@@ -1,0 +1,30 @@
+CHARACTER MOD TOOL - ASSET DISTRIBUTION POLICY
+
+The application source and a working private-beta build may contain assets that were
+created from or extracted from NBA 2K installations. Do not publish those assets
+unless you have confirmed that you have permission to redistribute them.
+
+REVIEW REQUIRED BEFORE PUBLIC DISTRIBUTION
+
+- built_in_glasses/**/*.iff
+- accessory_templates/**/*.iff
+- accessory_templates/**/*.dds
+- dynamic_body_package/hihead_DYN_BODY.SCNE
+- dynamic_body_package/Morph.zip
+- any user-created texture_exports, backups, research files, or test IFFs
+
+EXTERNAL USER-SUPPLIED REQUIREMENTS
+
+- A legitimate NBA 2K26 installation and its manifest/mod extraction files
+- Blender 5.1 or a compatible supported Blender build
+- Photoshop is optional and is never bundled
+
+BUILD MODES
+
+build_release.ps1 defaults to Public mode and removes the review-required assets.
+PrivateBeta mode includes them only when -AcknowledgeGameDerivedAssets is supplied.
+This switch is an explicit packaging choice; it is not a statement that distribution
+rights have been granted.
+
+The application never includes the NBA 2K game executable, manifest, mod.exe, or
+Oodle DLL. It discovers and uses those files from the user's own installation.

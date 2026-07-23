@@ -1,0 +1,43 @@
+# Python and local build environments
+__pycache__/
+*.py[cod]
+.release_venv/
+.build_python*/
+
+# Generated builds and user output
+build/
+dist/
+release/
+outputs/
+texture_exports/
+research_hair_companions/
+hair_tools/hair_picker_backups/
+*.log
+*.bak
+
+# Game-derived and redistributable binary assets
+accessory_templates/
+built_in_glasses/
+dynamic_body_package/
+blender_tools/
+tools/
+*.iff
+*.dds
+*.txtr
+*.SCNE
+*.bin
+*.shader
+*.material
+*.fx
+*.dll
+*.exe
+*.zip
+
+# Historical launchers are retained locally but not versioned.
+launch_character_mod_tool_v*.bat
+launch_current_character_mod_tool_v*.bat
+!launch_current_character_mod_tool_v1_0_113_beta.bat
+
+# Local installers and temporary probes
+python-*.exe
+tcl_probe.tcl

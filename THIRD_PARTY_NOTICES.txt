@@ -1,0 +1,29 @@
+CHARACTER MOD TOOL - THIRD-PARTY NOTICES
+
+Blender
+https://www.blender.org/
+Blender is an external prerequisite and is not included in the portable package.
+
+MeshDataTransfer
+The bundled source identifies itself as MeshDataTransfer 2.0.15 and declares
+SPDX:GPL-3.0-or-later in blender_manifest.toml. Its source is included under
+blender_tools/mesh_data_transfer.
+
+NBA Character HIHEAD Import/Export Add-On
+Credits embedded in the bundled add-on identify Hanleys and RipZz, with Blender 5.1
+maintenance by carrn/Codex. Confirm the upstream redistribution terms before public
+release; no standalone license file was present during this packaging pass.
+
+texconv.exe / DirectXTex
+The application currently includes texconv.exe under tools. Add the applicable
+DirectXTex license text and confirm redistribution terms before public release.
+
+NBA2K Live Roster Editor CLI 0.3.0
+The private beta includes the user-supplied roster.exe under tools/live_roster.
+It is unsigned and no standalone license or source archive was supplied. Confirm
+the author's redistribution terms before including it in a public release.
+
+NBA 2K assets
+NBA 2K game files and extracted content are not third-party software dependencies of
+the app itself. See ASSET_DISTRIBUTION_POLICY.txt before distributing any bundled IFF,
+DDS, SCNE, or morph-derived data.
