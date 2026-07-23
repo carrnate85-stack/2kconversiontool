@@ -104,7 +104,7 @@ OLDER_BODY_FIT_SUFFIXES = (
     ".sx", ".sy", ".sz",
     ".r1", ".r2",
 )
-APP_VERSION = "1.0.114-beta"
+APP_VERSION = "1.0.115-beta"
 
 
 LOGGER = logging.getLogger("character_mod_tool")
@@ -581,6 +581,13 @@ def read_dynamic_body_package():
 
 class CharacterModTool(tk.Tk):
     def __init__(self):
+        if sys.platform == "win32":
+            try:
+                ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(
+                    f"CharacterModTool.{APP_VERSION}"
+                )
+            except (AttributeError, OSError):
+                LOGGER.warning("Could not set the Windows application identity.", exc_info=True)
         super().__init__()
         self._app_icon_image = None
         icon_path = app_settings.resource_path("assets", "character_mod_tool_icon.ico")
