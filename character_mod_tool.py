@@ -104,7 +104,7 @@ OLDER_BODY_FIT_SUFFIXES = (
     ".sx", ".sy", ".sz",
     ".r1", ".r2",
 )
-APP_VERSION = "1.0.113-beta"
+APP_VERSION = "1.0.114-beta"
 
 
 LOGGER = logging.getLogger("character_mod_tool")
@@ -590,7 +590,7 @@ class CharacterModTool(tk.Tk):
             except tk.TclError:
                 LOGGER.warning("Could not apply the Windows app icon.", exc_info=True)
         icon_png_path = app_settings.resource_path("assets", "character_mod_tool_icon.png")
-        if os.path.isfile(icon_png_path):
+        if sys.platform != "win32" and os.path.isfile(icon_png_path):
             try:
                 self._app_icon_image = tk.PhotoImage(file=icon_png_path)
                 self.iconphoto(True, self._app_icon_image)

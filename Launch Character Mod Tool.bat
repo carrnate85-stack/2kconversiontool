@@ -7,8 +7,8 @@ if exist "CharacterModTool.exe" (
     exit /b 0
 )
 
-if exist "release\CharacterModTool-v1.0.113-beta-PrivateBeta\CharacterModTool.exe" (
-    start "" "release\CharacterModTool-v1.0.113-beta-PrivateBeta\CharacterModTool.exe"
+if exist "release\CharacterModTool-v1.0.114-beta-PrivateBeta\CharacterModTool.exe" (
+    start "" "release\CharacterModTool-v1.0.114-beta-PrivateBeta\CharacterModTool.exe"
     exit /b 0
 )
 
