@@ -104,7 +104,7 @@ OLDER_BODY_FIT_SUFFIXES = (
     ".sx", ".sy", ".sz",
     ".r1", ".r2",
 )
-APP_VERSION = "1.0.115-beta"
+APP_VERSION = "1.0.116-beta"
 
 
 LOGGER = logging.getLogger("character_mod_tool")
@@ -579,6 +579,42 @@ def read_dynamic_body_package():
     return replacement_text, morphs
 
 
+def apply_windows_window_icons(window, icon_path):
+    if sys.platform != "win32" or not os.path.isfile(icon_path):
+        return
+    try:
+        user32 = ctypes.windll.user32
+        load_image = user32.LoadImageW
+        load_image.argtypes = (
+            ctypes.c_void_p,
+            ctypes.c_wchar_p,
+            ctypes.c_uint,
+            ctypes.c_int,
+            ctypes.c_int,
+            ctypes.c_uint,
+        )
+        load_image.restype = ctypes.c_void_p
+        send_message = user32.SendMessageW
+        send_message.argtypes = (
+            ctypes.c_void_p,
+            ctypes.c_uint,
+            ctypes.c_size_t,
+            ctypes.c_void_p,
+        )
+        send_message.restype = ctypes.c_ssize_t
+
+        hwnd = ctypes.c_void_p(window.winfo_id())
+        handles = []
+        for icon_kind, size in ((0, 24), (1, 32)):
+            handle = load_image(None, icon_path, 1, size, size, 0x0010)
+            if handle:
+                send_message(hwnd, 0x0080, icon_kind, handle)
+                handles.append(handle)
+        window._windows_icon_handles = handles
+    except (AttributeError, OSError):
+        LOGGER.warning("Could not apply native Windows window icons.", exc_info=True)
+
+
 class CharacterModTool(tk.Tk):
     def __init__(self):
         if sys.platform == "win32":
@@ -596,6 +632,7 @@ class CharacterModTool(tk.Tk):
                 self.iconbitmap(default=icon_path)
             except tk.TclError:
                 LOGGER.warning("Could not apply the Windows app icon.", exc_info=True)
+            self.after(100, lambda: apply_windows_window_icons(self, icon_path))
         icon_png_path = app_settings.resource_path("assets", "character_mod_tool_icon.png")
         if sys.platform != "win32" and os.path.isfile(icon_png_path):
             try:
@@ -8704,8 +8741,15 @@ class CharacterModTool(tk.Tk):
         widget.configure(state=tk.DISABLED)
 
     def destroy(self):
+        icon_handles = getattr(self, "_windows_icon_handles", ())
         self.clear_manifest_target_cache()
         super().destroy()
+        if sys.platform == "win32":
+            for handle in icon_handles:
+                try:
+                    ctypes.windll.user32.DestroyIcon(handle)
+                except (AttributeError, OSError):
+                    pass
 
 
 def run_package_self_test():
