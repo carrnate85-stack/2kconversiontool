@@ -107,7 +107,7 @@ OLDER_BODY_FIT_SUFFIXES = (
     ".sx", ".sy", ".sz",
     ".r1", ".r2",
 )
-APP_VERSION = "1.0.127-beta"
+APP_VERSION = "1.0.128-beta"
 
 
 LOGGER = logging.getLogger("character_mod_tool")
@@ -2497,8 +2497,12 @@ class CharacterModTool(tk.Tk):
         if png_id:
             for hair_key in preferred_keys:
                 add_candidate(folder / f"png{png_id}_geo_{hair_key}.iff")
-            for path in sorted(folder.glob(f"png{png_id}_geo_hair*.iff")):
-                add_candidate(path)
+            for pattern in (
+                f"png{png_id}_geo_hair*.iff",
+                f"png{png_id}_hair*.iff",
+            ):
+                for path in sorted(folder.glob(pattern)):
+                    add_candidate(path)
         return candidates
 
     def refresh_everything_swap_hair_options(self, auto_detect_source=False):
