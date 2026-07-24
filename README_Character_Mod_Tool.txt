@@ -1,4 +1,4 @@
-CHARACTER MOD TOOL v1.0.117-beta
+CHARACTER MOD TOOL v1.0.118-beta
 
 Windows GUI for reading, editing, validating, and converting ZIP-style NBA 2K
 character IFF packages. This is a private-beta release. Always preserve original
@@ -47,6 +47,8 @@ FULL SWAP
   torso_shader, and legs_shader topology use active-UV group transfer and skip
   the legacy abdomen/groin anchors.
 - Older body layouts automatically retain the legacy shrinkwrap fallback.
+- Source IFFs that omit MatrixWeightsBuffer use temporary zero source weights;
+  the target character's original rigging and weights remain unchanged.
 - Full Swap always retains the target player's original png#### identity and writes
   the completed package into the app's outputs folder.
 - Existing target companion IFFs are copied into the output package under that same

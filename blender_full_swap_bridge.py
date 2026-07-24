@@ -96,6 +96,7 @@ def import_character(path, label, original_path=None):
         keep_extracted=False,
         apply_scene_placement=False,
         legacy_flip_uv_v=True,
+        allow_missing_matrix_weights=label.lower() == "source",
     )
     if "FINISHED" not in result:
         raise RuntimeError(f"Blender could not import the {label.lower()} IFF.")
