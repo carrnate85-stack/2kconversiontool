@@ -1,4 +1,4 @@
-CHARACTER MOD TOOL v1.0.122-beta
+CHARACTER MOD TOOL v1.0.123-beta
 
 Windows GUI for reading, editing, validating, and converting ZIP-style NBA 2K
 character IFF packages. This is a private-beta release. Always preserve original
@@ -40,6 +40,8 @@ FULL SWAP
 - Include Hair Swap detects a supported source companion or accepts a manually
   selected NBA 2K23/2K25 hair IFF, then converts it into the chosen target
   appearance slot as part of the same staged and validated package.
+- Large legacy hairs can expand beyond a smaller native target hair shell
+  while retaining the full source LOD0 geometry.
 - Face color/normal textures, supported tattoos, and target configurations are
   rebuilt and validated.
 - Face and tattoo swaps detect resolution differences, resize and encode to the

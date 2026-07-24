@@ -107,7 +107,7 @@ OLDER_BODY_FIT_SUFFIXES = (
     ".sx", ".sy", ".sz",
     ".r1", ".r2",
 )
-APP_VERSION = "1.0.122-beta"
+APP_VERSION = "1.0.123-beta"
 
 
 LOGGER = logging.getLogger("character_mod_tool")

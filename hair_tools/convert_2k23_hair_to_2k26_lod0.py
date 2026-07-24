@@ -164,6 +164,7 @@ def convert(
         root = scne[source_root_name]
         model = root["Model"]
         selected = None
+        fallback_selected = None
         for model_name, candidate in model.items():
             if not isinstance(candidate, dict) or "Binary" not in candidate or not candidate.get("Prim"):
                 continue
@@ -176,17 +177,24 @@ def convert(
             candidate_index_data = candidate_segments[0][2][: candidate_index_count * 2]
             candidate_indices = struct.unpack("<" + "H" * candidate_index_count, candidate_index_data)
             candidate_vertex_count = max(candidate_indices) + 1
+            candidate_selection = (
+                model_name,
+                candidate,
+                candidate_segments,
+                candidate_index_count,
+                candidate_index_data,
+                candidate_indices,
+                candidate_vertex_count,
+            )
+            if fallback_selected is None or candidate_vertex_count < fallback_selected[-1]:
+                fallback_selected = candidate_selection
             if template_vertex_count is None or candidate_vertex_count <= template_vertex_count:
-                selected = (
-                    model_name,
-                    candidate,
-                    candidate_segments,
-                    candidate_index_count,
-                    candidate_index_data,
-                    candidate_indices,
-                    candidate_vertex_count,
-                )
+                selected = candidate_selection
                 break
+        expanded_template = False
+        if selected is None and fallback_selected is not None and template_vertex_count is not None:
+            selected = fallback_selected
+            expanded_template = selected[-1] > template_vertex_count
         if selected is None:
             target_text = f" under {template_vertex_count} vertices" if template_vertex_count else ""
             raise RuntimeError(f"No supported legacy hair LOD was found{target_text}.")
@@ -200,6 +208,8 @@ def convert(
         indices,
         vertex_count,
     ) = selected
+    if expanded_template:
+        preserve_template_vertex_metadata = False
 
     index_data = segments[0][2]
     pos_data = segments[1][2]
@@ -659,6 +669,8 @@ def convert(
         "stream_vertices": vertex_count,
         "source_lod": lod0_name,
         "indices": index_count,
+        "expanded_template": expanded_template,
+        "template_vertices": template_vertex_count,
         "blend_range": [blend_min, blend_max],
         "matrix_weight_bytes": len(matrix_weights or b"\0\0\0\0"),
     }

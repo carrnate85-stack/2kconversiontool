@@ -2,7 +2,7 @@
 
 Last updated: 2026-07-24
 
-Current app version: `1.0.122-beta`
+Current app version: `1.0.123-beta`
 
 ## Scope
 
@@ -65,6 +65,8 @@ Detection requirements:
 Conversion behavior:
 
 - Selects the highest authored legacy LOD that fits the target shell.
+- If every authored LOD is larger than the target shell, uses the smallest
+  authored LOD and expands the rebuilt 2K26 stream metadata to fit it.
 - Converts quantized positions to `R32G32B32_FLOAT`.
 - Rebuilds the packed NBA 2K26 tangent frame from legacy tangent/binormal data.
 - Preserves source UV bytes and source UV Offset/Scale metadata.
