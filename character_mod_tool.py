@@ -107,7 +107,7 @@ OLDER_BODY_FIT_SUFFIXES = (
     ".sx", ".sy", ".sz",
     ".r1", ".r2",
 )
-APP_VERSION = "1.0.123-beta"
+APP_VERSION = "1.0.124-beta"
 
 
 LOGGER = logging.getLogger("character_mod_tool")
@@ -349,6 +349,16 @@ def validate_archive_snapshot(
         binary = str(metadata.get("Binary") or "")
         if binary and os.path.splitext(os.path.basename(binary))[0].lower() != os.path.splitext(os.path.basename(dds_name))[0].lower():
             mismatches.append(f"Binary={binary} does not match {os.path.basename(dds_name)}")
+        if binary.lower().endswith(".dds"):
+            packed_fields = [
+                key for key in ("Segments", "CompressionMethod", "Twiddled")
+                if key in metadata
+            ]
+            if packed_fields:
+                mismatches.append(
+                    "editable DDS TXTR retains packed-resource fields: "
+                    + ", ".join(packed_fields)
+                )
         if mismatches:
             texture_errors += 1
             results.append(ValidationResult("ERROR", "Texture metadata", f"{logical}: " + "; ".join(mismatches)))
@@ -6899,11 +6909,14 @@ class CharacterModTool(tk.Tk):
         if not isinstance(value, dict):
             raise ValueError("The source TXTR texture definition is invalid.")
         dds = parse_dds_header(dds_data)
+        for key in ("Segments", "CompressionMethod", "Twiddled"):
+            value.pop(key, None)
         value["Binary"] = os.path.basename(target_dds_name)
         value["Width"] = int(dds["width"])
         value["Height"] = int(dds["height"])
         value["Mips"] = int(dds["mips"])
         value["Format"] = normalized_texture_format(dds["format"])
+        value["HeaderSize"] = int(dds["header_size"])
         value["PixelDataSize"] = int(dds["pixel_data_size"])
         return cls.serialize_fragment_object(metadata)
 
