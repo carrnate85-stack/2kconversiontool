@@ -1,4 +1,4 @@
-CHARACTER MOD TOOL v1.0.125-beta
+CHARACTER MOD TOOL v1.0.126-beta
 
 Windows GUI for reading, editing, validating, and converting ZIP-style NBA 2K
 character IFF packages. This is a private-beta release. Always preserve original
@@ -44,8 +44,10 @@ FULL SWAP
   while retaining the full source LOD0 geometry.
 - Face color/normal textures, supported tattoos, and target configurations are
   rebuilt and validated.
-- Face and tattoo swaps detect resolution differences, resize and encode to the
-  target texture profile, and synchronize the final DDS/TXTR metadata.
+- Face swaps retain source dimensions, mip chains, and BC formats; only the
+  destination DDS names and matching TXTR metadata are rebuilt.
+- Tattoo swaps also retain the source DDS profile and synchronize the final
+  TXTR metadata to its actual dimensions, mip chain, format, and payload.
 - Every embedded face texture receives a real editable DDS reference; native
   TLD-only segment metadata is removed before the config is validated and saved.
 - Shrinkwrap Body is enabled by default. Appearance/body-fit

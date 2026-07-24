@@ -107,7 +107,7 @@ OLDER_BODY_FIT_SUFFIXES = (
     ".sx", ".sy", ".sz",
     ".r1", ".r2",
 )
-APP_VERSION = "1.0.125-beta"
+APP_VERSION = "1.0.126-beta"
 
 
 LOGGER = logging.getLogger("character_mod_tool")
@@ -3696,6 +3696,7 @@ class CharacterModTool(tk.Tk):
                     base_entries[target_txtr],
                     base_entries[target_dds],
                     target_dds,
+                    preserve_source_profile=True,
                 )
                 base_entries[target_txtr] = final_txtr
                 base_entries[target_dds] = final_dds
@@ -3779,6 +3780,7 @@ class CharacterModTool(tk.Tk):
                 target_data[target_txtr],
                 target_data[target_dds],
                 target_dds,
+                preserve_source_profile=True,
             )
             replacements[target_txtr] = final_txtr
             replacements[target_dds] = final_dds
@@ -7008,14 +7010,16 @@ class CharacterModTool(tk.Tk):
         target_txtr_data,
         target_dds_data,
         target_dds_name,
+        preserve_source_profile=False,
     ):
         source_header = parse_dds_header(source_dds_data)
         target_header = parse_dds_header(target_dds_data)
         final_dds = source_dds_data
-        resized = (
+        profile_differs = (
             int(source_header["width"]) != int(target_header["width"])
             or int(source_header["height"]) != int(target_header["height"])
         )
+        resized = profile_differs and not preserve_source_profile
         if resized:
             final_dds = cls.resize_dds_to_profile(
                 source_dds_data,
@@ -7138,6 +7142,7 @@ class CharacterModTool(tk.Tk):
                         self.get_entry_data(target_txtr),
                         self.get_entry_data(target_dds),
                         target_dds,
+                        preserve_source_profile=True,
                     )
                     swaps.append((
                         logical_name,
@@ -7736,6 +7741,7 @@ class CharacterModTool(tk.Tk):
                             target_entries[target_txtr],
                             target_entries[target_dds],
                             target_dds,
+                            preserve_source_profile=True,
                         )
                     else:
                         target_dds = os.path.basename(source_dds)

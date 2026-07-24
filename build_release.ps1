@@ -8,7 +8,7 @@ param(
 
 $ErrorActionPreference = "Stop"
 $Root = Split-Path -Parent $MyInvocation.MyCommand.Path
-$Version = "1.0.125-beta"
+$Version = "1.0.126-beta"
 $BuildRoot = Join-Path ([IO.Path]::GetTempPath()) "CharacterModTool-build-$Version-$PID"
 $TempDistRoot = Join-Path ([IO.Path]::GetTempPath()) "CharacterModTool-dist-$Version-$PID"
 $DistRoot = Join-Path $Root "dist"
