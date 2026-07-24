@@ -1,4 +1,4 @@
-CHARACTER MOD TOOL v1.0.119-beta
+CHARACTER MOD TOOL v1.0.120-beta
 
 Windows GUI for reading, editing, validating, and converting ZIP-style NBA 2K
 character IFF packages. This is a private-beta release. Always preserve original
@@ -113,7 +113,9 @@ HAIR
 
 HEADBAND SWAP
 
-- Transfers a legacy headband shape onto a modern target through background Blender.
+- Transfers a legacy or NBA 2K25 headband shape onto an NBA 2K26 target through
+  background Blender.
+- NBA 2K25 headbands using `hair_01Shape` are recognized automatically.
 - Requires a successful background-link test.
 
 VALIDATOR

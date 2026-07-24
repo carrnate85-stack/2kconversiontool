@@ -1,5 +1,6 @@
 import argparse
 import importlib
+import inspect
 import json
 import os
 import sys
@@ -9,7 +10,14 @@ import zipfile
 import bpy
 
 
-HEADBAND_GROUP_NAMES = {"headbandshape", "headbandshader", "headband"}
+HEADBAND_GROUP_NAMES = {
+    "headbandshape",
+    "headbandshader",
+    "headband",
+    "hair01shape",
+    "hairshader",
+    "hair01",
+}
 
 
 def emit(kind, message):
@@ -66,7 +74,7 @@ def normalized_name(value):
     return "".join(character for character in value.lower() if character.isalnum())
 
 
-def choose_headband_mesh(objects, label, legacy):
+def choose_headband_mesh(objects, label, expected_legacy):
     meshes = [obj for obj in objects if getattr(obj, "type", None) == "MESH"]
     headbands = []
     for obj in meshes:
@@ -75,16 +83,20 @@ def choose_headband_mesh(objects, label, legacy):
             headbands.append(obj)
     if headbands:
         meshes = headbands
-    matching = [obj for obj in meshes if bool(obj.get("nba2k_legacy_packed_import")) == legacy]
-    if matching:
-        meshes = matching
+    if expected_legacy is not None:
+        matching = [
+            obj for obj in meshes
+            if bool(obj.get("nba2k_legacy_packed_import")) == expected_legacy
+        ]
+        if matching:
+            meshes = matching
     if not meshes:
-        expected = "legacy" if legacy else "NBA 2K26"
+        expected = "source" if expected_legacy is None else ("legacy" if expected_legacy else "NBA 2K26")
         raise RuntimeError(f"{label} IFF did not import a usable {expected} headband mesh.")
     return max(meshes, key=lambda obj: len(obj.data.vertices))
 
 
-def import_headband(path, label, legacy):
+def import_headband(path, label, expected_legacy):
     emit("STAGE", f"Importing {label} headband")
     before = set(bpy.data.objects)
     result = bpy.ops.import_vcnbacharacter.load(
@@ -98,7 +110,7 @@ def import_headband(path, label, legacy):
     if "FINISHED" not in result:
         raise RuntimeError(f"Blender could not import the {label.lower()} headband IFF.")
     imported = [obj for obj in bpy.data.objects if obj not in before]
-    mesh = choose_headband_mesh(imported, label, legacy)
+    mesh = choose_headband_mesh(imported, label, expected_legacy)
     mesh["nba2k_source_path"] = path
     return mesh
 
@@ -114,11 +126,20 @@ def select_only(obj):
 
 def swap_headband(eye_tool, source_obj, target_obj):
     emit("STAGE", "Running Blender Headband Mesh Data Transfer")
-    scene = bpy.context.scene
-    scene.nbachar_headband_source_mesh = source_obj
-    scene.nbachar_headband_target_mesh = target_obj
-    scene.nbachar_headband_transfer_strength = 1.0
-    ok, message = eye_tool.transfer_headband_shape(bpy.context)
+    parameters = inspect.signature(eye_tool.transfer_headband_shape).parameters
+    if len(parameters) >= 3:
+        ok, message = eye_tool.transfer_headband_shape(
+            bpy.context,
+            source_obj,
+            target_obj,
+            1.0,
+        )
+    else:
+        scene = bpy.context.scene
+        scene.nbachar_headband_source_mesh = source_obj
+        scene.nbachar_headband_target_mesh = target_obj
+        scene.nbachar_headband_transfer_strength = 1.0
+        ok, message = eye_tool.transfer_headband_shape(bpy.context)
     if not ok:
         raise RuntimeError(message)
     emit("STAGE", message)
@@ -155,7 +176,7 @@ def main():
 
     _addon_name, addon, eye_tool = register_tools(args)
     clear_scene()
-    source_obj = import_headband(source_path, "Legacy source", True)
+    source_obj = import_headband(source_path, "Source", None)
     source_obj.name = "HEADBAND_SOURCE"
     target_obj = import_headband(target_path, "NBA 2K26 target", False)
     swap_headband(eye_tool, source_obj, target_obj)

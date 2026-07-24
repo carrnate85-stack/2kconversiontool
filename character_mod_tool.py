@@ -80,6 +80,9 @@ AVAILABLE_BUILT_IN_GLASSES = {
 }
 FULL_SWAP_BRIDGE = app_settings.resource_path("blender_full_swap_bridge.py")
 HEADBAND_SWAP_BRIDGE = app_settings.resource_path("blender_headband_swap_bridge.py")
+BUNDLED_HEADBAND_SWAP_TOOL = app_settings.resource_path(
+    os.path.join("blender_tools", "NBA_Character_HeadbandSwap")
+)
 OPEN_OUTPUT_BRIDGE = app_settings.resource_path("blender_open_output.py")
 ROSTER_CLI = app_settings.resource_path("tools", "live_roster", "roster.exe")
 ROSTER_CLI_SHA256 = "E1A55F8BCD032E2C2719535BCE5CB454CD74EE52AEAFDABFFB4027A9D8E32659"
@@ -104,7 +107,7 @@ OLDER_BODY_FIT_SUFFIXES = (
     ".sx", ".sy", ".sz",
     ".r1", ".r2",
 )
-APP_VERSION = "1.0.119-beta"
+APP_VERSION = "1.0.120-beta"
 
 
 LOGGER = logging.getLogger("character_mod_tool")
@@ -733,7 +736,9 @@ class CharacterModTool(tk.Tk):
         self.headband_source_var = tk.StringVar()
         self.headband_target_var = tk.StringVar()
         self.headband_tool_var = tk.StringVar(value=self.find_headband_swap_tool())
-        self.headband_status_var = tk.StringVar(value="Choose legacy source and NBA 2K26 target headband IFFs.")
+        self.headband_status_var = tk.StringVar(
+            value="Choose a legacy or NBA 2K25 source and an NBA 2K26 target headband IFF."
+        )
         self.accessory_source_var = tk.StringVar()
         self.accessory_target_var = tk.StringVar()
         self.builtin_glasses_var = tk.StringVar(value=next(iter(AVAILABLE_BUILT_IN_GLASSES), ""))
@@ -1472,7 +1477,7 @@ class CharacterModTool(tk.Tk):
         headband_paths.pack(fill=tk.X)
         headband_paths.columnconfigure(1, weight=1)
 
-        ttk.Label(headband_paths, text="Legacy Source Headband").grid(
+        ttk.Label(headband_paths, text="Source Headband (Legacy / 2K25)").grid(
             row=0, column=0, sticky=tk.W, padx=(0, 8), pady=3
         )
         ttk.Entry(headband_paths, textvariable=self.headband_source_var, state="readonly").grid(
@@ -1991,7 +1996,11 @@ class CharacterModTool(tk.Tk):
         return app_settings.discover_head_swap_tool(self.settings.get("head_swap_tool", ""))
 
     def find_headband_swap_tool(self):
-        candidates = [self.settings.get("head_swap_tool", ""), self.find_head_swap_tool()]
+        candidates = [
+            BUNDLED_HEADBAND_SWAP_TOOL,
+            self.settings.get("head_swap_tool", ""),
+            self.find_head_swap_tool(),
+        ]
         valid = []
         for path in candidates:
             normalized = os.path.normpath(path)
@@ -4034,7 +4043,7 @@ class CharacterModTool(tk.Tk):
                 pass
 
     @staticmethod
-    def inspect_headband_iff(path, legacy):
+    def inspect_headband_iff(path, source):
         if not path:
             return False, "Choose file", "No headband IFF selected"
         if not os.path.isfile(path):
@@ -4052,10 +4061,16 @@ class CharacterModTool(tk.Tk):
         model_count = sum(name.endswith(".model") for name in base_names)
         vertex_buffers = sum(name.startswith("vertexbuffer") for name in base_names)
         index_buffers = sum(name.startswith("indexbuffer") for name in base_names)
-        if legacy:
-            if not model_count:
-                return False, "Wrong format", "Source must be a legacy headband IFF containing a .model file"
-            return True, "Ready", f"Legacy headband; {model_count} model file; {len(names)} entries"
+        if source:
+            if model_count:
+                return True, "Ready", f"Legacy headband; {model_count} model file; {len(names)} entries"
+            if vertex_buffers and index_buffers:
+                return True, "Ready", (
+                    f"NBA 2K25/modern headband; {vertex_buffers} vertex buffers; {len(names)} entries"
+                )
+            return False, "Wrong format", (
+                "Source must contain either a legacy .model or modern vertex/index buffers"
+            )
         if not vertex_buffers or not index_buffers:
             return False, "Wrong format", "Target must be a modern geo_headband IFF with model buffers"
         return True, "Ready", f"NBA 2K26 headband; {vertex_buffers} vertex buffers; {len(names)} entries"
@@ -4088,7 +4103,7 @@ class CharacterModTool(tk.Tk):
         setup_ready = source_ready and target_ready and blender_ready and tool_ready and mesh_transfer_ready
         pipeline_ready = setup_ready and bridge_ready and os.path.isfile(HEADBAND_SWAP_BRIDGE)
 
-        self.set_headband_row("source", "Legacy Source IFF", source_status, source_details)
+        self.set_headband_row("source", "Source IFF (Legacy / 2K25)", source_status, source_details)
         self.set_headband_row("target", "NBA 2K26 Target IFF", target_status, target_details)
         self.set_headband_row(
             "blender",
@@ -4116,7 +4131,7 @@ class CharacterModTool(tk.Tk):
             "pipeline",
             "Automated Headband Swap",
             "Ready" if pipeline_ready else "Waiting",
-            "Legacy import -> Active UV transfer -> 2K26 headband export",
+            "Legacy/2K25 import -> Active UV transfer -> 2K26 headband export",
         )
         self.headband_run_button.configure(state=tk.NORMAL if pipeline_ready else tk.DISABLED)
         if pipeline_ready:
@@ -4127,7 +4142,7 @@ class CharacterModTool(tk.Tk):
     def browse_headband_source(self):
         current = self.headband_source_var.get().strip()
         path = filedialog.askopenfilename(
-            title="Choose legacy source headband IFF",
+            title="Choose legacy or NBA 2K25 source headband IFF",
             filetypes=[("NBA 2K headband IFF", "*.iff"), ("All files", "*.*")],
             initialdir=os.path.dirname(current) if current else "",
         )
@@ -4248,7 +4263,10 @@ class CharacterModTool(tk.Tk):
         tool_path = self.headband_tool_var.get().strip()
         mesh_transfer_path = self.find_mesh_data_transfer_tool()
         if not self.inspect_headband_iff(source_path, True)[0] or not self.inspect_headband_iff(target_path, False)[0]:
-            messagebox.showinfo("Character Mod Tool", "Choose valid legacy source and NBA 2K26 target headband IFFs.")
+            messagebox.showinfo(
+                "Character Mod Tool",
+                "Choose a valid legacy or NBA 2K25 source and an NBA 2K26 target headband IFF.",
+            )
             return
         if not self.headband_bridge_result.startswith("Connected"):
             messagebox.showinfo("Character Mod Tool", "Run the Headband Test Background Link first.")
