@@ -10,6 +10,7 @@ import zipfile
 import ctypes
 import io
 import struct
+import zlib
 from dataclasses import dataclass, replace
 from datetime import datetime
 from pathlib import Path
@@ -21,6 +22,11 @@ try:
 except ImportError:
     sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
     import app_settings
+
+from convert_2k23_hair_to_2k26_lod0 import convert as convert_legacy_hair
+from convert_2k23_hair_to_2k26_lod0 import read_scne as read_legacy_scne
+from convert_2k25_hair_to_2k26_static import convert as convert_2k25_hair
+from convert_2k25_hair_to_2k26_static import read_scne as read_2k25_scne
 
 
 _SETTINGS = app_settings.load_settings()
@@ -40,7 +46,7 @@ BLENDER_IMPORT_SCRIPT = Path(__file__).resolve().parent / "blender_hair_import.p
 BLENDER_AUTOFIT_SCRIPT = Path(__file__).resolve().parent / "blender_hair_autofit.py"
 app_settings.LOG_DIR.mkdir(parents=True, exist_ok=True)
 BLENDER_AUTOFIT_LOG = app_settings.LOG_DIR / "hair_fixer_blender.log"
-HAIR_PICKER_VERSION = "1.0.6 Full Detail LOD0"
+HAIR_PICKER_VERSION = "1.0.7 External Conversion"
 
 
 def configure_environment(game_root="", blender_exe="", log_dir=""):
@@ -547,6 +553,290 @@ def backup_existing(path: Path, stamp: str):
     backup.parent.mkdir(parents=True, exist_ok=True)
     shutil.copy2(path, backup)
     return backup
+
+
+def external_hair_identity(path: Path):
+    path = Path(path)
+    filename_match = re.match(r"(?i)^png(\d+)_", path.name)
+    if not filename_match:
+        raise ValueError("The source filename must begin with png followed by its player id.")
+    if not zipfile.is_zipfile(path):
+        raise ValueError("The selected source is not a ZIP-style NBA 2K IFF.")
+
+    with zipfile.ZipFile(path, "r") as archive:
+        scne_name = next((name for name in archive.namelist() if name.lower().endswith(".scne")), None)
+        if not scne_name:
+            raise ValueError("The selected source contains no SCNE file.")
+        scene = read_2k25_scne(archive, scne_name, preserve_duplicates=True)
+        root_name, root = next(iter(scene.items()))
+        models = root.get("Model", {})
+        model = models.get("hihead") if isinstance(models, dict) else None
+        if not isinstance(model, dict):
+            model = next((value for value in models.values() if isinstance(value, dict)), None)
+        if not model:
+            raise ValueError("The selected SCNE contains no supported hair model.")
+        vertex_format = model.get("VertexFormat", {})
+        position_format = vertex_format.get("POSITION0", {}).get("Format")
+        if (
+            position_format == "R16G16B16A16_SNORM"
+            and "BINORMAL0" in vertex_format
+            and "TANGENT0" in vertex_format
+            and str(model.get("Binary", "")).lower().endswith(".model")
+        ):
+            generation = "2K23"
+        elif (
+            position_format == "R32G32B32_FLOAT"
+            and "TANGENTFRAME0" in vertex_format
+            and model.get("VertexStream")
+            and model.get("IndexBuffer")
+        ):
+            generation = "2K25"
+        else:
+            raise ValueError("The selected hair does not use a supported 2K23 or 2K25 mesh layout.")
+
+    if not re.fullmatch(r"hair_[A-Za-z0-9_]+", root_name, re.IGNORECASE):
+        raise ValueError(f"Unsupported source hair SCNE key: {root_name}")
+    return generation, filename_match.group(1), root_name
+
+
+def external_hair_conversion_plan(source_path: Path, target_png: str, target_hair_key: str):
+    source_path = Path(source_path)
+    if source_path.stem.lower().endswith("_tangentspace"):
+        regular_path = source_path.with_name(
+            source_path.name[: -len("_tangentspace.iff")] + ".iff"
+        )
+        if not regular_path.exists():
+            raise FileNotFoundError(
+                "The selected tangent-space companion has no ordinary geometry partner:\n"
+                f"{regular_path}"
+            )
+        source_path = regular_path
+
+    generation, source_png, source_hair_key = external_hair_identity(source_path)
+    target_png = re.sub(r"\D", "", str(target_png))
+    if not target_png:
+        raise ValueError("Open a target appearance IFF before converting hair.")
+    target_hair_key = validate_target_asset_key(target_hair_key)
+    archive_template = f"char/sig/png{target_png}_geo_{target_hair_key}.iff"
+    if archive_template.lower() not in parse_manifest_entries():
+        raise FileNotFoundError(
+            f"The selected target slot has no native 2K26 geometry shell:\n{archive_template}"
+        )
+    return {
+        "generation": generation,
+        "source_path": source_path,
+        "source_png": source_png,
+        "source_hair_key": source_hair_key,
+        "target_png": target_png,
+        "target_hair_key": target_hair_key,
+        "archive_template": archive_template,
+        "target_path": TARGET_SIG_DIR / f"png{target_png}_geo_{target_hair_key}.iff",
+    }
+
+
+def validate_converted_external_hair(path: Path, target_hair_key: str, expected_vertex_count: int):
+    with zipfile.ZipFile(path, "r") as archive:
+        bad_member = archive.testzip()
+        if bad_member:
+            raise RuntimeError(f"Converted IFF failed ZIP validation at {bad_member}.")
+        scne_names = [name for name in archive.namelist() if name.lower().endswith(".scne")]
+        if len(scne_names) != 1:
+            raise RuntimeError(f"Converted IFF must contain one SCNE file, found {len(scne_names)}.")
+        scne_name = scne_names[0]
+        scne_data = archive.read(scne_name)
+        if scne_data.startswith((b" ", b"\t", b"\r", b"\n")):
+            raise RuntimeError("Converted SCNE retains invalid top-level indentation.")
+        scene, _text = read_legacy_scne(archive, scne_name)
+        root_name = next(iter(scene))
+        if root_name.lower() != target_hair_key.lower():
+            raise RuntimeError(f"Converted SCNE root is {root_name}, expected {target_hair_key}.")
+        model = scene[root_name]["Model"]["hihead"]
+
+        def member_data(binary_name):
+            for candidate in (
+                binary_name,
+                binary_name.replace(".gz", ".bin"),
+                binary_name.replace(".bin", ".gz"),
+            ):
+                if candidate in archive.namelist():
+                    return archive.read(candidate)
+            raise RuntimeError(f"Converted IFF is missing referenced buffer {binary_name}.")
+
+        streams = model.get("VertexStream", [])
+        if len(streams) != 2:
+            raise RuntimeError(f"Converted hair must contain two vertex streams, found {len(streams)}.")
+        for stream in streams:
+            data = member_data(stream["Binary"])
+            stride = int(stream["Stride"])
+            if len(data) != int(stream["Size"]) or len(data) != expected_vertex_count * stride:
+                raise RuntimeError(f"Converted vertex stream {stream['Binary']} has an invalid size.")
+
+        lods = model.get("Lods") or []
+        if lods and (
+            len(lods) != 1
+            or int(lods[0].get("LodVerts", -1)) != expected_vertex_count
+        ):
+            raise RuntimeError("Converted SCNE does not contain one valid full-detail LOD.")
+        index_data = member_data(model["IndexBuffer"]["Binary"])
+        if len(index_data) != int(model["IndexBuffer"]["Size"]):
+            raise RuntimeError("Converted index buffer size does not match its SCNE descriptor.")
+        if (zlib.crc32(index_data) & 0xFFFFFFFF) != int(model["IndexBufferCrc32"]):
+            raise RuntimeError("Converted index buffer CRC does not match its SCNE descriptor.")
+        primitive = model["Prim"][0]
+        if int(primitive["Count"]) * 2 != len(index_data):
+            raise RuntimeError("Converted primitive count does not match its index buffer.")
+        lod_list = primitive.get("LodList") or []
+        if lod_list and len(lod_list) != 1:
+            raise RuntimeError("Converted primitive contains more than one LOD.")
+        if index_data:
+            indices = struct.unpack(f"<{len(index_data) // 2}H", index_data)
+            if max(indices) >= expected_vertex_count:
+                raise RuntimeError("Converted index buffer references a missing vertex.")
+
+        weight_stream = member_data(streams[1]["Binary"])
+        weights = {
+            struct.unpack_from("<I", weight_stream, offset + 12)[0]
+            for offset in range(0, len(weight_stream), 16)
+        }
+        if weights != {48 << 8}:
+            raise RuntimeError("Converted hair is not fully static on head bone 48.")
+        if len(member_data(model["MatrixWeightsBuffer"]["Binary"])) != 4:
+            raise RuntimeError("Converted static matrix-weight buffer must contain four bytes.")
+        if any(
+            info.create_system != 3
+            or info.create_version != 63
+            or info.extract_version != 20
+            or info.external_attr != 0x81B60000
+            for info in archive.infolist()
+        ):
+            raise RuntimeError("Converted IFF did not preserve native archive member headers.")
+
+
+def convert_external_hair_to_output(
+    source_path: Path,
+    target_png: str,
+    target_hair_key: str,
+    output_path: Path,
+    template_path: Path | None = None,
+):
+    source_path = Path(source_path)
+    output_path = Path(output_path)
+    target_png = re.sub(r"\D", "", str(target_png))
+    if not target_png:
+        raise ValueError("Target PNG id must contain digits.")
+    target_hair_key = validate_target_asset_key(target_hair_key)
+
+    if template_path:
+        template_path = Path(template_path)
+        if not archive_zip_is_valid(template_path):
+            raise ValueError(f"The target hair template is not a valid IFF:\n{template_path}")
+        generation, source_png, source_hair_key = external_hair_identity(source_path)
+        plan = {
+            "generation": generation,
+            "source_path": source_path,
+            "source_png": source_png,
+            "source_hair_key": source_hair_key,
+            "target_png": target_png,
+            "target_hair_key": target_hair_key,
+            "archive_template": "",
+            "target_path": output_path,
+        }
+    else:
+        plan = external_hair_conversion_plan(source_path, target_png, target_hair_key)
+
+    staging = Path(tempfile.mkdtemp(prefix="character_mod_hair_stage_"))
+    staged_template = staging / f"template_png{target_png}_geo_{target_hair_key}.iff"
+    converted_path = staging / f"png{target_png}_geo_{target_hair_key}.iff"
+    try:
+        if template_path:
+            shutil.copy2(template_path, staged_template)
+        else:
+            extract_archive_iff_fallback(plan["archive_template"], staged_template)
+
+        if plan["generation"] == "2K23":
+            result = convert_legacy_hair(
+                plan["source_path"],
+                converted_path,
+                force_bone=48,
+                target_name=plan["target_hair_key"],
+                target_scne_name=f"{plan['target_hair_key']}.SCNE",
+                duplicate_lods=False,
+                template_path=staged_template,
+                preserve_template_vertex_metadata=True,
+                fit_template_vertex_count=True,
+                use_source_uv_metadata=True,
+            )
+            expected_vertex_count = int(result["stream_vertices"])
+        else:
+            result = convert_2k25_hair(
+                plan["source_path"],
+                staged_template,
+                converted_path,
+                force_bone=48,
+            )
+            expected_vertex_count = int(result["vertices"])
+
+        validate_converted_external_hair(
+            converted_path,
+            plan["target_hair_key"],
+            expected_vertex_count,
+        )
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(converted_path, output_path)
+        validate_converted_external_hair(
+            output_path,
+            plan["target_hair_key"],
+            expected_vertex_count,
+        )
+        return output_path, result, plan
+    finally:
+        shutil.rmtree(staging, ignore_errors=True)
+
+
+def convert_external_hair_to_target(source_path: Path, target_png: str, target_hair_key: str):
+    plan = external_hair_conversion_plan(source_path, target_png, target_hair_key)
+    staging = Path(tempfile.mkdtemp(prefix="character_mod_hair_convert_"))
+    template_path = staging / f"template_{Path(plan['archive_template']).name}"
+    converted_path = staging / plan["target_path"].name
+    target_path = plan["target_path"]
+    stamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    backup = None
+    try:
+        extract_archive_iff_fallback(plan["archive_template"], template_path)
+        if plan["generation"] == "2K23":
+            result = convert_legacy_hair(
+                plan["source_path"],
+                converted_path,
+                force_bone=48,
+                target_name=plan["target_hair_key"],
+                target_scne_name=f"{plan['target_hair_key']}.SCNE",
+                duplicate_lods=False,
+                template_path=template_path,
+                preserve_template_vertex_metadata=True,
+                fit_template_vertex_count=True,
+                use_source_uv_metadata=True,
+            )
+            expected_vertex_count = int(result["stream_vertices"])
+        else:
+            result = convert_2k25_hair(
+                plan["source_path"],
+                template_path,
+                converted_path,
+                force_bone=48,
+            )
+            expected_vertex_count = int(result["vertices"])
+
+        validate_converted_external_hair(
+            converted_path,
+            plan["target_hair_key"],
+            expected_vertex_count,
+        )
+        TARGET_SIG_DIR.mkdir(parents=True, exist_ok=True)
+        backup = backup_existing(target_path, stamp)
+        converted_path.replace(target_path)
+        return target_path, backup, result, plan
+    finally:
+        shutil.rmtree(staging, ignore_errors=True)
 
 
 def rename_scne_payload(data: bytes, source_hair_key: str, target_hair_key: str):

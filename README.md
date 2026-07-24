@@ -12,3 +12,6 @@ Run `Launch Character Mod Tool.bat` to use an existing packaged build or the loc
 Python environment. Release packages are produced with `build_release.ps1`.
 
 Blender 5.1 is required for background mesh transfers.
+
+Developer handoff notes for the external hair converters are in
+`HAIR_CONVERSION_HANDOFF.md`.

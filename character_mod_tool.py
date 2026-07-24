@@ -107,7 +107,7 @@ OLDER_BODY_FIT_SUFFIXES = (
     ".sx", ".sy", ".sz",
     ".r1", ".r2",
 )
-APP_VERSION = "1.0.120-beta"
+APP_VERSION = "1.0.122-beta"
 
 
 LOGGER = logging.getLogger("character_mod_tool")
@@ -721,6 +721,16 @@ class CharacterModTool(tk.Tk):
         self.everything_swap_target_info_var = tk.StringVar(
             value="Browse for a custom target or select a clean NBA 2K26 player from the manifest."
         )
+        self.everything_swap_hair_enabled_var = tk.BooleanVar(value=False)
+        self.everything_swap_hair_source_var = tk.StringVar()
+        self.everything_swap_hair_slot_var = tk.StringVar()
+        self.everything_swap_hair_status_var = tk.StringVar(
+            value="Choose source and target characters to detect a compatible hair swap."
+        )
+        self.everything_swap_hair_slot_map = {}
+        self.everything_swap_hair_source_path = ""
+        self.everything_swap_hair_target_key = ""
+        self.everything_swap_hair_result = None
         self.full_swap_log_tail = []
         self.last_validation_report = {}
         self.last_full_swap_output = ""
@@ -904,6 +914,53 @@ class CharacterModTool(tk.Tk):
             textvariable=self.everything_swap_target_info_var,
             wraplength=1040,
         ).grid(row=3, column=0, columnspan=4, sticky=tk.W, pady=(8, 0))
+        ttk.Separator(everything_swap_paths, orient=tk.HORIZONTAL).grid(
+            row=4, column=0, columnspan=4, sticky=tk.EW, pady=(12, 8)
+        )
+        ttk.Checkbutton(
+            everything_swap_paths,
+            text="Include Hair Swap",
+            variable=self.everything_swap_hair_enabled_var,
+            command=self.update_everything_swap_hair_status,
+        ).grid(row=5, column=0, columnspan=4, sticky=tk.W, pady=(0, 4))
+        ttk.Label(everything_swap_paths, text="Source Hair").grid(
+            row=6, column=0, sticky=tk.W, padx=(0, 8), pady=3
+        )
+        ttk.Entry(
+            everything_swap_paths,
+            textvariable=self.everything_swap_hair_source_var,
+            state="readonly",
+        ).grid(row=6, column=1, sticky=tk.EW, pady=3)
+        ttk.Button(
+            everything_swap_paths,
+            text="Browse",
+            command=self.browse_everything_swap_hair_source,
+        ).grid(row=6, column=2, padx=(6, 0), pady=3)
+        ttk.Button(
+            everything_swap_paths,
+            text="Detect",
+            command=self.detect_everything_swap_hair,
+        ).grid(row=6, column=3, padx=(6, 0), pady=3)
+        ttk.Label(everything_swap_paths, text="Target Hair Slot").grid(
+            row=7, column=0, sticky=tk.W, padx=(0, 8), pady=3
+        )
+        self.everything_swap_hair_slot_combo = ttk.Combobox(
+            everything_swap_paths,
+            textvariable=self.everything_swap_hair_slot_var,
+            state="readonly",
+        )
+        self.everything_swap_hair_slot_combo.grid(
+            row=7, column=1, columnspan=3, sticky=tk.EW, pady=3
+        )
+        self.everything_swap_hair_slot_combo.bind(
+            "<<ComboboxSelected>>",
+            lambda _event: self.update_everything_swap_hair_status(),
+        )
+        ttk.Label(
+            everything_swap_paths,
+            textvariable=self.everything_swap_hair_status_var,
+            wraplength=1040,
+        ).grid(row=8, column=0, columnspan=4, sticky=tk.W, pady=(5, 0))
 
         appearance = ttk.Frame(self.notebook, padding=6)
         self.notebook.add(appearance, text="Appearance")
@@ -1247,6 +1304,11 @@ class CharacterModTool(tk.Tk):
         ttk.Button(hair_actions, text="Install Selected", command=self.install_selected_hair).pack(
             side=tk.RIGHT
         )
+        ttk.Button(
+            hair_actions,
+            text="Convert 2K23 / 2K25 IFF",
+            command=self.convert_external_hair,
+        ).pack(side=tk.RIGHT, padx=(0, 8))
 
         hair_list_frame = ttk.Frame(hair)
         hair_list_frame.pack(fill=tk.BOTH, expand=True)
@@ -2210,6 +2272,8 @@ class CharacterModTool(tk.Tk):
         )
         if path:
             self.everything_swap_source_var.set(path)
+            self.everything_swap_hair_source_var.set("")
+            self.refresh_everything_swap_hair_options(auto_detect_source=True)
 
     def browse_everything_swap_target(self):
         current = self.everything_swap_target_var.get().strip()
@@ -2223,6 +2287,148 @@ class CharacterModTool(tk.Tk):
             self.everything_swap_target_var.set(path)
             self.everything_swap_target_info_var.set(
                 f"Custom target: {os.path.basename(path)}. Companion files will be read from the same folder."
+            )
+            self.refresh_everything_swap_hair_options(auto_detect_source=False)
+
+    def source_hair_candidates(self, character_path):
+        if not character_path or not os.path.isfile(character_path):
+            return []
+        backend = self.load_hair_backend()
+        character = backend.Path(character_path)
+        folder = character.parent
+        png_id = self.character_number_from_path(character_path)
+        preferred_keys = []
+        try:
+            summary = backend.parse_appearance_iff(character)
+            png_id = summary.png_id or png_id
+            ordered_configs = sorted(
+                summary.configs,
+                key=lambda config: config.name != summary.default_config,
+            )
+            for config in ordered_configs:
+                for item in config.hair:
+                    key = item.get("asset_key") or item.get("name")
+                    if key and key not in preferred_keys:
+                        preferred_keys.append(key)
+        except Exception:
+            pass
+
+        candidates = []
+        seen = set()
+
+        def add_candidate(path):
+            path = backend.Path(path)
+            key = str(path.resolve()).lower()
+            if key in seen or not path.is_file() or path.stem.lower().endswith("_tangentspace"):
+                return
+            try:
+                backend.external_hair_identity(path)
+            except Exception:
+                return
+            seen.add(key)
+            candidates.append(path)
+
+        if png_id:
+            for hair_key in preferred_keys:
+                add_candidate(folder / f"png{png_id}_geo_{hair_key}.iff")
+            for path in sorted(folder.glob(f"png{png_id}_geo_hair*.iff")):
+                add_candidate(path)
+        return candidates
+
+    def refresh_everything_swap_hair_options(self, auto_detect_source=False):
+        backend = self.load_hair_backend()
+        target_path = self.everything_swap_target_var.get().strip()
+        current_key = self.everything_swap_hair_slot_map.get(
+            self.everything_swap_hair_slot_var.get(),
+            "",
+        )
+        self.everything_swap_hair_slot_map = {}
+        self.everything_swap_hair_slot_var.set("")
+        self.everything_swap_hair_slot_combo.configure(values=())
+        if target_path and os.path.isfile(target_path):
+            try:
+                summary = backend.parse_appearance_iff(backend.Path(target_path))
+                slots = backend.appearance_asset_slots(summary, "hair")
+            except Exception as exc:
+                self.everything_swap_hair_status_var.set(f"Could not read target hair slots: {exc}")
+                return
+            self.everything_swap_hair_slot_map = {
+                label: key for label, key, _tangent in slots
+            }
+            labels = tuple(self.everything_swap_hair_slot_map)
+            self.everything_swap_hair_slot_combo.configure(values=labels)
+            selected = next(
+                (
+                    label for label, key in self.everything_swap_hair_slot_map.items()
+                    if key == current_key
+                ),
+                "",
+            )
+            if not selected and labels:
+                selected = next((label for label in labels if " default)" in label), labels[0])
+            self.everything_swap_hair_slot_var.set(selected)
+
+        if auto_detect_source or not self.everything_swap_hair_source_var.get().strip():
+            candidates = self.source_hair_candidates(
+                self.everything_swap_source_var.get().strip()
+            )
+            if candidates:
+                self.everything_swap_hair_source_var.set(str(candidates[0]))
+                self.everything_swap_hair_enabled_var.set(True)
+        self.update_everything_swap_hair_status()
+
+    def detect_everything_swap_hair(self):
+        self.everything_swap_hair_source_var.set("")
+        self.refresh_everything_swap_hair_options(auto_detect_source=True)
+        if not self.everything_swap_hair_source_var.get().strip():
+            messagebox.showinfo(
+                "Character Mod Tool",
+                "No supported NBA 2K23 or NBA 2K25 hair geometry was found beside the source character.",
+            )
+
+    def browse_everything_swap_hair_source(self):
+        current = self.everything_swap_hair_source_var.get().strip()
+        source_character = self.everything_swap_source_var.get().strip()
+        path = filedialog.askopenfilename(
+            title="Choose NBA 2K23 or NBA 2K25 source hair geometry IFF",
+            filetypes=[("NBA 2K hair IFF", "*.iff"), ("All files", "*.*")],
+            initialdir=os.path.dirname(current or source_character),
+        )
+        if not path:
+            return
+        try:
+            backend = self.load_hair_backend()
+            generation, _source_png, source_key = backend.external_hair_identity(
+                backend.Path(path)
+            )
+        except Exception as exc:
+            messagebox.showerror("Unsupported Hair", str(exc))
+            return
+        self.everything_swap_hair_source_var.set(path)
+        self.everything_swap_hair_enabled_var.set(True)
+        self.everything_swap_hair_status_var.set(
+            f"Ready: {generation} {source_key}. Choose the target slot and run Full Swap."
+        )
+
+    def update_everything_swap_hair_status(self):
+        source = self.everything_swap_hair_source_var.get().strip()
+        target_label = self.everything_swap_hair_slot_var.get()
+        target_key = self.everything_swap_hair_slot_map.get(target_label, "")
+        if not self.everything_swap_hair_enabled_var.get():
+            self.everything_swap_hair_status_var.set(
+                "Hair Swap is off; target hair companion files will be preserved."
+            )
+        elif not source:
+            self.everything_swap_hair_status_var.set(
+                "Choose or detect an NBA 2K23/2K25 source hair geometry IFF."
+            )
+        elif not target_key:
+            self.everything_swap_hair_status_var.set(
+                "The target character has no selectable hair appearance slot."
+            )
+        else:
+            self.everything_swap_hair_status_var.set(
+                f"Full Swap will convert {os.path.basename(source)} into target slot {target_key}."
             )
 
     @staticmethod
@@ -2409,6 +2615,7 @@ class CharacterModTool(tk.Tk):
                 f"Headband: {'Yes' if row['headband'] else 'No'} | "
                 f"{companion_count} companion IFF(s) staged"
             )
+            self.refresh_everything_swap_hair_options(auto_detect_source=False)
             window.grab_release()
             window.destroy()
 
@@ -2550,6 +2757,19 @@ class CharacterModTool(tk.Tk):
 
     def confirm_full_swap_output_plan(self, output_path, config_outputs, companion_plan):
         all_outputs = [output_path, *config_outputs, *(destination for _source, destination in companion_plan)]
+        if self.everything_swap_hair_enabled_var.get():
+            target_key = self.everything_swap_hair_slot_map.get(
+                self.everything_swap_hair_slot_var.get(),
+                "",
+            )
+            target_png = self.character_number_from_path(output_path)
+            if target_key and target_png:
+                all_outputs.append(
+                    os.path.join(
+                        os.path.dirname(output_path),
+                        f"png{target_png}_geo_{target_key}.iff",
+                    )
+                )
         unique_outputs = []
         seen = set()
         for path in all_outputs:
@@ -2562,6 +2782,7 @@ class CharacterModTool(tk.Tk):
             f"Player IFF: 1\n"
             f"Face configs: {len(config_outputs)}\n"
             f"Target companion IFFs: {len(companion_plan)}\n"
+            f"Hair swap: {'Yes' if self.everything_swap_hair_enabled_var.get() else 'No'}\n"
             f"Existing files to replace: {len(collisions)}"
         )
         if collisions:
@@ -3144,6 +3365,34 @@ class CharacterModTool(tk.Tk):
             messagebox.showinfo("Character Mod Tool", "The Blender swap tools are incomplete.")
             return
 
+        hair_enabled = combined and self.everything_swap_hair_enabled_var.get()
+        hair_source = ""
+        hair_target_key = ""
+        if hair_enabled:
+            hair_source = self.everything_swap_hair_source_var.get().strip()
+            hair_target_key = self.everything_swap_hair_slot_map.get(
+                self.everything_swap_hair_slot_var.get(),
+                "",
+            )
+            if not hair_source or not os.path.isfile(hair_source):
+                messagebox.showinfo(
+                    "Character Mod Tool",
+                    "Choose a valid source hair IFF or turn off Include Hair Swap.",
+                )
+                return
+            if not hair_target_key:
+                messagebox.showinfo(
+                    "Character Mod Tool",
+                    "Choose a target hair appearance slot or turn off Include Hair Swap.",
+                )
+                return
+            try:
+                backend = self.load_hair_backend()
+                backend.external_hair_identity(backend.Path(hair_source))
+            except Exception as exc:
+                messagebox.showerror("Unsupported Hair", str(exc))
+                return
+
         target_base = os.path.splitext(os.path.basename(target_path))[0]
         if combined:
             export_name = self.normalized_png_export_name(target_base)
@@ -3201,6 +3450,9 @@ class CharacterModTool(tk.Tk):
             self.everything_swap_stage_dir = stage_dir
             self.everything_swap_include_appearance = shrinkwrap_body
             self.everything_swap_companion_plan = companion_plan
+            self.everything_swap_hair_source_path = hair_source
+            self.everything_swap_hair_target_key = hair_target_key
+            self.everything_swap_hair_result = None
             self.full_swap_output_path = stage_output
         else:
             self.everything_swap_active = False
@@ -3673,6 +3925,56 @@ class CharacterModTool(tk.Tk):
             staged.append((staged_path, destination))
         return staged
 
+    def stage_everything_swap_hair(self, staged_companions):
+        source_path = self.everything_swap_hair_source_path
+        target_key = self.everything_swap_hair_target_key
+        if not source_path or not target_key:
+            return None
+
+        target_png = self.character_number_from_path(self.everything_swap_final_output)
+        if not target_png:
+            raise ValueError("Could not determine the Full Swap target PNG for Hair Swap.")
+        output_name = f"png{target_png}_geo_{target_key}.iff"
+        destination = os.path.join(
+            os.path.dirname(self.everything_swap_final_output),
+            output_name,
+        )
+        template_path = None
+        replace_index = None
+        for index, (staged, planned_destination) in enumerate(staged_companions):
+            if os.path.abspath(planned_destination).lower() == os.path.abspath(destination).lower():
+                template_path = staged
+                replace_index = index
+                break
+
+        hair_dir = os.path.join(self.everything_swap_stage_dir, "hair")
+        os.makedirs(hair_dir, exist_ok=True)
+        converted_path = os.path.join(hair_dir, output_name)
+        backend = self.load_hair_backend()
+        output, result, plan = backend.convert_external_hair_to_output(
+            backend.Path(source_path),
+            target_png,
+            target_key,
+            backend.Path(converted_path),
+            backend.Path(template_path) if template_path else None,
+        )
+        staged_hair = (str(output), destination)
+        if replace_index is None:
+            staged_companions.append(staged_hair)
+        else:
+            staged_companions[replace_index] = staged_hair
+
+        details = {
+            "generation": plan["generation"],
+            "source": str(plan["source_path"]),
+            "source_key": plan["source_hair_key"],
+            "target_key": target_key,
+            "output": destination,
+            "vertices": int(result.get("vertices", result.get("stream_vertices", 0))),
+        }
+        self.everything_swap_hair_result = details
+        return details
+
     def complete_everything_swap(self):
         appearance = None
         if self.everything_swap_include_appearance:
@@ -3702,6 +4004,7 @@ class CharacterModTool(tk.Tk):
             staged_outputs.append((staged_path, path))
             config_paths.append(path)
         staged_companions = self.stage_export_companions()
+        hair_result = self.stage_everything_swap_hair(staged_companions)
         validation = self.validate_everything_swap_outputs(
             self.full_swap_output_path,
             config_archives,
@@ -3711,7 +4014,17 @@ class CharacterModTool(tk.Tk):
         staged_outputs.append((self.full_swap_output_path, self.everything_swap_final_output))
         self.commit_staged_outputs(staged_outputs)
         companion_paths = [destination for _source, destination in self.everything_swap_companion_plan]
-        return source_face, config_paths, companion_paths, tattoo_actions, appearance, validation
+        if hair_result and hair_result["output"] not in companion_paths:
+            companion_paths.append(hair_result["output"])
+        return (
+            source_face,
+            config_paths,
+            companion_paths,
+            tattoo_actions,
+            appearance,
+            hair_result,
+            validation,
+        )
 
     @staticmethod
     def validate_archive_file(path, allow_shared_textures=False, shared_texture_names=()):
@@ -3841,6 +4154,9 @@ class CharacterModTool(tk.Tk):
         self.everything_swap_final_output = ""
         self.everything_swap_stage_dir = ""
         self.everything_swap_include_appearance = False
+        self.everything_swap_hair_source_path = ""
+        self.everything_swap_hair_target_key = ""
+        self.everything_swap_hair_result = None
         self.everything_swap_run_button.configure(state=tk.NORMAL)
         self.schedule_directory_cleanup(stage_dir)
 
@@ -3921,16 +4237,27 @@ class CharacterModTool(tk.Tk):
             version = self.full_swap_success.get("addon_version", "")
             if combined:
                 try:
+                    hair_suffix = " and hair" if self.everything_swap_hair_source_path else ""
                     if self.everything_swap_include_appearance:
-                        post_blender_status = "Swapping appearance, face textures, and tattoos..."
+                        post_blender_status = (
+                            f"Swapping appearance, face textures, tattoos{hair_suffix}..."
+                        )
                     else:
-                        post_blender_status = "Creating face textures and applying tattoos..."
+                        post_blender_status = (
+                            f"Creating face textures and applying tattoos{hair_suffix}..."
+                        )
                     self.full_swap_progress_var.set(post_blender_status)
                     self.full_swap_status_var.set("Full Swap is " + post_blender_status.lower())
                     self.update_idletasks()
-                    source_face, config_paths, companion_paths, tattoo_actions, appearance, validation = (
-                        self.complete_everything_swap()
-                    )
+                    (
+                        source_face,
+                        config_paths,
+                        companion_paths,
+                        tattoo_actions,
+                        appearance,
+                        hair_result,
+                        validation,
+                    ) = self.complete_everything_swap()
                 except Exception as exc:
                     LOGGER.exception("Full Swap post-processing failed")
                     self.reset_everything_swap_run(remove_stage=True)
@@ -3953,6 +4280,13 @@ class CharacterModTool(tk.Tk):
                     )
                 else:
                     appearance_text = "preserved target appearance_info"
+                if hair_result:
+                    hair_text = (
+                        f"{hair_result['generation']} {hair_result['source_key']} -> "
+                        f"{hair_result['target_key']} ({hair_result['vertices']:,} vertices)"
+                    )
+                else:
+                    hair_text = "preserved target hair"
                 verdict = "GAME READY" if not validation["warnings"] else "CHECK WARNINGS"
                 validation_text = (
                     f"{verdict}: {validation['archives']} archive(s), "
@@ -3973,7 +4307,8 @@ class CharacterModTool(tk.Tk):
                     f"Face configs:\n{config_text}\n\n"
                     f"Companion IFFs:\n{companion_text}\n\n"
                     f"Appearance: {appearance_text}\n\n"
-                    f"Tattoos: {tattoo_text}\n\n{validation_text}",
+                    f"Tattoos: {tattoo_text}\n\n"
+                    f"Hair: {hair_text}\n\n{validation_text}",
                 )
                 return
             if body_only:
@@ -6195,6 +6530,86 @@ class CharacterModTool(tk.Tk):
             + backup_text,
         )
 
+    def convert_external_hair(self):
+        if self.hair_asset_type_var.get() != "hair":
+            messagebox.showinfo(
+                "Character Mod Tool",
+                "External conversion currently supports head hair, not facial hair.",
+            )
+            return
+        if self.hair_appearance_summary is None:
+            messagebox.showinfo(
+                "Character Mod Tool",
+                "Open a player IFF with an appearance hair slot first.",
+            )
+            return
+        slot_label = self.hair_slot_var.get()
+        target_key = self.hair_slot_map.get(slot_label, "")
+        if not target_key:
+            messagebox.showinfo("Character Mod Tool", "Choose the target appearance slot.")
+            return
+
+        source = filedialog.askopenfilename(
+            title="Choose NBA 2K23 or NBA 2K25 hair geometry IFF",
+            filetypes=[("NBA 2K hair IFF", "*.iff"), ("All files", "*.*")],
+            initialdir=os.path.dirname(self.file_path) if self.file_path else "",
+        )
+        if not source:
+            return
+
+        backend = self.load_hair_backend()
+        target_png = self.hair_appearance_summary.png_id
+        try:
+            plan = backend.external_hair_conversion_plan(
+                backend.Path(source),
+                target_png,
+                target_key,
+            )
+        except Exception as exc:
+            messagebox.showerror("Unsupported Hair", str(exc))
+            return
+
+        if not messagebox.askyesno(
+            "Convert External Hair",
+            f"{plan['generation']} geometry donor:\n{plan['source_path']}\n\n"
+            f"2K26 target:\npng{target_png}_geo_{target_key}.iff\n\n"
+            "The converter will use full-detail geometry, make it static on head bone 48, "
+            "and retain the target slot's existing 2K26 item textures.\n\n"
+            "Continue?",
+        ):
+            return
+
+        self.set_hair_install_status(
+            f"Converting {plan['generation']} {plan['source_hair_key']} to "
+            f"png{target_png} {target_key}..."
+        )
+        try:
+            output, backup, result, plan = backend.convert_external_hair_to_target(
+                backend.Path(source),
+                target_png,
+                target_key,
+            )
+        except Exception as exc:
+            messagebox.showerror("Hair Conversion Failed", str(exc))
+            self.hair_status_var.set("External hair conversion did not complete.")
+            return
+
+        source_lod = result.get("source_lod", 0)
+        vertices = result.get("vertices", result.get("stream_vertices", 0))
+        self.hair_status_var.set(
+            f"Converted {plan['generation']} hair to {output.name} "
+            f"({vertices:,} source vertices)."
+        )
+        backup_text = str(backup) if backup else "No existing file needed backup."
+        messagebox.showinfo(
+            "Hair Converted",
+            f"Created:\n{output}\n\n"
+            f"Source: {plan['generation']} {plan['source_hair_key']}\n"
+            f"Source LOD: {source_lod}\n"
+            f"Static bone: 48\n\n"
+            f"Backup:\n{backup_text}",
+        )
+
     def open_iff(self):
         path = filedialog.askopenfilename(
             title="Open character IFF",
@@ -6360,6 +6775,7 @@ class CharacterModTool(tk.Tk):
         self.show_tattoos()
         self.show_face()
         self.refresh_hair_target_slots()
+        self.refresh_everything_swap_hair_options(auto_detect_source=False)
         self.refresh_full_swap_status()
         self.run_validator()
         self.inspect_dynamic_body(show_popup=False)
@@ -8793,7 +9209,13 @@ def run_package_self_test():
         module = importlib.util.module_from_spec(spec)
         sys.modules[spec.name] = module
         spec.loader.exec_module(module)
-        for name in ("configure_environment", "discover_hairs", "discover_facial_hairs"):
+        for name in (
+            "configure_environment",
+            "discover_hairs",
+            "discover_facial_hairs",
+            "external_hair_conversion_plan",
+            "convert_external_hair_to_target",
+        ):
             if not callable(getattr(module, name, None)):
                 raise RuntimeError(f"Hair backend is missing {name}().")
         return 0

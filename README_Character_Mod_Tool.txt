@@ -1,4 +1,4 @@
-CHARACTER MOD TOOL v1.0.120-beta
+CHARACTER MOD TOOL v1.0.122-beta
 
 Windows GUI for reading, editing, validating, and converting ZIP-style NBA 2K
 character IFF packages. This is a private-beta release. Always preserve original
@@ -37,6 +37,9 @@ FULL SWAP
 - Face textures can come from a matching face####.iff or, for NBA 2K25 players,
   a matching png####_config_*.iff beside the source player.
 - Run Full Swap performs the background Blender head/body transfer.
+- Include Hair Swap detects a supported source companion or accepts a manually
+  selected NBA 2K23/2K25 hair IFF, then converts it into the chosen target
+  appearance slot as part of the same staged and validated package.
 - Face color/normal textures, supported tattoos, and target configurations are
   rebuilt and validated.
 - Face and tattoo swaps detect resolution differences, resize and encode to the
@@ -110,6 +113,11 @@ HAIR
   behavior.
 - Matching item hair is copied by default.
 - Full-detail LOD0 is used at every distance for transferred hair.
+- Convert 2K23 / 2K25 IFF detects the source generation automatically and installs
+  static bone-48 geometry into the selected NBA 2K26 appearance slot.
+- External conversion retains the target slot's existing NBA 2K26 item textures.
+- The same external converter is available inside Full Swap and does not write to
+  the live mods folder while the package is being staged.
 
 HEADBAND SWAP
 
