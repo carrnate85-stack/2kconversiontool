@@ -107,7 +107,7 @@ OLDER_BODY_FIT_SUFFIXES = (
     ".sx", ".sy", ".sz",
     ".r1", ".r2",
 )
-APP_VERSION = "1.0.124-beta"
+APP_VERSION = "1.0.125-beta"
 
 
 LOGGER = logging.getLogger("character_mod_tool")
@@ -3700,6 +3700,7 @@ class CharacterModTool(tk.Tk):
                 base_entries[target_txtr] = final_txtr
                 base_entries[target_dds] = final_dds
 
+            base_entries = self.materialize_embedded_texture_txtrs(base_entries)
             buffer = io.BytesIO()
             with zipfile.ZipFile(buffer, "w", compression=zipfile.ZIP_DEFLATED) as output:
                 for name, data in base_entries.items():
@@ -6921,6 +6922,22 @@ class CharacterModTool(tk.Tk):
         return cls.serialize_fragment_object(metadata)
 
     @classmethod
+    def materialize_embedded_texture_txtrs(cls, entries):
+        materialized = dict(entries)
+        names = list(materialized)
+        for txtr_name in (name for name in names if name.lower().endswith(".txtr")):
+            logical_name = os.path.splitext(os.path.basename(txtr_name))[0]
+            _paired_txtr, dds_name = cls.archive_texture_pair(names, logical_name)
+            if not dds_name:
+                continue
+            materialized[txtr_name] = cls.synchronized_texture_txtr(
+                materialized[txtr_name],
+                materialized[dds_name],
+                dds_name,
+            )
+        return materialized
+
+    @classmethod
     def resize_dds_to_profile(cls, dds_data, width, height, texture_format, mips):
         texconv = cls.find_texconv_executable()
         if not texconv:
@@ -7765,6 +7782,14 @@ class CharacterModTool(tk.Tk):
         for _logical, target_txtr, txtr_data, target_dds, dds_data, _resized in swaps:
             mods[target_txtr] = txtr_data
             mods[target_dds] = dds_data
+        materialized_entries = dict(target_entries)
+        materialized_entries.update(mods)
+        materialized_entries = self.materialize_embedded_texture_txtrs(materialized_entries)
+        mods.update(
+            (name, data)
+            for name, data in materialized_entries.items()
+            if name.lower().endswith(".txtr")
+        )
 
         self.show_face()
         for row_id, archive_path in self.face_archive_rows.items():
