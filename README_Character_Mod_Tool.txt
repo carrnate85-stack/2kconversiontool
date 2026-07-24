@@ -1,4 +1,4 @@
-CHARACTER MOD TOOL v1.0.118-beta
+CHARACTER MOD TOOL v1.0.119-beta
 
 Windows GUI for reading, editing, validating, and converting ZIP-style NBA 2K
 character IFF packages. This is a private-beta release. Always preserve original
@@ -41,7 +41,7 @@ FULL SWAP
   rebuilt and validated.
 - Face and tattoo swaps detect resolution differences, resize and encode to the
   target texture profile, and synchronize the final DDS/TXTR metadata.
-- Shrinkwrap Body is experimental and disabled by default. Appearance/body-fit
+- Shrinkwrap Body is enabled by default. Appearance/body-fit
   transfer only runs when this option is enabled.
 - NBA 2K25-style bodies with matching baseBodyShape, arms_shader,
   torso_shader, and legs_shader topology use active-UV group transfer and skip
@@ -169,8 +169,8 @@ SAFE FILE HANDLING
 
 KNOWN BETA LIMITATIONS
 
-- Shrinkwrap Body, Dynamic Body, glasses hihead bake, and headband transfer remain
-  advanced or experimental workflows.
+- Dynamic Body, glasses hihead bake, and headband transfer remain advanced or
+  experimental workflows.
 - Some legacy or unusual hair assets may still require manual testing.
 - Manifest extraction requires the configured NBA 2K26 installation to contain
   manifest, mod.exe, and the game Oodle DLL.

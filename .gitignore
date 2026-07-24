@@ -36,7 +36,7 @@ tools/
 # Historical launchers are retained locally but not versioned.
 launch_character_mod_tool_v*.bat
 launch_current_character_mod_tool_v*.bat
-!launch_current_character_mod_tool_v1_0_118_beta.bat
+!launch_current_character_mod_tool_v1_0_119_beta.bat
 
 # Local installers and temporary probes
 python-*.exe

@@ -104,7 +104,7 @@ OLDER_BODY_FIT_SUFFIXES = (
     ".sx", ".sy", ".sz",
     ".r1", ".r2",
 )
-APP_VERSION = "1.0.118-beta"
+APP_VERSION = "1.0.119-beta"
 
 
 LOGGER = logging.getLogger("character_mod_tool")
@@ -704,7 +704,7 @@ class CharacterModTool(tk.Tk):
         self.status_var = tk.StringVar(value="Open a character .iff file to begin.")
         self.everything_swap_source_var = tk.StringVar()
         self.everything_swap_target_var = tk.StringVar()
-        self.everything_swap_shrinkwrap_var = tk.BooleanVar(value=False)
+        self.everything_swap_shrinkwrap_var = tk.BooleanVar(value=True)
         self.everything_swap_active = False
         self.everything_swap_source_path = ""
         self.everything_swap_target_path = ""
@@ -891,7 +891,7 @@ class CharacterModTool(tk.Tk):
         self.everything_swap_open_blender_button.pack(side=tk.LEFT, padx=(6, 0))
         ttk.Checkbutton(
             everything_swap_actions,
-            text="Shrinkwrap Body (Experimental)",
+            text="Shrinkwrap Body",
             variable=self.everything_swap_shrinkwrap_var,
         ).pack(side=tk.LEFT, padx=(14, 0))
         ttk.Label(
