@@ -1,4 +1,4 @@
-CHARACTER MOD TOOL v1.0.126-beta
+CHARACTER MOD TOOL v1.0.127-beta
 
 Windows GUI for reading, editing, validating, and converting ZIP-style NBA 2K
 character IFF packages. This is a private-beta release. Always preserve original
@@ -30,8 +30,11 @@ WORKFLOW TABS
 
 FULL SWAP
 
-- Select a legacy or NBA 2K25 source png####.iff and either browse for a modern
-  target or choose a clean target directly from the NBA 2K26 manifest.
+- Select a legacy or NBA 2K25 source png####.iff, or select a ZIP containing that
+  player package, then browse for a modern target or choose a clean target directly
+  from the NBA 2K26 manifest.
+- ZIP sources automatically identify the main png####.iff and safely stage its
+  matching face#### and png####_* companion IFFs, including configs and hair.
 - The manifest target picker supports player-name/PNG search and shows whether each
   player has hair, facial-hair, and headband assets before selection.
 - Face textures can come from a matching face####.iff or, for NBA 2K25 players,

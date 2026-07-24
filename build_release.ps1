@@ -8,7 +8,7 @@ param(
 
 $ErrorActionPreference = "Stop"
 $Root = Split-Path -Parent $MyInvocation.MyCommand.Path
-$Version = "1.0.126-beta"
+$Version = "1.0.127-beta"
 $BuildRoot = Join-Path ([IO.Path]::GetTempPath()) "CharacterModTool-build-$Version-$PID"
 $TempDistRoot = Join-Path ([IO.Path]::GetTempPath()) "CharacterModTool-dist-$Version-$PID"
 $DistRoot = Join-Path $Root "dist"
@@ -100,7 +100,9 @@ $selfTestProcess = Start-Process -FilePath $BuiltExecutable `
     -WindowStyle Hidden `
     -Wait `
     -PassThru
-if ($selfTestProcess.ExitCode -ne 0) {
+$selfTestProcess.Refresh()
+$selfTestExitCode = $selfTestProcess.ExitCode
+if ($null -eq $selfTestExitCode -or $selfTestExitCode -ne 0) {
     $selfTestReport = Join-Path ([IO.Path]::GetTempPath()) "CharacterModTool-package-self-test.txt"
     $details = if (Test-Path -LiteralPath $selfTestReport) { Get-Content -LiteralPath $selfTestReport -Raw } else { "No self-test report was created." }
     throw "Packaged backend self-test failed. No release package was created.`n$details"

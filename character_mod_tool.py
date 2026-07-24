@@ -107,7 +107,7 @@ OLDER_BODY_FIT_SUFFIXES = (
     ".sx", ".sy", ".sz",
     ".r1", ".r2",
 )
-APP_VERSION = "1.0.126-beta"
+APP_VERSION = "1.0.127-beta"
 
 
 LOGGER = logging.getLogger("character_mod_tool")
@@ -720,6 +720,9 @@ class CharacterModTool(tk.Tk):
         self.everything_swap_shrinkwrap_var = tk.BooleanVar(value=True)
         self.everything_swap_active = False
         self.everything_swap_source_path = ""
+        self.everything_swap_source_package_path = ""
+        self.everything_swap_source_package_dir = ""
+        self.everything_swap_source_package_main = ""
         self.everything_swap_target_path = ""
         self.everything_swap_final_output = ""
         self.everything_swap_stage_dir = ""
@@ -2276,14 +2279,167 @@ class CharacterModTool(tk.Tk):
     def browse_everything_swap_source(self):
         current = self.everything_swap_source_var.get().strip()
         path = filedialog.askopenfilename(
-            title="Choose Full Swap source character IFF",
-            filetypes=[("NBA 2K character IFF", "*.iff"), ("All files", "*.*")],
+            title="Choose Full Swap source character IFF or ZIP",
+            filetypes=[
+                ("NBA 2K character package", "*.iff *.zip"),
+                ("NBA 2K character IFF", "*.iff"),
+                ("ZIP package", "*.zip"),
+                ("All files", "*.*"),
+            ],
             initialdir=os.path.dirname(current or self.file_path),
         )
         if path:
+            try:
+                if path.lower().endswith(".zip"):
+                    self.prepare_everything_swap_source_package(path)
+                else:
+                    self.clear_everything_swap_source_package()
+            except (OSError, ValueError, zipfile.BadZipFile) as exc:
+                messagebox.showerror("Character Mod Tool", f"Could not open source package.\n\n{exc}")
+                return
             self.everything_swap_source_var.set(path)
             self.everything_swap_hair_source_var.set("")
             self.refresh_everything_swap_hair_options(auto_detect_source=True)
+
+    @staticmethod
+    def source_package_member_basename(member_name):
+        return member_name.replace("\\", "/").rstrip("/").rsplit("/", 1)[-1]
+
+    @classmethod
+    def select_source_package_main(cls, package_path, members):
+        main_candidates = []
+        companion_counts = {}
+        basenames = {
+            info.filename: cls.source_package_member_basename(info.filename)
+            for info in members
+            if not info.is_dir()
+        }
+        for member_name, basename in basenames.items():
+            match = re.fullmatch(r"(?i)png(\d+)\.iff", basename)
+            if not match:
+                continue
+            png_id = match.group(1)
+            main_candidates.append((member_name, basename, png_id))
+            companion_pattern = re.compile(
+                rf"(?i)^(?:face{re.escape(png_id)}(?:_.+)?|png{re.escape(png_id)}_.+)\.iff$"
+            )
+            companion_counts[member_name] = sum(
+                bool(companion_pattern.fullmatch(other_basename))
+                for other_basename in basenames.values()
+            )
+
+        if not main_candidates:
+            raise ValueError("The ZIP does not contain a main character file named png####.iff.")
+        if len(main_candidates) == 1:
+            return main_candidates[0]
+
+        package_match = re.search(r"(?i)png(\d+)", os.path.basename(package_path))
+        if package_match:
+            package_id = package_match.group(1)
+            matching = [candidate for candidate in main_candidates if candidate[2] == package_id]
+            if len(matching) == 1:
+                return matching[0]
+
+        best_count = max(companion_counts[candidate[0]] for candidate in main_candidates)
+        best = [
+            candidate
+            for candidate in main_candidates
+            if companion_counts[candidate[0]] == best_count
+        ]
+        if len(best) == 1:
+            return best[0]
+        choices = ", ".join(sorted(candidate[1] for candidate in best))
+        raise ValueError(
+            "The ZIP contains multiple possible main character IFFs and no unique package could "
+            f"be identified: {choices}. Put one character package in each ZIP."
+        )
+
+    def prepare_everything_swap_source_package(self, package_path):
+        package_path = os.path.abspath(package_path)
+        if (
+            self.everything_swap_source_package_path
+            and os.path.normcase(self.everything_swap_source_package_path) == os.path.normcase(package_path)
+            and os.path.isfile(self.everything_swap_source_package_main)
+        ):
+            return self.everything_swap_source_package_main
+        if not os.path.isfile(package_path) or not zipfile.is_zipfile(package_path):
+            raise ValueError(f"{os.path.basename(package_path)} is not a readable ZIP package.")
+
+        with zipfile.ZipFile(package_path, "r") as package:
+            members = package.infolist()
+            if len(members) > 5000:
+                raise ValueError("The ZIP contains too many entries to be treated as one character package.")
+            main_member, main_basename, png_id = self.select_source_package_main(
+                package_path,
+                members,
+            )
+            package_pattern = re.compile(
+                rf"(?i)^(?:png{re.escape(png_id)}|"
+                rf"face{re.escape(png_id)}(?:_.+)?|"
+                rf"png{re.escape(png_id)}_.+)\.iff$"
+            )
+            selected = [
+                info
+                for info in members
+                if not info.is_dir()
+                and package_pattern.fullmatch(self.source_package_member_basename(info.filename))
+            ]
+            if len(selected) > 500:
+                raise ValueError("The selected character package contains too many companion IFFs.")
+            total_size = sum(info.file_size for info in selected)
+            if total_size > 2 * 1024 * 1024 * 1024:
+                raise ValueError("The selected character package expands beyond the 2 GB safety limit.")
+
+            output_names = {}
+            for info in selected:
+                basename = self.source_package_member_basename(info.filename)
+                key = basename.lower()
+                if key in output_names:
+                    raise ValueError(
+                        f"The ZIP contains duplicate companion filenames: {basename}."
+                    )
+                output_names[key] = basename
+
+            work_dir = tempfile.mkdtemp(prefix="character_mod_source_package_")
+            try:
+                for info in selected:
+                    basename = self.source_package_member_basename(info.filename)
+                    output_path = os.path.join(work_dir, basename)
+                    with package.open(info, "r") as source, open(output_path, "wb") as output:
+                        shutil.copyfileobj(source, output, length=1024 * 1024)
+                    if not zipfile.is_zipfile(output_path):
+                        raise ValueError(f"{basename} is not a readable ZIP-style IFF.")
+                main_path = os.path.join(work_dir, main_basename)
+                if not os.path.isfile(main_path):
+                    raise ValueError(f"The selected main character {main_basename} could not be extracted.")
+            except Exception:
+                self.remove_directory_with_retries(work_dir)
+                raise
+
+        self.clear_everything_swap_source_package()
+        self.everything_swap_source_package_path = package_path
+        self.everything_swap_source_package_dir = work_dir
+        self.everything_swap_source_package_main = main_path
+        LOGGER.info(
+            "Prepared Full Swap source package %s as %s with %s companion file(s)",
+            package_path,
+            main_path,
+            max(0, len(selected) - 1),
+        )
+        return main_path
+
+    def resolve_everything_swap_source(self):
+        selected = self.everything_swap_source_var.get().strip()
+        if selected.lower().endswith(".zip"):
+            return self.prepare_everything_swap_source_package(selected)
+        return selected
+
+    def clear_everything_swap_source_package(self):
+        work_dir = self.everything_swap_source_package_dir
+        self.everything_swap_source_package_path = ""
+        self.everything_swap_source_package_dir = ""
+        self.everything_swap_source_package_main = ""
+        self.schedule_directory_cleanup(work_dir)
 
     def browse_everything_swap_target(self):
         current = self.everything_swap_target_var.get().strip()
@@ -2379,9 +2535,12 @@ class CharacterModTool(tk.Tk):
             self.everything_swap_hair_slot_var.set(selected)
 
         if auto_detect_source or not self.everything_swap_hair_source_var.get().strip():
-            candidates = self.source_hair_candidates(
-                self.everything_swap_source_var.get().strip()
-            )
+            try:
+                source_character = self.resolve_everything_swap_source()
+            except (OSError, ValueError, zipfile.BadZipFile) as exc:
+                self.everything_swap_hair_status_var.set(f"Could not read source package: {exc}")
+                return
+            candidates = self.source_hair_candidates(source_character)
             if candidates:
                 self.everything_swap_hair_source_var.set(str(candidates[0]))
                 self.everything_swap_hair_enabled_var.set(True)
@@ -3099,10 +3258,15 @@ class CharacterModTool(tk.Tk):
         return ""
 
     def run_everything_swap(self):
-        source_path = self.everything_swap_source_var.get().strip()
+        source_selection = self.everything_swap_source_var.get().strip()
         target_path = self.everything_swap_target_var.get().strip()
-        if not source_path or not target_path:
+        if not source_selection or not target_path:
             messagebox.showinfo("Character Mod Tool", "Choose Full Swap source and target characters first.")
+            return
+        try:
+            source_path = self.resolve_everything_swap_source()
+        except (OSError, ValueError, zipfile.BadZipFile) as exc:
+            messagebox.showerror("Character Mod Tool", f"Could not open source package.\n\n{exc}")
             return
         source_ready = self.inspect_full_swap_iff(source_path)[0]
         target_ready = self.inspect_full_swap_iff(target_path)[0]
@@ -3337,7 +3501,11 @@ class CharacterModTool(tk.Tk):
         if self.full_swap_process is not None:
             return
         if combined:
-            source_path = self.everything_swap_source_var.get().strip()
+            try:
+                source_path = self.resolve_everything_swap_source()
+            except (OSError, ValueError, zipfile.BadZipFile) as exc:
+                messagebox.showerror("Character Mod Tool", f"Could not open source package.\n\n{exc}")
+                return
             target_path = self.everything_swap_target_var.get().strip()
             shrinkwrap_body = self.everything_swap_shrinkwrap_var.get()
             self.full_swap_source_var.set(source_path)
@@ -9220,6 +9388,7 @@ class CharacterModTool(tk.Tk):
 
     def destroy(self):
         icon_handles = getattr(self, "_windows_icon_handles", ())
+        self.clear_everything_swap_source_package()
         self.clear_manifest_target_cache()
         super().destroy()
         if sys.platform == "win32":
