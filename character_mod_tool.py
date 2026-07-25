@@ -78,6 +78,14 @@ BUILT_IN_GLASSES = {
 AVAILABLE_BUILT_IN_GLASSES = {
     label: paths for label, paths in BUILT_IN_GLASSES.items() if all(os.path.isfile(path) for path in paths)
 }
+BUILT_IN_HEADBANDS_DIR = app_settings.resource_path("built_in_headbands")
+BUILT_IN_STOCK_HEADBAND = os.path.join(BUILT_IN_HEADBANDS_DIR, "stock_headband.iff")
+BUILT_IN_HEADBANDS = {
+    "Stock NBA 2K26 Headband": BUILT_IN_STOCK_HEADBAND,
+}
+AVAILABLE_BUILT_IN_HEADBANDS = {
+    label: path for label, path in BUILT_IN_HEADBANDS.items() if os.path.isfile(path)
+}
 FULL_SWAP_BRIDGE = app_settings.resource_path("blender_full_swap_bridge.py")
 HEADBAND_SWAP_BRIDGE = app_settings.resource_path("blender_headband_swap_bridge.py")
 BUNDLED_HEADBAND_SWAP_TOOL = app_settings.resource_path(
@@ -107,7 +115,7 @@ OLDER_BODY_FIT_SUFFIXES = (
     ".sx", ".sy", ".sz",
     ".r1", ".r2",
 )
-APP_VERSION = "1.0.130-beta"
+APP_VERSION = "1.0.131-beta"
 
 
 LOGGER = logging.getLogger("character_mod_tool")
@@ -764,6 +772,14 @@ class CharacterModTool(tk.Tk):
         self.body_swap_status_var = tk.StringVar(value="Choose source and target character IFFs.")
         self.headband_source_var = tk.StringVar()
         self.headband_target_var = tk.StringVar()
+        self.headband_add_target_var = tk.StringVar()
+        self.headband_add_style_var = tk.StringVar(
+            value=next(iter(AVAILABLE_BUILT_IN_HEADBANDS), "")
+        )
+        self.headband_add_config_var = tk.StringVar()
+        self.headband_add_status_var = tk.StringVar(
+            value="Choose a character package and add the bundled stock headband."
+        )
         self.headband_tool_var = tk.StringVar(value=self.find_headband_swap_tool())
         self.headband_status_var = tk.StringVar(
             value="Choose a legacy or NBA 2K25 source and an NBA 2K26 target headband IFF."
@@ -1623,7 +1639,66 @@ class CharacterModTool(tk.Tk):
         headband_swap = ttk.Frame(self.notebook, padding=8)
         self.notebook.add(headband_swap, text="Headband Swap")
 
-        headband_paths = ttk.Frame(headband_swap)
+        headband_add = ttk.LabelFrame(headband_swap, text="Add Headband to Character", padding=8)
+        headband_add.pack(fill=tk.X, pady=(0, 10))
+        headband_add.columnconfigure(1, weight=1)
+        ttk.Label(headband_add, text="Target Character").grid(
+            row=0, column=0, sticky=tk.W, padx=(0, 8), pady=3
+        )
+        ttk.Entry(
+            headband_add,
+            textvariable=self.headband_add_target_var,
+            state="readonly",
+        ).grid(row=0, column=1, sticky=tk.EW, pady=3)
+        ttk.Button(
+            headband_add,
+            text="Browse",
+            command=self.browse_headband_add_target,
+        ).grid(row=0, column=2, padx=(6, 0), pady=3)
+        ttk.Label(headband_add, text="Recent Output").grid(
+            row=0, column=3, sticky=tk.W, padx=(12, 6), pady=3
+        )
+        self.create_recent_output_combo(headband_add).grid(
+            row=0, column=4, sticky=tk.EW, pady=3
+        )
+        ttk.Label(headband_add, text="Headband").grid(
+            row=1, column=0, sticky=tk.W, padx=(0, 8), pady=3
+        )
+        self.headband_add_style_combo = ttk.Combobox(
+            headband_add,
+            textvariable=self.headband_add_style_var,
+            values=tuple(AVAILABLE_BUILT_IN_HEADBANDS),
+            state="readonly",
+        )
+        self.headband_add_style_combo.grid(row=1, column=1, sticky=tk.EW, pady=3)
+        ttk.Label(headband_add, text="Appearance Config").grid(
+            row=1, column=2, sticky=tk.W, padx=(12, 6), pady=3
+        )
+        self.headband_add_config_combo = ttk.Combobox(
+            headband_add,
+            textvariable=self.headband_add_config_var,
+            state="readonly",
+            width=24,
+        )
+        self.headband_add_config_combo.grid(row=1, column=3, sticky=tk.EW, pady=3)
+        self.headband_add_button = ttk.Button(
+            headband_add,
+            text="Add Headband",
+            command=self.add_headband_to_character,
+            state=tk.NORMAL if AVAILABLE_BUILT_IN_HEADBANDS else tk.DISABLED,
+        )
+        self.headband_add_button.grid(row=1, column=4, padx=(6, 0), pady=3)
+        ttk.Label(
+            headband_add,
+            textvariable=self.headband_add_status_var,
+            wraplength=1040,
+        ).grid(row=2, column=0, columnspan=5, sticky=tk.W, pady=(5, 0))
+
+        headband_paths = ttk.LabelFrame(
+            headband_swap,
+            text="Convert and Fit a Headband",
+            padding=8,
+        )
         headband_paths.pack(fill=tk.X)
         headband_paths.columnconfigure(1, weight=1)
 
@@ -2492,6 +2567,8 @@ class CharacterModTool(tk.Tk):
         self.everything_swap_target_info_var.set(
             f"Recent output loaded for follow-up work: {os.path.basename(path)}."
         )
+        self.headband_add_target_var.set(path)
+        self.refresh_headband_add_configs()
 
         prefix = self.player_iff_prefix(path)
         headband_path = ""
@@ -4741,7 +4818,13 @@ class CharacterModTool(tk.Tk):
         except OSError:
             return
         for entry in entries:
-            if not entry.name.startswith((".character_mod_full_swap_", ".character_mod_rename_")) or not entry.is_dir():
+            if not entry.name.startswith(
+                (
+                    ".character_mod_full_swap_",
+                    ".character_mod_rename_",
+                    ".character_mod_headband_add_",
+                )
+            ) or not entry.is_dir():
                 continue
             try:
                 if entry.stat().st_mtime > cutoff:
@@ -5009,6 +5092,291 @@ class CharacterModTool(tk.Tk):
             self.headband_tree.item(iid, text=label, values=values)
         else:
             self.headband_tree.insert("", tk.END, iid=iid, text=label, values=values)
+
+    def browse_headband_add_target(self):
+        current = self.headband_add_target_var.get().strip()
+        path = filedialog.askopenfilename(
+            title="Choose target character IFF",
+            filetypes=[("NBA 2K character IFF", "*.iff"), ("All files", "*.*")],
+            initialdir=os.path.dirname(current or self.file_path),
+        )
+        if path:
+            self.headband_add_target_var.set(path)
+            self.refresh_headband_add_configs()
+
+    def refresh_headband_add_configs(self):
+        target_path = self.headband_add_target_var.get().strip()
+        config_names = []
+        default_name = ""
+        if target_path and os.path.isfile(target_path) and zipfile.is_zipfile(target_path):
+            try:
+                _entry_name, appearance = self.read_appearance_from_archive(target_path)
+                accessory = appearance.get("accessory_items")
+                if isinstance(accessory, dict):
+                    default_name = str(accessory.get("default_config") or "").strip()
+                    configurations = accessory.get("configurations")
+                    if isinstance(configurations, list):
+                        config_names = [
+                            str(config.get("name"))
+                            for config in configurations
+                            if isinstance(config, dict) and config.get("name")
+                        ]
+            except (OSError, ValueError, zipfile.BadZipFile):
+                config_names = []
+        self.headband_add_config_combo.configure(values=tuple(config_names))
+        current = self.headband_add_config_var.get()
+        if current not in config_names:
+            selected = next(
+                (
+                    name for name in config_names
+                    if name.lower() == default_name.lower()
+                ),
+                config_names[0] if config_names else "",
+            )
+            self.headband_add_config_var.set(selected)
+        if config_names:
+            self.headband_add_status_var.set(
+                f"Found {len(config_names)} existing config(s) in {os.path.basename(target_path)}. "
+                "Choose the config that should call the headband."
+            )
+        else:
+            self.headband_add_config_var.set("")
+            self.headband_add_status_var.set(
+                "The selected character has no readable appearance configurations."
+            )
+
+    @staticmethod
+    def add_stock_headband_appearance(appearance, selected_config):
+        updated = copy.deepcopy(appearance)
+        accessory = updated.get("accessory_items")
+        if not isinstance(accessory, dict):
+            raise ValueError("The target appearance_info has no accessory_items section.")
+        items = accessory.get("items")
+        configurations = accessory.get("configurations")
+        if not isinstance(items, list):
+            items = []
+            accessory["items"] = items
+        if not isinstance(configurations, list) or not configurations:
+            raise ValueError("The target appearance_info has no usable configurations.")
+
+        stock_item = {
+            "headband_type": "headband",
+            "mesh": "headbandShape",
+            "name": "headband",
+            "shader": "headband_shader",
+            "type": "headband",
+        }
+        existing_item = next(
+            (
+                item for item in items
+                if isinstance(item, dict) and str(item.get("name", "")).lower() == "headband"
+            ),
+            None,
+        )
+        if existing_item is None:
+            items.append(stock_item)
+        else:
+            existing_item.update(stock_item)
+
+        selected = next(
+            (
+                config for config in configurations
+                if isinstance(config, dict)
+                and str(config.get("name", "")).lower() == str(selected_config).lower()
+            ),
+            None,
+        )
+        if selected is None:
+            raise ValueError("Choose an existing appearance configuration for the headband.")
+        config_name = str(selected.get("name"))
+        config_items = selected.get("items")
+        if not isinstance(config_items, list):
+            config_items = []
+            selected["items"] = config_items
+        changed = not any(str(item).lower() == "headband" for item in config_items)
+        if changed:
+            config_items.append("headband")
+        return updated, config_name, changed
+
+    @classmethod
+    def write_appearance_archive_copy(
+        cls,
+        source_path,
+        output_path,
+        appearance_name,
+        appearance_data,
+    ):
+        with zipfile.ZipFile(source_path, "r") as source, zipfile.ZipFile(output_path, "w") as output:
+            found = False
+            for info in source.infolist():
+                data = b"" if info.is_dir() else source.read(info.filename)
+                if info.filename == appearance_name:
+                    data = appearance_data
+                    found = True
+                output.writestr(cls.copied_zip_info(info), data)
+        if not found:
+            raise ValueError(f"{appearance_name} was not found in the target IFF.")
+
+    @staticmethod
+    def archive_signature_except(path, excluded_name):
+        with zipfile.ZipFile(path, "r") as archive:
+            return [
+                (info.filename, info.CRC, info.file_size)
+                for info in archive.infolist()
+                if info.filename != excluded_name
+            ]
+
+    def add_headband_to_character(self):
+        target_path = self.headband_add_target_var.get().strip()
+        style_name = self.headband_add_style_var.get().strip()
+        selected_config = self.headband_add_config_var.get().strip()
+        stock_path = AVAILABLE_BUILT_IN_HEADBANDS.get(style_name, "")
+        if not target_path or not os.path.isfile(target_path) or not zipfile.is_zipfile(target_path):
+            messagebox.showerror("Character Mod Tool", "Choose a readable target character IFF first.")
+            return
+        if not stock_path or not self.inspect_headband_iff(stock_path, False)[0]:
+            messagebox.showerror(
+                "Character Mod Tool",
+                "The bundled stock NBA 2K26 headband is missing or unreadable.",
+            )
+            return
+        if not selected_config:
+            messagebox.showerror(
+                "Character Mod Tool",
+                "Choose an existing appearance configuration for the headband.",
+            )
+            return
+        target_number = self.character_number_from_path(target_path)
+        if not target_number:
+            messagebox.showerror(
+                "Character Mod Tool",
+                "The target filename must begin with a PNG number such as png1335.iff.",
+            )
+            return
+
+        try:
+            with zipfile.ZipFile(target_path, "r") as target_archive:
+                appearance_name = next(
+                    (
+                        name for name in target_archive.namelist()
+                        if os.path.basename(name).lower()
+                        in {item.lower() for item in APPEARANCE_ENTRY_NAMES}
+                    ),
+                    "",
+                )
+                if not appearance_name:
+                    raise ValueError("The target IFF does not contain appearance_info.")
+                original_appearance_data = target_archive.read(appearance_name)
+            appearance, _wrapped, error = try_parse_structured_text(
+                appearance_name,
+                original_appearance_data,
+            )
+            if not isinstance(appearance, dict):
+                raise ValueError(error or f"{appearance_name} could not be parsed.")
+            updated, config_name, changed = self.add_stock_headband_appearance(
+                appearance,
+                selected_config,
+            )
+            replacement_data = serialize_structured_entry(
+                appearance_name,
+                original_appearance_data,
+                updated,
+                False,
+            )
+        except Exception as exc:
+            messagebox.showerror("Character Mod Tool", f"Could not prepare the headband call.\n\n{exc}")
+            return
+
+        output_dir = app_settings.ensure_output_dir(self.settings.get("output_dir", ""))
+        output_main = os.path.join(output_dir, f"png{target_number}.iff")
+        output_headband = os.path.join(output_dir, f"png{target_number}_geo_headband.iff")
+        collisions = [
+            path for path in (output_main, output_headband)
+            if os.path.exists(path)
+        ]
+        detail = (
+            f"Character: {os.path.basename(output_main)}\n"
+            f"Headband: {os.path.basename(output_headband)}\n"
+            f"Existing appearance configuration: {config_name}\n"
+            f"Existing files to replace: {len(collisions)}"
+        )
+        if not messagebox.askyesno(
+            "Add Headband?",
+            "The stock headband geometry and its appearance configuration will be written "
+            f"to the output package.\n\n{detail}\n\nContinue?",
+        ):
+            return
+
+        stage_dir = tempfile.mkdtemp(prefix=".character_mod_headband_add_", dir=output_dir)
+        staged_main = os.path.join(stage_dir, os.path.basename(output_main))
+        staged_headband = os.path.join(stage_dir, os.path.basename(output_headband))
+        try:
+            self.write_appearance_archive_copy(
+                target_path,
+                staged_main,
+                appearance_name,
+                replacement_data,
+            )
+            if self.archive_signature_except(target_path, appearance_name) != self.archive_signature_except(
+                staged_main,
+                appearance_name,
+            ):
+                raise ValueError("Non-appearance entries changed while adding the headband call.")
+            staged_name, staged_appearance = self.read_appearance_from_archive(staged_main)
+            staged_accessory = staged_appearance.get("accessory_items", {})
+            staged_configs = staged_accessory.get("configurations", [])
+            staged_config = next(
+                (
+                    config for config in staged_configs
+                    if isinstance(config, dict)
+                    and str(config.get("name", "")).lower() == config_name.lower()
+                ),
+                None,
+            )
+            if (
+                staged_name != appearance_name
+                or staged_config is None
+                or not any(
+                    str(item).lower() == "headband"
+                    for item in staged_config.get("items", [])
+                )
+            ):
+                raise ValueError("The staged appearance did not retain the selected headband call.")
+            shutil.copy2(stock_path, staged_headband)
+            if not self.inspect_headband_iff(staged_headband, False)[0]:
+                raise ValueError("The staged stock headband companion is unreadable.")
+            self.commit_staged_outputs(
+                [
+                    (staged_main, output_main),
+                    (staged_headband, output_headband),
+                ],
+                work_dir=stage_dir,
+            )
+        except Exception as exc:
+            LOGGER.exception("Add Headband failed")
+            messagebox.showerror("Character Mod Tool", f"Add Headband did not complete.\n\n{exc}")
+            self.headband_add_status_var.set("Add Headband did not complete.")
+            return
+        finally:
+            self.schedule_directory_cleanup(stage_dir)
+
+        self.headband_add_target_var.set(output_main)
+        self.headband_target_var.set(output_headband)
+        self.refresh_headband_status()
+        self.refresh_recent_output_choices(select_path=output_main)
+        self.load_iff(output_main)
+        self.headband_add_config_var.set(config_name)
+        self.headband_add_status_var.set(
+            f"Added {style_name} to existing appearance configuration {config_name}."
+        )
+        messagebox.showinfo(
+            "Character Mod Tool",
+            "Headband added successfully.\n\n"
+            f"Character:\n{output_main}\n\n"
+            f"Headband:\n{output_headband}\n\n"
+            f"Existing configuration updated: {config_name}"
+            + ("\nNew headband call added." if changed else "\nThe headband call was already present."),
+        )
 
     def refresh_headband_status(self):
         source_path = self.headband_source_var.get().strip()
@@ -7356,6 +7724,8 @@ class CharacterModTool(tk.Tk):
         self.tattoo_target_var.set(path)
         self.appearance_swap_target_var.set(path)
         self.face_swap_target_var.set(path)
+        self.headband_add_target_var.set(path)
+        self.refresh_headband_add_configs()
         self.advanced_dynamic_body_iff_var.set(path)
         package_ready = os.path.isfile(DYNAMIC_BODY_SCNE) and os.path.isfile(DYNAMIC_BODY_MORPHS)
         self.advanced_dynamic_body_apply_button.configure(state=tk.NORMAL if package_ready else tk.DISABLED)

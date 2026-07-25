@@ -8,7 +8,7 @@ param(
 
 $ErrorActionPreference = "Stop"
 $Root = Split-Path -Parent $MyInvocation.MyCommand.Path
-$Version = "1.0.130-beta"
+$Version = "1.0.131-beta"
 $BuildRoot = Join-Path ([IO.Path]::GetTempPath()) "CharacterModTool-build-$Version-$PID"
 $TempDistRoot = Join-Path ([IO.Path]::GetTempPath()) "CharacterModTool-dist-$Version-$PID"
 $DistRoot = Join-Path $Root "dist"
@@ -124,7 +124,7 @@ New-Item -ItemType Directory -Force -Path (Join-Path $PackageRoot "outputs") | O
 
 if ($DistributionMode -eq "Public") {
     $internal = Join-Path $PackageRoot "_internal"
-    foreach ($relative in @("built_in_glasses", "accessory_templates", "dynamic_body_package", "tools\live_roster")) {
+    foreach ($relative in @("built_in_glasses", "built_in_headbands", "accessory_templates", "dynamic_body_package", "tools\live_roster")) {
         $candidate = Join-Path $internal $relative
         $resolvedCandidate = [IO.Path]::GetFullPath($candidate)
         if ($resolvedCandidate.StartsWith([IO.Path]::GetFullPath($internal), [StringComparison]::OrdinalIgnoreCase) -and (Test-Path -LiteralPath $candidate)) {
@@ -133,7 +133,7 @@ if ($DistributionMode -eq "Public") {
     }
     @"
 This public package intentionally excludes review-required game-derived glasses,
-accessory templates, and dynamic-body assets. See ASSET_DISTRIBUTION_POLICY.txt.
+headbands, accessory templates, and dynamic-body assets. See ASSET_DISTRIBUTION_POLICY.txt.
 The affected controls remain unavailable until locally supplied assets are installed.
 "@ | Set-Content -LiteralPath (Join-Path $PackageRoot "ASSETS_NOT_INCLUDED.txt") -Encoding ASCII
 }

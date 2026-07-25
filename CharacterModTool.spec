@@ -25,6 +25,7 @@ datas = []
 for folder in (
     "accessory_templates",
     "built_in_glasses",
+    "built_in_headbands",
     "dynamic_body_package",
     "hair_tools",
     "tools",

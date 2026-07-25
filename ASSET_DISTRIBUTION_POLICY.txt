@@ -7,6 +7,7 @@ unless you have confirmed that you have permission to redistribute them.
 REVIEW REQUIRED BEFORE PUBLIC DISTRIBUTION
 
 - built_in_glasses/**/*.iff
+- built_in_headbands/**/*.iff
 - accessory_templates/**/*.iff
 - accessory_templates/**/*.dds
 - dynamic_body_package/hihead_DYN_BODY.SCNE
