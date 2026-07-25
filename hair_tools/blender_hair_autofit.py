@@ -28,6 +28,7 @@ SAFE_TEMPLATE_BYTES = None
 SAFE_EXPORT_DEFAULT = ""
 SAFE_TARGET_KEY = "hair"
 ACTIVE_FIT_MODE = "baseline"
+FURY_HEADBAND_SURFACE_CLEARANCE = 0.12
 
 
 def command_line_values():
@@ -439,7 +440,13 @@ def clamp_ratio(value):
     return max(0.80, min(1.20, value))
 
 
-def tangent_frame_fit(hair_objects, donor_head, target_head, surface_locked=False):
+def tangent_frame_fit(
+    hair_objects,
+    donor_head,
+    target_head,
+    surface_locked=False,
+    surface_clearance=0.0,
+):
     donor_vertices = [donor_head.matrix_world @ vertex.co for vertex in donor_head.data.vertices]
     target_vertices = [target_head.matrix_world @ vertex.co for vertex in target_head.data.vertices]
     donor_faces = [tuple(polygon.vertices) for polygon in donor_head.data.polygons]
@@ -473,6 +480,11 @@ def tangent_frame_fit(hair_objects, donor_head, target_head, surface_locked=Fals
     width_scale = conservative_ratio(target_measure["width"], donor_measure["width"])
     depth_scale = conservative_ratio(target_measure["depth"], donor_measure["depth"])
     baseline_scale = math.sqrt(width_scale * depth_scale)
+    target_center = (
+        sum(target_vertices, Vector()) / len(target_vertices)
+        if surface_clearance
+        else None
+    )
 
     control = bpy.data.objects.new("TANGENT_FRAME_FIT_TEST", None)
     bpy.context.scene.collection.objects.link(control)
@@ -545,6 +557,11 @@ def tangent_frame_fit(hair_objects, donor_head, target_head, surface_locked=Fals
             if surface_locked:
                 local_weight = 1.0
                 fitted_point = local_fit
+                if surface_clearance and target_center is not None:
+                    clearance_normal = target_normal.copy()
+                    if clearance_normal.dot(target_surface - target_center) < 0.0:
+                        clearance_normal.negate()
+                    fitted_point += clearance_normal * surface_clearance
             else:
                 baseline_fit = target_measure["anchor"] + (
                     source_point - donor_measure["anchor"]
@@ -565,6 +582,7 @@ def tangent_frame_fit(hair_objects, donor_head, target_head, surface_locked=Fals
     control["nba2k_fit_correspondence"] = "topology" if matching_topology else "aligned_nearest_surface"
     control["nba2k_fit_average_distance"] = sum(distances) / len(distances)
     control["nba2k_fit_average_local_weight"] = sum(weights) / len(weights)
+    control["nba2k_fit_surface_clearance"] = surface_clearance
     return control, donor_measure, target_measure
 
 
@@ -635,11 +653,17 @@ def main():
         donor_head = head_mesh(donor_objects, "donor head")
         target_head = head_mesh(target_objects, "target head")
         if fit_mode in {"tangent", "headband"}:
+            surface_clearance = (
+                FURY_HEADBAND_SURFACE_CLEARANCE
+                if fit_mode == "headband" and target_key.lower() == "headband_fury"
+                else 0.0
+            )
             control, donor, target = tangent_frame_fit(
                 hair_objects,
                 donor_head,
                 target_head,
                 surface_locked=fit_mode == "headband",
+                surface_clearance=surface_clearance,
             )
         else:
             control, donor, target = fit_hair(hair_objects, donor_head, target_head)
@@ -665,7 +689,8 @@ def main():
                 f"vertices={control.get('nba2k_fit_vertices', 0):,} "
                 f"correspondence={control.get('nba2k_fit_correspondence', '?')} "
                 f"average_distance={control.get('nba2k_fit_average_distance', 0.0):.5f} "
-                f"average_local_weight={control.get('nba2k_fit_average_local_weight', 0.0):.5f}"
+                f"average_local_weight={control.get('nba2k_fit_average_local_weight', 0.0):.5f} "
+                f"clearance={control.get('nba2k_fit_surface_clearance', 0.0):.5f}"
             )
         if bpy.app.background and export_path:
             output = write_safe_fitted_iff(export_path)
