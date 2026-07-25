@@ -80,6 +80,13 @@ AVAILABLE_BUILT_IN_GLASSES = {
 }
 BUILT_IN_HEADBANDS_DIR = app_settings.resource_path("built_in_headbands")
 BUILT_IN_STOCK_HEADBAND = os.path.join(BUILT_IN_HEADBANDS_DIR, "stock_headband.iff")
+BUILT_IN_STOCK_HEADBAND_DONOR = os.path.join(
+    BUILT_IN_HEADBANDS_DIR,
+    "stock_headband_donor.iff",
+)
+HEADBAND_SURFACE_FIT_SCRIPT = app_settings.resource_path(
+    os.path.join("hair_tools", "blender_hair_autofit.py")
+)
 BUILT_IN_HEADBANDS = {
     "Stock NBA 2K26 Headband": BUILT_IN_STOCK_HEADBAND,
 }
@@ -115,7 +122,7 @@ OLDER_BODY_FIT_SUFFIXES = (
     ".sx", ".sy", ".sz",
     ".r1", ".r2",
 )
-APP_VERSION = "1.0.131-beta"
+APP_VERSION = "1.0.132-beta"
 
 
 LOGGER = logging.getLogger("character_mod_tool")
@@ -1683,7 +1690,7 @@ class CharacterModTool(tk.Tk):
         self.headband_add_config_combo.grid(row=1, column=3, sticky=tk.EW, pady=3)
         self.headband_add_button = ttk.Button(
             headband_add,
-            text="Add Headband",
+            text="Add and Fit Headband",
             command=self.add_headband_to_character,
             state=tk.NORMAL if AVAILABLE_BUILT_IN_HEADBANDS else tk.DISABLED,
         )
@@ -5226,6 +5233,61 @@ class CharacterModTool(tk.Tk):
                 if info.filename != excluded_name
             ]
 
+    def fit_stock_headband_to_character(self, stock_path, target_path, output_path, work_dir):
+        blender_path = self.full_swap_blender_var.get().strip() or self.find_blender_executable()
+        if not os.path.isfile(blender_path):
+            raise ValueError("Blender 5.1 was not found. Select Blender before adding the headband.")
+        if not os.path.isfile(HEADBAND_SURFACE_FIT_SCRIPT):
+            raise ValueError("The bundled headband surface-fit script is missing.")
+        if not os.path.isfile(BUILT_IN_STOCK_HEADBAND_DONOR):
+            raise ValueError("The bundled stock headband donor head is missing.")
+
+        staged_stock = os.path.join(work_dir, "_stock_headband_input.iff")
+        staged_donor = os.path.join(work_dir, "_stock_headband_donor.iff")
+        staged_target = os.path.join(work_dir, "_headband_target.iff")
+        shutil.copy2(stock_path, staged_stock)
+        shutil.copy2(BUILT_IN_STOCK_HEADBAND_DONOR, staged_donor)
+        shutil.copy2(target_path, staged_target)
+        self.headband_add_status_var.set(
+            "Fitting the stock headband to the target forehead and temples..."
+        )
+        self.update_idletasks()
+        try:
+            result = subprocess.run(
+                [
+                    blender_path,
+                    "--background",
+                    "--factory-startup",
+                    "--python",
+                    HEADBAND_SURFACE_FIT_SCRIPT,
+                    "--",
+                    staged_stock,
+                    staged_donor,
+                    staged_target,
+                    output_path,
+                    "headband",
+                    "headband",
+                ],
+                capture_output=True,
+                text=True,
+                timeout=300,
+                creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0),
+            )
+        except subprocess.TimeoutExpired as exc:
+            raise ValueError("Blender timed out while fitting the headband.") from exc
+        except OSError as exc:
+            raise ValueError(f"Blender could not start: {exc}") from exc
+
+        blender_output = "\n".join(part for part in (result.stdout, result.stderr) if part)
+        if result.returncode != 0 or not os.path.isfile(output_path):
+            tail = "\n".join(blender_output.splitlines()[-14:]).strip()
+            raise ValueError(
+                "Blender could not fit the headband to the target head."
+                + (f"\n\n{tail}" if tail else "")
+            )
+        if "Headband surface mapping:" not in blender_output:
+            raise ValueError("Blender finished without confirming the headband surface mapping.")
+
     def add_headband_to_character(self):
         target_path = self.headband_add_target_var.get().strip()
         style_name = self.headband_add_style_var.get().strip()
@@ -5238,6 +5300,12 @@ class CharacterModTool(tk.Tk):
             messagebox.showerror(
                 "Character Mod Tool",
                 "The bundled stock NBA 2K26 headband is missing or unreadable.",
+            )
+            return
+        if not os.path.isfile(BUILT_IN_STOCK_HEADBAND_DONOR):
+            messagebox.showerror(
+                "Character Mod Tool",
+                "The bundled donor head required for headband fitting is missing.",
             )
             return
         if not selected_config:
@@ -5298,11 +5366,13 @@ class CharacterModTool(tk.Tk):
             f"Character: {os.path.basename(output_main)}\n"
             f"Headband: {os.path.basename(output_headband)}\n"
             f"Existing appearance configuration: {config_name}\n"
+            "Fit: donor forehead/temple surface to target head\n"
             f"Existing files to replace: {len(collisions)}"
         )
         if not messagebox.askyesno(
             "Add Headband?",
-            "The stock headband geometry and its appearance configuration will be written "
+            "The stock headband will be fitted to the target head, then its geometry and "
+            "appearance configuration will be written "
             f"to the output package.\n\n{detail}\n\nContinue?",
         ):
             return
@@ -5342,9 +5412,14 @@ class CharacterModTool(tk.Tk):
                 )
             ):
                 raise ValueError("The staged appearance did not retain the selected headband call.")
-            shutil.copy2(stock_path, staged_headband)
+            self.fit_stock_headband_to_character(
+                stock_path,
+                target_path,
+                staged_headband,
+                stage_dir,
+            )
             if not self.inspect_headband_iff(staged_headband, False)[0]:
-                raise ValueError("The staged stock headband companion is unreadable.")
+                raise ValueError("The fitted stock headband companion is unreadable.")
             self.commit_staged_outputs(
                 [
                     (staged_main, output_main),
@@ -5367,13 +5442,14 @@ class CharacterModTool(tk.Tk):
         self.load_iff(output_main)
         self.headband_add_config_var.set(config_name)
         self.headband_add_status_var.set(
-            f"Added {style_name} to existing appearance configuration {config_name}."
+            f"Added and surface-fitted {style_name} to appearance configuration {config_name}."
         )
         messagebox.showinfo(
             "Character Mod Tool",
-            "Headband added successfully.\n\n"
+            "Headband added and fitted successfully.\n\n"
             f"Character:\n{output_main}\n\n"
             f"Headband:\n{output_headband}\n\n"
+            "Fit: target forehead and temple surface\n"
             f"Existing configuration updated: {config_name}"
             + ("\nNew headband call added." if changed else "\nThe headband call was already present."),
         )
@@ -10196,6 +10272,14 @@ def run_package_self_test():
             raise RuntimeError("Bundled Live Roster tool failed its integrity check.")
         if not os.path.isfile(HAIR_BACKEND_PATH):
             raise FileNotFoundError(f"Bundled Hair backend is missing: {HAIR_BACKEND_PATH}")
+        if not os.path.isfile(HEADBAND_SURFACE_FIT_SCRIPT):
+            raise FileNotFoundError(
+                f"Bundled headband surface-fit script is missing: {HEADBAND_SURFACE_FIT_SCRIPT}"
+            )
+        if not os.path.isfile(BUILT_IN_STOCK_HEADBAND_DONOR):
+            raise FileNotFoundError(
+                f"Bundled stock headband donor is missing: {BUILT_IN_STOCK_HEADBAND_DONOR}"
+            )
         if HAIR_TOOLS_DIR not in sys.path:
             sys.path.insert(0, HAIR_TOOLS_DIR)
         spec = importlib.util.spec_from_file_location("character_mod_hair_backend_self_test", HAIR_BACKEND_PATH)

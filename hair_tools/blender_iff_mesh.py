@@ -1,4 +1,5 @@
 import json
+import re
 import struct
 import zipfile
 from pathlib import Path
@@ -26,7 +27,7 @@ def scene_model(archive):
     if not models:
         raise RuntimeError(f"{scne_name} contains no model.")
     model_name, model = next(iter(models.items()))
-    return scne_name, root_name, model_name, model
+    return scne_name, root_name, model_name, model, text
 
 
 def archive_buffer_name(archive, binary_name):
@@ -39,12 +40,111 @@ def archive_buffer_name(archive, binary_name):
     return member
 
 
-def read_positions(archive, model):
+def _balanced_block(text, start, open_char, close_char):
+    depth = 0
+    in_string = False
+    escaped = False
+    for index in range(start, len(text)):
+        char = text[index]
+        if in_string:
+            if escaped:
+                escaped = False
+            elif char == "\\":
+                escaped = True
+            elif char == '"':
+                in_string = False
+            continue
+        if char == '"':
+            in_string = True
+        elif char == open_char:
+            depth += 1
+        elif char == close_char:
+            depth -= 1
+            if depth == 0:
+                return text[start:index + 1]
+    return ""
+
+
+def _raw_vertex_streams(scne_text):
+    key = scne_text.find('"VertexStream"')
+    if key < 0:
+        return []
+    colon = scne_text.find(":", key)
+    start = next(
+        (index for index in range(colon + 1, len(scne_text)) if scne_text[index] in "[{"),
+        -1,
+    )
+    if start < 0:
+        return []
+    open_char = scne_text[start]
+    close_char = "]" if open_char == "[" else "}"
+    block = _balanced_block(scne_text, start, open_char, close_char)
+    if not block:
+        return []
+
+    entries = []
+    if open_char == "{":
+        matches = re.finditer(r'"VertexBuffer"\s*:\s*\{', block)
+        starts = [match.end() - 1 for match in matches]
+    else:
+        starts = []
+        depth = 0
+        in_string = False
+        escaped = False
+        for index, char in enumerate(block[1:-1], start=1):
+            if in_string:
+                if escaped:
+                    escaped = False
+                elif char == "\\":
+                    escaped = True
+                elif char == '"':
+                    in_string = False
+                continue
+            if char == '"':
+                in_string = True
+            elif char in "[{":
+                if depth == 0 and char == "{":
+                    starts.append(index)
+                depth += 1
+            elif char in "]}":
+                depth -= 1
+
+    for entry_start in starts:
+        entry = _balanced_block(block, entry_start, "{", "}")
+        if not entry:
+            continue
+        try:
+            parsed = json.loads(entry)
+        except json.JSONDecodeError:
+            continue
+        if isinstance(parsed, dict) and parsed.get("Binary"):
+            entries.append(parsed)
+    return entries
+
+
+def vertex_streams(model, scne_text=None):
+    raw_streams = _raw_vertex_streams(scne_text) if scne_text else []
+    if raw_streams:
+        return raw_streams
+    streams = model.get("VertexStream", [])
+    if isinstance(streams, list):
+        return streams
+    if isinstance(streams, dict):
+        if "VertexBuffer" in streams and isinstance(streams["VertexBuffer"], dict):
+            return [streams["VertexBuffer"]]
+        return [
+            stream for stream in streams.values()
+            if isinstance(stream, dict) and stream.get("Binary")
+        ]
+    return []
+
+
+def read_positions(archive, model, scne_text=None):
     position = model.get("VertexFormat", {}).get("POSITION0", {})
     if position.get("Format") != "R32G32B32_FLOAT":
         raise RuntimeError(f"Unsupported position format: {position.get('Format')}")
     stream_index = int(position.get("Stream", 0))
-    streams = model.get("VertexStream", [])
+    streams = vertex_streams(model, scne_text)
     if stream_index >= len(streams) or not streams[stream_index]:
         raise RuntimeError("Position vertex stream is missing.")
     stream = streams[stream_index]
@@ -102,8 +202,8 @@ def lod0_faces(model, indices, vertex_count):
 def import_iff_mesh(path, object_name=None):
     path = Path(path)
     with zipfile.ZipFile(path, "r") as archive:
-        scne_name, root_name, model_name, model = scene_model(archive)
-        vertices = read_positions(archive, model)
+        scne_name, root_name, model_name, model, scne_text = scene_model(archive)
+        vertices = read_positions(archive, model, scne_text)
         indices = read_indices(archive, model)
         faces = lod0_faces(model, indices, len(vertices))
 

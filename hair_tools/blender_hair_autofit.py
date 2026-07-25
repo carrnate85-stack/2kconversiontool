@@ -20,7 +20,7 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 if str(SCRIPT_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPT_DIR))
 
-from blender_iff_mesh import blender_to_game, import_iff_mesh
+from blender_iff_mesh import blender_to_game, import_iff_mesh, vertex_streams
 
 
 SAFE_TEMPLATE_BYTES = None
@@ -41,7 +41,7 @@ def command_line_values():
     export_path = Path(arguments[3]).resolve() if len(arguments) > 3 and arguments[3] else None
     target_key = arguments[4] if len(arguments) > 4 and arguments[4] else "hair"
     fit_mode = arguments[5].lower() if len(arguments) > 5 else "baseline"
-    if fit_mode not in {"baseline", "tangent"}:
+    if fit_mode not in {"baseline", "tangent", "headband"}:
         raise RuntimeError(f"Unknown Hair Fixer mode: {fit_mode}")
     return hair_path, donor_head_path, target_head_path, export_path, target_key, fit_mode
 
@@ -53,19 +53,19 @@ def scne_model(scne_data):
     models = root.get("Model", {})
     if not models:
         raise RuntimeError("The source SCNE has no model.")
-    return next(iter(models.values()))
+    return next(iter(models.values())), text
 
 
 def position_buffer_details(archive):
     scne_name = next((name for name in archive.namelist() if name.lower().endswith(".scne")), None)
     if not scne_name:
         raise RuntimeError("The source IFF has no SCNE file.")
-    model = scne_model(archive.read(scne_name))
+    model, scne_text = scne_model(archive.read(scne_name))
     position = model.get("VertexFormat", {}).get("POSITION0", {})
     if position.get("Format") != "R32G32B32_FLOAT":
         raise RuntimeError(f"Safe export does not support position format {position.get('Format')}.")
     stream_index = int(position.get("Stream", 0))
-    streams = model.get("VertexStream", [])
+    streams = vertex_streams(model, scne_text)
     if stream_index >= len(streams):
         raise RuntimeError("The source position stream is missing.")
     stream = streams[stream_index]
@@ -339,7 +339,7 @@ def clamp_ratio(value):
     return max(0.80, min(1.20, value))
 
 
-def tangent_frame_fit(hair_objects, donor_head, target_head):
+def tangent_frame_fit(hair_objects, donor_head, target_head, surface_locked=False):
     donor_vertices = [donor_head.matrix_world @ vertex.co for vertex in donor_head.data.vertices]
     target_vertices = [target_head.matrix_world @ vertex.co for vertex in target_head.data.vertices]
     donor_faces = [tuple(polygon.vertices) for polygon in donor_head.data.polygons]
@@ -364,6 +364,10 @@ def tangent_frame_fit(hair_objects, donor_head, target_head):
         for vertex_index in face:
             target_vertex_faces[vertex_index].append(face_index)
     matching_topology = len(donor_vertices) == len(target_vertices) and donor_faces == target_faces
+    if surface_locked and not matching_topology:
+        raise RuntimeError(
+            "Headband surface fitting requires matching donor/target head topology."
+        )
     donor_measure = scalp_measurement(donor_head)
     target_measure = scalp_measurement(target_head)
     width_scale = conservative_ratio(target_measure["width"], donor_measure["width"])
@@ -438,13 +442,17 @@ def tangent_frame_fit(hair_objects, donor_head, target_head):
                 + target_bitangent * bitangent_offset * bitangent_scale
                 + target_normal * normal_offset
             )
-            baseline_fit = target_measure["anchor"] + (
-                source_point - donor_measure["anchor"]
-            ) * baseline_scale
-            falloff = max(0.0, min(1.0, (distance - 0.75) / 11.25))
-            falloff = falloff * falloff * (3.0 - 2.0 * falloff)
-            local_weight = max(0.20, 1.0 - falloff)
-            fitted_point = baseline_fit.lerp(local_fit, local_weight)
+            if surface_locked:
+                local_weight = 1.0
+                fitted_point = local_fit
+            else:
+                baseline_fit = target_measure["anchor"] + (
+                    source_point - donor_measure["anchor"]
+                ) * baseline_scale
+                falloff = max(0.0, min(1.0, (distance - 0.75) / 11.25))
+                falloff = falloff * falloff * (3.0 - 2.0 * falloff)
+                local_weight = max(0.20, 1.0 - falloff)
+                fitted_point = baseline_fit.lerp(local_fit, local_weight)
             vertex.co = inverse_world @ fitted_point
             moved += 1
             distances.append(distance)
@@ -526,8 +534,13 @@ def main():
 
         donor_head = head_mesh(donor_objects, "donor head")
         target_head = head_mesh(target_objects, "target head")
-        if fit_mode == "tangent":
-            control, donor, target = tangent_frame_fit(hair_objects, donor_head, target_head)
+        if fit_mode in {"tangent", "headband"}:
+            control, donor, target = tangent_frame_fit(
+                hair_objects,
+                donor_head,
+                target_head,
+                surface_locked=fit_mode == "headband",
+            )
         else:
             control, donor, target = fit_hair(hair_objects, donor_head, target_head)
 
@@ -546,9 +559,9 @@ def main():
             f"donor=({donor['width']:.3f}w, {donor['depth']:.3f}d) "
             f"target=({target['width']:.3f}w, {target['depth']:.3f}d)"
         )
-        if fit_mode == "tangent":
+        if fit_mode in {"tangent", "headband"}:
             print(
-                "[Hair Fixer] Tangent mapping: "
+                f"[Hair Fixer] {'Headband surface' if fit_mode == 'headband' else 'Tangent'} mapping: "
                 f"vertices={control.get('nba2k_fit_vertices', 0):,} "
                 f"correspondence={control.get('nba2k_fit_correspondence', '?')} "
                 f"average_distance={control.get('nba2k_fit_average_distance', 0.0):.5f} "
