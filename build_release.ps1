@@ -8,14 +8,19 @@ param(
 
 $ErrorActionPreference = "Stop"
 $Root = Split-Path -Parent $MyInvocation.MyCommand.Path
-$Version = "1.0.134-beta"
+$Version = "1.0.135-beta"
 $BuildRoot = Join-Path ([IO.Path]::GetTempPath()) "CharacterModTool-build-$Version-$PID"
 $TempDistRoot = Join-Path ([IO.Path]::GetTempPath()) "CharacterModTool-dist-$Version-$PID"
 $DistRoot = Join-Path $Root "dist"
 $ReleaseRoot = Join-Path $Root "release"
 $PackageName = "CharacterModTool-v$Version-$DistributionMode"
 $PackageRoot = Join-Path $ReleaseRoot $PackageName
-$VenvRoot = Join-Path $Root ".release_venv"
+$VenvName = if ($PythonPath) {
+    ".release_venv_" + ([IO.Path]::GetFileNameWithoutExtension($PythonPath) -replace "[^A-Za-z0-9]+", "_")
+} else {
+    ".release_venv"
+}
+$VenvRoot = Join-Path $Root $VenvName
 
 if ($DistributionMode -eq "PrivateBeta" -and -not $AcknowledgeGameDerivedAssets) {
     throw "PrivateBeta includes review-required game-derived assets. Re-run with -AcknowledgeGameDerivedAssets after reading ASSET_DISTRIBUTION_POLICY.txt."
@@ -86,8 +91,11 @@ if (-not (Test-Path -LiteralPath $BuiltTkinter)) {
         (Join-Path $PythonDllRoot "tcl86t.dll"),
         (Join-Path $PythonDllRoot "tk86t.dll")
     ) -Destination $BuiltInternal -Force
-    Copy-Item -LiteralPath (Join-Path $TclRoot "tcl8.6") -Destination (Join-Path $BuiltInternal "_tcl_data") -Recurse -Force
-    Copy-Item -LiteralPath (Join-Path $TclRoot "tk8.6") -Destination (Join-Path $BuiltInternal "_tk_data") -Recurse -Force
+    $BuiltTclData = Join-Path $BuiltInternal "_tcl_data"
+    $BuiltTkData = Join-Path $BuiltInternal "_tk_data"
+    New-Item -ItemType Directory -Force -Path $BuiltTclData,$BuiltTkData | Out-Null
+    Copy-Item -Path (Join-Path $TclRoot "tcl8.6\*") -Destination $BuiltTclData -Recurse -Force
+    Copy-Item -Path (Join-Path $TclRoot "tk8.6\*") -Destination $BuiltTkData -Recurse -Force
     Copy-Item -LiteralPath (Join-Path $TclRoot "tcl8") -Destination (Join-Path $BuiltInternal "tcl8") -Recurse -Force
     Get-ChildItem -LiteralPath (Join-Path $BuiltInternal "tkinter") -Directory -Filter "__pycache__" -Recurse |
         Remove-Item -Recurse -Force

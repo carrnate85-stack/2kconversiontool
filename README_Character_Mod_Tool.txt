@@ -1,4 +1,4 @@
-CHARACTER MOD TOOL v1.0.134-beta
+CHARACTER MOD TOOL v1.0.135-beta
 
 Windows GUI for reading, editing, validating, and converting ZIP-style NBA 2K
 character IFF packages. This is a private-beta release. Always preserve original
@@ -136,9 +136,12 @@ HAIR
 
 HEADBAND SWAP
 
-- Adds a bundled stock NBA 2K26 headband to any png character output, fits it to
+- Adds either the bundled stock NBA 2K26 headband or the Fury headband from
+  png4474 to any png character output, fits the selected style to
   that player's forehead and temple surface, and lets you choose which existing
   appearance configuration receives the headband call.
+- Writes the selected style's exact appearance item, SCNE name, and companion
+  filename (`geo_headband` or `geo_headband_fury`).
 - Rebinds fitted headbands to `def_head` bone 48 so they remain attached during
   gameplay head and neck animation.
 - Select from Manifest can load any listed NBA 2K26 player directly as the

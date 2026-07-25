@@ -116,11 +116,11 @@ def headband_weight_buffer_details(archive):
 def bind_headband_scne_to_head(scne_data):
     text = scne_data.decode("utf-8-sig")
     model_pattern = re.compile(
-        r'("BlendIndexRange"\s*:\s*\[\s*)0(\s*,\s*)(?:47|48)(\s*\])',
+        r'("BlendIndexRange"\s*:\s*\[\s*)0(\s*,\s*)(?:47|48|49)(\s*\])',
         re.S,
     )
     primitive_pattern = re.compile(
-        r'("BlendIndexRange"\s*:\s*\[\s*)(?:47|48)(\s*,\s*)(?:47|48)(\s*\])',
+        r'("BlendIndexRange"\s*:\s*\[\s*)(?:47|48|49)(\s*,\s*)(?:47|48|49)(\s*\])',
         re.S,
     )
     text, model_count = model_pattern.subn(r"\g<1>0\g<2>48\g<3>", text, count=1)

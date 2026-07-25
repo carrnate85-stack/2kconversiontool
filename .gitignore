@@ -1,7 +1,7 @@
 # Python and local build environments
 __pycache__/
 *.py[cod]
-.release_venv/
+.release_venv*/
 .build_python*/
 
 # Generated builds and user output

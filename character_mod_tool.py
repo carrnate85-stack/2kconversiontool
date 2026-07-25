@@ -84,14 +84,46 @@ BUILT_IN_STOCK_HEADBAND_DONOR = os.path.join(
     BUILT_IN_HEADBANDS_DIR,
     "stock_headband_donor.iff",
 )
+BUILT_IN_FURY_HEADBAND = os.path.join(BUILT_IN_HEADBANDS_DIR, "headband_fury.iff")
+BUILT_IN_FURY_HEADBAND_DONOR = os.path.join(
+    BUILT_IN_HEADBANDS_DIR,
+    "headband_fury_donor.iff",
+)
 HEADBAND_SURFACE_FIT_SCRIPT = app_settings.resource_path(
     os.path.join("hair_tools", "blender_hair_autofit.py")
 )
 BUILT_IN_HEADBANDS = {
-    "Stock NBA 2K26 Headband": BUILT_IN_STOCK_HEADBAND,
+    "Stock NBA 2K26 Headband": {
+        "geometry": BUILT_IN_STOCK_HEADBAND,
+        "donor": BUILT_IN_STOCK_HEADBAND_DONOR,
+        "asset_name": "headband",
+        "output_suffix": "_geo_headband.iff",
+        "appearance_item": {
+            "headband_type": "headband",
+            "mesh": "headbandShape",
+            "name": "headband",
+            "shader": "headband_shader",
+            "type": "headband",
+        },
+    },
+    "Fury Headband (png4474)": {
+        "geometry": BUILT_IN_FURY_HEADBAND,
+        "donor": BUILT_IN_FURY_HEADBAND_DONOR,
+        "asset_name": "headband_fury",
+        "output_suffix": "_geo_headband_fury.iff",
+        "appearance_item": {
+            "headband_type": "headband_fury",
+            "mesh": "headband_furyShape",
+            "name": "headband_fury",
+            "shader": "headband_fury_shader",
+            "type": "headband_fury",
+        },
+    },
 }
 AVAILABLE_BUILT_IN_HEADBANDS = {
-    label: path for label, path in BUILT_IN_HEADBANDS.items() if os.path.isfile(path)
+    label: style
+    for label, style in BUILT_IN_HEADBANDS.items()
+    if os.path.isfile(style["geometry"]) and os.path.isfile(style["donor"])
 }
 FULL_SWAP_BRIDGE = app_settings.resource_path("blender_full_swap_bridge.py")
 HEADBAND_SWAP_BRIDGE = app_settings.resource_path("blender_headband_swap_bridge.py")
@@ -122,7 +154,7 @@ OLDER_BODY_FIT_SUFFIXES = (
     ".sx", ".sy", ".sz",
     ".r1", ".r2",
 )
-APP_VERSION = "1.0.134-beta"
+APP_VERSION = "1.0.135-beta"
 
 
 LOGGER = logging.getLogger("character_mod_tool")
@@ -787,7 +819,7 @@ class CharacterModTool(tk.Tk):
         )
         self.headband_add_config_var = tk.StringVar()
         self.headband_add_status_var = tk.StringVar(
-            value="Choose a character package and add the bundled stock headband."
+            value="Choose a character package and a bundled headband style."
         )
         self.headband_tool_var = tk.StringVar(value=self.find_headband_swap_tool())
         self.headband_status_var = tk.StringVar(
@@ -5130,8 +5162,11 @@ class CharacterModTool(tk.Tk):
         except (OSError, zipfile.BadZipFile) as exc:
             return False, "Could not read", str(exc)
         base_names = [os.path.basename(name).lower() for name in names]
-        if "headband.scne" not in base_names:
-            return False, "Wrong file", "headband.SCNE was not found"
+        if not any(
+            name.startswith("headband") and name.endswith(".scne")
+            for name in base_names
+        ):
+            return False, "Wrong file", "A headband SCNE was not found"
         model_count = sum(name.endswith(".model") for name in base_names)
         vertex_buffers = sum(name.startswith("vertexbuffer") for name in base_names)
         index_buffers = sum(name.startswith("indexbuffer") for name in base_names)
@@ -5210,7 +5245,7 @@ class CharacterModTool(tk.Tk):
             )
 
     @staticmethod
-    def add_stock_headband_appearance(appearance, selected_config):
+    def add_built_in_headband_appearance(appearance, selected_config, style):
         updated = copy.deepcopy(appearance)
         accessory = updated.get("accessory_items")
         if not isinstance(accessory, dict):
@@ -5223,24 +5258,20 @@ class CharacterModTool(tk.Tk):
         if not isinstance(configurations, list) or not configurations:
             raise ValueError("The target appearance_info has no usable configurations.")
 
-        stock_item = {
-            "headband_type": "headband",
-            "mesh": "headbandShape",
-            "name": "headband",
-            "shader": "headband_shader",
-            "type": "headband",
-        }
+        selected_item = copy.deepcopy(style["appearance_item"])
+        asset_name = str(style["asset_name"])
         existing_item = next(
             (
                 item for item in items
-                if isinstance(item, dict) and str(item.get("name", "")).lower() == "headband"
+                if isinstance(item, dict)
+                and str(item.get("name", "")).lower() == asset_name.lower()
             ),
             None,
         )
         if existing_item is None:
-            items.append(stock_item)
+            items.append(selected_item)
         else:
-            existing_item.update(stock_item)
+            existing_item.update(selected_item)
 
         selected = next(
             (
@@ -5257,9 +5288,18 @@ class CharacterModTool(tk.Tk):
         if not isinstance(config_items, list):
             config_items = []
             selected["items"] = config_items
-        changed = not any(str(item).lower() == "headband" for item in config_items)
-        if changed:
-            config_items.append("headband")
+        built_in_names = {
+            str(candidate["asset_name"]).lower()
+            for candidate in BUILT_IN_HEADBANDS.values()
+        }
+        previous_items = list(config_items)
+        config_items[:] = [
+            item
+            for item in config_items
+            if str(item).lower() not in built_in_names
+        ]
+        config_items.append(asset_name)
+        changed = config_items != previous_items or existing_item is None
         return updated, config_name, changed
 
     @classmethod
@@ -5290,23 +5330,31 @@ class CharacterModTool(tk.Tk):
                 if info.filename != excluded_name
             ]
 
-    def fit_stock_headband_to_character(self, stock_path, target_path, output_path, work_dir):
+    def fit_built_in_headband_to_character(
+        self,
+        stock_path,
+        donor_path,
+        target_path,
+        output_path,
+        work_dir,
+        asset_name,
+    ):
         blender_path = self.full_swap_blender_var.get().strip() or self.find_blender_executable()
         if not os.path.isfile(blender_path):
             raise ValueError("Blender 5.1 was not found. Select Blender before adding the headband.")
         if not os.path.isfile(HEADBAND_SURFACE_FIT_SCRIPT):
             raise ValueError("The bundled headband surface-fit script is missing.")
-        if not os.path.isfile(BUILT_IN_STOCK_HEADBAND_DONOR):
-            raise ValueError("The bundled stock headband donor head is missing.")
+        if not os.path.isfile(donor_path):
+            raise ValueError("The selected bundled headband donor head is missing.")
 
         staged_stock = os.path.join(work_dir, "_stock_headband_input.iff")
         staged_donor = os.path.join(work_dir, "_stock_headband_donor.iff")
         staged_target = os.path.join(work_dir, "_headband_target.iff")
         shutil.copy2(stock_path, staged_stock)
-        shutil.copy2(BUILT_IN_STOCK_HEADBAND_DONOR, staged_donor)
+        shutil.copy2(donor_path, staged_donor)
         shutil.copy2(target_path, staged_target)
         self.headband_add_status_var.set(
-            "Fitting the stock headband to the target forehead and temples..."
+            "Fitting the selected headband to the target forehead and temples..."
         )
         self.update_idletasks()
         try:
@@ -5322,7 +5370,7 @@ class CharacterModTool(tk.Tk):
                     staged_donor,
                     staged_target,
                     output_path,
-                    "headband",
+                    asset_name,
                     "headband",
                 ],
                 capture_output=True,
@@ -5349,17 +5397,20 @@ class CharacterModTool(tk.Tk):
         target_path = self.headband_add_target_var.get().strip()
         style_name = self.headband_add_style_var.get().strip()
         selected_config = self.headband_add_config_var.get().strip()
-        stock_path = AVAILABLE_BUILT_IN_HEADBANDS.get(style_name, "")
+        style = AVAILABLE_BUILT_IN_HEADBANDS.get(style_name)
+        stock_path = style["geometry"] if style else ""
+        donor_path = style["donor"] if style else ""
+        asset_name = style["asset_name"] if style else ""
         if not target_path or not os.path.isfile(target_path) or not zipfile.is_zipfile(target_path):
             messagebox.showerror("Character Mod Tool", "Choose a readable target character IFF first.")
             return
         if not stock_path or not self.inspect_headband_iff(stock_path, False)[0]:
             messagebox.showerror(
                 "Character Mod Tool",
-                "The bundled stock NBA 2K26 headband is missing or unreadable.",
+                "The selected bundled NBA 2K26 headband is missing or unreadable.",
             )
             return
-        if not os.path.isfile(BUILT_IN_STOCK_HEADBAND_DONOR):
+        if not donor_path or not os.path.isfile(donor_path):
             messagebox.showerror(
                 "Character Mod Tool",
                 "The bundled donor head required for headband fitting is missing.",
@@ -5398,9 +5449,10 @@ class CharacterModTool(tk.Tk):
             )
             if not isinstance(appearance, dict):
                 raise ValueError(error or f"{appearance_name} could not be parsed.")
-            updated, config_name, changed = self.add_stock_headband_appearance(
+            updated, config_name, changed = self.add_built_in_headband_appearance(
                 appearance,
                 selected_config,
+                style,
             )
             replacement_data = serialize_structured_entry(
                 appearance_name,
@@ -5414,7 +5466,10 @@ class CharacterModTool(tk.Tk):
 
         output_dir = app_settings.ensure_output_dir(self.settings.get("output_dir", ""))
         output_main = os.path.join(output_dir, f"png{target_number}.iff")
-        output_headband = os.path.join(output_dir, f"png{target_number}_geo_headband.iff")
+        output_headband = os.path.join(
+            output_dir,
+            f"png{target_number}{style['output_suffix']}",
+        )
         collisions = [
             path for path in (output_main, output_headband)
             if os.path.exists(path)
@@ -5428,7 +5483,7 @@ class CharacterModTool(tk.Tk):
         )
         if not messagebox.askyesno(
             "Add Headband?",
-            "The stock headband will be fitted to the target head, then its geometry and "
+            f"{style_name} will be fitted to the target head, then its geometry and "
             "appearance configuration will be written "
             f"to the output package.\n\n{detail}\n\nContinue?",
         ):
@@ -5464,19 +5519,21 @@ class CharacterModTool(tk.Tk):
                 staged_name != appearance_name
                 or staged_config is None
                 or not any(
-                    str(item).lower() == "headband"
+                    str(item).lower() == asset_name.lower()
                     for item in staged_config.get("items", [])
                 )
             ):
                 raise ValueError("The staged appearance did not retain the selected headband call.")
-            self.fit_stock_headband_to_character(
+            self.fit_built_in_headband_to_character(
                 stock_path,
+                donor_path,
                 target_path,
                 staged_headband,
                 stage_dir,
+                asset_name,
             )
             if not self.inspect_headband_iff(staged_headband, False)[0]:
-                raise ValueError("The fitted stock headband companion is unreadable.")
+                raise ValueError("The fitted headband companion is unreadable.")
             self.commit_staged_outputs(
                 [
                     (staged_main, output_main),
@@ -10340,10 +10397,12 @@ def run_package_self_test():
             raise FileNotFoundError(
                 f"Bundled headband surface-fit script is missing: {HEADBAND_SURFACE_FIT_SCRIPT}"
             )
-        if not os.path.isfile(BUILT_IN_STOCK_HEADBAND_DONOR):
-            raise FileNotFoundError(
-                f"Bundled stock headband donor is missing: {BUILT_IN_STOCK_HEADBAND_DONOR}"
-            )
+        for label, style in BUILT_IN_HEADBANDS.items():
+            for field in ("geometry", "donor"):
+                if not os.path.isfile(style[field]):
+                    raise FileNotFoundError(
+                        f"Bundled {label} {field} is missing: {style[field]}"
+                    )
         if HAIR_TOOLS_DIR not in sys.path:
             sys.path.insert(0, HAIR_TOOLS_DIR)
         spec = importlib.util.spec_from_file_location("character_mod_hair_backend_self_test", HAIR_BACKEND_PATH)
