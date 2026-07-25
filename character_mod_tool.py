@@ -84,14 +84,14 @@ BUILT_IN_STOCK_HEADBAND_DONOR = os.path.join(
     BUILT_IN_HEADBANDS_DIR,
     "stock_headband_donor.iff",
 )
+BUILT_IN_STOCK_HEADBAND_MATERIALS = os.path.join(
+    BUILT_IN_HEADBANDS_DIR,
+    "headband_materials.iff",
+)
 BUILT_IN_FURY_HEADBAND = os.path.join(BUILT_IN_HEADBANDS_DIR, "headband_fury.iff")
 BUILT_IN_FURY_HEADBAND_DONOR = os.path.join(
     BUILT_IN_HEADBANDS_DIR,
     "headband_fury_donor.iff",
-)
-BUILT_IN_STOCK_HEADBAND_MATERIALS = os.path.join(
-    BUILT_IN_HEADBANDS_DIR,
-    "headband_materials.iff",
 )
 BUILT_IN_FURY_HEADBAND_MATERIALS = os.path.join(
     BUILT_IN_HEADBANDS_DIR,
@@ -133,10 +133,7 @@ BUILT_IN_HEADBANDS = {
 AVAILABLE_BUILT_IN_HEADBANDS = {
     label: style
     for label, style in BUILT_IN_HEADBANDS.items()
-    if all(
-        os.path.isfile(style[field])
-        for field in ("geometry", "donor", "materials")
-    )
+    if all(os.path.isfile(style[field]) for field in ("geometry", "donor", "materials"))
 }
 FULL_SWAP_BRIDGE = app_settings.resource_path("blender_full_swap_bridge.py")
 HEADBAND_SWAP_BRIDGE = app_settings.resource_path("blender_headband_swap_bridge.py")
@@ -167,7 +164,7 @@ OLDER_BODY_FIT_SUFFIXES = (
     ".sx", ".sy", ".sz",
     ".r1", ".r2",
 )
-APP_VERSION = "1.0.137-beta"
+APP_VERSION = "1.0.139-beta"
 
 
 LOGGER = logging.getLogger("character_mod_tool")
@@ -363,12 +360,9 @@ def validate_archive_snapshot(
 
     txtr_names = [name for name in active_names if name.lower().endswith(".txtr")]
     dds_names = [name for name in active_names if name.lower().endswith(".dds")]
-    tld_names = [
-        name
-        for name in active_names
-        if name.lower().endswith((".tld", ".mip0"))
-    ]
+    tld_names = [name for name in active_names if name.lower().endswith(".tld")]
     paired_dds = set()
+    packed_texture_count = 0
     texture_errors = 0
     texture_warnings = 0
     for txtr_name in txtr_names:
@@ -381,11 +375,12 @@ def validate_archive_snapshot(
                 if os.path.basename(name).lower().startswith(logical + ".")
             ]
             if packed_matches:
+                packed_texture_count += 1
                 results.append(
                     ValidationResult(
-                        "PASS",
+                        "INFO",
                         "Native packed texture",
-                        f"{os.path.basename(txtr_name)} has {len(packed_matches)} local TLD resource(s).",
+                        f"{os.path.basename(txtr_name)} has its compiled TLD/MIP payload.",
                     )
                 )
                 continue
@@ -446,7 +441,15 @@ def validate_archive_snapshot(
         texture_warnings += 1
         results.append(ValidationResult("WARNING", "Unpaired DDS", ", ".join(os.path.basename(name) for name in unpaired[:8])))
     if txtr_names and not texture_errors and not texture_warnings:
-        results.append(ValidationResult("PASS", "Texture resources", f"{len(txtr_names)} TXTR/DDS pair(s) agree on format, dimensions, mips, and payload size."))
+        editable_count = len(txtr_names) - packed_texture_count
+        results.append(
+            ValidationResult(
+                "PASS",
+                "Texture resources",
+                f"{editable_count} editable DDS texture(s) and "
+                f"{packed_texture_count} native packed texture(s) are complete.",
+            )
+        )
     elif not txtr_names and not dds_names:
         results.append(ValidationResult("INFO", "Texture resources", "No embedded texture resources."))
 
@@ -5362,11 +5365,58 @@ class CharacterModTool(tk.Tk):
                 if info.filename != excluded_name
             ]
 
+    @classmethod
+    def embed_headband_materials_in_character(cls, character_path, materials_path):
+        replacement_path = f"{character_path}.materials.tmp"
+        try:
+            with zipfile.ZipFile(materials_path, "r") as materials:
+                material_infos = [info for info in materials.infolist() if not info.is_dir()]
+                if not material_infos:
+                    raise ValueError("The bundled headband material archive is empty.")
+                material_names = {info.filename for info in material_infos}
+                expected = {
+                    info.filename: (info.CRC, info.file_size)
+                    for info in material_infos
+                }
+                with zipfile.ZipFile(character_path, "r") as source, zipfile.ZipFile(
+                    replacement_path,
+                    "w",
+                ) as output:
+                    for info in source.infolist():
+                        if info.filename in material_names:
+                            continue
+                        data = b"" if info.is_dir() else source.read(info.filename)
+                        output.writestr(cls.copied_zip_info(info), data)
+                    for info in material_infos:
+                        output.writestr(
+                            cls.copied_zip_info(info),
+                            materials.read(info.filename),
+                        )
+            with zipfile.ZipFile(replacement_path, "r") as rebuilt:
+                actual = {
+                    info.filename: (info.CRC, info.file_size)
+                    for info in rebuilt.infolist()
+                    if info.filename in expected
+                }
+                if actual != expected:
+                    raise ValueError(
+                        "The staged character IFF did not retain every headband material resource."
+                    )
+                if rebuilt.testzip() is not None:
+                    raise ValueError("The staged character IFF failed its ZIP integrity check.")
+            os.replace(replacement_path, character_path)
+            return len(expected)
+        finally:
+            try:
+                if os.path.exists(replacement_path):
+                    os.remove(replacement_path)
+            except OSError:
+                pass
+
     def fit_built_in_headband_to_character(
         self,
         stock_path,
         donor_path,
-        materials_path,
         target_path,
         output_path,
         work_dir,
@@ -5379,8 +5429,6 @@ class CharacterModTool(tk.Tk):
             raise ValueError("The bundled headband surface-fit script is missing.")
         if not os.path.isfile(donor_path):
             raise ValueError("The selected bundled headband donor head is missing.")
-        if not os.path.isfile(materials_path) or not zipfile.is_zipfile(materials_path):
-            raise ValueError("The selected bundled headband material package is missing.")
 
         staged_stock = os.path.join(work_dir, "_stock_headband_input.iff")
         staged_donor = os.path.join(work_dir, "_stock_headband_donor.iff")
@@ -5427,47 +5475,6 @@ class CharacterModTool(tk.Tk):
             )
         if "Headband surface mapping:" not in blender_output:
             raise ValueError("Blender finished without confirming the headband surface mapping.")
-        self.embed_headband_materials(output_path, materials_path)
-
-    @classmethod
-    def embed_headband_materials(cls, output_path, materials_path):
-        temp_path = f"{output_path}.materials_tmp"
-        try:
-            with (
-                zipfile.ZipFile(output_path, "r") as source,
-                zipfile.ZipFile(materials_path, "r") as materials,
-                zipfile.ZipFile(temp_path, "w") as output,
-            ):
-                existing = set()
-                for info in source.infolist():
-                    data = b"" if info.is_dir() else source.read(info.filename)
-                    output.writestr(cls.copied_zip_info(info), data)
-                    existing.add(info.filename.lower())
-                material_names = []
-                for info in materials.infolist():
-                    if info.is_dir() or info.filename.lower() in existing:
-                        continue
-                    output.writestr(
-                        cls.copied_zip_info(info),
-                        materials.read(info.filename),
-                    )
-                    material_names.append(info.filename)
-                    existing.add(info.filename.lower())
-            os.replace(temp_path, output_path)
-            with zipfile.ZipFile(output_path, "r") as check:
-                check_names = {name.lower() for name in check.namelist()}
-                missing = [
-                    name
-                    for name in material_names
-                    if name.lower() not in check_names
-                ]
-                if missing or check.testzip() is not None:
-                    raise ValueError("The fitted headband material bundle failed verification.")
-        finally:
-            try:
-                os.remove(temp_path)
-            except OSError:
-                pass
 
     def add_headband_to_character(self):
         target_path = self.headband_add_target_var.get().strip()
@@ -5496,7 +5503,7 @@ class CharacterModTool(tk.Tk):
         if not materials_path or not zipfile.is_zipfile(materials_path):
             messagebox.showerror(
                 "Character Mod Tool",
-                "The bundled material package for the selected headband is missing.",
+                "The bundled headband material resources are missing or unreadable.",
             )
             return
         if not selected_config:
@@ -5610,7 +5617,6 @@ class CharacterModTool(tk.Tk):
             self.fit_built_in_headband_to_character(
                 stock_path,
                 donor_path,
-                materials_path,
                 target_path,
                 staged_headband,
                 stage_dir,
@@ -5618,6 +5624,10 @@ class CharacterModTool(tk.Tk):
             )
             if not self.inspect_headband_iff(staged_headband, False)[0]:
                 raise ValueError("The fitted headband companion is unreadable.")
+            material_count = self.embed_headband_materials_in_character(
+                staged_main,
+                materials_path,
+            )
             self.commit_staged_outputs(
                 [
                     (staged_main, output_main),
@@ -5640,7 +5650,8 @@ class CharacterModTool(tk.Tk):
         self.load_iff(output_main)
         self.headband_add_config_var.set(config_name)
         self.headband_add_status_var.set(
-            f"Added and surface-fitted {style_name} to appearance configuration {config_name}."
+            f"Added and surface-fitted {style_name} with {material_count} material resources "
+            f"to appearance configuration {config_name}."
         )
         messagebox.showinfo(
             "Character Mod Tool",
@@ -5648,6 +5659,7 @@ class CharacterModTool(tk.Tk):
             f"Character:\n{output_main}\n\n"
             f"Headband:\n{output_headband}\n\n"
             "Fit: target forehead and temple surface\n"
+            f"Materials packed in character IFF: {material_count}\n"
             f"Existing configuration updated: {config_name}"
             + ("\nNew headband call added." if changed else "\nThe headband call was already present."),
         )
