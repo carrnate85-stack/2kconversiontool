@@ -2,7 +2,7 @@
   #error SourceDir must be supplied by build_release.ps1
 #endif
 #ifndef AppVersion
-  #define AppVersion "1.0.136-beta"
+  #define AppVersion "1.0.137-beta"
 #endif
 #ifndef OutputDir
   #define OutputDir "."

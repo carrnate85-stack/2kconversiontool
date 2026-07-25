@@ -89,6 +89,14 @@ BUILT_IN_FURY_HEADBAND_DONOR = os.path.join(
     BUILT_IN_HEADBANDS_DIR,
     "headband_fury_donor.iff",
 )
+BUILT_IN_STOCK_HEADBAND_MATERIALS = os.path.join(
+    BUILT_IN_HEADBANDS_DIR,
+    "headband_materials.iff",
+)
+BUILT_IN_FURY_HEADBAND_MATERIALS = os.path.join(
+    BUILT_IN_HEADBANDS_DIR,
+    "headband_fury_materials.iff",
+)
 HEADBAND_SURFACE_FIT_SCRIPT = app_settings.resource_path(
     os.path.join("hair_tools", "blender_hair_autofit.py")
 )
@@ -96,6 +104,7 @@ BUILT_IN_HEADBANDS = {
     "Stock NBA 2K26 Headband": {
         "geometry": BUILT_IN_STOCK_HEADBAND,
         "donor": BUILT_IN_STOCK_HEADBAND_DONOR,
+        "materials": BUILT_IN_STOCK_HEADBAND_MATERIALS,
         "asset_name": "headband",
         "output_suffix": "_geo_headband.iff",
         "appearance_item": {
@@ -109,6 +118,7 @@ BUILT_IN_HEADBANDS = {
     "Fury Headband": {
         "geometry": BUILT_IN_FURY_HEADBAND,
         "donor": BUILT_IN_FURY_HEADBAND_DONOR,
+        "materials": BUILT_IN_FURY_HEADBAND_MATERIALS,
         "asset_name": "headband_fury",
         "output_suffix": "_geo_headband_fury.iff",
         "appearance_item": {
@@ -123,7 +133,10 @@ BUILT_IN_HEADBANDS = {
 AVAILABLE_BUILT_IN_HEADBANDS = {
     label: style
     for label, style in BUILT_IN_HEADBANDS.items()
-    if os.path.isfile(style["geometry"]) and os.path.isfile(style["donor"])
+    if all(
+        os.path.isfile(style[field])
+        for field in ("geometry", "donor", "materials")
+    )
 }
 FULL_SWAP_BRIDGE = app_settings.resource_path("blender_full_swap_bridge.py")
 HEADBAND_SWAP_BRIDGE = app_settings.resource_path("blender_headband_swap_bridge.py")
@@ -154,7 +167,7 @@ OLDER_BODY_FIT_SUFFIXES = (
     ".sx", ".sy", ".sz",
     ".r1", ".r2",
 )
-APP_VERSION = "1.0.136-beta"
+APP_VERSION = "1.0.137-beta"
 
 
 LOGGER = logging.getLogger("character_mod_tool")
@@ -350,6 +363,11 @@ def validate_archive_snapshot(
 
     txtr_names = [name for name in active_names if name.lower().endswith(".txtr")]
     dds_names = [name for name in active_names if name.lower().endswith(".dds")]
+    tld_names = [
+        name
+        for name in active_names
+        if name.lower().endswith((".tld", ".mip0"))
+    ]
     paired_dds = set()
     texture_errors = 0
     texture_warnings = 0
@@ -357,6 +375,20 @@ def validate_archive_snapshot(
         logical = os.path.splitext(os.path.basename(txtr_name))[0].lower()
         matches = [name for name in dds_names if os.path.basename(name).lower().startswith(logical + ".") or os.path.basename(name).lower() == logical + ".dds"]
         if not matches:
+            packed_matches = [
+                name
+                for name in tld_names
+                if os.path.basename(name).lower().startswith(logical + ".")
+            ]
+            if packed_matches:
+                results.append(
+                    ValidationResult(
+                        "PASS",
+                        "Native packed texture",
+                        f"{os.path.basename(txtr_name)} has {len(packed_matches)} local TLD resource(s).",
+                    )
+                )
+                continue
             if allow_shared_textures or logical in shared_texture_names:
                 results.append(
                     ValidationResult(
@@ -5334,6 +5366,7 @@ class CharacterModTool(tk.Tk):
         self,
         stock_path,
         donor_path,
+        materials_path,
         target_path,
         output_path,
         work_dir,
@@ -5346,6 +5379,8 @@ class CharacterModTool(tk.Tk):
             raise ValueError("The bundled headband surface-fit script is missing.")
         if not os.path.isfile(donor_path):
             raise ValueError("The selected bundled headband donor head is missing.")
+        if not os.path.isfile(materials_path) or not zipfile.is_zipfile(materials_path):
+            raise ValueError("The selected bundled headband material package is missing.")
 
         staged_stock = os.path.join(work_dir, "_stock_headband_input.iff")
         staged_donor = os.path.join(work_dir, "_stock_headband_donor.iff")
@@ -5392,6 +5427,47 @@ class CharacterModTool(tk.Tk):
             )
         if "Headband surface mapping:" not in blender_output:
             raise ValueError("Blender finished without confirming the headband surface mapping.")
+        self.embed_headband_materials(output_path, materials_path)
+
+    @classmethod
+    def embed_headband_materials(cls, output_path, materials_path):
+        temp_path = f"{output_path}.materials_tmp"
+        try:
+            with (
+                zipfile.ZipFile(output_path, "r") as source,
+                zipfile.ZipFile(materials_path, "r") as materials,
+                zipfile.ZipFile(temp_path, "w") as output,
+            ):
+                existing = set()
+                for info in source.infolist():
+                    data = b"" if info.is_dir() else source.read(info.filename)
+                    output.writestr(cls.copied_zip_info(info), data)
+                    existing.add(info.filename.lower())
+                material_names = []
+                for info in materials.infolist():
+                    if info.is_dir() or info.filename.lower() in existing:
+                        continue
+                    output.writestr(
+                        cls.copied_zip_info(info),
+                        materials.read(info.filename),
+                    )
+                    material_names.append(info.filename)
+                    existing.add(info.filename.lower())
+            os.replace(temp_path, output_path)
+            with zipfile.ZipFile(output_path, "r") as check:
+                check_names = {name.lower() for name in check.namelist()}
+                missing = [
+                    name
+                    for name in material_names
+                    if name.lower() not in check_names
+                ]
+                if missing or check.testzip() is not None:
+                    raise ValueError("The fitted headband material bundle failed verification.")
+        finally:
+            try:
+                os.remove(temp_path)
+            except OSError:
+                pass
 
     def add_headband_to_character(self):
         target_path = self.headband_add_target_var.get().strip()
@@ -5400,6 +5476,7 @@ class CharacterModTool(tk.Tk):
         style = AVAILABLE_BUILT_IN_HEADBANDS.get(style_name)
         stock_path = style["geometry"] if style else ""
         donor_path = style["donor"] if style else ""
+        materials_path = style["materials"] if style else ""
         asset_name = style["asset_name"] if style else ""
         if not target_path or not os.path.isfile(target_path) or not zipfile.is_zipfile(target_path):
             messagebox.showerror("Character Mod Tool", "Choose a readable target character IFF first.")
@@ -5414,6 +5491,12 @@ class CharacterModTool(tk.Tk):
             messagebox.showerror(
                 "Character Mod Tool",
                 "The bundled donor head required for headband fitting is missing.",
+            )
+            return
+        if not materials_path or not zipfile.is_zipfile(materials_path):
+            messagebox.showerror(
+                "Character Mod Tool",
+                "The bundled material package for the selected headband is missing.",
             )
             return
         if not selected_config:
@@ -5527,6 +5610,7 @@ class CharacterModTool(tk.Tk):
             self.fit_built_in_headband_to_character(
                 stock_path,
                 donor_path,
+                materials_path,
                 target_path,
                 staged_headband,
                 stage_dir,
@@ -10398,7 +10482,7 @@ def run_package_self_test():
                 f"Bundled headband surface-fit script is missing: {HEADBAND_SURFACE_FIT_SCRIPT}"
             )
         for label, style in BUILT_IN_HEADBANDS.items():
-            for field in ("geometry", "donor"):
+            for field in ("geometry", "donor", "materials"):
                 if not os.path.isfile(style[field]):
                     raise FileNotFoundError(
                         f"Bundled {label} {field} is missing: {style[field]}"
