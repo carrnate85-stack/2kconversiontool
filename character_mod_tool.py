@@ -106,7 +106,7 @@ BUILT_IN_HEADBANDS = {
             "type": "headband",
         },
     },
-    "Fury Headband (png4474)": {
+    "Fury Headband": {
         "geometry": BUILT_IN_FURY_HEADBAND,
         "donor": BUILT_IN_FURY_HEADBAND_DONOR,
         "asset_name": "headband_fury",
@@ -154,7 +154,7 @@ OLDER_BODY_FIT_SUFFIXES = (
     ".sx", ".sy", ".sz",
     ".r1", ".r2",
 )
-APP_VERSION = "1.0.135-beta"
+APP_VERSION = "1.0.136-beta"
 
 
 LOGGER = logging.getLogger("character_mod_tool")
