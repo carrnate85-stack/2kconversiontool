@@ -1,4 +1,4 @@
-CHARACTER MOD TOOL v1.0.129-beta
+CHARACTER MOD TOOL v1.0.130-beta
 
 Windows GUI for reading, editing, validating, and converting ZIP-style NBA 2K
 character IFF packages. This is a private-beta release. Always preserve original

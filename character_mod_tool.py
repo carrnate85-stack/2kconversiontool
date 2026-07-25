@@ -107,7 +107,7 @@ OLDER_BODY_FIT_SUFFIXES = (
     ".sx", ".sy", ".sz",
     ".r1", ".r2",
 )
-APP_VERSION = "1.0.129-beta"
+APP_VERSION = "1.0.130-beta"
 
 
 LOGGER = logging.getLogger("character_mod_tool")
@@ -728,6 +728,7 @@ class CharacterModTool(tk.Tk):
         self.everything_swap_source_package_main = ""
         self.everything_swap_target_path = ""
         self.everything_swap_final_output = ""
+        self.everything_swap_rename_name = ""
         self.everything_swap_stage_dir = ""
         self.everything_swap_include_appearance = False
         self.everything_swap_companion_plan = []
@@ -738,6 +739,8 @@ class CharacterModTool(tk.Tk):
             value="Browse for a custom target or select a clean NBA 2K26 player from the manifest."
         )
         self.everything_swap_hair_enabled_var = tk.BooleanVar(value=False)
+        self.everything_swap_rename_enabled_var = tk.BooleanVar(value=False)
+        self.everything_swap_rename_name_var = tk.StringVar()
         self.everything_swap_hair_source_var = tk.StringVar()
         self.everything_swap_hair_slot_var = tk.StringVar()
         self.everything_swap_hair_status_var = tk.StringVar(
@@ -905,8 +908,24 @@ class CharacterModTool(tk.Tk):
             text="Select from Manifest",
             command=self.open_manifest_target_picker,
         ).grid(row=1, column=3, padx=(6, 0), pady=3)
+        rename_swap_row = ttk.Frame(everything_swap_paths)
+        rename_swap_row.grid(row=2, column=0, columnspan=4, sticky=tk.W, pady=(5, 0))
+        ttk.Checkbutton(
+            rename_swap_row,
+            text="Rename Character Package",
+            variable=self.everything_swap_rename_enabled_var,
+            command=self.update_everything_swap_rename_state,
+        ).pack(side=tk.LEFT)
+        ttk.Label(rename_swap_row, text="New PNG ID").pack(side=tk.LEFT, padx=(14, 6))
+        self.everything_swap_rename_entry = ttk.Entry(
+            rename_swap_row,
+            textvariable=self.everything_swap_rename_name_var,
+            width=18,
+            state=tk.DISABLED,
+        )
+        self.everything_swap_rename_entry.pack(side=tk.LEFT)
         everything_swap_actions = ttk.Frame(everything_swap_paths)
-        everything_swap_actions.grid(row=2, column=0, columnspan=4, sticky=tk.W, pady=(8, 0))
+        everything_swap_actions.grid(row=3, column=0, columnspan=4, sticky=tk.W, pady=(8, 0))
         self.everything_swap_run_button = ttk.Button(
             everything_swap_actions,
             text="Run Full Swap",
@@ -929,36 +948,36 @@ class CharacterModTool(tk.Tk):
             everything_swap_paths,
             textvariable=self.everything_swap_target_info_var,
             wraplength=1040,
-        ).grid(row=3, column=0, columnspan=4, sticky=tk.W, pady=(8, 0))
+        ).grid(row=4, column=0, columnspan=4, sticky=tk.W, pady=(8, 0))
         ttk.Separator(everything_swap_paths, orient=tk.HORIZONTAL).grid(
-            row=4, column=0, columnspan=4, sticky=tk.EW, pady=(12, 8)
+            row=5, column=0, columnspan=4, sticky=tk.EW, pady=(12, 8)
         )
         ttk.Checkbutton(
             everything_swap_paths,
             text="Include Hair Swap",
             variable=self.everything_swap_hair_enabled_var,
             command=self.update_everything_swap_hair_status,
-        ).grid(row=5, column=0, columnspan=4, sticky=tk.W, pady=(0, 4))
+        ).grid(row=6, column=0, columnspan=4, sticky=tk.W, pady=(0, 4))
         ttk.Label(everything_swap_paths, text="Source Hair").grid(
-            row=6, column=0, sticky=tk.W, padx=(0, 8), pady=3
+            row=7, column=0, sticky=tk.W, padx=(0, 8), pady=3
         )
         ttk.Entry(
             everything_swap_paths,
             textvariable=self.everything_swap_hair_source_var,
             state="readonly",
-        ).grid(row=6, column=1, sticky=tk.EW, pady=3)
+        ).grid(row=7, column=1, sticky=tk.EW, pady=3)
         ttk.Button(
             everything_swap_paths,
             text="Browse",
             command=self.browse_everything_swap_hair_source,
-        ).grid(row=6, column=2, padx=(6, 0), pady=3)
+        ).grid(row=7, column=2, padx=(6, 0), pady=3)
         ttk.Button(
             everything_swap_paths,
             text="Detect",
             command=self.detect_everything_swap_hair,
-        ).grid(row=6, column=3, padx=(6, 0), pady=3)
+        ).grid(row=7, column=3, padx=(6, 0), pady=3)
         ttk.Label(everything_swap_paths, text="Target Hair Slot").grid(
-            row=7, column=0, sticky=tk.W, padx=(0, 8), pady=3
+            row=8, column=0, sticky=tk.W, padx=(0, 8), pady=3
         )
         self.everything_swap_hair_slot_combo = ttk.Combobox(
             everything_swap_paths,
@@ -966,7 +985,7 @@ class CharacterModTool(tk.Tk):
             state="readonly",
         )
         self.everything_swap_hair_slot_combo.grid(
-            row=7, column=1, columnspan=3, sticky=tk.EW, pady=3
+            row=8, column=1, columnspan=3, sticky=tk.EW, pady=3
         )
         self.everything_swap_hair_slot_combo.bind(
             "<<ComboboxSelected>>",
@@ -976,7 +995,7 @@ class CharacterModTool(tk.Tk):
             everything_swap_paths,
             textvariable=self.everything_swap_hair_status_var,
             wraplength=1040,
-        ).grid(row=8, column=0, columnspan=4, sticky=tk.W, pady=(5, 0))
+        ).grid(row=9, column=0, columnspan=4, sticky=tk.W, pady=(5, 0))
 
         appearance = ttk.Frame(self.notebook, padding=6)
         self.notebook.add(appearance, text="Appearance")
@@ -2792,6 +2811,12 @@ class CharacterModTool(tk.Tk):
                 f"Full Swap will convert {os.path.basename(source)} into target slot {target_key}."
             )
 
+    def update_everything_swap_rename_state(self):
+        enabled = self.everything_swap_rename_enabled_var.get()
+        self.everything_swap_rename_entry.configure(state=tk.NORMAL if enabled else tk.DISABLED)
+        if enabled:
+            self.everything_swap_rename_entry.focus_set()
+
     @staticmethod
     def manifest_asset_summary(values):
         if not values:
@@ -3116,7 +3141,13 @@ class CharacterModTool(tk.Tk):
                 outputs.append(destination)
         return outputs
 
-    def confirm_full_swap_output_plan(self, output_path, config_outputs, companion_plan):
+    def confirm_full_swap_output_plan(
+        self,
+        output_path,
+        config_outputs,
+        companion_plan,
+        rename_name="",
+    ):
         all_outputs = [output_path, *config_outputs, *(destination for _source, destination in companion_plan)]
         if self.everything_swap_hair_enabled_var.get():
             target_key = self.everything_swap_hair_slot_map.get(
@@ -3131,6 +3162,26 @@ class CharacterModTool(tk.Tk):
                         f"png{target_png}_geo_{target_key}.iff",
                     )
                 )
+        if rename_name:
+            old_number = self.character_number_from_path(output_path)
+            new_number = self.character_number_from_path(rename_name)
+            renamed_outputs = []
+            for path in all_outputs:
+                filename = os.path.basename(path)
+                filename = re.sub(
+                    rf"(?i)^png{re.escape(old_number)}",
+                    f"png{new_number}",
+                    filename,
+                    count=1,
+                )
+                filename = re.sub(
+                    rf"(?i)^face{re.escape(old_number)}",
+                    f"face{new_number}",
+                    filename,
+                    count=1,
+                )
+                renamed_outputs.append(os.path.join(os.path.dirname(path), filename))
+            all_outputs.extend(renamed_outputs)
         unique_outputs = []
         seen = set()
         for path in all_outputs:
@@ -3144,6 +3195,7 @@ class CharacterModTool(tk.Tk):
             f"Face configs: {len(config_outputs)}\n"
             f"Target companion IFFs: {len(companion_plan)}\n"
             f"Hair swap: {'Yes' if self.everything_swap_hair_enabled_var.get() else 'No'}\n"
+            f"Automatic package rename: {rename_name or 'No'}\n"
             f"Existing files to replace: {len(collisions)}"
         )
         if collisions:
@@ -3286,6 +3338,117 @@ class CharacterModTool(tk.Tk):
             raise
         return [source for source, _held in moved]
 
+    @classmethod
+    def rename_package_plan_for_sources(cls, source_main, source_paths, new_name, output_dir):
+        old_number = cls.character_number_from_path(source_main)
+        new_number = cls.character_number_from_path(new_name)
+        if not old_number or not new_number:
+            return []
+        player_pattern = re.compile(rf"(?i)^png{re.escape(old_number)}(.*)\.iff$")
+        face_pattern = re.compile(rf"(?i)^face{re.escape(old_number)}(.*)\.iff$")
+        plan = []
+        seen = set()
+        for source in source_paths:
+            source = os.path.abspath(source)
+            source_key = source.lower()
+            if source_key in seen or not os.path.isfile(source):
+                continue
+            seen.add(source_key)
+            filename = os.path.basename(source)
+            match = player_pattern.fullmatch(filename)
+            if match:
+                destination_name = f"png{new_number}{match.group(1)}.iff"
+            else:
+                match = face_pattern.fullmatch(filename)
+                if not match:
+                    continue
+                destination_name = f"face{new_number}{match.group(1)}.iff"
+            plan.append((source, os.path.join(output_dir, destination_name)))
+        return plan
+
+    def execute_character_package_rename(
+        self,
+        source_main,
+        new_name,
+        output_dir,
+        delete_original=True,
+        source_paths=None,
+    ):
+        old_number = self.character_number_from_path(source_main)
+        new_number = self.character_number_from_path(new_name)
+        if not source_main or not os.path.isfile(source_main) or not zipfile.is_zipfile(source_main):
+            raise ValueError("Choose a readable finished character IFF first.")
+        if not old_number or not new_number:
+            raise ValueError("Enter a PNG number such as 1335 or png1335.")
+        if old_number == new_number:
+            raise ValueError("The new PNG number must be different from the current number.")
+        if source_paths is None:
+            plan = self.rename_package_plan(source_main, new_name, output_dir)
+        else:
+            plan = self.rename_package_plan_for_sources(
+                source_main,
+                source_paths,
+                new_name,
+                output_dir,
+            )
+        if not plan:
+            raise ValueError("No matching character package files were found.")
+
+        stage_dir = tempfile.mkdtemp(prefix=".character_mod_rename_", dir=output_dir)
+        staged_outputs = []
+        total_warnings = 0
+        deleted_originals = []
+        deletion_error = ""
+        try:
+            for index, (source, destination) in enumerate(plan):
+                staged = os.path.join(stage_dir, f"{index:04d}_{os.path.basename(destination)}")
+                rewritten = self.stage_renamed_archive(source, staged, old_number, new_number)
+                if rewritten:
+                    results = self.validate_archive_file(staged)
+                    errors = [result for result in results if result.severity == "ERROR"]
+                    if errors:
+                        raise ValueError(
+                            f"{os.path.basename(source)} failed validation: "
+                            + "; ".join(f"{result.check}: {result.details}" for result in errors[:4])
+                        )
+                    total_warnings += sum(result.severity == "WARNING" for result in results)
+                elif self.archive_metadata_signature(source) != self.archive_metadata_signature(staged):
+                    raise ValueError(f"{os.path.basename(source)} did not pass archive-copy integrity checks.")
+                staged_outputs.append((staged, destination))
+            self.commit_staged_outputs(staged_outputs, work_dir=stage_dir)
+            if delete_original:
+                try:
+                    deleted_originals = self.stage_original_package_deletion(plan, stage_dir)
+                except Exception as exc:
+                    deletion_error = str(exc)
+                    LOGGER.exception("Renamed package succeeded, but original package deletion was rolled back")
+        finally:
+            self.schedule_directory_cleanup(stage_dir)
+
+        new_main = next(
+            (
+                destination
+                for _source, destination in plan
+                if os.path.basename(destination).lower() == f"{new_name}.iff".lower()
+            ),
+            "",
+        )
+        if not new_main:
+            raise ValueError("The renamed package did not produce its main player IFF.")
+        return {
+            "old_number": old_number,
+            "new_number": new_number,
+            "new_main": new_main,
+            "outputs": [destination for _source, destination in plan],
+            "path_map": {
+                os.path.abspath(source).lower(): destination
+                for source, destination in plan
+            },
+            "warnings": total_warnings,
+            "deleted_originals": deleted_originals,
+            "deletion_error": deletion_error,
+        }
+
     def rename_character_package(self):
         source_main = self.rename_package_source_var.get().strip()
         new_name = self.normalized_png_export_name(self.rename_package_new_name_var.get())
@@ -3326,50 +3489,24 @@ class CharacterModTool(tk.Tk):
             + f"\n\n{detail}\n\nContinue?",
         ):
             return
-        stage_dir = tempfile.mkdtemp(prefix=".character_mod_rename_", dir=output_dir)
-        staged_outputs = []
-        total_warnings = 0
-        deleted_originals = []
-        deletion_error = ""
         try:
-            for index, (source, destination) in enumerate(plan):
-                staged = os.path.join(stage_dir, f"{index:04d}_{os.path.basename(destination)}")
-                rewritten = self.stage_renamed_archive(source, staged, old_number, new_number)
-                if rewritten:
-                    results = self.validate_archive_file(staged)
-                    errors = [result for result in results if result.severity == "ERROR"]
-                    if errors:
-                        raise ValueError(
-                            f"{os.path.basename(source)} failed validation: "
-                            + "; ".join(f"{result.check}: {result.details}" for result in errors[:4])
-                        )
-                    total_warnings += sum(result.severity == "WARNING" for result in results)
-                elif self.archive_metadata_signature(source) != self.archive_metadata_signature(staged):
-                    raise ValueError(f"{os.path.basename(source)} did not pass archive-copy integrity checks.")
-                staged_outputs.append((staged, destination))
-            self.commit_staged_outputs(staged_outputs, work_dir=stage_dir)
-            if delete_original:
-                try:
-                    deleted_originals = self.stage_original_package_deletion(plan, stage_dir)
-                except Exception as exc:
-                    deletion_error = str(exc)
-                    LOGGER.exception("Renamed package succeeded, but original package deletion was rolled back")
+            report = self.execute_character_package_rename(
+                source_main,
+                new_name,
+                output_dir,
+                delete_original=delete_original,
+            )
         except Exception as exc:
             LOGGER.exception("Rename Character Package failed")
             messagebox.showerror("Character Mod Tool", f"Rename Character Package did not complete.\n\n{exc}")
             self.rename_package_status_var.set("Rename Character Package did not complete.")
             return
-        finally:
-            self.schedule_directory_cleanup(stage_dir)
+
         self.rename_package_new_name_var.set(new_name)
-        new_main = next(
-            (
-                destination
-                for _source, destination in plan
-                if os.path.basename(destination).lower() == f"{new_name}.iff".lower()
-            ),
-            "",
-        )
+        new_main = report["new_main"]
+        deleted_originals = report["deleted_originals"]
+        deletion_error = report["deletion_error"]
+        total_warnings = report["warnings"]
         if deleted_originals and new_main:
             self.rename_package_source_var.set(new_main)
         original_status = (
@@ -3764,6 +3901,7 @@ class CharacterModTool(tk.Tk):
                 return
 
         target_base = os.path.splitext(os.path.basename(target_path))[0]
+        rename_name = ""
         if combined:
             export_name = self.normalized_png_export_name(target_base)
             if not export_name:
@@ -3772,6 +3910,22 @@ class CharacterModTool(tk.Tk):
                     "The target character filename must be a PNG number such as png1335.iff.",
                 )
                 return
+            if self.everything_swap_rename_enabled_var.get():
+                rename_name = self.normalized_png_export_name(
+                    self.everything_swap_rename_name_var.get()
+                )
+                if not rename_name:
+                    messagebox.showerror(
+                        "Character Mod Tool",
+                        "Enter a new PNG ID such as 1335 or png1335, or turn off Rename Character Package.",
+                    )
+                    return
+                if self.character_number_from_path(rename_name) == self.character_number_from_path(export_name):
+                    messagebox.showerror(
+                        "Character Mod Tool",
+                        "The renamed PNG ID must be different from the target character number.",
+                    )
+                    return
             output_dir = app_settings.ensure_output_dir(self.settings.get("output_dir", ""))
             output_path = os.path.join(output_dir, export_name + ".iff") if output_dir else ""
         elif body_only:
@@ -3802,7 +3956,12 @@ class CharacterModTool(tk.Tk):
         if combined:
             config_outputs = self.planned_config_outputs(target_path, export_name, os.path.dirname(output_abs))
             companion_plan = self.full_swap_companion_plan(target_path, export_name, os.path.dirname(output_abs))
-            if not self.confirm_full_swap_output_plan(output_abs, config_outputs, companion_plan):
+            if not self.confirm_full_swap_output_plan(
+                output_abs,
+                config_outputs,
+                companion_plan,
+                rename_name=rename_name,
+            ):
                 return
 
         if combined:
@@ -3817,6 +3976,7 @@ class CharacterModTool(tk.Tk):
             self.everything_swap_source_path = source_path
             self.everything_swap_target_path = target_path
             self.everything_swap_final_output = output_abs
+            self.everything_swap_rename_name = rename_name
             self.everything_swap_stage_dir = stage_dir
             self.everything_swap_include_appearance = shrinkwrap_body
             self.everything_swap_companion_plan = companion_plan
@@ -4525,6 +4685,7 @@ class CharacterModTool(tk.Tk):
         self.everything_swap_source_path = ""
         self.everything_swap_target_path = ""
         self.everything_swap_final_output = ""
+        self.everything_swap_rename_name = ""
         self.everything_swap_stage_dir = ""
         self.everything_swap_include_appearance = False
         self.everything_swap_hair_source_path = ""
@@ -4643,6 +4804,55 @@ class CharacterModTool(tk.Tk):
                     )
                     return
                 final_output = self.everything_swap_final_output
+                rename_report = None
+                rename_name = self.everything_swap_rename_name
+                if rename_name:
+                    self.full_swap_progress_var.set(f"Renaming character package to {rename_name}...")
+                    self.full_swap_status_var.set(
+                        f"Full Swap is renaming the completed package to {rename_name}."
+                    )
+                    self.update_idletasks()
+                    original_outputs = [
+                        final_output,
+                        *config_paths,
+                        *companion_paths,
+                    ]
+                    try:
+                        rename_report = self.execute_character_package_rename(
+                            final_output,
+                            rename_name,
+                            os.path.dirname(final_output),
+                            delete_original=True,
+                            source_paths=original_outputs,
+                        )
+                    except Exception as exc:
+                        LOGGER.exception("Full Swap automatic package rename failed")
+                        self.reset_everything_swap_run()
+                        self.refresh_full_swap_status()
+                        self.refresh_body_swap_status()
+                        self.last_full_swap_output = final_output
+                        self.everything_swap_open_blender_button.configure(state=tk.NORMAL)
+                        self.refresh_recent_output_choices(select_path=final_output)
+                        self.full_swap_status_var.set(
+                            "Full Swap completed, but the automatic package rename did not."
+                        )
+                        messagebox.showerror(
+                            "Character Mod Tool",
+                            "Full Swap completed under the target PNG number, but the automatic "
+                            f"rename to {rename_name} did not complete.\n\n"
+                            f"Original output:\n{final_output}\n\n{exc}",
+                        )
+                        return
+                    path_map = rename_report["path_map"]
+                    final_output = rename_report["new_main"]
+                    config_paths = [
+                        path_map.get(os.path.abspath(path).lower(), path)
+                        for path in config_paths
+                    ]
+                    companion_paths = [
+                        path_map.get(os.path.abspath(path).lower(), path)
+                        for path in companion_paths
+                    ]
                 config_text = "\n".join(config_paths)
                 companion_text = "\n".join(companion_paths) if companion_paths else "No target companions were present."
                 tattoo_text = ", ".join(tattoo_actions) if tattoo_actions else "No chest/legs tattoo changes needed."
@@ -4666,6 +4876,15 @@ class CharacterModTool(tk.Tk):
                     f"{validation['errors']} errors, {validation['warnings']} warnings, "
                     f"{validation['passes']} passed checks."
                 )
+                rename_text = ""
+                if rename_report:
+                    rename_text = (
+                        f"\n\nPackage rename: png{rename_report['old_number']} -> "
+                        f"png{rename_report['new_number']} "
+                        f"({len(rename_report['outputs'])} files)."
+                    )
+                    if rename_report["deletion_error"]:
+                        rename_text += "\nThe original package could not be deleted and was kept."
                 self.reset_everything_swap_run()
                 self.refresh_full_swap_status()
                 self.refresh_body_swap_status()
@@ -4682,7 +4901,7 @@ class CharacterModTool(tk.Tk):
                     f"Companion IFFs:\n{companion_text}\n\n"
                     f"Appearance: {appearance_text}\n\n"
                     f"Tattoos: {tattoo_text}\n\n"
-                    f"Hair: {hair_text}\n\n{validation_text}",
+                    f"Hair: {hair_text}\n\n{validation_text}{rename_text}",
                 )
                 return
             if body_only:

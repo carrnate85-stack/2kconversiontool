@@ -2,7 +2,7 @@
 
 Last updated: 2026-07-24
 
-Current app version: `1.0.129-beta`
+Current app version: `1.0.130-beta`
 
 ## Scope
 
