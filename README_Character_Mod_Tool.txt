@@ -1,4 +1,4 @@
-CHARACTER MOD TOOL v1.0.128-beta
+CHARACTER MOD TOOL v1.0.129-beta
 
 Windows GUI for reading, editing, validating, and converting ZIP-style NBA 2K
 character IFF packages. This is a private-beta release. Always preserve original
@@ -74,6 +74,9 @@ FULL SWAP
   retries for temporary OneDrive locks. Abandoned staging folders are cleaned later.
 - Open Output in Blender is disabled until a Full Swap succeeds. It launches visible
   Blender and imports the completed player for inspection and small adjustments.
+- Follow-up workflow tabs provide a shared Recent Output selector. Choosing a
+  completed png####.iff opens it and synchronizes compatible target fields without
+  changing the active tab.
 
 HEAD SWAP
 
@@ -117,6 +120,7 @@ APPEARANCE
 
 HAIR
 
+- The Hair Converter is grouped above the Hair Picker for a source-to-output workflow.
 - Reads the game manifest and native hair/facial-hair catalog from the configured
   NBA 2K26 installation.
 - Install Selected preserves the target player's current png#### identity.

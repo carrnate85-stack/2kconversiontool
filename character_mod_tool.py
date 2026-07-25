@@ -107,7 +107,7 @@ OLDER_BODY_FIT_SUFFIXES = (
     ".sx", ".sy", ".sz",
     ".r1", ".r2",
 )
-APP_VERSION = "1.0.128-beta"
+APP_VERSION = "1.0.129-beta"
 
 
 LOGGER = logging.getLogger("character_mod_tool")
@@ -717,6 +717,9 @@ class CharacterModTool(tk.Tk):
         self.status_var = tk.StringVar(value="Open a character .iff file to begin.")
         self.everything_swap_source_var = tk.StringVar()
         self.everything_swap_target_var = tk.StringVar()
+        self.recent_output_var = tk.StringVar()
+        self.recent_output_path_map = {}
+        self.recent_output_combos = []
         self.everything_swap_shrinkwrap_var = tk.BooleanVar(value=True)
         self.everything_swap_active = False
         self.everything_swap_source_path = ""
@@ -1006,8 +1009,14 @@ class CharacterModTool(tk.Tk):
             text="Browse",
             command=self.browse_appearance_swap_target,
         ).grid(row=1, column=2, padx=(8, 0), pady=3)
+        ttk.Label(appearance_swap_paths, text="Recent Output").grid(
+            row=1, column=3, sticky=tk.W, padx=(12, 6), pady=3
+        )
+        self.create_recent_output_combo(appearance_swap_paths).grid(
+            row=1, column=4, sticky=tk.EW, pady=3
+        )
         appearance_swap_actions = ttk.Frame(appearance_swap_paths)
-        appearance_swap_actions.grid(row=2, column=0, columnspan=3, sticky=tk.W, pady=(3, 5))
+        appearance_swap_actions.grid(row=2, column=0, columnspan=5, sticky=tk.W, pady=(3, 5))
         ttk.Button(
             appearance_swap_actions,
             text="Swap Appearance + Body Fit",
@@ -1059,8 +1068,14 @@ class CharacterModTool(tk.Tk):
             text="Open IFF",
             command=self.browse_advanced_dynamic_body_iff,
         ).grid(row=0, column=2, padx=(6, 0), pady=3)
+        ttk.Label(advanced_paths, text="Recent Output").grid(
+            row=0, column=3, sticky=tk.W, padx=(12, 6), pady=3
+        )
+        self.create_recent_output_combo(advanced_paths).grid(
+            row=0, column=4, sticky=tk.EW, pady=3
+        )
         advanced_actions = ttk.Frame(advanced_paths)
-        advanced_actions.grid(row=1, column=0, columnspan=3, sticky=tk.W, pady=(8, 0))
+        advanced_actions.grid(row=1, column=0, columnspan=5, sticky=tk.W, pady=(8, 0))
         self.advanced_dynamic_body_apply_button = ttk.Button(
             advanced_actions,
             text="Apply Dynamic Body",
@@ -1094,6 +1109,8 @@ class CharacterModTool(tk.Tk):
         validator_buttons.pack(fill=tk.X, pady=(0, 6))
         ttk.Button(validator_buttons, text="Run Validation", command=self.run_validator).pack(side=tk.LEFT)
         ttk.Button(validator_buttons, text="Save Report", command=self.save_validation_report).pack(side=tk.LEFT, padx=(6, 0))
+        ttk.Label(validator_buttons, text="Recent Output").pack(side=tk.LEFT, padx=(14, 6))
+        self.create_recent_output_combo(validator_buttons, width=30).pack(side=tk.LEFT)
         ttk.Label(validator_buttons, textvariable=self.validator_status_var).pack(side=tk.LEFT, padx=(12, 0))
         validator_frame = ttk.Frame(validator)
         validator_frame.pack(fill=tk.BOTH, expand=True)
@@ -1130,6 +1147,12 @@ class CharacterModTool(tk.Tk):
         ttk.Button(rename_paths, text="Browse", command=self.browse_rename_package_source).grid(
             row=0, column=2, padx=(6, 0), pady=3
         )
+        ttk.Label(rename_paths, text="Recent Output").grid(
+            row=0, column=3, sticky=tk.W, padx=(12, 6), pady=3
+        )
+        self.create_recent_output_combo(rename_paths).grid(
+            row=0, column=4, sticky=tk.EW, pady=3
+        )
         ttk.Label(rename_paths, text="New PNG Number").grid(row=1, column=0, sticky=tk.W, padx=(0, 8), pady=3)
         ttk.Entry(rename_paths, textvariable=self.rename_package_new_name_var).grid(
             row=1, column=1, sticky=tk.EW, pady=3
@@ -1165,8 +1188,14 @@ class CharacterModTool(tk.Tk):
         ttk.Button(tattoo_paths, text="Browse", command=self.browse_tattoo_target).grid(
             row=1, column=2, padx=(8, 0), pady=3
         )
+        ttk.Label(tattoo_paths, text="Recent Output").grid(
+            row=1, column=3, sticky=tk.W, padx=(12, 6), pady=3
+        )
+        self.create_recent_output_combo(tattoo_paths).grid(
+            row=1, column=4, sticky=tk.EW, pady=3
+        )
         tattoo_swap_actions = ttk.Frame(tattoo_paths)
-        tattoo_swap_actions.grid(row=2, column=0, columnspan=3, sticky=tk.W, pady=(3, 5))
+        tattoo_swap_actions.grid(row=2, column=0, columnspan=5, sticky=tk.W, pady=(3, 5))
         ttk.Button(
             tattoo_swap_actions,
             text="Swap Tattoos",
@@ -1223,13 +1252,19 @@ class CharacterModTool(tk.Tk):
         ttk.Button(face_swap_paths, text="Browse", command=self.browse_face_swap_target).grid(
             row=1, column=2, padx=(8, 0), pady=3
         )
+        ttk.Label(face_swap_paths, text="Recent Output").grid(
+            row=1, column=3, sticky=tk.W, padx=(12, 6), pady=3
+        )
+        self.create_recent_output_combo(face_swap_paths).grid(
+            row=1, column=4, sticky=tk.EW, pady=3
+        )
         ttk.Label(face_swap_paths, text="Target Config").grid(row=2, column=0, sticky=tk.W, padx=(0, 8), pady=3)
         self.face_swap_target_config_combo = ttk.Combobox(
             face_swap_paths, textvariable=self.face_swap_target_config_var, state="readonly"
         )
         self.face_swap_target_config_combo.grid(row=2, column=1, sticky="ew", pady=3)
         face_config_actions = ttk.Frame(face_swap_paths)
-        face_config_actions.grid(row=3, column=0, columnspan=3, sticky=tk.W, pady=(3, 5))
+        face_config_actions.grid(row=3, column=0, columnspan=5, sticky=tk.W, pady=(3, 5))
         ttk.Button(
             face_config_actions,
             text="Swap Face Textures",
@@ -1268,7 +1303,32 @@ class CharacterModTool(tk.Tk):
 
         hair = ttk.Frame(self.notebook, padding=8)
         self.notebook.add(hair, text="Hair")
-        hair_controls = ttk.Frame(hair)
+
+        hair_converter = ttk.LabelFrame(hair, text="Hair Converter", padding=8)
+        hair_converter.pack(fill=tk.X, pady=(0, 8))
+        hair_target = ttk.Frame(hair_converter)
+        hair_target.pack(fill=tk.X)
+        ttk.Label(hair_target, text="Recent Output").pack(side=tk.LEFT)
+        self.create_recent_output_combo(hair_target, width=30).pack(
+            side=tk.LEFT, padx=(8, 18)
+        )
+        ttk.Label(hair_target, text="Target Appearance Slot").pack(side=tk.LEFT)
+        self.hair_slot_combo = ttk.Combobox(
+            hair_target,
+            textvariable=self.hair_slot_var,
+            state="readonly",
+            width=44,
+        )
+        self.hair_slot_combo.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=(8, 8))
+        ttk.Button(
+            hair_target,
+            text="Convert 2K23 / 2K25 IFF",
+            command=self.convert_external_hair,
+        ).pack(side=tk.RIGHT)
+
+        hair_picker = ttk.LabelFrame(hair, text="Hair Picker", padding=8)
+        hair_picker.pack(fill=tk.BOTH, expand=True)
+        hair_controls = ttk.Frame(hair_picker)
         hair_controls.pack(fill=tk.X, pady=(0, 6))
         ttk.Radiobutton(
             hair_controls,
@@ -1290,18 +1350,7 @@ class CharacterModTool(tk.Tk):
         hair_search.bind("<KeyRelease>", lambda _event: self.filter_hair_catalog())
         ttk.Button(hair_controls, text="Refresh", command=self.refresh_hair_catalog).pack(side=tk.LEFT)
 
-        hair_target = ttk.Frame(hair)
-        hair_target.pack(fill=tk.X, pady=(0, 6))
-        ttk.Label(hair_target, text="Target Appearance Slot").pack(side=tk.LEFT)
-        self.hair_slot_combo = ttk.Combobox(
-            hair_target,
-            textvariable=self.hair_slot_var,
-            state="readonly",
-            width=56,
-        )
-        self.hair_slot_combo.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=(8, 0))
-
-        hair_actions = ttk.Frame(hair)
+        hair_actions = ttk.Frame(hair_picker)
         hair_actions.pack(fill=tk.X, pady=(0, 8))
         ttk.Checkbutton(
             hair_actions,
@@ -1317,13 +1366,8 @@ class CharacterModTool(tk.Tk):
         ttk.Button(hair_actions, text="Install Selected", command=self.install_selected_hair).pack(
             side=tk.RIGHT
         )
-        ttk.Button(
-            hair_actions,
-            text="Convert 2K23 / 2K25 IFF",
-            command=self.convert_external_hair,
-        ).pack(side=tk.RIGHT, padx=(0, 8))
 
-        hair_list_frame = ttk.Frame(hair)
+        hair_list_frame = ttk.Frame(hair_picker)
         hair_list_frame.pack(fill=tk.BOTH, expand=True)
         self.hair_tree = ttk.Treeview(
             hair_list_frame,
@@ -1375,6 +1419,12 @@ class CharacterModTool(tk.Tk):
         )
         ttk.Button(swap_paths, text="Use Open IFF", command=self.use_open_iff_as_swap_target).grid(
             row=1, column=3, padx=(6, 0), pady=3
+        )
+        ttk.Label(swap_paths, text="Recent Output").grid(
+            row=1, column=4, sticky=tk.W, padx=(12, 6), pady=3
+        )
+        self.create_recent_output_combo(swap_paths).grid(
+            row=1, column=5, sticky=tk.EW, pady=3
         )
 
         ttk.Label(swap_paths, text="Blender").grid(row=2, column=0, sticky=tk.W, padx=(0, 8), pady=3)
@@ -1491,6 +1541,12 @@ class CharacterModTool(tk.Tk):
             text="Use Open IFF",
             command=self.use_open_iff_as_body_swap_target,
         ).grid(row=1, column=3, padx=(6, 0), pady=3)
+        ttk.Label(body_swap_paths, text="Recent Output").grid(
+            row=1, column=4, sticky=tk.W, padx=(12, 6), pady=3
+        )
+        self.create_recent_output_combo(body_swap_paths).grid(
+            row=1, column=5, sticky=tk.EW, pady=3
+        )
 
         body_swap_buttons = ttk.Frame(body_swap)
         body_swap_buttons.pack(fill=tk.X, pady=(8, 6))
@@ -1570,6 +1626,12 @@ class CharacterModTool(tk.Tk):
         )
         ttk.Button(headband_paths, text="Browse", command=self.browse_headband_target).grid(
             row=1, column=2, padx=(6, 0), pady=3
+        )
+        ttk.Label(headband_paths, text="Recent Output").grid(
+            row=1, column=3, sticky=tk.W, padx=(12, 6), pady=3
+        )
+        self.create_recent_output_combo(headband_paths).grid(
+            row=1, column=4, sticky=tk.EW, pady=3
         )
 
         ttk.Label(headband_paths, text="Blender").grid(row=2, column=0, sticky=tk.W, padx=(0, 8), pady=3)
@@ -1667,6 +1729,12 @@ class CharacterModTool(tk.Tk):
         )
         ttk.Button(accessory_paths, text="Browse", command=self.browse_accessory_target).grid(
             row=1, column=3, padx=(6, 0), pady=3
+        )
+        ttk.Label(accessory_paths, text="Recent Output").grid(
+            row=1, column=4, sticky=tk.W, padx=(12, 6), pady=3
+        )
+        self.create_recent_output_combo(accessory_paths).grid(
+            row=1, column=5, sticky=tk.EW, pady=3
         )
 
         accessory_buttons = ttk.Frame(accessories)
@@ -1907,6 +1975,7 @@ class CharacterModTool(tk.Tk):
         bottom.pack(fill=tk.X)
         ttk.Label(bottom, text="Tip: save to a new .iff first, then test that copy in the game.").pack(anchor=tk.W)
         self.after(500, self.cleanup_stale_output_staging)
+        self.after(150, self.refresh_recent_output_choices)
 
     def _add_text_tab(self, title):
         frame = ttk.Frame(self.notebook, padding=6)
@@ -1948,6 +2017,7 @@ class CharacterModTool(tk.Tk):
         self.configure_hair_backend()
         self.refresh_full_swap_status()
         self.refresh_headband_status()
+        self.refresh_recent_output_choices()
         if self.settings.get("game_root") and os.path.isfile(self.settings.get("blender_exe", "")):
             self.after(50, self.refresh_hair_catalog)
 
@@ -2300,6 +2370,124 @@ class CharacterModTool(tk.Tk):
             self.everything_swap_source_var.set(path)
             self.everything_swap_hair_source_var.set("")
             self.refresh_everything_swap_hair_options(auto_detect_source=True)
+
+    def create_recent_output_combo(self, parent, width=32):
+        combo = ttk.Combobox(
+            parent,
+            textvariable=self.recent_output_var,
+            state="readonly",
+            width=width,
+        )
+        combo.bind("<<ComboboxSelected>>", self.load_selected_recent_output)
+        combo.bind(
+            "<Button-1>",
+            lambda _event: self.refresh_recent_output_choices(),
+            add="+",
+        )
+        self.recent_output_combos.append(combo)
+        return combo
+
+    def recent_output_candidates(self):
+        output_dir = os.path.abspath(
+            app_settings.ensure_output_dir(self.settings.get("output_dir", ""))
+        )
+        if not os.path.isdir(output_dir):
+            return []
+        candidates = []
+        for root, directories, filenames in os.walk(output_dir):
+            directories[:] = [
+                name
+                for name in directories
+                if not name.startswith((".character_mod_", "texture_exports"))
+            ]
+            for filename in filenames:
+                if not re.fullmatch(r"(?i)png\d+\.iff", filename):
+                    continue
+                path = os.path.join(root, filename)
+                try:
+                    modified = os.path.getmtime(path)
+                except OSError:
+                    continue
+                candidates.append((modified, os.path.abspath(path)))
+        candidates.sort(key=lambda item: (-item[0], item[1].lower()))
+        return candidates[:40]
+
+    def refresh_recent_output_choices(self, select_path=""):
+        previous_path = self.recent_output_path_map.get(
+            self.recent_output_var.get(),
+            "",
+        )
+        output_dir = os.path.abspath(
+            app_settings.ensure_output_dir(self.settings.get("output_dir", ""))
+        )
+        path_map = {}
+        for modified, path in self.recent_output_candidates():
+            try:
+                relative_parent = os.path.relpath(os.path.dirname(path), output_dir)
+            except ValueError:
+                relative_parent = ""
+            timestamp = datetime.fromtimestamp(modified).strftime("%m/%d %I:%M %p")
+            location = "" if relative_parent in ("", ".") else f" | {relative_parent}"
+            label = f"{os.path.basename(path)} | {timestamp}{location}"
+            if label in path_map:
+                label = f"{label} | {len(path_map) + 1}"
+            path_map[label] = path
+
+        self.recent_output_path_map = path_map
+        values = tuple(path_map)
+        for combo in self.recent_output_combos:
+            combo.configure(values=values)
+
+        wanted = os.path.abspath(select_path) if select_path else previous_path
+        selected_label = next(
+            (
+                label
+                for label, path in path_map.items()
+                if wanted and os.path.normcase(path) == os.path.normcase(wanted)
+            ),
+            "",
+        )
+        if not selected_label and values:
+            selected_label = values[0]
+        self.recent_output_var.set(selected_label)
+
+    def load_selected_recent_output(self, _event=None):
+        path = self.recent_output_path_map.get(self.recent_output_var.get(), "")
+        if not path or not os.path.isfile(path):
+            self.refresh_recent_output_choices()
+            path = self.recent_output_path_map.get(self.recent_output_var.get(), "")
+        if not path:
+            messagebox.showinfo(
+                "Character Mod Tool",
+                "No completed png####.iff files were found in the output folder.",
+            )
+            return
+
+        self.load_iff(path)
+        if os.path.normcase(os.path.abspath(self.file_path or "")) != os.path.normcase(path):
+            return
+        self.rename_package_source_var.set(path)
+        self.rename_package_status_var.set(
+            f"Recent output loaded: {os.path.basename(path)}"
+        )
+        self.everything_swap_target_info_var.set(
+            f"Recent output loaded for follow-up work: {os.path.basename(path)}."
+        )
+
+        prefix = self.player_iff_prefix(path)
+        headband_path = ""
+        if prefix:
+            exact = os.path.join(os.path.dirname(path), f"{prefix}_geo_headband.iff")
+            matches = sorted(
+                glob.glob(os.path.join(os.path.dirname(path), f"{prefix}_geo_headband*.iff"))
+            )
+            headband_path = exact if os.path.isfile(exact) else (matches[0] if matches else "")
+        self.headband_target_var.set(headband_path)
+        self.refresh_headband_status()
+        self.refresh_recent_output_choices(select_path=path)
+        self.status_var.set(
+            f"Loaded recent output {os.path.basename(path)} for follow-up adjustments."
+        )
 
     @staticmethod
     def source_package_member_basename(member_name):
@@ -4483,6 +4671,7 @@ class CharacterModTool(tk.Tk):
                 self.refresh_body_swap_status()
                 self.last_full_swap_output = final_output
                 self.everything_swap_open_blender_button.configure(state=tk.NORMAL)
+                self.refresh_recent_output_choices(select_path=final_output)
                 self.full_swap_status_var.set(f"Full Swap completed. Validation: {verdict}.")
                 messagebox.showinfo(
                     "Character Mod Tool",
