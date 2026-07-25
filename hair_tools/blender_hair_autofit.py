@@ -1,6 +1,7 @@
 import io
 import json
 import math
+import re
 import shutil
 import struct
 import sys
@@ -84,6 +85,51 @@ def position_buffer_details(archive):
     return scne_name, member, stride, byte_offset, size // stride
 
 
+def headband_weight_buffer_details(archive):
+    scne_name = next((name for name in archive.namelist() if name.lower().endswith(".scne")), None)
+    if not scne_name:
+        raise RuntimeError("The headband IFF has no SCNE file.")
+    model, scne_text = scne_model(archive.read(scne_name))
+    weight = model.get("VertexFormat", {}).get("WEIGHTDATA0", {})
+    if weight.get("Format") != "R32_UINT":
+        raise RuntimeError(f"Headband binding does not support weight format {weight.get('Format')}.")
+    stream_index = int(weight.get("Stream", 0))
+    streams = vertex_streams(model, scne_text)
+    if stream_index >= len(streams):
+        raise RuntimeError("The headband weight stream is missing.")
+    stream = streams[stream_index]
+    stride = int(stream.get("Stride", 0))
+    byte_offset = int(weight.get("ByteOffset", 0))
+    size = int(stream.get("Size", 0))
+    if stride < byte_offset + 4 or size <= 0 or size % stride:
+        raise RuntimeError("The headband weight stream layout is invalid.")
+    binary = str(stream.get("Binary", ""))
+    candidates = {binary.lower()}
+    if binary.lower().endswith(".gz"):
+        candidates.add((binary[:-3] + ".bin").lower())
+    member = next((name for name in archive.namelist() if name.lower() in candidates), None)
+    if not member:
+        raise RuntimeError(f"The headband weight buffer {binary} is missing.")
+    return scne_name, member, stride, byte_offset, size // stride
+
+
+def bind_headband_scne_to_head(scne_data):
+    text = scne_data.decode("utf-8-sig")
+    model_pattern = re.compile(
+        r'("BlendIndexRange"\s*:\s*\[\s*)0(\s*,\s*)(?:47|48)(\s*\])',
+        re.S,
+    )
+    primitive_pattern = re.compile(
+        r'("BlendIndexRange"\s*:\s*\[\s*)(?:47|48)(\s*,\s*)(?:47|48)(\s*\])',
+        re.S,
+    )
+    text, model_count = model_pattern.subn(r"\g<1>0\g<2>48\g<3>", text, count=1)
+    text, primitive_count = primitive_pattern.subn(r"\g<1>48\g<2>48\g<3>", text, count=1)
+    if model_count != 1 or primitive_count != 1:
+        raise RuntimeError("The headband SCNE bone ranges could not be rebound safely.")
+    return text.encode("utf-8")
+
+
 def selected_fitted_mesh():
     selected = [
         obj
@@ -120,6 +166,26 @@ def write_safe_fitted_iff(filepath):
                 *blender_to_game(point),
             )
 
+        weight_member = ""
+        weight_data = None
+        scne_data = source.read(scne_name)
+        if ACTIVE_FIT_MODE == "headband":
+            (
+                weight_scne,
+                weight_member,
+                weight_stride,
+                weight_offset,
+                weight_vertices,
+            ) = headband_weight_buffer_details(source)
+            if weight_scne != scne_name or weight_vertices != expected_vertices:
+                raise RuntimeError("The headband position and weight streams do not match.")
+            weight_data = bytearray(source.read(weight_member))
+            if len(weight_data) < weight_vertices * weight_stride:
+                raise RuntimeError("The headband weight buffer is truncated.")
+            for index in range(weight_vertices):
+                struct.pack_into("<I", weight_data, index * weight_stride + weight_offset, 48 << 8)
+            scne_data = bind_headband_scne_to_head(scne_data)
+
         output_path = Path(filepath)
         output_path.parent.mkdir(parents=True, exist_ok=True)
         if output_path.exists():
@@ -132,7 +198,14 @@ def write_safe_fitted_iff(filepath):
         try:
             with zipfile.ZipFile(temp_path, "w", compression=zipfile.ZIP_DEFLATED) as output:
                 for info in source.infolist():
-                    data = bytes(position_data) if info.filename == position_member else source.read(info.filename)
+                    if info.filename == position_member:
+                        data = bytes(position_data)
+                    elif weight_data is not None and info.filename == weight_member:
+                        data = bytes(weight_data)
+                    elif info.filename == scne_name:
+                        data = scne_data
+                    else:
+                        data = source.read(info.filename)
                     name = f"{SAFE_TARGET_KEY}.SCNE" if info.filename == scne_name else info.filename
                     replacement = zipfile.ZipInfo(name, info.date_time)
                     replacement.compress_type = zipfile.ZIP_DEFLATED
@@ -146,6 +219,33 @@ def write_safe_fitted_iff(filepath):
                 check_scne, _buffer, _stride, _offset, check_vertices = position_buffer_details(check)
                 if Path(check_scne).stem.lower() != SAFE_TARGET_KEY.lower() or check_vertices != expected_vertices:
                     raise RuntimeError("Safe export verification failed.")
+                if ACTIVE_FIT_MODE == "headband":
+                    (
+                        _weight_scne,
+                        check_weight_member,
+                        check_weight_stride,
+                        check_weight_offset,
+                        check_weight_vertices,
+                    ) = headband_weight_buffer_details(check)
+                    check_weight_data = check.read(check_weight_member)
+                    check_weights = {
+                        struct.unpack_from(
+                            "<I",
+                            check_weight_data,
+                            index * check_weight_stride + check_weight_offset,
+                        )[0]
+                        for index in range(check_weight_vertices)
+                    }
+                    check_scne_text = check.read(check_scne).decode("utf-8-sig")
+                    if (
+                        check_weight_vertices != expected_vertices
+                        or check_weights != {48 << 8}
+                        or not re.search(
+                            r'"BlendIndexRange"\s*:\s*\[\s*48\s*,\s*48\s*\]',
+                            check_scne_text,
+                        )
+                    ):
+                        raise RuntimeError("Headband head-bone binding verification failed.")
                 if check.testzip() is not None:
                     raise RuntimeError("Safe export ZIP verification failed.")
             temp_path.replace(output_path)
