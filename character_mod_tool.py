@@ -122,7 +122,7 @@ OLDER_BODY_FIT_SUFFIXES = (
     ".sx", ".sy", ".sz",
     ".r1", ".r2",
 )
-APP_VERSION = "1.0.132-beta"
+APP_VERSION = "1.0.133-beta"
 
 
 LOGGER = logging.getLogger("character_mod_tool")
@@ -780,6 +780,8 @@ class CharacterModTool(tk.Tk):
         self.headband_source_var = tk.StringVar()
         self.headband_target_var = tk.StringVar()
         self.headband_add_target_var = tk.StringVar()
+        self.headband_manifest_target_path = ""
+        self.headband_manifest_work_dir = ""
         self.headband_add_style_var = tk.StringVar(
             value=next(iter(AVAILABLE_BUILT_IN_HEADBANDS), "")
         )
@@ -1662,11 +1664,16 @@ class CharacterModTool(tk.Tk):
             text="Browse",
             command=self.browse_headband_add_target,
         ).grid(row=0, column=2, padx=(6, 0), pady=3)
+        ttk.Button(
+            headband_add,
+            text="Select from Manifest",
+            command=self.open_headband_manifest_target_picker,
+        ).grid(row=0, column=3, padx=(6, 0), pady=3)
         ttk.Label(headband_add, text="Recent Output").grid(
-            row=0, column=3, sticky=tk.W, padx=(12, 6), pady=3
+            row=0, column=4, sticky=tk.W, padx=(12, 6), pady=3
         )
         self.create_recent_output_combo(headband_add).grid(
-            row=0, column=4, sticky=tk.EW, pady=3
+            row=0, column=5, sticky=tk.EW, pady=3
         )
         ttk.Label(headband_add, text="Headband").grid(
             row=1, column=0, sticky=tk.W, padx=(0, 8), pady=3
@@ -1699,7 +1706,7 @@ class CharacterModTool(tk.Tk):
             headband_add,
             textvariable=self.headband_add_status_var,
             wraplength=1040,
-        ).grid(row=2, column=0, columnspan=5, sticky=tk.W, pady=(5, 0))
+        ).grid(row=2, column=0, columnspan=6, sticky=tk.W, pady=(5, 0))
 
         headband_paths = ttk.LabelFrame(
             headband_swap,
@@ -2958,7 +2965,7 @@ class CharacterModTool(tk.Tk):
         rows.sort(key=lambda row: (row["name"] == "Unknown Player", row["name"].lower(), int(row["png"])))
         return rows
 
-    def open_manifest_target_picker(self):
+    def open_manifest_target_picker(self, destination="full_swap"):
         try:
             rows = self.manifest_target_catalog()
         except Exception as exc:
@@ -2967,7 +2974,11 @@ class CharacterModTool(tk.Tk):
             return
 
         window = tk.Toplevel(self)
-        window.title("Select NBA 2K26 Target from Manifest")
+        window.title(
+            "Select Headband Target from NBA 2K26 Manifest"
+            if destination == "headband"
+            else "Select NBA 2K26 Target from Manifest"
+        )
         window.geometry("980x650")
         window.minsize(760, 470)
         window.transient(self)
@@ -3064,10 +3075,18 @@ class CharacterModTool(tk.Tk):
             row = row_by_iid.get(selection[0])
             if not row:
                 return
-            detail_var.set(f"Extracting clean png{row['png']} and its companion files...")
+            detail_var.set(
+                f"Extracting clean png{row['png']}..."
+                if destination == "headband"
+                else f"Extracting clean png{row['png']} and its companion files..."
+            )
             window.update_idletasks()
             try:
-                target_path, companion_count = self.extract_manifest_target(row)
+                if destination == "headband":
+                    target_path = self.extract_manifest_headband_target(row)
+                    companion_count = 0
+                else:
+                    target_path, companion_count = self.extract_manifest_target(row)
             except Exception as exc:
                 LOGGER.exception("Could not extract manifest target png%s", row["png"])
                 messagebox.showerror(
@@ -3077,15 +3096,23 @@ class CharacterModTool(tk.Tk):
                 )
                 update_details()
                 return
-            self.everything_swap_target_var.set(target_path)
-            self.everything_swap_target_info_var.set(
-                f"Manifest target: {row['name']} (png{row['png']}) | "
-                f"Hair: {'Yes' if row['hair'] else 'No'} | "
-                f"Facial Hair: {'Yes' if row['facialhair'] else 'No'} | "
-                f"Headband: {'Yes' if row['headband'] else 'No'} | "
-                f"{companion_count} companion IFF(s) staged"
-            )
-            self.refresh_everything_swap_hair_options(auto_detect_source=False)
+            if destination == "headband":
+                self.headband_add_target_var.set(target_path)
+                self.refresh_headband_add_configs()
+                self.headband_add_status_var.set(
+                    f"Manifest target: {row['name']} (png{row['png']}). "
+                    "Choose an existing appearance config, then add and fit the headband."
+                )
+            else:
+                self.everything_swap_target_var.set(target_path)
+                self.everything_swap_target_info_var.set(
+                    f"Manifest target: {row['name']} (png{row['png']}) | "
+                    f"Hair: {'Yes' if row['hair'] else 'No'} | "
+                    f"Facial Hair: {'Yes' if row['facialhair'] else 'No'} | "
+                    f"Headband: {'Yes' if row['headband'] else 'No'} | "
+                    f"{companion_count} companion IFF(s) staged"
+                )
+                self.refresh_everything_swap_hair_options(auto_detect_source=False)
             window.grab_release()
             window.destroy()
 
@@ -3100,6 +3127,35 @@ class CharacterModTool(tk.Tk):
         ttk.Button(button_row, text="Cancel", command=window.destroy).pack(side=tk.RIGHT, padx=(0, 6))
         refresh_rows()
         search_entry.focus_set()
+
+    def open_headband_manifest_target_picker(self):
+        self.open_manifest_target_picker(destination="headband")
+
+    def extract_manifest_headband_target(self, row):
+        backend = self.load_hair_backend()
+        png = row["png"]
+        work_dir = tempfile.mkdtemp(prefix=f"character_mod_headband_manifest_png{png}_")
+        try:
+            target_path = os.path.join(work_dir, f"png{png}.iff")
+            backend.extract_archive_iff_fallback(row["archive_entry"], backend.Path(target_path))
+            ready, _status, details = self.inspect_full_swap_iff(target_path)
+            if not ready:
+                raise ValueError(f"The extracted player is not headband-ready: {details}")
+            self.read_appearance_from_archive(target_path)
+        except Exception:
+            shutil.rmtree(work_dir, ignore_errors=True)
+            raise
+
+        self.clear_headband_manifest_target_cache()
+        self.headband_manifest_target_path = target_path
+        self.headband_manifest_work_dir = work_dir
+        return target_path
+
+    def clear_headband_manifest_target_cache(self):
+        work_dir = self.headband_manifest_work_dir
+        self.headband_manifest_target_path = ""
+        self.headband_manifest_work_dir = ""
+        self.schedule_directory_cleanup(work_dir)
 
     def extract_manifest_target(self, row):
         backend = self.load_hair_backend()
@@ -5108,6 +5164,7 @@ class CharacterModTool(tk.Tk):
             initialdir=os.path.dirname(current or self.file_path),
         )
         if path:
+            self.clear_headband_manifest_target_cache()
             self.headband_add_target_var.set(path)
             self.refresh_headband_add_configs()
 
@@ -7800,6 +7857,12 @@ class CharacterModTool(tk.Tk):
         self.tattoo_target_var.set(path)
         self.appearance_swap_target_var.set(path)
         self.face_swap_target_var.set(path)
+        if (
+            self.headband_manifest_target_path
+            and os.path.normcase(os.path.abspath(path))
+            != os.path.normcase(os.path.abspath(self.headband_manifest_target_path))
+        ):
+            self.clear_headband_manifest_target_cache()
         self.headband_add_target_var.set(path)
         self.refresh_headband_add_configs()
         self.advanced_dynamic_body_iff_var.set(path)
@@ -10248,6 +10311,7 @@ class CharacterModTool(tk.Tk):
         icon_handles = getattr(self, "_windows_icon_handles", ())
         self.clear_everything_swap_source_package()
         self.clear_manifest_target_cache()
+        self.clear_headband_manifest_target_cache()
         super().destroy()
         if sys.platform == "win32":
             for handle in icon_handles:
