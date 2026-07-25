@@ -1,4 +1,4 @@
-CHARACTER MOD TOOL v1.0.139-beta
+CHARACTER MOD TOOL v1.0.140-beta
 
 Windows GUI for reading, editing, validating, and converting ZIP-style NBA 2K
 character IFF packages. This is a private-beta release. Always preserve original
@@ -142,8 +142,8 @@ HEADBAND SWAP
   appearance configuration receives the headband call.
 - Writes the selected style's exact appearance item, SCNE name, and companion
   filename (`geo_headband` or `geo_headband_fury`).
-- Keeps the fitted companion geometry-only and packs the selected style's native
-  TXTR/TLD/MIP material resources into the main png character IFF.
+- Keeps the fitted companion geometry-only and leaves the main character archive
+  unchanged except for its selected appearance configuration.
 - Uses a stock bald-player Fury donor so hair clearance is not baked into the
   transferred headband shape.
 - Rebinds fitted headbands to `def_head` bone 48 so they remain attached during
