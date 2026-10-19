@@ -1,0 +1,40 @@
+:root { color-scheme: dark; font-family: 'Segoe UI', sans-serif; color: #eef2f8; background: #10151e; }
+* { box-sizing: border-box; }
+body { margin: 0; height: 100vh; display: flex; flex-direction: column; border: 1px solid #3a465a; border-radius: 10px; overflow: hidden; }
+header { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 18px; background: #17202c; -webkit-app-region: drag; }
+header small { color: #8fd9bb; font-size: 10px; letter-spacing: 1px; } h1 { font-size: 24px; margin: 3px 0 0; }
+button, select { -webkit-app-region: no-drag; font: inherit; color: inherit; border: 1px solid #40506a; border-radius: 7px; background: #202d3d; padding: 8px 11px; }
+button { cursor: pointer; font-weight: 600; } button:hover { background: #304159; } button:disabled, select:disabled { opacity: .45; cursor: default; }
+button:focus-visible, select:focus-visible { outline: 2px solid #73deb3; outline-offset: 2px; }
+main { padding: 10px 14px; overflow: hidden; flex: 1; min-height: 0; display: flex; flex-direction: column; }
+.blacktop-workspace { display: grid; grid-template-columns: 156px minmax(0, 1fr); gap: 12px; min-height: 0; flex: 1; }
+#blacktopPlayerPicker, #blacktopPlayers { min-height: 0; overflow-y: auto; scrollbar-width: thin; }
+#blacktopPlayerPicker { display: flex; flex-direction: column; gap: 5px; padding-right: 3px; }
+.blacktop-player-button { flex-shrink: 0; text-align: left; padding: 7px 9px; font-size: 12px; min-height: 49px; }
+.blacktop-player-button span { display: block; overflow-wrap: anywhere; }
+.blacktop-player-button small { display: block; color: #a3b2c8; font-size: 10px; margin-bottom: 2px; font-weight: 400; }
+.blacktop-player-button[aria-pressed="true"] { background: #214939; border-color: #73deb3; }
+.blacktop-outfit-row[hidden] { display: none; }
+.blacktop-empty { font-size: 13px; color: #b4c1d3; }
+.toolbar { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 12px; }
+.toolbar p { color: #b4c1d3; } #blacktopStatus { font-size: 12px; color: #b4c1d3; min-height: 16px; overflow-wrap: anywhere; margin: 8px 0 12px; flex-shrink: 0; max-height: 72px; overflow-y: auto; }
+.blacktop-outfit-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 9px; padding: 13px; background: #19222e; border: 1px solid #2c3b50; border-radius: 9px; margin-bottom: 10px; }
+.blacktop-outfit-row > div { grid-column: 1 / -1; } .blacktop-outfit-row small { display: block; margin-top: 3px; color: #91a1b7; font-size: 11px; }
+.blacktop-outfit-row select { min-width: 0; width: 100%; font-size: 12px; }
+.blacktop-outfit-row p { grid-column: 1 / -1; font-size: 12px; }
+.blacktop-piece { min-width: 0; }
+.blacktop-collection { grid-column: 1 / -1; }
+.blacktop-piece span { display: block; font-size: 11px; color: #91a1b7; margin-bottom: 4px; }
+.blacktop-outfit-actions { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; font-size: 12px; }
+.blacktop-player-heading { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 10px; }
+.blacktop-player-identity { flex: 1 1 140px; min-width: 0; overflow-wrap: anywhere; }
+.blacktop-player-heading .blacktop-outfit-actions { flex: 0 1 auto; gap: 6px; }
+.blacktop-player-heading .blacktop-outfit-actions button { padding: 6px 8px; font-size: 11px; white-space: nowrap; }
+.blacktop-player-heading .blacktop-auto-apply-note { flex-basis: 100%; margin: 0; }
+.blacktop-piece-hint { margin: 0; color: #e4c68d; }
+.primary { background: #246f55; border-color: #388c6e; } .primary:hover { background: #2f8667; }
+footer { padding: 10px 18px; border-top: 1px solid #2b374a; font-size: 11px; line-height: 1.8; color: #a3b2c8; }
+kbd { font: inherit; border: 1px solid #4b5c72; padding: 1px 4px; border-radius: 4px; margin-left: 4px; }
+.blacktop-busy::before { content: ''; display: inline-block; width: 12px; height: 12px; margin-right: 8px; border: 2px solid #ffffff33; border-top-color: #73deb3; border-radius: 50%; animation: spin .8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (max-width: 520px) { header { padding: 12px; } header button { font-size: 11px; } .blacktop-workspace { grid-template-columns: 125px minmax(0, 1fr); gap: 8px; } .blacktop-outfit-row { grid-template-columns: minmax(0, 1fr); padding: 10px; } }

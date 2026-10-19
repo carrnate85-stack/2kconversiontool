@@ -1,0 +1,102 @@
+arena_000_int|76ers
+arena_001_int|Bucks
+arena_002_int|Wizards
+arena_003_int|Bulls
+arena_004_int|Cavaliers
+arena_005_int|Celtics
+arena_006_int|Clippers
+arena_008_int|Grizzlies
+arena_009_int|Hawks
+arena_010_int|Heat
+arena_011_int|Pelicans
+arena_012_int|Jazz
+arena_013_int|Kings
+arena_014_int|Knicks
+arena_015_int|Lakers
+arena_016_int|Magic
+arena_017_int|Mavericks
+arena_018_int|Nets
+arena_019_int|Nuggets
+arena_020_int|Pacers
+arena_021_int|Pistons
+arena_022_int|Raptors
+arena_023_int|Rockets
+arena_024_int|Thunder
+arena_025_int|Spurs
+arena_026_int|Suns
+arena_027_int|Timberwolves
+arena_028_int|Trail Blazers
+arena_029_int|Warriors
+arena_031_int|Hornets
+arena_300_int|Las Vegas Aces
+arena_wnbageneric_int|Atlanta Dream|floor_301_int_floor
+arena_302_int|Indiana Fever / Pacers
+arena_303_int|New York Liberty / Nets
+arena_304_int|Minnesota Lynx / Timberwolves
+arena_305_int|Phoenix Mercury / Suns
+arena_306_int|Washington Mystics
+arena_307_int|Chicago Sky
+arena_308_int|Los Angeles Sparks / Lakers
+arena_309_int|Seattle Storm
+arena_wnbageneric_int|Connecticut Sun|floor_310_int_floor
+arena_wnbageneric_int|Dallas Wings|floor_311_int_floor
+arena_315_int|Golden State Valkyries / Chase Center
+arena_wnbageneric_int|Toronto Tempo|floor_316_int_floor
+arena_317_int|Portland Fire
+arena_551_int|1985-86 Bulls / Chicago Stadium
+arena_552_int|1985-86 Celtics / Boston Garden
+arena_553_int|1987-93 Bulls / Chicago Stadium
+arena_554_int|1986-87 Hawks / Omni Coliseum
+arena_555_int|1980-90 Cavaliers / Richfield Coliseum
+arena_556_int|1989-90 Pistons / Palace of Auburn Hills
+arena_557_int|1990-91 Lakers / Great Western Forum
+arena_558_int|1990-91 Trail Blazers / Memorial Coliseum
+arena_559_int|1995-98 Bulls / United Center
+arena_560_int|1994-95 Knicks
+arena_562_int|1995-96 SuperSonics / KeyArena
+arena_564_int|1997-98 Jazz / Delta Center
+arena_570_int|1964-65 Lakers / Los Angeles Memorial Sports Arena
+arena_571_int|1970-71 Bucks / Milwaukee Arena
+arena_574_int|1971-72 Knicks
+arena_576_int|1984-85 Bucks / MECCA Arena
+arena_578_int|Historic Lakers
+arena_583_int|1990-91 Warriors
+arena_586_int|1992-93 Hornets / Charlotte Coliseum
+arena_588_int|1993-94 Nuggets / McNichols Sports Arena
+arena_589_int|1993-94 Rockets / The Summit
+arena_590_int|1994-95 Magic / Orlando Arena
+arena_591_int|1997-98 Lakers / Great Western Forum
+arena_592_int|1997-98 Spurs / Alamodome
+arena_593_int|2001-02 Kings / ARCO Arena
+arena_594_int|1976-77 76ers / The Spectrum
+arena_595_int|2000-01 76ers / First Union Center
+arena_620_int|1999-00 Raptors / Air Canada Centre
+arena_621_int|1999-00 Trail Blazers / Rose Garden
+arena_622_int|2000-01 Lakers / Staples Center
+arena_623_int|2002-03 Mavericks / American Airlines Center
+arena_624_int|2003-04 Pistons / Palace of Auburn Hills
+arena_625_int|2003-04 Timberwolves / Target Center
+arena_626_int|2004-05 Suns / America West Arena
+arena_627_int|2005-06 Heat / American Airlines Arena
+arena_628_int|2006-07 Cavaliers / Quicken Loans Arena
+arena_629_int|2007-08 Celtics
+arena_630_int|2007-08 Rockets / Toyota Center
+arena_631_int|2012-13 Heat / American Airlines Arena
+arena_633_int|Historic Knicks
+arena_634_int|Historic Warriors / Oracle Arena
+arena_635_int|2001-02 Nets / Continental Airlines Arena
+arena_636_int|2004-05 Spurs / SBC Center
+arena_637_int|Historic Warriors / Oracle Arena
+arena_638_int|2006-07 Wizards / Verizon Center
+arena_639_int|2007-08 Nuggets / Pepsi Center
+arena_641_int|2010-11 Bulls / United Center
+arena_642_int|2010-11 Mavericks / American Airlines Center
+arena_644_int|2011-12 Knicks
+arena_646_int|Historic Trail Blazers / Rose Garden
+arena_647_int|2013-14 Spurs / AT&T Center
+arena_648_int|2013-14 Clippers / Staples Center
+arena_649_int|2015-16 Cavaliers / Quicken Loans Arena
+arena_era00s_int|2000s Era Arena
+arena_era80s_int|1980s Era Arena
+arena_era90s_int|1990s Era Arena
+arena_924_int|2018-19 Raptors / Scotiabank Arena

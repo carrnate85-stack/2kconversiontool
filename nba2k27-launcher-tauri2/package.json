@@ -1,0 +1,23 @@
+{
+  "name": "nba2k27-launcher-tauri2-ui",
+  "private": true,
+  "version": "0.53.1",
+  "type": "module",
+  "scripts": {
+    "build": "tsc --noEmit && vite build",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@tauri-apps/api": "^2",
+    "react": "^19",
+    "react-dom": "^19"
+  },
+  "devDependencies": {
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "prettier": "3.9.10",
+    "typescript": "^5",
+    "vite": "^7",
+    "vitest": "^3"
+  }
+}

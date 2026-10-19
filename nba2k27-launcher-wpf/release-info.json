@@ -1,0 +1,12 @@
+{
+  "version": "0.1.0-wpf.24",
+  "channel": "QA",
+  "notes": [
+    "Main promotion requires an exact-build release checklist for startup, shutdown, update/rollback, Blacktop re-entry and roster saving.",
+    "Game executable compatibility is checked per feature before supported game-edit requests; existing native checks and restoration remain intact.",
+    "Settings adds one diagnostics panel with helper states, compatibility details and a copyable redacted report.",
+    "Player DNA, Team DNA, ratings and season imports now show a consistent before/after review before staging or applying.",
+    "Startup, shutdown cleanup and overlay catalog timings are recorded locally with per-build regression comparisons; QA measurements stay separate.",
+    "WPF23 updates/rollback, build retention, release identity and scroll/focus improvements are retained."
+  ]
+}

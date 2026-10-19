@@ -1,0 +1,95 @@
+{
+  "schema": "nba2k27-v2-normal-ball-anchors-v1",
+  "sha256": "29A96471C55909FC2BCEA6C699C59238656A501C19B50C74ED64B0D842E576A1",
+  "registryRva": 179382400,
+  "holderRva": 179188712,
+  "rendererRva": 179356920,
+  "referencesRva": 181430504,
+  "recordOffset": 1002792,
+  "recordStride": 416,
+  "filenameOffset": 156,
+  "anchors": [
+    {
+      "label": "record-holder",
+      "rva": 34616837,
+      "hex": "488B35DCFD9D08"
+    },
+    {
+      "label": "record-offset-and-holder-data",
+      "rva": 34616980,
+      "hex": "B8284D0F00480346184883C4705EC5F877C3"
+    },
+    {
+      "label": "default-to-normal",
+      "rva": 35554676,
+      "hex": "85FF740881FFC5FE1BDC7508C7442448BE9156CB"
+    },
+    {
+      "label": "registry-model-search",
+      "rva": 35554696,
+      "hex": "8B15FAA29208488B0DEBA29208488D7C244848897C24204C8D0D4A1D000041B808000000E83FEDCF01"
+    },
+    {
+      "label": "registry-index-and-1A0-row",
+      "rva": 35554741,
+      "hex": "488B0DC4A2920889C08B44C1048944244C483DF40100000F83840000004869C8A00100004889F04801C84883C4785F5E"
+    },
+    {
+      "label": "filename-plus-9C",
+      "rva": 35562168,
+      "hex": "4881C79C000000"
+    },
+    {
+      "label": "native-ball-identity",
+      "rva": 39483952,
+      "hex": "488B05E9535B088B80A40D0000C3"
+    },
+    {
+      "label": "reference-index",
+      "rva": 50845790,
+      "hex": "488D358390C8078B548618"
+    },
+    {
+      "label": "reference-increment",
+      "rva": 50845827,
+      "hex": "FFC289548618"
+    },
+    {
+      "label": "reference-decrement",
+      "rva": 50847185,
+      "hex": "488D3D108BC8078B448F1889C2FFCA89548F18"
+    },
+    {
+      "label": "renderer-global",
+      "rva": 35549210,
+      "hex": "488D0DD7549208"
+    },
+    {
+      "label": "resource-array-plus-28",
+      "rva": 35549386,
+      "hex": "4889C7488D5E28E82AC5F1FF"
+    },
+    {
+      "label": "resource-stride-48",
+      "rva": 35549514,
+      "hex": "4863C1488D044048C1E00448634E08488D0C8948C1E1054801C3"
+    },
+    {
+      "label": "native-load-entry",
+      "rva": 50844768,
+      "hex": "5657534881EC10020000894C24608954246C85C90F84D40300004489C6E8DEB016FF"
+    },
+    {
+      "label": "native-release-entry",
+      "rva": 50846400,
+      "hex": "5657534881ECF0000000894C24548954246C85C90F84E70200004489C7E87EAA16FF"
+    },
+    {
+      "label": "native-render-call",
+      "rva": 68660297,
+      "hex": "418B8E4C0300004C894424284889442420C5E857D241B101E89AC306FE"
+    }
+  ],
+  "gameProcessAccess": false,
+  "gameFilesChanged": false
+}

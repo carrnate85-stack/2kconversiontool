@@ -1,0 +1,86 @@
+QA058 DEV CHECKPOINT — 2026-10-18
+Read NEXT-CHAT-HANDOFF-QA054.txt first for safety; QA055/056/057 retain history.
+Read artifacts/qa058-dev-progress-20261018.txt for exact current changes/tests.
+
+User: keep going WNBA until testable in DEV. No install/promotion. Read-only
+game access was authorized; no new agent-executed live writes or game launch.
+User explicitly allowed agents. Native source-test execution is separately
+gated by a user-run exact-session approval script with a confirmation dialog.
+No approval token, native game call, UI launch or Main install occurred.
+
+STAGED DEV
+Start QA058 Dev.vbs (same folder as this handoff). Checked, NOT activated.
+Dev/Pending/QA058/launcher.exe 52060672bytes
+SHA310C0D60C900C27D1E3B5BAC057DE04560688AA209C0C2B74EED066F512DE3C7
+Embedded DLL1029632bytes
+SHA4B03D0EAD15EB5CE562C434CD304017ADAD09DEFA96C1B4AAF30AA656830886F
+The starter refuses any current game/launcher and backs up DEV before copying.
+Current Dev/Portable/App still had the previous EXE at the final CheckOnly.
+Never overwrite an active EXE or install/promote Main without approval.
+
+LATEST USER FEEDBACK / CHANGES
+- Players take visible seconds to appear; raw selection Reader sample was
+  only13.464ms cold then~1ms. Guarded probe corrected read-handle rights, but
+  by retry the game was gone; no valid guarded timing sample yet.
+- Visible compact bar now polls results250ms and scans established lineups
+  or retries List read errors250ms; hidden settled cadence remains1s.
+- Authenticated modded-status reply overlays the fresh independent outfit
+  queue. Running session.status reads this directly, avoiding delayed main
+  provider diagnostic-file publication. Bounded owner-validated disk fallback
+  remains. All command/profile/write guards unchanged.
+- Initial automatic random is STREETWEAR ONLY, accessories empty, roster shoes
+  retained. Manual modes retained. Checkbox wording updated. Random player
+  toggles from latest React state: first click opens, second retracts.
+- Match clothes still arrive after stock walk-in; NOT fixed/claimed faster.
+  Existing native intent records now include TICK_MS for next live diagnosis.
+- F8 responsiveness improved per user; Ready/Waiting flips remain unresolved.
+  Overlay history now preserves bounded error reasons and mode/readiness data.
+- Checking game build latest24s (earlier30s); still open.
+
+WNBA CONCRETE IMPLEMENTATION, NOT FULL GAMEPLAY SUPPORT
+Read artifacts/qa058-wnba-native-source-diagnostic-20261018.txt.
+Native priority registration0x51F2230, recursive mutex0x4B99460/420, raw narrow
+C-string ABI and native ownership proven by bounded disk disassembly. The
+ordinary NBA TKU thunk requests roster/learn2k_roster.iff. Native prefix join
+inserts no slash; final host appends '/' to the exact validated portable root.
+Priority+48 empty check and registration occur under one native recursive
+mutex. Never replace foreign override. Native unregister doesn't drain raw
+entry pointers: DO NOT unregister or release pack/module during live game.
+Once an attempt occurs, conservative process-lifetime retention applies.
+
+New native/wnba_priority_v2_{core,profile,win,proxy_bridge}.hpp, existing bridge
+only adds const native_binding getter. version_proxy_v2.cpp starts a dormant
+10min metadata watcher after live.session_active. No Authority/profile hashing
+or game call until72-byte PID/birth/session token matches. After approval,
+fresh inactive Home/Quick Play and exact file/function/manager/ownership proofs
+gate one attempt. No category writes/code hooks. Feature Plan WNBA stays off.
+
+Private pack: artifacts/qa058-wnba-private-wad-wpf-era-20261018/0A+0B.
+0A120bytes SHA6630BEDCBF708145FDFB55A48DE467265F3DE29CD76081E9C24A1C8EFD7B84BD
+0B1762144bytes SHAD42B4E4DDFA03A83DF799A49A9BAEF1526A74393F4CFC44A5CE01AA2BF7CE7EE
+No roster crypto keys were read/copied/printed/shipped. Pack is prior encrypted
+candidate copied verbatim.53 appended players still absent from player index.
+
+USER TEST SEQUENCE
+Start QA058 DEV, ordinary Play, stay Home/Quick Play. Within10min user clicks
+Test QA058 WNBA Source.vbs and approves its explicit dialog. It pins staged/
+current EXEs, game/version.dll, lease and exact game/worker/parent identities;
+copies only fixed private pack into portable Data; creates exact-session token.
+No approval file currently exists. CheckOnly rejected current old DEV as intended.
+Native result: Dev/Portable/Logs/game-session/wnba-source-test-<PID>.log.
+REGISTERED means metadata registered only. User then enters NBA Learn2K /
+Freestyle picker and leaves it open for the already-authorized read-only probe:
+tools/wnba_priority_loaded_roster_probe.py --out artifacts/<fresh>.json
+ --priority-manager
+Use working bundled Python; inspect help/report for invocation. Never read keys.
+Expected403teams/30NBA/15WNBA. Prove loaded roster, return/reentry before category
+enablement. Actual source admission has NOT been run or verified.
+
+VALIDATION
+29frontend tests +tsc;91changed-module Rust tests (one additional ignored),
+final embedded-pin/status-owner tests2/2; C++ carry/native source default-deny
+and admission cases;10Python WAD/probe tests; DLL forwarding smoke; dev/test
+builds passed. Full-suite natural AV remains unresolved; do not broaden/repeat
+without a new reason or claim release qualification. Estimate stays80.2%.
+Backups qa058-selection-speed-20261018 / qa058-carry-timing-20261018 /
+qa058-wnba-priority-20261018 (see WNBA report for exact backup folder names).

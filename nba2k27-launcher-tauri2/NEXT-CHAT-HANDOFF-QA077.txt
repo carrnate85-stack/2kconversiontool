@@ -1,0 +1,144 @@
+QA077 FINAL CHECKPOINT - 2026-10-18
+Read this before QA077-WIP. Earlier documents retain detailed history.
+Canonical project C:\Users\carrn\CodexProjects\2kconversiontool\nba2k27-launcher-tauri2.
+
+USER / BOUNDARIES
+Dev only. No install, promotion, automatic activation, game launch/stop, desktop
+control or ad hoc live writes. Future gameplay entry is normal user toggles and
+Play. Preserve Data/Library, builds, backups and journals. Back up and fsync edits.
+Never expose/copy/ship a roster key or salt. No runtime key capture or guessing.
+User reports retained WPF had BOTH WNBA modes working perfectly: use its actual
+source and docs/wpf-reference/unlocks-wnba.md as the behavior target.
+
+LATEST USER-RUN DEV BUILD: QA077
+Start QA077 Dev.vbs / Start QA077 Dev.ps1
+Dev/Pending/QA077/launcher.exe, 53,074,432 bytes
+EXE 2117196A20F50A94850455E0CDE05AB0AB62905F2D5ADFD3182E3DD3D1ED0A85
+Native payload 1E3A0E67030D0D2421C75797659AC7E6F390115921228F14A18CC84D0B5E0EB1
+1,194,496 bytes. Candidate only; releaseEligible=false.
+artifacts/qa077-final-stage-20261018.json
+QA077 preserves detailed Host failure reasons; it is NOT a WNBA functional fix.
+User activated QA077 normally. Root did not activate it. Last verified game
+18972, born 21:32:56.4631562 UTC, session
+000000000000000018dfbd2acab5ff7c0000000000000005, both WNBA toggles ON.
+Current process state must be freshly checked before attributing more logs.
+
+LATEST LIVE RESULTS: WNBA MISSING IN BOTH MODES
+Blacktop: failure in initialize's checkpoint BEFORE initialization intent/code
+writes/category publication. First deep capture passed, second ending context
+changed. 403 teams, 30 NBA, 15 WNBA clubs. CTX224 = kind + game_mode + active.
+Repeated scope and context reads passed, positive stable departure did not.
+Do NOT normalize game mode or ignore active/kind. The earlier CTX64 proposal
+does not apply. Already-held session stays held; no log-driven repair/reopen.
+artifacts/qa077-exact-user-failure-20261018.json
+Backups/qa077-user-failure-evidence-20261018 retains exact private evidence.
+
+Freestyle: journal says publication interrupted and restored because selection
+changed during capture; cumulative eight-attempt limit exhausted. Specific
+changed ContextSnapshot field remains UNKNOWN. Applied receipts may describe
+restoration, not enabled categories. Journal snapshot SHA
+E7D943EB3C4B7F5F6BFCE1A5C2E563B131FE3E8583A37252BA9CEED932CE96E5.
+artifacts/qa077-freestyle-journal-evidence-20261018.json
+artifacts/qa077-freestyle-both-toggle-restored-hold-source-audit-20261018.json
+Offline journal refinement: seven four-word forward intents, four exact reverse
+prefix intents of 2,2,1,1 words, four Applied receipts for those reversals. Actual
+partial publication occurred: no-effect waiting parity alone is NOT proven
+sufficient. Eight typed failures versus seven forward intents is consistent with
+one pre-intent failure; this log does not identify every refused guard or changed
+snapshot field. artifacts/qa077-freestyle-partial-prefix-refinement-20261018.json.
+Static both-toggle audit found no proven token/source/offset conflict.
+
+WPF COMPARISON: CONCRETE DIVERGENCES
+artifacts/qa077-wpf-blacktop-waiting-comparison-20261018.md
+Blacktop WPF throws waiting on roster movement, catches it and continues its
+100ms worker; unchanged roster deep checks at most once/second. Dev permanently
+holds on the pre-initialize failure. Merely returning waiting is WRONG because
+if(!bridge_) encloses initialization: retained uninitialized RW needs explicit
+state, original allocation-intent witness, same generation, fresh proofs.
+
+artifacts/qa078-wpf-freestyle-entry-retry-field-comparison-20261018.md
+and companion JSON with source hashes. Freestyle dev maps zero-applied-word
+failure to the same restored type/budget as actual rollback. WPF pre-effect
+waiting continues after bind, whereas touched/protection/write failures restore
+then STOP. Raising the eight-attempt limit is not parity. applied==0 alone does
+NOT prove no protection attempt, uncertain write or durable pending intent;
+a production fix must track exact stage and attempted effects explicitly.
+WPF ending deep-snapshot guard rechecks mode pair/setup/root/owner/full header;
+Rust also compares selected/category/mask windows. WPF DOES compare those UI
+fields across transaction snapshots, so do not simply delete comparisons.
+Neither implementation has a separate timed stable-picker dwell.
+
+RESEARCH ONLY: NO QA078 PRODUCTION BUILD OR STARTER
+Production QA077 is frozen. artifacts/qa077-final-freeze-verification-20261018.json
+verified 422 source files plus six assets with zero mismatch at 21:42 UTC.
+Later changes are research reports and reference/handoff documentation only.
+
+artifacts/qa078-defer-prototype/: pure controller; strict C++ PASS; all1024
+context masks, 12attempt/10second bound, monotonic clock, one allocation,
+same generation, irreversible init-attempt and proof/fault/sticky-held tests.
+artifacts/qa078-host-witness-prototype/: strict C++ PASS15case groups, actual
+self-owned files/memory only; exact FileID/volume/bytes/ordinal/parentpin,
+8192zero privateRW doubleproof, mutation and attempt-boundary faults.
+Neither is wired into real NativeHost/coordinator. Full existing pinned dirs,
+retained original allocation-intent witness, all authority/source/consent/profile/
+route/rows and cleanup/lifetime tests still required. Self-prototype VirtualFree
+destructor MUST NOT be copied into native process-lifetime retention.
+
+artifacts/qa078-freestyle-publication-research/: 377 synthetic cases PASS.
+Proposed 8 to 3 deep scans saves 62.5% roster bytes, NOT measured live latency.
+It detects in-place row change later (after four writes versus one example),
+and row ABA may evade final observation. Not equivalent, not implemented,
+not guaranteed to fix context failure. Review tradeoff before any integration.
+Prefer typed proven pre-effect waiting + component-difference diagnostics first.
+
+OUTFITS / RANDOM ALL DELIVERED
+User QA075 two-player match: outfits appeared almost immediately/very quick.
+Native consume-to-last-completion was297ms; excludes transition/final durability.
+One live sample, not universal instantaneous guarantee.
+artifacts/qa075-user-match-evidence-20261018.json
+QA076/77 Random All streetwear-only, accessories empty, original roster shoes
+retained. Routine progress/success no longer opens report dropdown; real errors
+remain visible. frontend/App.tsx SHA
+AA8164D4D699530F2B6C54CB51A8F5AEDC4E16B87E21CB026090B0D0129A6139.
+TypeScript noEmit PASS. Explicit per-player accessory choice unchanged.
+QA076/77 paired typed trigger-intent + Submitted frames use one flush instead
+of two, final fresh handoff proof before unlock. Failed/uncertain trigger
+cleanup quarantines exact pins to process exit; no replay/adoption.18focused
+tests PASS plus peer audit. Saves one flush; live gain not independently measured.
+artifacts/qa076-paired-trigger-submission-proof-20261018.json
+
+QA077 VALIDATION / QUALIFICATION
+Three affected strict native fixtures PASS, full DLL strict compile and isolated
+system-version-forward smoke PASS. ONE changed-image natural undebugged full
+Rust run:1302 PASS,54ignored,0failed,61.49s, exit0/no dump. Dev build PASS.
+artifacts/qa077-final-full-rust-tests.log
+artifacts/qa074-natural-qa077-whole-1.txt
+Test EXE AB6A03A0F17225ABBFF1B7F45CC4230DB9112AA71716EB36F3533338D2CC471B
+PDB 9CC22580358D89C2050ED4D8BC173E262CC8DF887EF27EA8AAC234596EB7C784
+Backups/qa077-passing-test-image-20261018/exact-test-image.zip roundtrip verified.
+
+HISTORICAL NATURAL TEST AV IS STILL UNRESOLVED
+QA073 natural0xC0000005 failed after7.083s. Exact EXE/PDB/control ZIP preserved:
+Backups/qa073-natural-test-av-20261018/exact-test-image.zip
+EXE BC3B784A828DC5149C28A7F8D9688ECA302CCD46E7F5294D101C0CF99AE82D21
+PDB A97CB0292EA39E292C81400E5F77DF4F3AC658AA0614F0DBB7E2DFBF3804556A
+Debugger pass and changed QA074/75/76/77 passes do not explain or fix that AV.
+Bounded test-only natural dump capture synthetic tests PASS; no actual natural
+dump yet. No unchanged-image repetitions to manufacture green results. Future
+failure: preserve exact image/PDB/log/dump before rebuilding. No global settings.
+
+OTHER RESEARCH / NEXT WORK
+QA075-WIP records WNBA player-index reverse engineering and blocked encrypted
+candidate. Existing index rebuild models pass; native rebuild behavior remains
+unproven. Existing explicit local key path absent; no speculative shipping.
+Next useful work is production typed no-effect waiting integration with exact
+NativeHost witnesses and stage-aware Freestyle outcomes, preserving all guards.
+Add field-difference diagnostics from already-read snapshots before considering
+any field-scope change. No further user restart requested for unchanged QA077.
+Live acceptance requires both toggles, both modes and re-entry after a reviewed
+new dev build; no offline check establishes this.
+
+AUTOMATION / WORK WINDOW
+Original two-hour window ends2026-10-18 21:53:37UTC. Heartbeat id
+two-hour-dev-parity-work must be paused at/after deadline, then report once.
+Check automation status; this file does not itself assert that pause succeeded.

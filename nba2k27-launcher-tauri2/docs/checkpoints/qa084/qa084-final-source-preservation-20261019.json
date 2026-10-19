@@ -1,0 +1,30 @@
+{
+  "utc": "2026-10-19T17:01:14.194751+00:00",
+  "verifiedFrozenInputs": 714,
+  "priorStagesAndNativeDllUnchanged": [
+    {
+      "path": "Dev/Pending/QA083/launcher.exe",
+      "bytes": 55046656,
+      "sha256": "5040AA978A29AD809DDA889EF97D2B68FEA7AEBB3D5531FEF81DFD8FFE2CB765"
+    },
+    {
+      "path": "Dev/Pending/QA082/launcher.exe",
+      "bytes": 53273600,
+      "sha256": "71404BF01756E4A63ED267BCF4860CD023BA8E0FCA1FBF84813E4646F63D882D"
+    },
+    {
+      "path": "Dev/Pending/QA080/launcher.exe",
+      "bytes": 53165568,
+      "sha256": "783B64372BFB73621AE3D6083EB2460D0AA42A140DEBFF27365315EDC330E7EC"
+    },
+    {
+      "path": "assets/native/version-outfits-v2.dll",
+      "bytes": 1215488,
+      "sha256": "83AF5D0613D1E90D51933F382C22D215F766A61A198CAFEB41E80606A1722518"
+    }
+  ],
+  "devOnly": true,
+  "gameLaunched": false,
+  "installed": false,
+  "promoted": false
+}

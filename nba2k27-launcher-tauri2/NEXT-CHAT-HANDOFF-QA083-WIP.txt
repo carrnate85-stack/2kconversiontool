@@ -1,0 +1,34 @@
+QA083 WIP FINAL VALIDATION - DEV ONLY
+User authorized remaining feature parity implementation; Steam/game launch permitted
+only if needed, must close normally. NO GAME LAUNCHED / READ / WRITTEN this turn.
+No install/promote/activation. Preserve Data/Library/journals/stages/backups.
+QA082 remains latest usable starter; QA083 not yet built/staged.
+
+Sources now include: native fullName audio signed scalar + readonly first/last audio
+lookup; Team type/year native guarded masks; existing Arena and Origin pointer-only
+selection with catalog/owner/source/target witnesses; custom unified/stats catalog
+native chooser+immutable store; explicit career-season chooser; saved ratings TEXT
+import with WPF mappings (NO live online capture); pure structural season model
+(NO structural native executor); frontend/native capability gates and regressions.
+Catalog external replacement stale-cache recovery just fixed v4. Root frontend
+56 PASS. TypeScript PASS. First cargo no-run had 3 concrete syntax/conversion defects,
+all fixed by owners; second shared compile running. Need final pack/freeze/no-run,
+full bounded natural Rust tests, build, exact-hash candidate stage, starter checks,
+final handoff/archive. No Rust test results yet. Do not claim gameplay acceptance.
+
+Latest agent manifests: qa083-custom-catalog-20261019/source-freeze.json (v4);
+qa083-origins-20261019/source-freeze.json(v3); name-audio source-freeze.json;
+qa083-existing-arena-capture-access-source-freeze-v2.json;
+qa083-native-origin-player-pointer-writer-source-freeze-v2.json;
+qa083-season-structure-pure-model-source-freeze.json. Final root build-input freeze
+will supersede individual manifests. Helpers tools/qa083_stage_dev_checkpoint.py,
+qa083_archive_evidence.py prepared NOT RUN. Archive recursively includes qa083
+subfolder reports. Natural supervisor fixed180s, test binary same hashed-name,
+artifacts prefix qa074-natural-qa083-whole-1; exact crash images must preserve.
+
+Remaining: height/wingspan production executor/composite journal; structural native
+quiescence/COW; isolated live online source capture; custom floor/profile cloning;
+future live acceptance. QA073 natural AV and QA078 Clang crash UNRESOLVED, QA080
+visible scaler pending, WNBA reentry/OFF not certified. Native DLL untouched.
+
+Updated 2026-10-19T14:32:45.469095+00:00

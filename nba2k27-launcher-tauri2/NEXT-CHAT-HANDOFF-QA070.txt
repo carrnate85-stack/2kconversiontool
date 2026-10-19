@@ -1,0 +1,77 @@
+QA070 DEV CHECKPOINT - 2026-10-18
+Read QA069 for baseline and permissions. DEV ONLY; no installation/promotion.
+Do not launch/stop game or drive desktop. Normal user toggle+Play only.
+Exact retained-identity read-only probes authorized. Preserve all journals,
+Data/Library/builds/backups. Back up and fsync edits.
+
+CURRENT STAGE
+Start QA070 Dev.vbs/.ps1 ready, NOT activated by agent.
+Dev/Pending/QA070/launcher.exe
+SHA8655FF66923CC5BB80D662AE5A724BCD2B5BE25F0B550968B4D12748C5E399FC
+52696576bytes. Active Dev/App remains QA069 B922...7C83.
+Payload E1BB63BF598B9FDE1B28F83E82F240E2FD5CB603505DF8A08F2921DB959BB204
+1142784bytes. Exact QA069 EE2D...C0B9/1142784 now recovery-only with fixture;
+new publication accepts only new embedded hash. Prior recovery pins preserved.
+Manifest artifacts/qa070-final-stage-20261018.json pins416sourcefiles+assets.
+
+LIVE QA069 WNBA EVIDENCE
+Game49792 session000000000000000018dfb624c04b24480000000000000002.
+ARM9358093 Home6509837b/stage0, installed8ae66c8 requested8ae67d8 playnull uid29.
+RESTORE9359109 stable4fde5dcd/stage0 same delegates and uid29: exact1016ms.
+Rearm intent9364437 then HELD9365062. Do not clear/adopt/retry this heldsession.
+Read-only inventory370teams/30NBA/0WNBA. All44callback/sourcechecksPASS,
+stockD30callback236e510 and installedBlacktop9b31bb0 atpicker.
+This proves premature restoration before Blacktop installation. ARMED alone
+never proves native invocation. Exact4fde5dcd native references associate it
+withLearn2K navigation, exactmodeclassname/path remains unproven.
+Sourcealias unsignedbinarysearch and identicalGeneral leaf/requestflags pass;
+no cache/Blacktop flag bypass found. Keep aliases/flags unchanged.
+
+QA070 CHANGE
+native/wnba_blacktop_roster_core.hpp + native host GetTickCount64 method.
+Initial admission STILL strict stable offline Home/QuickPlay + transition-ready,
+exact source/permit/profile/table and durable intent/CAS/readback.
+Already-owned callback now retains through stable intermediate modes until
+bothBlacktop/stage3 or60seconds. Clock starts BEFORE durablepublication;
+observations never renew. Permissionloss, explicitactive/kind (even unstable),
+identity/profile/foreign failure still stop. Clockrollback restores exactowned
+then permanentholds; clockexception holds withresources/no speculativewrites.
+Restoration still exactCAS/RO protection; categorypublication onlyafterrestore.
+No retry relaxation, no gamecalls, no rosterpointer injection.
+Actual WNBA/category success still requires next normal new Play session.
+
+VALIDATION
+Strict C++ core/coordinator + production no-call bindingPASS; forwardingDLLsmokePASS.
+Independent review found no blocker. Rust whole1257PASS/0FAIL/52ignored63.24s.
+DevbuildPASS22.34s/47existingwarnings; testbuildPASS36.82s/12existingwarnings.
+Frontend unchanged, no repeated frontend suite. PSstarterASTPASS;
+VBS/check echo-onlyPASS (sandboxCscriptsettingsdenied; escalationread-onlypassed).
+Sourcefreeze manifestverified afterbuild. No activeappcopy/install/promotion.
+
+NEW USER REPORTS PRESERVED, NOT FIXED IN QA070
+Outfits didnotcarry atall: providerheld 'Another launcher is active; observer held'.
+JournalLeBron/Jaylen eachReserve/Prepared/Attempt/Verified,3pieces; noConsume/Match.
+NativeworkerARMED/PLAYERS_REBUILT0; carryTimingnull => no matchplanpublished.
+CurrentCIMonlyvalidUI50292/provider47012 pair; cannotprove historicalduplicate.
+PotentialsameEXEjukeboxhelper or unresolvedNode guard exists but no evidence.
+Next diagnostic should recordboundedblockeridentity, NOTrelaxguard/autoresume.
+Scoreboardera1980appliedall3 thenrestoreall3; activeIddefault ownsMutationfalse,
+restored-held. Originalfailurecause lost becauseRunner.observe_status overwrites
+Held(error) withRestored andjournalhasnofailureevent. Needpreservecausefuturefix.
+No claim tilemiss/ownershipfalsepositive. Keephelduntilnormalrestart.
+
+EVIDENCE
+qa069-wnba-live-early-restoration-20261018.json
+qa069-blacktop-loaded-roster-readonly-20261018-1.json
+qa069-blacktop-callback-readonly-20261018-1.json
+qa069-blacktop-install-disassembly-20261018.json
+qa069-mode-4fde5dcd-native-proof-20261018.json
+qa069-wnba-source-route-independent-review.txt
+qa070-blacktop-roster-retention-review-20261018.txt
+qa070-wnba-retention-independent-review.json
+qa069-outfit-49792-blocked-carry-evidence-20261018.json
+qa069-scoreboard-restored-held-review.json
+Backups/qa070-blacktop-roster-retention-20261018 and
+Backups/qa070-wnba-retention-20261018-root.
+
+LIVE UPDATE: User activatedQA070 and confirmedWNBAcategory appeared afterfewseconds. Game43128 session18dfb68c3c69cd38...0001. Readonlydoubleinventory403teams/30NBA/15WNBA/exactclubsPASS. ARMED9788265; RESTORED9795765atBlacktopstage3 uid31; PUBLISHED9795781. LaterHELD9807187 Activecategorypublicationchangedorreadinessuncertain. Firstnormal-toggleBlacktoproster/categorysuccessconfirmed; persistence/reentry/gameplayNOTverified. Seeartifacts/qa070-wnba-live-acceptance-20261018.json.

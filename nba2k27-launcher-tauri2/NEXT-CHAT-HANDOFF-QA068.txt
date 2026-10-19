@@ -1,0 +1,93 @@
+2K LAUNCHER - QA068 DEV CHECKPOINT
+2026-10-18. Continue QA067; read NEXT-CHAT-HANDOFF-QA067.txt and QA066 for
+larger parity baseline. DEV ONLY; no installation/promotion without approval.
+Preserve Data/Library, backups, exact owned journals. No agent desktop control,
+game launch/stop, or ad hoc live-memory writes. Normal toggles+Play only.
+User requests now: scoreboard new hold, overlay missing after AltTab return,
+remove `Native Blacktop players refreshed` text under Edit Outfit.
+
+QA067 LIVE SESSION
+Game32696, mainlauncher37548, session000000000000000018dfb4c50b1790bc0000000000000002.
+QA067 binary is retained; its manifest records the baseline. Current source targets QA068.
+Actual build verification50ms; readiness settle5416ms (previous20s fallback
+removed), stock manager stable5414ms. Players activation11060ms was a separate
+major startup step. No claim that total launch is now5seconds (provider22.5s).
+Outfits at selection ready, automaticChoiceProtection=true, last mutation
+revision3/apply-many/automatic; first automatic outfits are3streetwear items.
+Match carry-over acceptance still pending. Do not mark QA067 failed carry fixed.
+
+SCOREBOARD
+QA067 held: span4 length32 offset0, unchanged allocation/protection/count31.
+That is context+90, first byte of retained suffix90..AF. Native disk proof:
+context+90 is atomic global resource admission serial;98 is global current
+hash count;9C global high-water count. Together with prior lifecycle head88,
+these24bytes are global bookkeeping, not selected descriptor ownership.
+QA068 retains prefix0..87 and suffixA0..AF, exact contextclass7724EE8, original
+fullB0 single-region proof, eight complete semantic native methods. Bucket
+countA0/pointerA8 stay exact. Selected resource FULLB8 stays exact, including
+its OWN instance admission serial atowner+B0. Every bucket/backlink/resource/
+registry/package/property proof and owned restoration guard stays exact.
+No current held session is restored/adopted. All24byte volatility tests plus
+adjacent87/A0/A4/A8, own serial, owner, pointer, class, code, region refusal.
+Focused scoreboard20passed including actual fullSHA-bound installed disk audit.
+Proof artifacts/qa068-scoreboard-context-global-counters-proof-20261018.json.
+
+WNBA BLACKTOP
+New granular live refusal identified exact cause:
+`manager/delegate image regions tag=0x74cd158 mgr=0x1000000/0x4 del=0x1000000/0x8`.
+Static delegate is already correctly initialized; its loader-relocated image
+data page has PAGE_WRITECOPY8. QA068 permits committed exact-image/exeallocation
+staticdelegate DATA protections2/4/8. Manager remainsRW4, methodsRX20,
+callback full427-slot tableRO2 and all CAS/protection guards unchanged.
+Pure fixture rejects code80/RWX40/guard/private/foreignallocation/uncommitted;
+strict C++ no-call/admission tests pass. No blind class/protection relaxation.
+Blacktop category/roster still requires fresh normal launch live acceptance.
+New embedded DLL81952F0CF8D13226AF8F664A226E617B21F2EC278E6F7BF94844246E8D80CB04,
+1137152bytes; forwarding smoke passed. Exact QA06772984...BE53/1137152 added
+RECOVERY ONLY; new publications accept only exact current payload.
+
+OVERLAY
+Exact pre-fix log proves logical wanted/catalog restored on returnGame but
+physicalwindow remained hidden. `read_foreground` captures HWND before slow
+identity/process lookup; repeated unguarded ShowWindowAsync hides can execute
+after a newer show. QA068 coalesces focus hides on owned UI thread with fresh
+foreignHWND/PID + exactepoch/fullidentity + fresh game/overlay/root-owner checks.
+Observer and input discard foreground samples already changed during lookup.
+Preserve20ms F8 input, no added game calls/writes or focus activation.
+Final additional ordering/target-ownership details and validation are in
+artifacts/qa068-alt-tab-restore-review.txt and final-source manifest.
+Live AltTab/F8 retest remains required; source proof is not live certification.
+
+EDIT OUTFIT
+frontend/OverlayOutfitEditor.tsx suppresses exactly the routine refresh message
+and its empty paragraph. Errors, unavailable states and explicit apply feedback
+remain. Tsc passed; frontend43files/223tests passed.
+
+FINAL BUILD/STAGE
+Use artifacts/qa068-final-stage-20261018.json as authoritative exact executable,
+payload/assets/source hashes and whole Rust result. It exists only on successful
+staging. Start QA068 Dev.vbs/.ps1 replaces only Dev/Portable/App after exacthash/
+size and idlegame/launcher checks, backs up and durably flushes copied EXE.
+Agent does NOT activate/install/promote. User closes current game and launcher
+normally first. New test through normal toggles+Play; no trial scripts.
+Whole Rust/testcompile/devbuild: qa068-final-full-rust-tests.log,
+qa068-final-test-build.log,qa068-final-dev-build.log. Restricted first overlay
+run had one parent-directory access denial; use final elevated whole suite.
+No final test result can be inferred merely from a build log.
+
+NEXT
+Fresh QA068 normal launch, WNBA requested toggles+Play. Read exact-session
+category progress first, then read-only inventory and user Y-cycle visibility.
+Verify repeated scoreboard selection + fresh match; AltTab away/back while
+overlay open and rapid F8; match outfit carry timings/native receipt.
+Do not retry/clear current held game journals to force success.
+RandomAll further speed design: artifacts/qa068-random-all-next-measurement-plan.txt.
+Overall weighted parity remains81.8%; no new live parity promotion.
+
+FINAL VERIFIED19:08UTC: Rust1247passed/0failed/52ignored, frontend223passed/43files,
+scoreboard20passed including actual installed disk verifier; dev build PASS.
+Stage SHA DED4F862CC086C3938CF9C674894F0D4CD1E55CDFB7D4DE34182FBEE2211C28A
+52628992bytes;415source hashes match staged manifest. PS AST and VBS/check PASS.
+No activation/install/promotion. Active Dev remained QA067EBAA...96ED8.
+All raw asynchronous overlay hides removed; rapidF8/UIheartbeat cases use latest
+owner-thread presentation, with target HWND/PID ownership checks for focus hides.

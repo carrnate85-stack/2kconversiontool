@@ -1,0 +1,25 @@
+.wardrobe-topbar #arenaMenuButton{max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wardrobe-topbar #arenaMenuButton[data-phase=error]{border-color:#b96548}
+#arenaMenu{position:fixed;left:12px;right:12px;z-index:32;padding:8px;background:var(--panel,#18251b);color:var(--text,#eef5ea);border:1px solid #52684a;border-radius:6px;max-height:min(300px,calc(100vh - 76px));box-sizing:border-box;display:flex;flex-direction:column;gap:6px}
+#arenaMenu[hidden]{display:none}
+#arenaMenu input{flex:none;min-height:30px;width:100%;box-sizing:border-box;background:var(--bg,#0d1510);color:inherit;border:1px solid #52684a;border-radius:4px;padding:6px 9px}
+#arenaMenu .arena-options{overflow:auto;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;min-height:0}
+#arenaMenu button{min-height:32px;text-align:left;font-size:12px;white-space:normal}
+#arenaMenu button[aria-pressed=true]{border-color:#b4df94;background:#344a2b;color:#eef5ea}
+#arenaMenu small{font-size:12px;flex:none}
+#arenaMenu .arena-filters{display:flex;gap:5px;flex:none;overflow-x:auto}
+#arenaMenu .arena-filters button{white-space:nowrap;padding:4px 10px}
+#arenaMenu .arena-option{display:flex;min-width:0;gap:3px}
+#arenaMenu .arena-choice{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center;padding:5px 8px}
+#arenaMenu .arena-choice small{font-size:10px;opacity:.7;margin-top:2px}
+#arenaMenu .arena-star{flex:0 0 32px;text-align:center;font-size:20px;padding:0}
+#arenaMenu .arena-star[aria-pressed=true]{color:#f4d677}
+#arenaMenu .arena-empty{grid-column:1/-1;display:flex;align-items:center;gap:12px;font-size:13px}
+html[data-theme=light] #arenaMenu button{background:#edf2e8;color:#243727;border-color:#bac8b4}
+html[data-theme=light] #arenaMenu button[aria-pressed=true]{background:#d0e2bf;color:#20351e;border-color:#64824d}
+html[data-theme=light] #arenaMenu .arena-star[aria-pressed=true]{color:#755800}
+html[data-theme=light] .blacktop-overlay .wardrobe-topbar{background:#edf2e8;color:#243727}
+html[data-theme=light] .blacktop-overlay .wardrobe-topbar button,html[data-theme=light] .blacktop-overlay .wardrobe-topbar select{background:#e3ecdb;color:#243727;border-color:#bac8b4}
+html[data-theme=light] .blacktop-overlay .wardrobe-topbar strong,html[data-theme=light] .blacktop-overlay #hideBlacktopPanel{color:#335525}
+.blacktop-overlay.compact-bar.arena-menu-open .wardrobe-topbar{flex:0 0 62px}
+@media(max-width:800px){#arenaMenu .arena-options{grid-template-columns:repeat(2,minmax(0,1fr))}}

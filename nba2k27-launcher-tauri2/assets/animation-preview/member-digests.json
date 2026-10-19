@@ -1,0 +1,15 @@
+{
+ "schema": 1,
+ "source": "WPF PlayerAnimationPreview verified profile (file sha256 = revision.json)",
+ "assets": {
+  "nba_animations.iff": "2bd75b07dc82b66ef9defe131bee68a5641f1f8dcc1f6da50f3181473629dcf1",
+  "animations_pregame_single.iff": "f0bd219643e7493e3a82ad2c73eee6a32895fa69353a152cd50eab78bb36bf8b",
+  "animations_pregame_multi.iff": "60713e048c47033d07225f15adfb6e20b90ff2570258e1dc57395d70159100d2",
+  "animations_blacktop.iff": "e716af0f9de5d441b45a0062e7f43340f46ab8c46c8b9cda80ac41f7a66aab54",
+  "animations_slamball.iff": "018519a569b8a12549131e25df8ce068edaec8b68547e8296ffff25bbc2b0ec0",
+  "sigtable.iff": "408dfe442cde2dab8ef33ffc033a6113be1c3b054ec8399ae6cd8b58ea3eb911",
+  "shotdata.iff": "d9d764609c96e9124440fc82abe9b0cd5d7083ac2a230819c352d2987c25fe12",
+  "hands.iff": "167ab0dd61c79da032d6237b058f8b969ea28ab82898db44cff706ffc2387be6",
+  "character.iff": "ea4a942a3b98629481f24b12a3f719c9d7a22576d7fded46a5315287e61797a7"
+ }
+}

@@ -1,0 +1,39 @@
+[package]
+name = "nba2k27-launcher-tauri2"
+version = "0.53.1"
+edition = "2024"
+publish = false
+
+[dependencies]
+anyhow = "1"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+regex = "1"
+flate2 = "1"
+crc32fast = "1"
+libloading = "0.8"
+zip = { version = "4", default-features = false, features = ["deflate"] }
+png = "0.18"
+sha2 = "0.10"
+httparse = "1.10.1"
+tokio = { version = "1.53.2", features = ["net", "io-util", "sync", "time", "rt"] }
+tauri = { version = "2", default-features = false, features = ["wry", "compression", "common-controls-v6", "protocol-asset"] }
+windows = { version = "0.62", features = ["Win32_Foundation", "Win32_Media_MediaFoundation", "Win32_Globalization", "Win32_System_Com", "Win32_System_LibraryLoader", "Win32_System_Threading", "Win32_System_Diagnostics_ToolHelp", "Win32_System_Diagnostics_Debug", "Win32_System_Memory", "Win32_System_JobObjects", "Win32_System_IO", "Win32_System_Pipes", "Win32_Security", "Win32_Security_Authorization", "Win32_Security_Cryptography", "Win32_UI_Shell", "Win32_UI_Shell_Common", "Win32_UI_WindowsAndMessaging", "Win32_UI_Input_KeyboardAndMouse", "Win32_Graphics_Gdi", "Win32_Graphics_Imaging", "Win32_Storage_FileSystem", "Win32_Networking_WinHttp"] }
+webview2-com = "0.39"
+windows-core = "=0.62.2"
+
+[build-dependencies]
+tauri-build = "2"
+
+[features]
+default = ["custom-protocol"]
+custom-protocol = ["tauri/custom-protocol"]
+
+[profile.release]
+opt-level = "s"
+strip = true
+
+[lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(settings_compat_offline)', 'cfg(feature, values("startup-audio-worker"))'] }
+
+

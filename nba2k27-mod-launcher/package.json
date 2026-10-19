@@ -1,0 +1,87 @@
+{
+  "name": "nba2k27-mod-launcher",
+  "version": "0.37.85",
+  "description": "Session-only mod and camera launcher for NBA 2K27",
+  "packageManager": "pnpm@11.19.0",
+  "main": "src/main.js",
+  "type": "commonjs",
+  "scripts": {
+    "compatibility:audit": "node scripts/run-python.cjs scripts/compatibility-audit.py",
+    "compatibility:test": "node scripts/run-python.cjs -m unittest discover -s scripts/compatibility-tests -p test_*.py",
+    "research:roster-coverage": "node scripts/audit-player-editor-coverage.cjs --write",
+    "runtime:attest": "node scripts/runtime-provenance.cjs --write",
+    "runtime:verify": "node scripts/runtime-provenance.cjs",
+    "cleanup:builds": "node scripts/retain-recent-builds.cjs",
+    "stability:unit": "node --test test/startup-stability.test.js test/child-lifecycle.test.js test/runtime-resources.test.js test/provider-layout-resolver.test.js",
+    "stability:packaged": "node scripts/package-stability-smoke.cjs",
+    "start": "electron .",
+    "test": "node --test test/*.test.js",
+    "pack": "node scripts/build-native-wardrobe.cjs && electron-builder --dir",
+    "dist": "node scripts/build-cached-portable.cjs",
+    "dist:folder": "node scripts/build-portable-folder.cjs",
+    "previews:zip": "node scripts/build-preview-image-pack.cjs",
+    "dist:installer": "node scripts/build-native-wardrobe.cjs && electron-builder --win nsis"
+  },
+  "devDependencies": {
+    "electron": "44.0.0",
+    "electron-builder": "^26.15.3"
+  },
+  "build": {
+    "beforePack": "scripts/before-pack.cjs",
+    "appId": "com.twok.launcher",
+    "productName": "2k Launcher",
+    "asar": true,
+    "npmRebuild": false,
+    "files": [
+      "src/**/*",
+      "!src/core/presentation-session.js",
+      "!src/core/presentation-manager.js",
+      "!src/core/movie-import*",
+      "!src/core/startup-transition-builder.js",
+      "!src/assets/blacktop-*-previews/thumbnails/**",
+      "!src/assets/blacktop-*-previews/images/**",
+      "runtime-resources/**/*",
+      "!src/data/streetwear-components.bin",
+      "!src/renderer/fit-preview/model-preview.js",
+      "!src/renderer/fit-preview/app.js",
+      "!src/renderer/fit-preview/controls.js",
+      "!src/core/fit-preview*.js",
+      "!src/core/fit-memory-cache.js",
+      "!src/core/ball-scale-archive.js",
+      "!src/core/ball-scale-session.js",
+      "package.json",
+      "ABANDONED_FEATURES.md",
+      "README.md"
+    ],
+    "extraResources": [
+      {
+        "from": "vendor/animation-preview/runtime",
+        "to": "animation-preview"
+      },
+      {
+        "from": "vendor/flac-1.5.0/LAUNCHER-NOTICE.txt",
+        "to": "flac/LAUNCHER-NOTICE.txt"
+      },
+      {
+        "from": "vendor/flac-1.5.0/unpacked/flac-1.5.0-win",
+        "to": "flac/licenses",
+        "filter": ["COPYING.*", "AUTHORS", "README-for-these-builds.txt", "README-for-the-project.md"]
+      },
+      {
+        "from": "vendor/flac-1.5.0/flac-1.5.0.tar.xz",
+        "to": "flac/source/flac-1.5.0.tar.xz"
+      }
+    ],
+    "win": {
+      "icon": "src/assets/app-icon.ico",
+      "target": ["portable"]
+    },
+    "nsis": {
+      "artifactName": "2k-Launcher-${version}-Setup.${ext}",
+      "oneClick": true,
+      "perMachine": false,
+      "createDesktopShortcut": false
+    },
+    "artifactName": "2k-Launcher-${version}.${ext}"
+  }
+}

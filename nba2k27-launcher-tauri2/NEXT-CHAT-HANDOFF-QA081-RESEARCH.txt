@@ -1,0 +1,127 @@
+QA081 RESEARCH COMPLETE - NOT A BUILD
+
+Research-only user window:2026-10-18 23:26:32UTC through2026-10-19 01:26:32UTC
+(9:26:32p.m.Eastern October18). Completed after deadline. Heartbeat automation
+ two-hour-dev-parity-work is PAUSED (app tool confirmed). Do not resume recurring
+work or implement proposals without a new user instruction.
+
+Canonical project:
+C:\Users\carrn\CodexProjects\2kconversiontool\nba2k27-launcher-tauri2
+
+READ FIRST
+artifacts/qa081-two-hour-parity-research-20261018/root-audit/RESEARCH-RESULTS.md
+artifacts/qa081-two-hour-parity-research-20261018/root-audit/ranked-gap-reconciliation-v5-final.json
+artifacts/qa081-two-hour-parity-research-20261018/checkpoint.json
+
+AUTHORITATIVE DOMAIN INDEXES (later qualifications supersede exploratory prose)
+editor-fields/AUTHORITATIVE-INDEX.md and final-source-audit-index.json
+editor-services/authoritative-editor-services-evidence-index-v3-final.json
+seasons-dna/ACTIONABLE-SYNTHESIS.md and FINAL-INDEX.json
+All paths above are inside the QA081 research artifact directory. Root verified
+43+48+82 indexed report references, zero mismatches. Source hash/index inspection
+is not application testing. Domain agents are finished; no need to repeat scans.
+
+PRESERVATION / SCOPE
+No production/dev code, frontend, assets, tests or existing parity-status edits.
+No builds/tests, stage/activation/install/promotion, game launch/stop, desktop
+control or game-memory access. No user Data/Library inspection or mutation.
+Only new research reports/read-only helpers and this handoff were written.
+Research edits/backups were flushed. Current app remains QA080; no new starter.
+Final root validation01:25UTC:549source/config files,6embedded assets and QA080
+staged EXE all match original baseline. See root-audit/FINAL-VALIDATION.json.
+
+ACTUAL DEV BUILD
+Read NEXT-CHAT-HANDOFF-QA080.txt for full current build history/qualifications.
+Starter Start QA080 Dev.vbs / Start QA080 Dev.ps1.
+Dev/Pending/QA080/launcher.exe,53165568bytes
+SHA783B64372BFB73621AE3D6083EB2460D0AA42A140DEBFF27365315EDC330E7EC
+Native payload1215488bytes
+SHA83AF5D0613D1E90D51933F382C22D215F766A61A198CAFEB41E80606A1722518
+QA080 visible scaler result remains PENDING. Earlier user 'both' described a
+prior symptom; they said they had not rechecked. Do not call QA080 pass/failure.
+
+MAIN FINDINGS AND FUTURE ORDER
+1 Close current ordinary Save source dependencies: Uniform selected Team
+ID/name/slot; Staff full selected Team proof; changed Rotations final fresh
+player membership. Current link eligibility scan is stale-admission work but
+inherited helper policy, not normal frozen WPF-browser regression. Keep narrow
+writable records, durability/cancel/ownership and conditional held recovery.
+
+2 Existing season import is implemented (one existing unshared row, localstage,
+then Save). Repair fresh selected-player/full reference occurrence checks and
+choice/review credential isolation. teams/failedreview can replace tokens under
+visible old drafts. PlannerOk is NOT visible staging: use bounded separate
+ordinary/read and prepared-import credential domains or coherent prepare/commit.
+Never accept unknown tokens or reduce native checks to hide the workflow bug.
+
+3 Present destination capabilities before staging. DNA changed unsupported audio
+can block wholeSave; sharedstaff/automaticrotation metadata is ignored by served
+UI. Catalog normal-team suffix is stale. Current Stats yearcheckboxes and season
+visit generation already work; don't rewrite them as absent. TeamDNA file RPC
+and custom2K23 catalog integration remain useful missing workflows.
+
+4 Preview owner heartbeat expiry is missing despite implemented animation
+preview. Lost browser owners retain sessions/warm/capacity and block idle release.
+TokenTTL alone doesn't reap owner/session/payload state. Bound/coalesce prep and
+synchronize idle/shutdown publication; preserve owner/session authentication.
+These are resource/lifecycle findings, not an AV causal diagnosis or usable
+stale-payload disclosure. Native HandLibrary is Rust pose data, not a DLL.
+
+5 Generic Player Save already matches WPF441 ordered editablekeys/maxima.
+Uniform52controls, staff/rotation/presets and limited season writes exist; these
+are mapping/controller facts, not live acceptance. Old QA072 Editors55% ledger
+is stale; no newpercentage or status update was made.
+
+6 Exact native mappings now pinned: full-nameSID, shared-name readonlyaudio,
+Origins,TeamType36enum,ClassicTeamEndYear and ordinary arena pointer. Missing
+integration is not missingoffsets. Origins stride0x48=72decimal; NAMEDATA0x30=48.
+Current inherited Team labels after3 are wrong (6nativeSTREET_HOME,29WNBA); this
+is editorsemantics, not a game-WNBA-toggle diagnosis. Yearencoding nonunique;
+preserve raw unchanged echo. Readonly availability must not enable unsupported
+editing or echo refused fields into unrelated Save.
+
+7 Appearance height/wingspan and structural season histories are largest gaps.
+Appearance purepolicy is unwired and has confirmed Result-only CAS ownership
+counterexample. Needs supported atomic executor, sealed own-effect receipts,
+canonical outerjournal and bounded reverse-only capability. Full originalR0
+must be proved before appearanceundo; retained forwardhandle alone isn't enough
+postcancel/12sdeadline. Never resetstop or grant arbitrary writer ranges.
+
+Structural seasons use preallocated pools, not missing heapallocatorABI. Manager
+record56B/countowner1C0/pointer1C8; old WPF64B snapshot overlaps statrow0 in a
+historical layout. Player/Team/staff pools differ. Typed model/read-only validator,
+quiescence, coupled dependency-safe rollback and journal needed beforeeffects.
+Partialdirectory can reference newrow: don't free/reinsert it blindly. All
+reservedrows must be canonical/unreferenced before originalhead restoration.
+Source-to-free-destination COW reserved-bit policy still unproven; NativeClear
+and Acquire proof alone don'tauthorize whole64Bsourcecopy. No unknownpartial
+state is certified playable. Old aggregate fixtures did not test all COWpaths.
+
+QUALIFICATIONS / REJECTED HYPOTHESES
+Cached no-op rotation verifiedstatus is inherited WPF wrapper behavior. Actual
+changed-save WPF contrast is FINAL playerproof; per-effect projection is stronger
+futurepolicy and must be bounded. Ordinary two-tab sharedtoken lost-update
+hypothesis was rejected (each read mints a new singleton token). No additional
+journal false-terminal-completion issue established. Keep conditionalbyteguard
+versus sealed ownership and fullR0 distinctions. Sparse season writes remain;
+whole64Bwrite optimization was explicitly withdrawn. No TTL permission shortcut.
+
+Remote2KDB import is reachablemissing work but requires isolated unprivileged
+WebView2/fullrequest policy; Tauri resourcecallback doesn'tfilter externalHTTPS.
+Native savedrosterexport/standaloneclone routes have removed normalWPF UI; don't
+prioritize deadroutes. Conditional existing customarena profile reapply is
+reachable but no userprofile demand established. Manualart chooser frozenhost
+shim is incomplete. Existing arena selection can be smaller8B Team pointer
+milestone with no arena writes; customfloor COW is separate.
+
+UNRESOLVED EVIDENCE
+QA073 natural Rust testAV remains UNRESOLVED. Root streamed retained ZIP entries
+without extracting/executing and both exact original hashes match:
+Backups/qa073-natural-test-av-20261018/exact-test-image.zip
+EXE BC3B784A828DC5149C28A7F8D9688ECA302CCD46E7F5294D101C0CF99AE82D21
+PDB A97CB0292EA39E292C81400E5F77DF4F3AC658AA0614F0DBB7E2DFBF3804556A
+QA078 Clang23O2 coordinatorfixture compilercrash remains UNRESOLVED;O1pass does
+not explain it. Backups/qa078-clang-coordinator-crash-20261018 untouched.
+Zero-byte QA080 failedjournalcopy is NOT evidence. QA078 WNBA bothmodes user
+accepted, laterBlacktop CTX160 held; no full reentry/toggleOFF certification.
+No offline/source/diskresult establishes live Save/reload/game acceptance.

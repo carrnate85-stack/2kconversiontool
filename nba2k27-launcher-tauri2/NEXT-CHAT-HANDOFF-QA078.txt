@@ -1,0 +1,150 @@
+QA078 FINAL DEV CHECKPOINT - 2026-10-18
+Canonical project C:\Users\carrn\CodexProjects\2kconversiontool\nba2k27-launcher-tauri2.
+Read this before QA078-WIP and QA077. Earlier documents retain research/history.
+
+USER AUTHORIZATION / BOUNDARIES
+User resumed after original two-hour window: keep going on BOTH WNBA modes,
+use retained WPF behavior, get ready to test. DEV ONLY; do not install/promote.
+User separately reported scaler now applies as players load instead of earlier.
+No root game launch/stop, desktop control, staged-app activation or live writes.
+Normal future user starter/toggles/Play only. Preserve Data/Library/journals/
+builds/backups. Back up+fsync edits. No roster keys/salt capture/printing/shipping.
+Heartbeat two-hour-dev-parity-work remains PAUSED; no new automation requested.
+
+READY FOR NORMAL USER DEV TEST: QA078
+Start QA078 Dev.vbs (one click) / Start QA078 Dev.ps1
+Stage Dev/Pending/QA078/launcher.exe, 53,134,336 bytes
+EXE SHA256 368340096BA825FBC2E53361A20C79DB19DA12B9365B95686567F0C6CBB57F49
+Payload assets/native/version-outfits-v2.dll, 1,215,488 bytes
+DLL SHA256 83AF5D0613D1E90D51933F382C22D215F766A61A198CAFEB41E80606A1722518
+artifacts/qa078-final-stage-20261018.json
+candidateOnly=true, releaseEligible=false, wnBALiveValidated=false.
+No install/promotion/activation by agent. Active App hash was still exact QA077
+2117196A20F50A94850455E0CDE05AB0AB62905F2D5ADFD3182E3DD3D1ED0A85.
+CheckOnly verified game/launcher CLOSED and staged hash, without activation.
+PowerShell AST PASS; VBS /check echo-only PASS with normal settings access.
+Restricted CScript settings access denied; exact echo-only check passed outside
+restricted token, no script change. artifacts/qa078-starter-validation-20261018.json.
+
+WHAT CHANGED: FREESTYLE
+Retained WPF behavior is the reference. Two complete deep captures establish
+the plan. Before publication intent and every scalar, fresh complete context,
+profile, exact registered source/token and ALL12navigationDWORD expected-prefix
+checks remain. After DWORD4, complete deep capture equality +compact reproof
+precede durable Applied. Full selected/category/mask/header fields remain exact.
+No context normalization or new roster/mask/category-field writes.
+Typed valid readiness differences BEFORE entering publication intent can wait
+without spending journal budget. Once intent/protection/write is attempted,
+errors conditionally restore only exact owned prefix, then permanently HOLD.
+No zero-observed-word heuristic, string-authorized retry or eight-attempt replay.
+Foreign/partial words never authorize restoration overwrite.
+Intentional timing tradeoff:3full deep scans instead of8. In-place mutable row
+changes can be detected after all4words rather than between them; final deep
+proof plus exact cleanup remain mandatory. Row ABA/final-proof races are not
+claimed atomically solved. This follows WPF's temporal shape with additional
+compact checks, not a proof of identical intermediate row detection.
+src/freestyle_v2.rs, src/freestyle_v2_tests.rs, src/feature_runtime.rs.
+artifacts/qa078-freestyle-wpf-publication-source-audit-20261018.json
+artifacts/qa078-freestyle-independent-review.json (independent no blocker found).
+
+WHAT CHANGED: BLACKTOP
+Explicit preparing state retains one original allocation intent/allocation.
+Max12strictattempts/10seconds, passive waits included, one original monotonic
+origin bound into both core and Host; no renewal. All bound/clock faults HOLD.
+Only typed completed ending-context-change facts (nonzero subset224, successful
+remaining metadata/range proofs, repeated scope/context observations, exact403
+retained id/kind/name records matching original generation) can defer. This is
+observation-only, never normalization/admission of changed active/kind/gameMode.
+Same original intent handle/FileID128/volume/path/bytes/ordinal/full pinned dirs,
+same owned8192privateRW allocation still allzero twice, no runtime/registration/
+pending-write/initialize-attempt are required before strict resume. Any INITIALIZE
+record attempt sets irreversible flag before record, including failed durability.
+Actual read/source/consent/identity/foreign/generation/effect uncertainty HOLD;
+existing held sessions cannot reopen. Active-route restore/re-entry preserved.
+sample_input distinguishes ONLY proven same-generation completed-context failure
+as unstable passive wait. Stable picker with missing deep proof still HOLD.
+Native roster read grouping:34 <=64KiB reads of validated2,198,768B table instead
+of1209smallreads. SAME id/kind/name widths/offsets/validation and ending guards.
+Native retained row proof is those explicit fields, distinct from Freestyle's
+full raw-row equality. No global reader bound raised.
+After durable seal intent, BEFORE each protection/cacheflush/unwind effect,
+fresh scope/profile/strict selection/deadline and exact full8192 prepared bytes
+(code, CHAININFO, runtime function, zero padding) +actual page-phase proofs repeat.
+No free/unregister/reallocation/adoption path. Retention lasts to process exit.
+native/wnba_blacktop_category_core.hpp SHA
+0BFB585A38A8EA3494158B2CE57E499C1B0DC2F9196E2ADF2D46398DDD90B143
+native/wnba_blacktop_category_win.hpp SHA
+46B4FAE2C1E0E43855B3EFA0BFE85F19190EADA0C45F071459A66DE8A3712301
+artifacts/qa078-category-core-production-integration-final.json
+artifacts/qa078-host-preinitialize-integration-proof.json
+artifacts/qa078-host-seal-hardening-final.json
+artifacts/qa078-host-seal-independent-review.json (final independent review PASS).
+
+SEPARATE SCALER TIMING CHANGE
+Only initial unapplied/nonreset/notheld scaler gets priority BEFORE camera setup
+on the existing owned feature tick. Camera cleanup remains first. Two-lane loop
+invokes each at most once; failures stay feature-local. Actual scaler_tick and
+all scaler admission/identity/opt-in/profile/snapshot/intent/protection guards are
+unchanged. Provider500ms cadence and ARMED boundary unchanged.
+Existing QA077 saved journal proves cameras were processed before first scaler
+intent, but has no timing and does not prove this caused the visible delay.
+No first-apply loaded-player requirement was found. Visual timing still needs
+live confirmation; do not promise that initial ordering alone fixes all delay.
+artifacts/qa078-scaler-first-apply-timing-source-review-20261018.md
+artifacts/qa078-scaler-initial-priority-source-audit-20261018.json
+
+VALIDATION
+Final Rust no-run compile PASS45.55s/13warnings. ONE final changed-image bounded
+NATURAL UNDEBUGGED full suite PASS1312/0failed/54ignored,64.98s, EXIT_CODE0,
+CLAIMED0,DUMP0. artifacts/qa078-final-full-rust-tests.log and
+artifacts/qa074-natural-qa078-whole-1.txt. First focused FS19/2ignored and runtime32
+passed before final scaler/DLL changes; final fullsuite covers updated source.
+Dev build PASS63s/48warnings. No tests rerun until green on same failed image.
+Eight native fixtures pass at final sources, with compiler qualification below.
+Host actual SELF fixtures:1024typedmasks/13faults,403row equivalence/34partialread
+failures, actual original-intent IDs/bytes/replacement/fullancestor pins, zero/
+region/protection/size/deadline tests,3sealpagephases/12tamperoffsets. No game calls.
+Sandboxancestor pin denied; exact self-only fixture passed normal token without
+weakening pins. DLL strictO2build +isolated systemversionforward smoke PASS.
+artifacts/qa078-native/ contains exact logs and DLL.
+
+EXACT TEST/DEV EVIDENCE
+Test EXE ACF1F0E678A4A19064BA8E58C0A2AD3411CBC1742D48F259E51B4020EAE05B28
+Test PDB 846E60B5AFDD5560F3AA374DE40565352A5DE7D471F0B490B657236EA5B21DF9
+Backups/qa078-passing-test-image-20261018/exact-test-and-dev-images.zip
+181,031,364B, all member SHA256 roundtrips verified. Includes exact testEXE/PDB,
+staged devEXE/mainPDB, native payload, controls/logs, changed sources and fixtures.
+artifacts/qa078-test-and-dev-evidence-20261018.json
+Build inputs:549source/config/test files pinned, all unchanged after builds.
+Only7oldQA077production files differ (5Rust,2native); six embedded ancillary
+assets unchanged. Outfit carry/RandomAll source and UI remain unchanged.
+artifacts/qa078-production-scope-and-native-validation-20261018.json
+artifacts/qa078-final-build-inputs-20261018.json
+Previous exact QA077DLL/1,194,496B added RECOVERY ONLY with +/-1size tests.
+New publication remains ONLY new exact payload. All old recovery pins retained.
+
+COMPILER / HISTORICAL TEST CRASH QUALIFICATIONS
+One final Clang23 -O2 coordinator-fixture compile crashed in LLVM optimization.
+Exact original log and generated preprocessed.cpp/repro.sh preserved under
+Backups/qa078-clang-coordinator-crash-20261018. That fixture compiled/passedO1;
+remaining final fixtures and actual DLL compiledO2. Separate failed/pass logs
+are retained, no claim of compiler crash resolution. Earlier agent O2fixtures
+passed but do not explain this failure. No global/compiler/CPU settings changed.
+QA073 NATURAL Rust test AV0xC0000005 remains UNRESOLVED. Exact original control
+EXE/PDB/ZIP in Backups/qa073-natural-test-av-20261018 and QA077handoff. Debugger
+pass and changedQA074/75/76/77/78passes do not fix/explain it. No actual natural
+crashdump captured yet. Future failure: preserve exactimage/PDB/log/dump BEFORE
+rebuild; do not repeat unchanged image until green. Test-only bounded capture,
+no global WER/PageHeap/registry changes. Current dev candidate not release proof.
+
+NEXT LIVE CHECK / WORK REMAINING
+User closes any old game/launcher normally, opens Start QA078 Dev.vbs, enables
+BOTH WNBA toggles and uses Play normally. Check Freestyle category, Blacktop Y
+cycle, then Home/re-entry persistence in both. Read logs automatically, no test
+apps/scripts or ad hoc memory writes. Check initial scaler timing alongside it.
+Record fresh exact activeEXE/PID/birth/session before attributing logs; previous
+QA077game18972/sessionending0005 is historical, not a new test.
+No gameplay acceptance claimed from offline checks. If fail, use component
+bitmask/native exact stage diagnostics to identify next change; no blanket
+context relaxation/retry. QA075fast outfits and QA076quietstreetwearRandomAll
+stay preserved. Existing encrypted index research remains unintegrated/keyblocked.

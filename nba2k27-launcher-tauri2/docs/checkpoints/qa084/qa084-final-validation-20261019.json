@@ -1,0 +1,103 @@
+{
+  "utc": "2026-10-19T17:05:54.010246+00:00",
+  "scope": "DEV ONLY; no installation, promotion, activation or game launch",
+  "candidate": {
+    "path": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Dev\\Pending\\QA084\\launcher.exe",
+    "sha256": "03BFFF642F4EB7853F9B0F5B4DBD542BF8D60E9B8F002C4B45FA787026374630",
+    "bytes": 58926592
+  },
+  "payload": {
+    "sha256": "2E921A4E8B408996C20DEAD7412835A9197D67B83C05CE840130300A903120DD",
+    "bytes": 1966080
+  },
+  "rust": {
+    "utc": "2026-10-19T17:04:37.228654+00:00",
+    "completeExactPartition": true,
+    "testExeSha256": "DDBA3DBB62B098B7F39B8218CEDA5AC6284F4DB4A95605EABE2D2C80D7A88DAA",
+    "testPdbSha256": "18A2148F666E6C1756DE2E803689D63E52C97D6FF4FCABBC43B748E7D34E1C54",
+    "testListSha256": "EA480AF6F661907E4999E850D0C8EE63988E53EAAAF5269B2056FFAD9AAD5B86",
+    "enumerated": 1551,
+    "passed": 1497,
+    "ignored": 54,
+    "parts": [
+      {
+        "part": "roster",
+        "log": "artifacts\\qa084-final-roster-rust-tests.log",
+        "logSha256": "5A7BEBB438361B8F82FC2004FC7E447E21511BFB27CB5727386388D186A91DD0",
+        "capture": "artifacts\\qa074-natural-qa084-roster-final-3.txt",
+        "captureSha256": "2F16A57D06E55FAF1EBC698A86F1C1202F8037B0D7ABADE52CB3F85EC43D5522",
+        "passed": 164,
+        "ignored": 4,
+        "filtered": 1383
+      },
+      {
+        "part": "catalog",
+        "log": "artifacts\\qa084-final-catalog-rust-tests.log",
+        "logSha256": "FDC10DDE22309A7F09F7FA419CE6AB95B69E118E2ABFA5B02F7ED8C4303AED80",
+        "capture": "artifacts\\qa074-natural-qa084-catalog-final-3.txt",
+        "captureSha256": "45D40C0DFA16C3885AA27EFE82040CAEAE4E58054CD53903FAF27BEF33003EC7",
+        "passed": 13,
+        "ignored": 0,
+        "filtered": 1538
+      },
+      {
+        "part": "rest",
+        "log": "artifacts\\qa084-final-rest-rust-tests.log",
+        "logSha256": "4B6D5A17843696AAE12DA750A2803A2C33E2676C9523909F003121CE9B01A566",
+        "capture": "artifacts\\qa074-natural-qa084-rest-final-3.txt",
+        "captureSha256": "3C07C9099A47A094136AA939B4EA1FD91F14EB4FED0E28E01E4E601D8F1441C2",
+        "passed": 1320,
+        "ignored": 50,
+        "filtered": 181
+      }
+    ],
+    "underDebugger": false,
+    "qa073NaturalAvResolved": false
+  },
+  "frontend": {
+    "vitestPassed": 224,
+    "files": 43,
+    "browserRegressionScripts": 14,
+    "typecheck": "PASS",
+    "viteBuild": "PASS"
+  },
+  "nativeFixtures": 10,
+  "ownedHelperSynthetic": {
+    "units": 11,
+    "helperDeathCycles": 32,
+    "faultMatrix": 13,
+    "largeIntentBytes": 16777216,
+    "largeIntentChecksPerDirection": 52,
+    "forwardMs": 802.6,
+    "reverseMs": 817.2,
+    "forwardBudgetMs": 5000,
+    "reverseBudgetMs": 8000,
+    "gameplayPerformance": false
+  },
+  "delivered": [
+    "Native composite height/wingspan Save with atomic masked CAS and durable held/rollback guards",
+    "Structural add/remove/shared-copy season changes and retained-reviewed bulk season/DNA imports",
+    "Isolated online ratings capture; saved text fallback remains",
+    "Manual portrait/team artwork prepare/commit/cancel",
+    "Reserved native arena/floor clone and disabled-by-default saved profiles; initial enabled application on future normal modded Play",
+    "Selected legacy arena profile review/import without activation",
+    "Portable TeamDNA semantic type/year/existing-arena transfer",
+    "Fresh full-intent proof accelerated without cache/deadline/ownership changes; exact retained-helper teardown race fixed"
+  ],
+  "remaining": {
+    "implementedLiveUnverified": true,
+    "sameLaunchCustomArenaReloadPersistence": "No proven committed native reload epoch; keep once-per-launch no-replay. Request counter is not completion proof.",
+    "selectedPrivateHistory": "Unsupported; retained WPF also refuses selected private-history structure.",
+    "originClearNew": "Not a retained reachable WPF parity capability; no speculative allocator added.",
+    "qa073NaturalRustAvResolved": false,
+    "qa078ClangFixtureCrashResolved": false,
+    "qa080VisibleScalerAccepted": false
+  },
+  "starterChecks": {
+    "vbsPrintOnly": "PASS outside sandbox; sandbox Windows Script Host settings access denied",
+    "powershellCheckOnly": "Hash checks passed then correctly refused current dev launcher PID35872; nothing copied/launched",
+    "activation": false
+  },
+  "frozenInputCount": 714,
+  "evidenceArchiveReceipt": "artifacts/qa084-exact-evidence-archive-20261019.json"
+}

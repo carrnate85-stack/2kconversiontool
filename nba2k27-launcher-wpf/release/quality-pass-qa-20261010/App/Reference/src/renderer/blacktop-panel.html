@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: preview-image: https://launcher-resources.invalid; connect-src 'none'; object-src 'none'; base-uri 'none'">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Blacktop outfits</title><link rel="stylesheet" href="blacktop-panel.css"><link rel="stylesheet" href="clothing-picker.css"><link rel="stylesheet" href="release-theme.css"><link rel="stylesheet" href="blacktop-topbar.css"><link rel="stylesheet" href="arena-picker.css"><link rel="stylesheet" href="scoreboard-picker.css"><link rel="stylesheet" href="ball-picker.css"><link rel="stylesheet" href="blacktop-live-bar.css"><link rel="stylesheet" href="direct-game-rules.css"></head>
+<body class="blacktop-overlay compact-bar">
+  <header class="ball-picker-heading wardrobe-catalog-heading"><div><small>BLACKTOP</small><h2><span class="wardrobe-title">Edit outfit</span><span class="rules-title">Game rules</span></h2></div><button id="collapseBlacktopPanel" class="ball-picker-back" type="button" title="Return to the compact game bar" hidden>Back to game</button></header>
+  <button id="closeBlacktopEditor" class="wardrobe-close-editor" type="button" aria-label="Back to game" title="Back to game" hidden>×</button>
+  <header class="wardrobe-topbar">
+    <div class="blacktop-bar-brand" data-ui-icon="crown" aria-label="Blacktop"></div>
+    <div class="blacktop-bar-field blacktop-bar-mode"><small>Mode</small><span class="blacktop-bar-static">Blacktop</span></div>
+    <div class="blacktop-bar-field blacktop-bar-player" data-ui-icon="players"><small>Player</small><select id="blacktopPlayerSelect" aria-label="Player"><option>Select players in game</option></select></div>
+    <div class="blacktop-bar-controls">
+      <small>Actions</small>
+      <div class="blacktop-bar-actions" role="group" aria-label="Outfit actions">
+        <div class="blacktop-bar-action"><button id="editBlacktopPlayer" disabled>Edit outfit</button></div>
+        <div class="blacktop-bar-action"><button id="blacktopRandomPlayer" aria-haspopup="menu" aria-expanded="false" disabled>Random player</button></div>
+        <div class="blacktop-bar-action"><button id="blacktopRandomAll" aria-label="Random all players" disabled>Random all players</button></div>
+      </div>
+    </div>
+    <div class="blacktop-bar-field blacktop-bar-presentation" data-ui-icon="blacktop"><small>Arena</small><button id="arenaMenuButton" type="button">Loading…</button></div>
+    <div class="blacktop-bar-field blacktop-bar-presentation" data-ui-icon="presentation"><small>Scoreboard</small><button id="scoreboardMenuButton" type="button">Loading…</button></div>
+    <div class="blacktop-bar-field blacktop-bar-presentation" data-ui-icon="ball"><small>Ball</small><button id="ballMenuButton" type="button">Loading…</button></div>
+    <div class="blacktop-bar-field blacktop-bar-rules" role="group" aria-label="Game rules"><small>Rules</small><button id="openBlacktopRules" type="button">Game rules</button></div>
+    <div class="blacktop-bar-field blacktop-bar-status"><small>Status</small><span id="blacktopBarStatus" class="blacktop-bar-ready" data-ui-icon="check">Loading</span></div>
+    <div class="blacktop-bar-field blacktop-bar-hide"><small>Overlay</small><button id="hideBlacktopPanel" data-ui-icon="hide" title="Hide overlay (F8 or Escape)">Hide overlay</button></div>
+  </header>
+  <p id="blacktopStatus" role="status" aria-live="polite">Reading selected players…</p>
+  <main>
+    <div class="blacktop-workspace"><nav id="blacktopPlayerPicker" aria-label="Selected Blacktop players"></nav><div class="wardrobe-editor"><div id="blacktopPlayers"></div></div></div>
+    <section id="blacktopRulesPane" class="blacktop-rules-pane" aria-label="Game rules" hidden>
+      <div class="blacktop-rules-heading"><p>Live values for this game session. Nothing changes until you choose a value.</p><button id="refreshBlacktopRules" type="button">Refresh values</button></div>
+      <p id="blacktopRulesStatus" role="status" aria-live="polite">Open Game rules to read the current values.</p>
+      <div id="blacktopRulesList" class="blacktop-rules-list"></div>
+      <p class="blacktop-rules-note">Changes apply immediately to the current game state. The game may reload its own values when you change modes.</p>
+    </section>
+  </main>
+  <footer><span>F8 to hide · Esc back to game</span><span>Edit on player selection · Session-only outfits</span></footer>
+  <script src="preview-image-url.js"></script>
+  <script src="shoe-preview-catalog.js"></script>
+  <script src="../shared/accessory-slots.js"></script><script src="../shared/arena-browser.js"></script><script src="../shared/game-rule-values.js"></script><script src="accessory-controls.js"></script><script src="clothing-catalog-ui.js"></script><script src="sock-preview-catalog.js"></script><script src="accessory-preview-catalog.js"></script><script src="top-preview-catalog.js"></script><script src="bottom-preview-catalog.js"></script><script src="clothing-picker.js"></script><script src="blacktop-batch.js"></script><script src="blacktop.js"></script><script src="blacktop-player-menu.js"></script><script src="arena-picker.js"></script><script src="scoreboard-preview-catalog.js"></script><script src="scoreboard-picker.js"></script><script src="ball-picker.js"></script><script src="direct-game-rules.js"></script><script src="sidebar-icons.js"></script><script src="blacktop-live-bar.js"></script>
+<script src="catalog-performance.js"></script></body></html>

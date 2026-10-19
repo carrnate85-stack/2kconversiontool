@@ -1,0 +1,96 @@
+WNBA DEV CHECKPOINT QA065 - 2026-10-18
+Canonical project: C:\Users\carrn\CodexProjects\2kconversiontool\nba2k27-launcher-tauri2
+
+Scope and safety
+DEV only. No installation, promotion, game launch, UI control, or live game
+writes were performed for this checkpoint. The staged build is not activated.
+User has confirmed QA064 normal Freestyle toggle shows WNBA categories without
+scripts. Keep exact lease/profile, pinned pack, per-session consent, durable
+journal, conditional readback/restore, and process-lifetime retention guards.
+Never print/copy roster keys. Back up before editing and fsync changed files.
+
+Delivered stage
+Dev/Pending/QA065/launcher.exe
+SHA256 AA264F1AD5A630BBCDF059888E1FCE3F1FB2934E0722122B9EFD5107E8792740
+Bytes 52292608
+Embedded native DLL assets/native/version-outfits-v2.dll
+SHA256 376492792C2812947BB4200368C4737BDE5C59A9BF7A9375169E4FF6EF6EBEFB
+Bytes 1095680
+Rust source pins match. Previous exact QA064 DLL (4164D1.../1037312) is
+recovery-only, alongside older exact payloads. Intermediate candidates are not
+admitted recovery payloads and were never activated.
+
+What changed
+Blacktop explicit category trial follows the proven two-entry source trial.
+After REGISTERED, native watcher waits up to ten minutes for a SEPARATE token:
+Data/wnba-priority-v2/blacktop-categories-<48hex session>.bin
+72 bytes: C27WNBC1, PID u32 at8, reserved0 at12, birth u64 at16, nonce at24.
+Source C27WNBT1 and Freestyle C27WNPC1 do not authorize this route. The actual
+Blacktop product toggle is still disabled pending this live category trial.
+Normal one-entry Freestyle does not enter the new worker.
+
+Exact stable owned offline Blacktop selection + deep403-row snapshot requires
+30NBA and all15uniqueWNBA clubs. Source proof retains exact two-entry priority
+WAD/header/rawindex/descriptors/prefix, pack file identities and Authority.
+The EuroLeague label key and aligned category3 dispatch word are the only
+image data writes: label ACFC4D8, table entry7425F58 within table7425F4C.
+Native code methods remain unchanged. Bridge is private10byte movESI20000000
+then relative JMP230BE2B; publication order label then dispatch, restoration
+order dispatch then label. Complete neighbor/table/label proof, CAS/readback,
+original page protection, and flushed journals are required. Conflicts hold.
+Private code is RW then RX, metadata R, never freed/unregistered before exact
+game exit. CHAININFO references the original stock frame; original lookup and
+all10bridge byte lookups are checked. Category/source lifetime guards retain
+objects even on exception. Exit selection restores exact owned route; reentry
+may publish again after fresh proof. Unknown/foreign/failed states never retry.
+
+Checks
+Strict C++ core, production/FakeSource Host instantiations/default-deny tests,
+large same-allocation403-row range +72936byte chunked reads, protection and
+allocation rejection tests PASS. Two independent real Windows unwind fixtures
+PASS, including actual own-executable static .pdata plus private bridge at
+imageBase+40000000; all10PCs and original lookup pass, bad metadata controls fail.
+Strict full DLL build and VersionProxySmokeTest PASS. Offline/locked Rust test
+compile and dev build PASS (12/47 existing warnings). Final focused Rust tests
+85 PASS, 3 opt-in disk audits ignored. No general release qualification.
+Five final PowerShell scripts parse; three VBS /check modes PASS. Final source
+and category CheckOnly reject the older active dev EXE size before approval.
+Final starter CheckOnly validates staged hash/size and returns no activation.
+
+User test sequence - close current game and launcher normally first
+1. Start QA065 Dev.vbs. This updates ONLY Dev/Portable/App with idle/hash guards.
+2. Turn WNBA Freestyle OFF, then Play. Stay at Home.
+3. Test QA065 Blacktop Source.vbs. Wait for REGISTERED before entering a picker.
+4. Enter the NBA Learn2K/Freestyle picker naturally, return Home, enter Blacktop
+   player selection. The natural warmup is REQUIRED; direct first Blacktop
+   entry can retain370stock teams. Source profile unchanged from QA064 trial.
+5. Test QA065 Blacktop Categories.vbs. Separate concrete category trial consent.
+   Stay at Blacktop selection until exact-session PUBLISHED or HELD.
+6. Cycle Y to WNBA and check all15clubs/player names before entering a court.
+   Report result. After pass, test Home/reentry and a match separately.
+No test scripts needed for ordinary Freestyle toggle use; keep tests isolated.
+
+Remaining acceptance / next work
+QA064 source+reentry proven403/30/15, but QA065 category trial has NOT run live.
+Need Y-cycle visibility, NBA/classic/all-time unaffected, WNBA player selection,
+match compatibility, selection-exit restoration/reentry and toggle-off session.
+Then wire Blacktop next-Play toggle, including supported native roster warmup.
+Both toggles together need explicitly admitted two-entry Freestyle pack proof;
+current Rust Freestyle gate admits only normal one-entry profile. Do not just
+relax that guard. Do not claim automatic first-entry Blacktop reload solved.
+Outfit5second delay/ready-waiting flicker remain separate prior unresolved work.
+Prior whole-PC bugcheck cause remains unresolved. Overall estimate stays80.2%.
+
+Evidence and implementation
+native/wnba_blacktop_category_core.hpp, _win.hpp, _proxy_bridge.hpp
+native/wnba_blacktop_bridge_unwind.hpp
+native/wnba_priority_v2_win.hpp and _proxy_bridge.hpp
+artifacts/qa065-final-stage-20261018.json
+artifacts/qa065-final-test-build.log, qa065-final-dev-build.log,
+qa065-final-focused-tests.log, qa065-blacktop-category-win-compile.log
+artifacts/qa065-blacktop-bridge-windows-unwind-validation-20261018.md
+artifacts/qa065-blacktop-native-host-independent-review-20261018.txt
+artifacts/qa065-blacktop-bridge-unwind-static-image-test.log
+Backups/qa065-native-payload-20261018; qa065-category-worker-20261018;
+qa065-wnba-source-category-accessor-20261018; qa065-test-script-templates-20261018
+Read NEXT-CHAT-HANDOFF-QA064.txt for exact source pack hashes/live evidence.

@@ -1,0 +1,49 @@
+QA080 WORK IN PROGRESS - 2026-10-18
+Read NEXT-CHAT-HANDOFF-QA079.txt first for all boundaries, priorbuilds/crashes.
+User reports everybasketballplayer/refereevisiblyresizes onload. Useravailable;
+optionalpendingquestion: selection vswalkin/courtloading vsboth. Devonly:no
+install/promote/autoactivate/gamecontrol/ad hocwrites. Gameandlauncherclosed
+normallyduringresearch. QA079activeEXEwasverifiedC63571...currentunchanged.
+Currentnewsourcefrozen549files inartifacts/qa080-final-build-inputs-20261018.json.
+Changedonly3srcfiles:feature_runtime6023D2F212D3C2665EB2D640053B948CE3A2D6D515B5C3E998BBC57F27ABFAEB;
+scaler_npc_v2345255ACEF05973EFE92A8DBE3D207A44B5E35E8005DFBDB1C2212495434BA5B;
+scaler_npc_v2_testsB1A3B84A254CD49EA37CB050FC613D3D7369478BAF5B7DA392EDA970DB6E85AE.
+Backups/qa080-player-npc-boundary-20261018 durablebeforefiles.
+SafeWPFboundaryfix:identity+Groups.includes+pureplan refuseallPLAYER-class
+NPCadoption; unsupportedretainedreceiptsdroppedwithoutwrites. Previously
+PLAYERnotcurrentlyin30wrappers ->Celebritynegativeinference couldtouchloading
+player; writeidentitydidnotrecheckwrapperbinding. Standardnativefactorysets
+bit2beforecreationbutalternatepathsnotproven. CourtsidePLAYERfeaturewasUNV,
+nowwithhelduntilpositiveidentity. SharedPLAYER/refereeglobalscaleunchanged.
+Coach/GENERIC/Cheer/NBAWNBA/outfits/nativeDLLunchanged.
+Rootruntimefixedtotal+4group+unknowncounters recordwriterentered,verified
+flag/cacheRETURN,uncertainreturn,first/lastms. ExtraRPM/gamewritesNONE. Local
+clonepreservescountersafterbatchErr. Factsnotauthority/notdurablepre-effect.
+Onlyfreshquiescent/normalclosedzeroexcludeslane; stale/crashzeroDOESNOT.
+Actualuserresize/refereefixNOTproven. NoNPCcachewritesadded.
+QA079runtimeproof:globalapplied13.630smode0loadedwrapper0; first26wrappercache
+observation46.510s; NPCwrite/cachefact15.802s. Zero wrappersNOTzeroactorselsewhere;
+cacheobservationNOTactorbirth/frame. Nativejournalnormallyunlinkedwhenuser
+closedbeforecapture; Backups/qa080-scaler-user-resize-20261018/native-v2-features-session.jsonl
+isZERO-BYTEFAILED COPY,NOTevidence. Validproviderclosedstate+factsbackedup;
+artifacts/qa080-scaler-user-report-live-evidence-20261018.json qualifies this.
+Reports:qa080-scaler-wpf-player-initialization-research.json and
+qa080-scaler-player-native-lifecycle-disk-20261018.json/.txt (diskonly);
+qa080-scaler-player-npc-boundary-review.json (author2filesfrozen);
+qa080-scaler-independent-review.json independentPASSnodetectedblocker.
+Roottestcompilecurrentexecsession91231. No fullnaturalQA080run yet,nostageyet.
+Next:ONEboundednaturalrun supervisorartifacts/qa073-natural-crash-supervisor.exe
+exacttestEXEtarget-qa054/debug/deps/nba2k27_launcher_tauri2-281ce2d259e8f3fd.exe
+prefixartifacts/qa074-natural-qa080-whole-1,logqa080-final-full-rust-tests.log,
+--test-threads=4 enable; normalfixturepermissionsneeded. No repeatsuntilgreen.
+PreserveexactEXE/PDB/dump/logbeforeanyrebuildifcrash. HistoricalQA073AVandQA078
+ClangO2fixturecrashremainUNRESOLVED; exactevidencepaths inQA079final.
+Then cargo devbuild offline/locked/no-default-features/target-qa054/-j4.
+Prepared CREATE_NEWtools/qa080_stage_dev_checkpoint.pyusesQA079startertemplate,
+requiresnaturalpass>=1316+54ignored/exactcontrolhashes/sourcefreeze andsameDLL
+83AF5D0613D1E90D51933F382C22D215F766A61A198CAFEB41E80606A1722518/1215488B.
+Then stage(noactivation),starterAST+CheckOnly,VBScscript/checkechoonlynormal
+Windowssettingsread,exacttestEXE/PDB+devEXE/mainPDBarchiveZIProundtrip hashes,
+sourcefreeze549+nativeunchanged+activeDevstillQA079,finalhandoff,newclickable
+starter. Do notclaimvisibleinstantfixfromofflinechecks. WNBApreservedQA078user
+success plusHELD/CTX160persistencequalification recordedinQA079final.

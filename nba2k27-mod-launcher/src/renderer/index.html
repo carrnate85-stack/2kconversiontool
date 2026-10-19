@@ -1,0 +1,887 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: blob: preview-image: https://launcher-resources.invalid; media-src 'self' data: blob: https://launcher-resources.invalid; connect-src 'self' preview-image: https://launcher-resources.invalid; object-src 'none'; frame-src 'self'; base-uri 'none'; form-action 'none'">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2K Launcher</title>
+  <script src="theme.js"></script>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="release-theme.css">
+  <link rel="stylesheet" href="roster-workspace.css">
+  <link rel="stylesheet" href="session-panels.css">
+  <link rel="stylesheet" href="launcher-quality.css">
+  <link rel="stylesheet" href="launcher-polish.css">
+  <link rel="stylesheet" href="profiles-polish.css">
+  <link rel="stylesheet" href="mod-library-polish.css">
+  <link rel="stylesheet" href="jukebox-polish.css">
+  <link rel="stylesheet" href="presentation-polish.css">
+  <link rel="stylesheet" href="blacktop-page-polish.css">
+  <link rel="stylesheet" href="blacktop-overlay-preview.css">
+  <link rel="stylesheet" href="cameras-polish.css">
+  <link rel="stylesheet" href="unlocks-polish.css">
+  <link rel="stylesheet" href="typography-balance.css">
+  <link rel="stylesheet" href="presentation-combined.css">
+  <script src="sidebar-icons.js" defer></script>
+  <link rel="stylesheet" href="approved-polish.css">
+</head>
+<body>
+  <div id="appStartup" class="app-startup" role="status" aria-live="polite">
+    <div class="app-startup-card"><div class="launch-spinner" aria-hidden="true"><span></span></div>
+      <strong>Loading 2K Launcher…</strong><p id="appStartupMessage">Reading your settings and library.</p>
+    </div>
+  </div>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <img class="brand-mark" src="../assets/app-icon.png" alt="">
+        <div><strong>2K Launcher</strong><small>NBA 2K27</small></div>
+      </div>
+      <nav>
+        <button class="nav-item active" data-page="play">Play session</button>
+        <button class="nav-item" data-page="profiles">Profiles</button>
+        <button class="nav-item" data-page="mods">Mod library</button>
+        <button class="nav-item" data-page="jukebox">Jukebox</button>
+        <button class="nav-item" data-page="presentation">Presentation</button>
+        <hr class="nav-divider" aria-hidden="true">
+        <button class="nav-item" data-page="players">Roster Editor ↗</button>
+        <button class="nav-item" data-page="teams">Team Editor ↗</button>
+        <button class="nav-item" data-page="blacktop">Blacktop</button>
+        <button class="nav-item" data-page="unlocks">Unlocks</button>
+        <button class="nav-item" data-page="scaler">Scaler</button>
+        <button class="nav-item" data-page="settings">Settings</button>
+        <button class="nav-item hidden" id="developerNav" data-page="developer">Developer diagnostics</button>
+      </nav>
+      <div class="sidebar-foot"><button type="button" class="launcher-help-link" id="launcherHelp" aria-haspopup="dialog" aria-controls="launcherHelpDialog">Help</button>
+        <span class="status-dot" id="providerDot"></span>
+        <div><small>ASSET PROVIDER</small><strong id="providerLabel">Checking…</strong></div>
+      </div>
+    </aside>
+
+    <main>
+      <header>
+        <div>
+          <p class="eyebrow">NBA 2K27</p>
+          <h1 id="pageTitle" data-ui-icon="play">2K Launcher</h1>
+          <p class="home-intro">Configure your session, load your content, and jump into NBA 2K27.</p>
+          <p class="profiles-intro">Keep separate mod collections and choose one for Play.</p>
+          <p class="mods-intro">Search, tag, and organize the files in your mod profile.</p>
+          <p class="jukebox-intro">Build, manage, and preview your custom NBA 2K27 soundtrack.</p>
+          <p class="presentation-intro">Manage cameras and startup videos for your next session.</p>
+          <p class="blacktop-intro">Customize your streetball setup, presentation, and outfits.</p>
+          <p class="unlocks-intro">Enable the supported team options and session-only debug menus.</p>
+        </div>
+        <span class="version" id="version">v0.1.0</span>
+        <p id="rosterAutoAttach" role="status" aria-live="polite"></p>
+        <div id="rosterSectionSwitch" role="navigation" aria-label="Roster editor sections">
+          <button type="button" class="roster-section-button" data-section="players">Players</button>
+          <button type="button" class="roster-section-button" data-section="teams">Teams</button>
+        </div>
+        <button type="button" id="rosterLauncherButton" class="secondary">Open launcher</button>
+      </header>
+
+      <section class="page page-width-fluid active" id="page-play">
+        <div class="hero-card">
+          <div class="game-identity">
+            <span class="hidden" id="providerPill"></span>
+            <h2>NBA 2K27 <span id="launchStatus" role="status">Checking…</span></h2>
+            <div id="homeSetup" class="home-setup" role="status" aria-live="polite"><p id="homeSetupIssue">Checking your game and profile folders.</p><small id="homeSetupPath"></small><div class="home-setup-actions"><button type="button" class="secondary small" id="homeChooseFolder">Choose folder</button><button type="button" class="secondary small" id="homeRetrySetup">Retry</button></div></div>
+            <p id="sessionMessage">Choose your profile and playlist below.</p>
+          </div>
+          <div class="hero-actions">
+            <button class="primary play-primary" id="startSession" aria-label="Play NBA 2K27" data-ui-icon="play">Play session</button>
+            <button class="secondary hidden" id="stopSession">Stop waiting</button>
+            <div class="session-live-summary hidden" id="homeSessionActive" role="status"><span class="live-orbit" aria-hidden="true"></span><strong id="homeSessionActiveTitle">Session in progress</strong><small>Keep the launcher open while you play.</small></div>
+          </div>
+        </div>
+
+        <div class="card home-session-picks">
+          <label><span class="home-field-label" data-ui-icon="mods">Mod profile</span><select id="homeModProfile" aria-label="Mod profile"><option>Loading profiles…</option></select></label>
+          <div class="home-startup-video"><label class="home-startup-toggle"><span class="home-field-label" data-ui-icon="jukebox">Jukebox playlist</span><input type="checkbox" id="homeJukeboxEnabled" aria-label="Use a custom jukebox playlist" disabled></label><select id="homeJukeboxPlaylist" aria-label="Jukebox playlist" disabled><option>Loading playlists…</option></select></div>
+          <div class="home-startup-video"><label class="home-startup-toggle"><span class="home-field-label" data-ui-icon="presentation">Startup video</span><input type="checkbox" id="startupVideoEnabled"></label><select id="presentationVideoSelect" aria-label="Startup video" disabled><option value="">Loading videos…</option></select></div>
+          <small id="homePicksStatus" role="status"></small>
+        </div>
+
+      </section>
+
+      <section class="page page-width-fluid" id="page-blacktop">
+        <details class="presentation-section" id="blacktopScoreboardSection" open>
+          <summary>Game setup</summary>
+        <div class="blacktop-top-grid">
+          <section class="card blacktop-selector-card" aria-labelledby="blacktopPresentationTitle">
+            <div class="settings-card-heading"><span class="scene-heading-icon" data-ui-icon="blacktop" aria-hidden="true"></span><span class="scene-heading-copy"><strong id="blacktopPresentationTitle">Scoreboard, arena &amp; ball</strong></span></div>
+            <div class="blacktop-selector-row">
+              <span class="blacktop-selector-icon" data-ui-icon="presentation" aria-hidden="true"></span>
+              <div class="blacktop-selector-copy"><strong>Scoreboard</strong><span id="scoreboardSelected">Loading…</span><small id="scoreboardStatus" data-phase="loading" role="status">Loading…</small></div>
+              <select id="scoreboardSelect" aria-label="Blacktop scoreboard" hidden></select>
+              <button id="scoreboardCatalogButton" class="secondary blacktop-catalog-button" type="button" disabled>Catalog</button>
+            </div>
+            <div class="blacktop-selector-row">
+              <span class="blacktop-selector-icon" data-ui-icon="blacktop" aria-hidden="true"></span>
+              <div class="blacktop-selector-copy"><strong>Arena</strong><span id="arenaSelected">Loading…</span><small id="arenaStatus" data-phase="loading" role="status">Loading…</small></div>
+              <select id="arenaSelect" aria-label="Blacktop arena" hidden><option value="">Loading arenas…</option></select>
+              <button id="arenaCatalogButton" class="secondary blacktop-catalog-button" type="button" disabled>Catalog</button>
+            </div>
+            <div class="blacktop-selector-row">
+              <span class="blacktop-selector-icon blacktop-ball-icon" data-ui-icon="ball" aria-hidden="true"></span>
+              <div class="blacktop-selector-copy"><strong>Ball</strong><span id="ballSelected">Loading…</span><small id="ballStatus" data-phase="loading" role="status">Loading…</small></div>
+              <button id="ballCatalogButton" class="secondary blacktop-catalog-button" type="button" disabled>Catalog</button>
+            </div>
+          </section>
+          <section class="card blacktop-scene-settings">
+            <div class="settings-card-heading"><span class="scene-heading-icon" data-ui-icon="presentation" aria-hidden="true"></span><span class="scene-heading-copy"><strong>Court presentation</strong></span></div>
+            <div class="settings-switch-list">
+              <label class="settings-switch-row"><input class="settings-switch" type="checkbox" id="blacktopRemoveDrone" aria-describedby="blacktopRemovalStatus"><span class="scene-row-icon" data-ui-icon="drone" aria-hidden="true"></span><span>Remove drone</span></label>
+              <label class="settings-switch-row"><input class="settings-switch" type="checkbox" id="blacktopRemoveDj" aria-describedby="blacktopRemovalStatus"><span class="scene-row-icon" data-ui-icon="jukebox" aria-hidden="true"></span><span>Remove DJ</span></label>
+              <label class="settings-switch-row"><input class="settings-switch" type="checkbox" id="blacktopRemoveMc" aria-describedby="blacktopRemovalStatus"><span class="scene-row-icon" data-ui-icon="microphone" aria-hidden="true"></span><span>Remove MC</span></label>
+              <label class="settings-switch-row"><input class="settings-switch" type="checkbox" id="blacktopCrowdEnabled" aria-describedby="blacktopCrowdStatus"><span class="scene-row-icon" data-ui-icon="blacktop" aria-hidden="true"></span><span>Remove crowd</span></label>
+            </div>
+            <small id="blacktopRemovalStatus" role="status" aria-live="polite" hidden></small>
+            <small id="blacktopCrowdStatus" role="status" aria-live="polite" hidden></small>
+            <button id="blacktopCrowdRestore" class="secondary" type="button" hidden>Restore original crowd setting</button>
+          </section>
+          <section class="card blacktop-overlay-settings">
+            <div class="settings-card-heading"><span class="scene-heading-icon" data-ui-icon="blacktop" aria-hidden="true"></span><span class="scene-heading-copy"><strong>Blacktop overlay</strong></span></div>
+            <label class="settings-switch-row"><input class="settings-switch" type="checkbox" id="autoOpenBlacktop"><span><strong>Open overlay automatically</strong></span></label>
+            <button id="previewBlacktopOverlay" class="secondary blacktop-preview-trigger" type="button">Preview F8 overlay</button>
+          </section>
+        </div>
+        </details>
+        <details class="presentation-section" id="blacktopOutfitSection" open>
+          <summary id="outfitCreatorTitle">Outfit creator</summary>
+        <section class="card outfit-creator" id="outfitCreator" aria-labelledby="outfitCreatorTitle">
+          <div class="outfit-library-bar">
+            <label>Saved outfits<select id="outfitSaved" aria-label="Saved outfits"><option value="">New outfit</option></select></label>
+            <label>Name<input id="outfitName" maxlength="64" placeholder="Name your outfit"></label>
+            <label class="outfit-fit">Clothing fit<select id="outfitPool"><option value="male">Men</option><option value="female">Women</option></select></label>
+            <button id="outfitSave" type="button" class="primary">Save outfit</button>
+            <button id="outfitMannequin" type="button" class="secondary">View on mannequin</button>
+            <details class="outfit-actions" id="outfitActions"><summary aria-label="More outfit actions">More <span aria-hidden="true">▾</span></summary><div class="outfit-actions-menu"><button id="outfitImport" type="button">Import outfit</button><button id="outfitExport" type="button">Export outfit</button><button id="outfitDelete" type="button" disabled>Delete outfit</button></div></details><button id="outfitNew" type="button" class="hidden">New</button>
+          </div>
+          <div class="outfit-pieces">
+            <div class="outfit-piece"><button type="button" id="outfitTopBrowse" class="outfit-piece-button" aria-label="Change top"><span class="outfit-piece-category">Top</span><span id="outfitTopPreview" class="outfit-picture"></span><span id="outfitTopLabel" class="outfit-piece-name"></span><span class="outfit-change">Change <span aria-hidden="true">↗</span></span></button><select id="outfitTop" aria-label="Top" hidden></select></div>
+            <div class="outfit-piece"><button type="button" id="outfitBottomBrowse" class="outfit-piece-button" aria-label="Change bottom"><span class="outfit-piece-category">Bottom</span><span id="outfitBottomPreview" class="outfit-picture"></span><span id="outfitBottomLabel" class="outfit-piece-name"></span><span class="outfit-change">Change <span aria-hidden="true">↗</span></span></button><select id="outfitBottom" aria-label="Bottom" hidden></select></div>
+            <div class="outfit-piece"><button type="button" id="outfitSockBrowse" class="outfit-piece-button" aria-label="Change socks"><span class="outfit-piece-category">Socks</span><span id="outfitSockPreview" class="outfit-picture"></span><span id="outfitSockLabel" class="outfit-piece-name"></span><span class="outfit-change">Change <span aria-hidden="true">↗</span></span></button><select id="outfitSock" aria-label="Socks" hidden></select></div>
+            <div class="outfit-piece"><button type="button" id="outfitShoeBrowse" class="outfit-piece-button" aria-label="Change shoes"><span class="outfit-piece-category">Shoes</span><span id="outfitShoePreview" class="outfit-picture"></span><span id="outfitShoeLabel" class="outfit-piece-name"></span><span class="outfit-change">Change <span aria-hidden="true">↗</span></span></button><select id="outfitShoe" aria-label="Shoes" hidden></select></div>
+          </div>
+          <div id="outfitAccessories"></div>
+          <small id="outfitDetails" hidden></small>
+          <p id="outfitCreatorStatus" role="status" aria-live="polite">Loading outfit library…</p>
+          <div class="wardrobe-tools-footer">
+            <div class="wardrobe-cache-control">
+              <div class="wardrobe-cache-status"><small id="clothingCacheStatus" role="status" aria-live="polite">Previews save as you browse.</small><small id="previewPackStatus" role="status" aria-live="polite">Optional rendered previews can be imported from a ZIP.</small><progress id="clothingCacheProgress" aria-label="Wardrobe preview caching progress" hidden></progress></div>
+              <button class="secondary small cache-primary-action" id="cacheClothingPreviews"><span aria-hidden="true">↻</span> Prepare all previews</button>
+              <button class="secondary small" id="importPreviewPack" type="button">Import preview ZIP</button>
+              <button class="secondary small" id="cancelClothingCache" hidden>Cancel</button>
+            </div>
+          </div>
+        </section>
+        </details>
+        <div class="hidden" aria-hidden="true" id="blacktopOverlayOnlyControls">
+        <div class="toolbar"><button id="openBlacktopPanel">Open game panel · F8</button><small id="blacktopPanelHint">F8 opens the outfit panel over borderless/windowed NBA 2K27. Keep the launcher open.</small></div>
+        <div class="toolbar">
+          <div><h2>Blacktop <small>Preview</small></h2><p>Select players in Blacktop, then refresh this list. Keep the game on player selection while applying.</p></div>
+          <button class="secondary" id="refreshBlacktop">Refresh players</button>
+        </div>
+        <p id="blacktopStatus" role="status" aria-live="polite">Ready to check the current game.</p>
+        <div id="blacktopPlayers"></div>
+        </div>
+      </section>
+
+      <section class="page page-width-fluid" id="page-mods">
+        <section class="card mod-library-controls" aria-label="Mod library controls">
+          <div class="mod-folder-toolbar">
+            <span class="mod-folder-label" data-ui-icon="profiles">Current mod folder</span><p id="modsRootLabel" class="mod-folder-path">Not scanned</p>
+            <div class="mod-library-actions"><button class="secondary" id="openMods" data-ui-icon="profiles">Open folder</button><button class="secondary" id="installMods" data-ui-icon="download" title="Install individual files, a whole folder, ZIP, or RAR package"><span id="installModsLabel">Install mods</span></button><button class="primary" id="scanMods" data-ui-icon="refresh"><span id="scanModsLabel">Scan mods</span></button></div>
+          </div>
+          <div class="mod-search-toolbar">
+            <label class="mod-search-field" for="modSearch"><span data-ui-icon="search" aria-hidden="true"></span><input id="modSearch" aria-label="Search the active mod library" placeholder="Try png10000, arena_999, english, Player…" autocomplete="off"></label>
+            <p id="modResultSummary" role="status">Scan the folder to search its files.</p>
+          </div>
+        </section>
+        <div class="stats hidden" id="modStats" aria-hidden="true">
+          <div><strong>—</strong><small>FILES</small></div>
+          <div><strong>—</strong><small>SIZE</small></div>
+          <div><strong>—</strong><small>PLAYERS</small></div>
+          <div><strong>—</strong><small>ARENAS</small></div>
+        </div>
+        <div class="card table-card">
+          <div class="table-head"><button type="button" data-mod-sort="title" aria-label="Sort by mod name" aria-pressed="true" data-direction="ascending">Mod / asset tree <span aria-hidden="true">↕</span></button><button type="button" data-mod-sort="category" aria-label="Sort by category" aria-pressed="false">Category <span aria-hidden="true">↕</span></button><button type="button" data-mod-sort="tags" aria-label="Sort by search tags" aria-pressed="false">Search tags <span aria-hidden="true">↕</span></button><button type="button" data-mod-sort="size" aria-label="Sort by file size" aria-pressed="false">Size <span aria-hidden="true">↕</span></button><span>Actions</span></div>
+          <div id="modRows" class="table-body"><div class="empty">Scan the folder to build the local mod catalog.</div></div>
+          <div class="mod-library-footer"><span id="modShownSummary">No catalog loaded</span><span>Click tags to edit · expand grouped files</span></div>
+        </div>
+      </section>
+
+      <section class="page page-width-fluid" id="page-jukebox">
+        <div class="jukebox-status-line hidden" aria-hidden="true">
+          <span class="status-dot" id="jukeboxDot"></span>
+          <div><strong id="jukeboxState">CHECKING</strong><p id="jukeboxMessage">Reading music.iff from the active profile…</p></div>
+          <span class="pill" id="jukeboxActivePlaylist">DEFAULT PLAYLIST (LOCKED)</span>
+        </div>
+        <article class="card jukebox-controls">
+          <div class="jukebox-playlist-row">
+            <label>Playlist<select id="jukeboxPlaylistSelect"><option value="">Default Playlist (Locked)</option></select></label>
+            <div class="jukebox-playlist-actions jukebox-playlist-actions-primary">
+              <button class="secondary small" id="saveJukeboxPlaylistBundle" title="Save a compressed Opus playlist archive (requires launcher 0.36.42 or newer)">Save</button>
+            </div>
+            <div class="jukebox-playlist-actions jukebox-playlist-actions-manage">
+              <button class="secondary small" id="newJukeboxPlaylist" title="Create a new playlist">New</button>
+              <button class="secondary small" id="editJukeboxPlaylist" title="Rename the selected playlist">Rename</button>
+              <button class="secondary small" id="orderJukeboxPlaylists" title="Drag playlists into your preferred order">Reorder</button>
+              <button class="secondary small" id="deleteJukeboxPlaylist" title="Delete the selected playlist">Delete</button>
+            </div>
+            <div class="jukebox-playlist-actions jukebox-playlist-actions-files">
+              <button class="secondary small" id="importJukeboxPlaylist" title="Import a .2kplaylist share file">Import</button>
+              <button class="secondary small" id="openJukeboxPlaylistFolder" title="Open the playlist share folder">Folder</button>
+            </div>
+          </div>
+          <label class="jukebox-freestyle-option"><input type="checkbox" id="usePlaylistInFreestyle" checked><span>Use playlist in Freestyle</span><small>Applies next launch · samples 58 if your imported playlist is larger</small></label>
+        </article>
+        <div class="jukebox-table-search">
+            <div class="jukebox-song-tools">
+              <button class="primary small" id="importJukeboxWav">+ Add song</button>
+              <button class="secondary small" id="batchImportJukeboxWav">Batch add</button>
+              <button class="secondary small" id="findAllJukeboxArtwork">Find missing artwork</button>
+            </div>
+            <label class="jukebox-search-field"><span data-ui-icon="search" aria-hidden="true"></span><input id="jukeboxSearch" aria-label="Search playlist" placeholder="Search by song or artist…" autocomplete="off"></label>
+            <p id="jukeboxResultSummary">No soundtrack loaded.</p>
+        </div>
+        <article class="card jukebox-table-card">
+          <div class="jukebox-table-head"><span>Use</span><span>Art</span><span>Song</span><span>Artist</span><span>Actions</span></div>
+          <div id="jukeboxRows" class="jukebox-table-body"><div class="empty">Install or generate music.iff in the active profile to begin.</div></div>
+        </article>
+        <div class="notice player-note jukebox-share-note"><span class="jukebox-share-icon" data-ui-icon="jukebox" aria-hidden="true"></span><div><strong>Save to share</strong><p>Save builds a .2kplaylist with 192 kbps Opus audio and your artwork. Stock songs remain references. Keep your original audio for lossless quality.</p><small>Playback changes apply on the next launch.</small></div></div>
+      </section>
+
+      <section class="page page-width-fluid" id="page-presentation">
+        <dialog id="presentationRenameDialog" class="presentation-rename-dialog">
+          <form id="presentationRenameForm">
+            <h3>Edit video</h3>
+            <label for="presentationRenameInput">Video name</label>
+            <input id="presentationRenameInput" maxlength="120" required autocomplete="off">
+            <div class="presentation-rename-actions"><button type="button" class="secondary small" id="cancelPresentationRename">Cancel</button><button type="submit" class="primary small">Save</button></div>
+          </form>
+        </dialog>
+        <details class="presentation-fold" id="presentationCamerasSection" open>
+          <summary><span class="presentation-fold-icon" data-ui-icon="cameras" aria-hidden="true"></span><span class="presentation-fold-copy"><strong>Cameras</strong><small>Choose and arrange cameras for Play</small></span><span class="pill" id="cameraCount">0 SELECTED</span></summary>
+          <div class="presentation-fold-body">
+            <div class="camera-toolbar">
+              <button class="secondary hidden" id="retryCameras">Retry cameras</button>
+              <button class="secondary hidden" id="stopCameras">Stop &amp; restore</button>
+            </div>
+            <div class="camera-grid">
+              <article class="card camera-library">
+                <div class="camera-list-head"><span>Use</span><span>Camera</span><span>Height</span><span>Zoom</span><span>Order</span></div>
+                <div id="cameraRows" class="camera-list"></div>
+              </article>
+              <div class="camera-side-stack">
+                <article class="card camera-options">
+                  <div class="card-title"><span data-ui-icon="settings">Camera setup</span></div>
+                  <label class="toggle-row"><input type="checkbox" id="lockCameraValues"><span><strong>Lock height and zoom</strong><small>Reapply saved values while the game is running.</small></span></label>
+                  <div class="camera-names-box"><div><strong>In-game camera names</strong><small id="cameraNamesStatus">Checking loc/english.iff…</small></div><button class="secondary" id="installCameraNames">Install names</button></div>
+                  <button class="secondary camera-wide" id="saveCameraSetup">Save camera setup</button>
+                </article>
+                <div class="camera-status hidden" aria-live="polite"><span class="status-dot" id="cameraDot"></span><div><strong id="cameraState">STOPPED</strong><p id="cameraMessage">The camera controller is stopped.</p></div></div>
+              </div>
+            </div>
+          </div>
+        </details>
+        <details class="presentation-fold" id="presentationVideosSection" open>
+          <summary><span class="presentation-fold-icon" data-ui-icon="presentation" aria-hidden="true"></span><span class="presentation-fold-copy"><strong>Startup videos</strong><small>Choose intro playback for Play</small></span><button class="secondary small" id="openPresentationFolder" data-ui-icon="profiles">Open folder</button></summary>
+          <div class="presentation-fold-body">
+          <article class="card jukebox-table-card presentation-library-card">
+            <div id="presentationImportProgress" class="hidden" role="status"><progress id="presentationImportBar" max="100" value="0"></progress><p id="presentationImportMessage"></p><button class="secondary" id="cancelPresentationImport">Cancel import</button></div>
+            <div class="presentation-table-head"><span>Video name</span><span>Length / size</span><span>Actions</span></div>
+            <div id="presentationLibrary"></div>
+            <div class="presentation-library-footer">
+              <div class="presentation-library-buttons"><button class="primary small" id="choosePresentationMovie">+ Add MP4</button></div>
+              <p>Fullscreen MP4 playback · Click or Xbox A/B to skip · H.264, AV1 or VP9 + AAC · Up to 10 minutes / 2 GB</p>
+            </div>
+          </article>
+          <p id="presentationMovieDetail" role="status"></p>
+          </div>
+        </details>
+      </section>
+
+      <section class="page page-width-fluid" id="page-profiles">
+        <div class="toolbar">
+          <div><p>Keep separate mod collections and choose one for Play.</p></div>
+        </div>
+        <div class="grid two profiles-grid">
+          <article class="card form-card profiles-saved-card">
+            <div class="card-title profile-card-heading"><div class="profile-heading-main"><span class="profile-heading-icon" data-ui-icon="profiles" aria-hidden="true"></span><div><h2>Saved profiles</h2><p>Your mod collections</p></div></div><span class="quiet" id="profileCount">0 PROFILES</span></div>
+            <div id="profileRows" class="profile-list" role="radiogroup" aria-label="Active mod profile"></div>
+            <button type="button" class="primary" id="addModsProfile" data-ui-icon="plus">New profile</button>
+            <p class="camera-help profile-selection-note" id="profilesSelectionStatus" role="status">Choose a profile to make it active. Your selection is saved for the next Play session.</p>
+          </article>
+          <article class="card profile-guide-card">
+            <div class="card-title profile-card-heading"><div class="profile-heading-main"><span class="profile-heading-icon" data-ui-icon="book" aria-hidden="true"></span><div><h2>How profiles work</h2><p>A quick guide to keep things clear.</p></div></div><span class="pill amber" data-ui-icon="clock">SESSION ONLY</span></div>
+            <div class="notice profile-active-path"><small>Currently selected profile</small><strong id="activeProfileName">Default mods</strong><span id="activeProfilePath">No profile selected.</span></div>
+            <div class="boundary profile-guide-list">
+              <div><span class="check">✓</span><p><strong>No merging</strong><small>Each folder remains an independent mod collection.</small></p></div>
+              <div><span class="check">✓</span><p><strong>Native game support</strong><small>The selected folder is temporarily presented at the game's normal mods path.</small></p></div>
+              <div><span class="check">✓</span><p><strong>Automatic restoration</strong><small>Your original mods folder returns after NBA 2K27 closes.</small></p></div>
+              <div><span class="check">✓</span><p><strong>Safe removal</strong><small>Remove forgets the list entry and never deletes its files.</small></p></div>
+            </div>
+          </article>
+        </div>
+        <dialog id="profileDialog" class="profile-dialog" aria-labelledby="profileDialogTitle">
+          <form id="profileDialogForm">
+            <h2 id="profileDialogTitle">New profile</h2>
+            <label id="profileDialogFolderLabel">Mod folder</label>
+            <div class="profile-dialog-folder"><p id="profileDialogPath" class="profile-dialog-path" aria-labelledby="profileDialogFolderLabel"></p><button type="button" class="secondary" id="chooseProfileDialogFolder">Change folder</button></div>
+            <p id="profileDialogFolderHelp" class="profile-dialog-help" hidden></p>
+            <label for="profileDialogName">Profile name</label>
+            <input id="profileDialogName" maxlength="80" required autocomplete="off">
+            <p id="profileDialogError" class="profile-dialog-error" role="alert" hidden></p>
+            <div class="profile-dialog-actions"><button type="button" class="secondary" id="cancelProfileDialog">Cancel</button><button type="submit" class="primary" id="saveProfileDialog">Create profile</button></div>
+          </form>
+        </dialog>
+      </section>
+
+      <section class="page page-width-fluid" id="page-players">
+        <div class="toolbar">
+          <div><h2>Roster player editor</h2><p>Choose a live player to inspect or edit.</p></div>
+          <div><button class="secondary small" id="exportPlayers" title="Export player catalog as JSON" disabled>Export JSON</button><button class="primary small" id="refreshPlayers">Refresh players</button></div>
+        </div>
+        <div class="player-status card hidden" aria-hidden="true">
+          <span class="status-dot" id="playerResearchDot"></span>
+          <div><strong id="playerResearchState">IDLE</strong><p id="playerResearchMessage">Start NBA 2K27 and refresh to read the live player directory.</p></div>
+          <span class="pill" id="playerResearchSafety">GUARDED EDITOR</span>
+        </div>
+        <div class="stats player-stats hidden" aria-hidden="true">
+          <div><strong id="playerCount">—</strong><small>LIVE RECORDS</small></div>
+          <div><strong id="playerCatalogCount">—</strong><small>TOTAL CATALOG</small></div>
+          <div><strong id="playerManifestCount">—</strong><small>STOCK FACE ASSETS</small></div>
+          <div><strong id="playerModsCount">—</strong><small>MOD FACE ASSETS</small></div>
+        </div>
+        <article class="card player-search-card">
+          <label for="playerSearch">Search names, record numbers, Face IDs, or teams</label>
+          <input id="playerSearch" placeholder="Try Joel Embiid, 4090, 76ers…" autocomplete="off">
+          <label for="playerTeamFilter">Filter by current roster team</label>
+          <select id="playerTeamFilter"><option value="">All teams</option></select>
+          <p id="playerResultSummary">No live player list loaded.</p>
+        </article>
+        <article class="card player-table-card">
+          <div class="player-table-head"><span>Source</span><span>Player / live vitals</span><span>Cyberface ID</span><span>Verified team</span><span>Record address</span></div>
+          <div id="playerRows" class="player-table-body"><div class="empty">Refresh while NBA 2K27 is at its full main menu.</div></div>
+        </article>
+        <div class="notice player-note"><strong>Click a live player to edit.</strong> Every write is limited to mapped data fields, read back immediately, and rolled back if verification fails. CATALOG, MANIFEST, and MODS-only rows remain view-only until their roster record is loaded. Cached overall remains informational because the real attribute-driven calculation is not mapped yet.</div>
+      </section>
+
+      <section class="page page-width-fluid" id="page-teams">
+        <div class="toolbar">
+          <div><h2>Team editor</h2><p>Choose a live team to inspect or edit.</p></div>
+          <div><button class="primary small" id="refreshTeams">Refresh teams</button></div>
+        </div>
+        <div class="stats team-stats hidden" aria-hidden="true">
+          <div><strong id="teamNamedCount">—</strong><small>NAMED TEAM RECORDS</small></div>
+          <div><strong id="teamNormalCount">—</strong><small>CURRENT NBA TEAMS</small></div>
+          <div><strong id="teamHistoricCount">—</strong><small>HISTORIC TEAMS</small></div>
+          <div><strong id="teamArenaCount">—</strong><small>ARENA LINKS</small></div>
+        </div>
+        <article class="card player-search-card">
+          <label for="teamSearch">Search team, city, ID, arena, or file</label>
+          <input id="teamSearch" placeholder="Try 76ers, Philadelphia, arena_000_int…" autocomplete="off">
+          <p id="teamResultSummary">No live team list loaded.</p>
+        </article>
+        <article class="card team-table-card">
+          <div class="team-table-head"><span>Record</span><span>Team</span><span>Team ID</span><span>Type / season</span><span>Arena</span><span>Main logo</span></div>
+          <div id="teamRows" class="team-table-body"><div class="empty">Refresh while NBA 2K27 has an NBA roster loaded.</div></div>
+        </article>
+        <div class="notice player-note"><strong>Click a row to inspect or edit it.</strong> Refreshing is read-only. Saving a live row makes bounded data-field writes only—no game-code hook—then verifies every byte. Failed saves automatically roll back. Team ID and record identity are never editable.</div>
+      </section>
+
+      <section class="page page-width-fluid" id="page-unlocks">
+        <div class="unlocks-content">
+          <div class="unlock-category-strip" aria-label="Available unlock categories"><span class="unlock-category-active" data-ui-icon="unlocks">Team access</span><span data-ui-icon="settings">Experimental</span><small>Changes apply when you launch with Play</small></div>
+          <div class="unlocks-layout"><div class="unlocks-main">
+          <section class="unlock-group" aria-labelledby="teamUnlocksTitle">
+          <div class="settings-section-heading"><div><h2 id="teamUnlocksTitle">Team access</h2><p>Choose where WNBA teams are available.</p></div><span class="settings-badge">Applies next launch</span></div>
+          <div class="team-unlocks-grid">
+          <article class="card unlock-feature">
+            <span class="unlock-feature-icon wnba-logo-mark" aria-hidden="true"><img src="../assets/wnba-logo-horizontal.png" alt=""></span>
+            <label class="settings-switch-row"><input class="settings-switch" type="checkbox" id="unlockWnbaFreestyle" aria-describedby="freestyleUnlockHelp"><span><strong>Unlock WNBA Teams in Freestyle</strong></span></label>
+            <p class="settings-description" id="freestyleUnlockHelp">Adds WNBA to the team categories in Freestyle. Availability varies by mode.</p>
+            <small class="unlock-status" id="freestyleUnlockStatus" role="status" aria-live="polite"></small>
+          </article>
+          <article class="card unlock-feature">
+            <span class="unlock-feature-icon wnba-logo-mark" aria-hidden="true"><img src="../assets/wnba-logo-horizontal.png" alt=""></span>
+            <label class="settings-switch-row"><input class="settings-switch" type="checkbox" id="unlockWnbaBlacktop" aria-describedby="blacktopUnlockHelp"><span><strong>Unlock WNBA Teams in Blacktop</strong></span></label>
+            <p class="settings-description" id="blacktopUnlockHelp">Use Y to cycle to WNBA. Custom rosters must include WNBA teams.</p>
+            <small class="unlock-status" id="blacktopUnlockStatus" role="status" aria-live="polite"></small>
+          </article>
+          </div>
+          </section>
+          <section class="unlock-group unlock-experimental" aria-labelledby="experimentalUnlocksTitle">
+          <div class="settings-section-heading experimental-heading"><div><h2 id="experimentalUnlocksTitle">Experimental</h2><p>Advanced controls. Use with care.</p></div><span class="settings-badge">Resets on app launch</span></div>
+        <article class="card debug-unlock-card">
+            <span class="unlock-feature-icon" data-ui-icon="settings" aria-hidden="true"></span>
+            <label class="settings-switch-row"><input class="settings-switch" type="checkbox" id="enableDebugMenus" aria-describedby="debugMenuHelp"><span><strong>Enable Debug Menus</strong></span></label>
+            <p class="settings-description">Opens built-in debug and restricted menus when starting the game with Play.</p>
+            <div class="debug-offline-note" id="debugMenuHelp"><strong>Steam Offline Mode required</strong><span>May cause instability or affect saves. Use a backup or test roster. Always off when the launcher opens; this choice is never saved.</span></div>
+            <small class="unlock-status" id="debugMenuStatus" role="status" aria-live="polite">Debug menus are off.</small>
+        </article>
+          </section></div>
+          <aside class="unlocks-aside" aria-label="Unlock guidance">
+            <section class="card unlock-guide-card"><h2 data-ui-icon="unlocks">How unlocks apply</h2><p>WNBA choices save automatically and take effect on your next Play session.</p><p>Debug menus are session-only and switch off each time the launcher opens.</p></section>
+            <section class="card unlock-guide-card"><h2 data-ui-icon="book">Good to know</h2><ul><li>Custom rosters must contain WNBA teams for them to appear.</li><li>If debug menus cause instability, turn them off and test with a backup roster.</li></ul></section>
+          </aside></div>
+        </div>
+      </section>
+      <section class="page page-width-fluid" id="page-scaler">
+        <div class="scaler-layout">
+          <article class="card scaler-groups-card">
+            <div class="scaler-card-heading"><div><strong>Character groups</strong><small>Choose who uses the saved scale</small></div><span class="settings-badge">Session setting</span></div>
+            <div class="scaler-groups" aria-label="Scaled character groups">
+              <label class="scaler-enable scaler-group-primary"><span><strong>Players &amp; referees</strong><small>Main scale switch</small></span><input type="checkbox" id="scalerEnabled"></label>
+              <label class="scaler-enable"><span>Coaches</span><input type="checkbox" id="scalerCoaches"></label>
+              <label class="scaler-enable"><span>Cheerleaders</span><input type="checkbox" id="scalerCheerleaders"></label>
+              <label class="scaler-enable"><span><strong>Arena personnel &amp; crowd</strong><small>Announcers, security and individually loaded crowd actors</small></span><input type="checkbox" id="scalerArenaPersonnel"></label>
+            </div>
+          </article>
+          <article class="card scaler-size-card">
+            <div class="scaler-card-heading"><div><strong>Character size</strong><small>Relative to the original model</small></div><output id="scalerValue" class="scaler-value" for="scalerPercent">100%</output></div>
+            <div class="scaler-control"><input id="scalerPercent" aria-label="Character size relative to original" type="range" min="95" max="100" step="1" value="100" aria-describedby="scalerHelp"><div class="scaler-limits"><small>95% · Smaller</small><small>100% · Original</small></div></div>
+            <div class="scaler-scale-marks" aria-hidden="true"><span>95</span><span>96</span><span>97</span><span>98</span><span>99</span><span>100</span></div>
+          </article>
+          <section class="card scaler-command-bar">
+            <div class="scaler-status-wrap"><span class="status-dot" aria-hidden="true"></span><p id="scalerStatus" role="status" aria-live="polite">Loading saved size…</p></div>
+            <div class="scaler-actions"><button id="scalerSave" class="primary" type="button">Save size</button><button id="scalerApply" class="secondary" type="button" hidden>Retry apply</button><button id="scalerReset" class="secondary" type="button">Reset to 100%</button></div>
+          </section>
+          <small id="scalerHelp" class="scaler-help">Players and referees remain paired because they share one native scale input. Roster height, wingspan and weight stay unchanged. Individually loaded crowd actors are included with arena personnel; props and batched background crowd geometry are excluded. Loaded arena groups update automatically; players and referees already loaded require reloading the mode.</small>
+        </div>
+      </section>
+      <section class="page page-width-fluid" id="page-settings">
+        <div class="settings-page-layout">
+          <article class="card settings-path-card" id="launcherUpdateCard" hidden>
+            <div class="settings-card-heading"><strong>Launcher updates</strong><span class="settings-badge" id="launcherBuildLabel"></span></div>
+            <p class="settings-description" id="launcherBuildDate"></p>
+            <details><summary>What changed</summary><ul id="launcherReleaseNotes"></ul></details>
+            <p class="settings-description">Extract your downloaded launcher release, then choose its folder to update. The previous version is kept for rollback.</p>
+            <div class="settings-support-actions"><button class="secondary" id="chooseLauncherUpdate" type="button">Install update folder</button><button class="secondary" id="restorePreviousLauncher" type="button" disabled>Restore previous version</button></div>
+            <div id="launcherUpdateReview" hidden><strong id="launcherUpdateChoice"></strong><ul id="launcherUpdateNotes"></ul><div class="settings-support-actions"><button class="primary" type="button" id="restartLauncherUpdate">Install and restart</button><button class="secondary" type="button" id="cancelLauncherUpdate">Cancel</button></div></div>
+            <p id="launcherUpdateStatus" role="status" aria-live="polite"></p>
+            <progress id="launcherUpdateProgress" hidden></progress>
+          </article>
+          <article class="card settings-path-card">
+            <div class="settings-card-heading"><strong>Game installation</strong><span class="settings-badge" id="validationLabel">NOT CHECKED</span></div>
+            <p class="settings-description">The launcher uses this folder for the game executable, mods and verified runtime integration.</p>
+            <div class="settings-path-controls">
+              <label for="gameRoot">NBA 2K27 folder</label>
+              <input id="gameRoot">
+              <button class="secondary" data-choose="gameRoot">Browse</button>
+              <button class="primary" id="saveSettings">Save settings</button>
+            </div>
+            <div class="settings-support-actions"><button class="secondary" id="openLauncherStorage" type="button">Open launcher folder</button><small id="launcherStoragePath">Checking storage location…</small></div>
+          </article>
+          <div class="settings-preferences-grid">
+            <article class="card settings-option-card">
+              <div class="settings-card-heading"><strong>Launch performance</strong></div>
+              <label class="settings-switch-row"><input type="checkbox" id="cachePreparedPlaylists" checked><span><strong>Cache prepared playlists</strong><small>Keep the most recently played playlist ready for faster launches. Turning this off clears only the reusable cache after the game closes.</small></span></label>
+            </article>
+            <article class="card settings-option-card settings-support-card">
+              <div class="settings-card-heading"><strong>Support</strong><span class="settings-badge">Redacted</span></div>
+              <p class="settings-description">Export recent launcher diagnostics without game paths, profile paths, usernames, or secrets.</p>
+              <div class="settings-support-actions"><button class="secondary" id="exportSupportBundle" type="button">Export support bundle</button><small id="supportBundleStatus" role="status" aria-live="polite">Nothing is sent automatically.</small></div>
+              <div class="settings-support-actions"><button class="secondary" id="captureGameHang" type="button">Capture game hang</button><button class="secondary" id="openGameDiagnostics" type="button">Open diagnostics</button></div>
+              <small id="gameCaptureStatus" role="status" aria-live="polite">Ctrl+Shift+F12 captures a stuck game while it is still running.</small>
+              <small>Snapshots can briefly pause the game and may contain private memory. Stored locally in Logs/game-captures; never uploaded or included in support exports. Keeps three sessions, up to three 64 MB snapshots each.</small>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="page page-width-fluid" id="page-developer">
+        <details class="card pipeline-card session-diagnostics"><summary class="card-title"><span>Session progress</span><span class="quiet" id="sessionPhase">IDLE</span></summary>
+
+            <ol class="pipeline">
+              <li id="stepProvider"><i></i><div><strong>Local asset loader</strong><small>Starts automatically when you press Play</small></div></li>
+              <li id="stepGame"><i></i><div><strong>NBA 2K27</strong><small>Launches through Steam without EAC</small></div></li>
+              <li id="stepCamera"><i></i><div><strong>Camera unlock</strong><small>Starts after the game appears</small></div></li>
+            </ol>
+          </details>
+
+        <div class="toolbar">
+          <div><h2>Provider-layout resolver</h2><p>Automatic, local, and fail-closed update compatibility.</p></div>
+          <div><button class="secondary" id="copyResolver">Copy report</button><button class="primary small" id="rescanResolver">Rescan executable</button></div>
+        </div>
+        <article class="card resolver-card">
+          <div class="resolver-heading">
+            <span class="status-dot" id="resolverDot"></span>
+            <div><strong id="resolverState">PENDING</strong><p id="resolverSummary">Waiting for the automatic local build scan.</p></div>
+          </div>
+          <div class="notice">This diagnostic maps the executable file read-only. It does not attach to the game, write game memory, install hooks, or register the provider.</div>
+          <pre class="resolver-output" id="resolverOutput">No resolver report yet.</pre>
+        </article>
+        <article class="card developer-tools-card">
+          <div class="card-title"><span>Advanced loader diagnostics</span><span class="pill amber">DEVELOPER ONLY</span></div>
+          <div class="diagnostic-box">
+            <label>Offline asset-path test<input id="providerTestPath" value="png10000.iff" placeholder="png10000.iff"></label>
+            <button class="secondary" id="testProvider">Test provider core</button>
+            <p id="providerDiagnostic">Starts the local production host, streams the complete asset, verifies authentication and EOF, then shuts the host down without opening the game.</p>
+          </div>
+          <div class="diagnostic-box">
+            <button class="secondary" id="auditBridge">Run bridge audit</button>
+            <p id="bridgeDiagnostic">Runs the complete read-only build, native ABI, rollback, and cross-module lifetime audit.</p>
+          </div>
+          <div class="diagnostic-box">
+            <div class="probe-heading"><strong>Controlled game handshake</strong><span class="quiet" id="probeState">DISARMED</span></div>
+            <label class="toggle-row probe-option"><input type="checkbox" id="registrationProbe"><span><strong>One-time path-aware test</strong><small>Runs the isolated registration and local fallback diagnostic for the current game session.</small></span></label>
+            <div class="probe-actions">
+              <button class="secondary" id="armProbe">Arm probe</button>
+              <button class="secondary hidden" id="disarmProbe">Disarm</button>
+              <button class="secondary hidden" id="activateLiveRoute">Retry local fallback</button>
+              <button class="secondary" id="openProbe">Show add-on</button>
+            </div>
+            <p id="probeDiagnostic">These controls are not needed for normal Play sessions.</p>
+          </div>
+        </article>
+      </section>
+    </main>
+  </div>
+  <div class="launch-overlay hidden" id="launchOverlay" role="status" aria-live="polite" aria-label="NBA 2K27 startup progress">
+    <section class="launch-dialog">
+      <div class="launch-spinner" aria-hidden="true"><span></span></div>
+      <p class="eyebrow">STARTING GAME</p>
+      <h2 id="launchTitle">Starting NBA 2K27…</h2>
+      <p id="launchStage">Preparing your selected mod profile.</p>
+      <div class="launch-progress" aria-hidden="true"><span id="launchProgressBar"></span></div>
+      <div class="launch-meta"><span id="launchStep">Preparing</span><span id="launchElapsed">0 seconds</span></div>
+      <small>Keep this launcher open. This window clears automatically when the game is ready.</small>
+    </section>
+  </div>
+  <div class="launch-overlay batch-import-overlay hidden" id="batchImportOverlay" role="status" aria-live="polite" aria-label="Song import progress">
+    <section class="launch-dialog">
+      <div class="launch-spinner" aria-hidden="true"><span></span></div>
+      <p class="eyebrow" id="batchImportEyebrow">BUILDING PLAYLIST</p>
+      <h2 id="batchImportTitle">Adding your songs…</h2>
+      <p id="batchImportSong">Preparing the selected audio files.</p>
+      <div class="launch-progress" aria-hidden="true"><span id="batchImportProgressBar"></span></div>
+      <div class="launch-meta"><span id="batchImportStage">Converting</span><span id="batchImportCount">0 / 0</span></div>
+      <small id="batchImportHelp">Audio is converted and installed one song at a time to keep the launcher responsive.</small>
+    </section>
+  </div>
+  <div class="modal-overlay hidden" id="modTagModal">
+    <section class="team-editor mod-tag-editor" role="dialog" aria-modal="true" aria-labelledby="modTagTitle">
+      <div class="team-editor-head">
+        <div><p class="eyebrow">MOD LIBRARY TAGS</p><h2 id="modTagTitle">Mod</h2><small class="mono" id="modTagIdentity"></small></div>
+        <button class="icon-button" id="closeModTagEditor" aria-label="Close">×</button>
+      </div>
+      <label class="mod-tag-field">Tags<input id="modTagInput" maxlength="500" placeholder="Player name, team, era, project…"><small>Separate tags with commas. Search matches these tags and every dependency filename in the bundle.</small></label>
+      <div class="notice" id="modTagBundleInfo"></div>
+      <div class="team-editor-actions"><button class="secondary" id="cancelModTagEdit">Cancel</button><button class="primary" id="saveModTagEdit">Save tags</button></div>
+    </section>
+  </div>
+  <div class="modal-overlay hidden" id="jukeboxEditorModal">
+    <section class="team-editor jukebox-editor" role="dialog" aria-modal="true" aria-labelledby="jukeboxEditTitle">
+      <div class="team-editor-head">
+        <div><p class="eyebrow">JUKEBOX METADATA</p><h2 id="jukeboxEditTitle">Song</h2></div>
+        <button class="icon-button" id="closeJukeboxEditor" aria-label="Close">×</button>
+      </div>
+      <div class="team-edit-grid">
+        <label>Song title<input id="jukeboxEditName" maxlength="120"></label>
+        <label>Artist<input id="jukeboxEditArtist" maxlength="120"></label>
+      </div>
+      <div class="jukebox-file-choice artwork-choice jukebox-edit-artwork">
+        <div class="jukebox-artwork-frame">
+          <div class="jukebox-generic-art" aria-hidden="true"><span>♫</span><small>2K MIX</small></div>
+          <img id="jukeboxEditArtworkPreview" class="hidden" alt="Replacement album artwork preview">
+        </div>
+        <div><strong>Album artwork</strong><small id="jukeboxEditArtworkName">Keep the current artwork, or choose a replacement image.</small></div>
+        <div class="jukebox-artwork-actions"><button class="secondary" id="findJukeboxEditArtwork">Find online</button><button class="secondary" id="chooseJukeboxEditArtwork">Choose file</button></div>
+      </div>
+      <div class="notice">Artwork is center-cropped to 256 × 256 and converted locally. It does not change the song’s audio bank or redistribute stock audio.</div>
+      <div class="team-editor-actions"><button class="secondary" id="cancelJukeboxEdit">Cancel</button><button class="primary" id="saveJukeboxEdit">Save song</button></div>
+    </section>
+  </div>
+  <div class="modal-overlay hidden" id="jukeboxImportModal">
+    <section class="team-editor jukebox-importer" role="dialog" aria-modal="true" aria-labelledby="jukeboxImportTitle">
+      <div class="team-editor-head">
+        <div><p class="eyebrow">ADD CUSTOM TRACK</p><h2 id="jukeboxImportTitle">Add song</h2><small>Audio and artwork are converted locally on this PC.</small></div>
+        <button class="icon-button" id="closeJukeboxImport" aria-label="Close">×</button>
+      </div>
+      <div class="team-edit-grid">
+        <label>Song title<input id="jukeboxImportName" maxlength="120" placeholder="Song title"></label>
+        <label>Artist<input id="jukeboxImportArtist" maxlength="120" value="Custom"></label>
+        <label class="span-two">Add to playlist<select id="jukeboxImportPlaylist"><option value="">Default Playlist (Locked)</option></select></label>
+      </div>
+      <div class="jukebox-import-files">
+        <div class="jukebox-file-choice">
+          <strong>Song file</strong><small id="jukeboxImportAudioName">Choose MP3, WAV, M4A, AAC, FLAC, OGG, or Opus.</small>
+          <button class="secondary" id="chooseJukeboxAudio">Choose song</button>
+        </div>
+        <div class="jukebox-file-choice artwork-choice">
+          <div class="jukebox-artwork-frame">
+            <div class="jukebox-generic-art" aria-hidden="true"><span>♫</span><small>2K MIX</small></div>
+            <img id="jukeboxArtworkPreview" class="hidden" alt="Selected album artwork preview">
+          </div>
+          <div><strong>Album artwork</strong><small id="jukeboxImportArtworkName">Optional. PNG, JPG, WebP, or BMP; it will be center-cropped to 256 × 256.</small></div>
+          <div class="jukebox-artwork-actions"><button class="secondary" id="findJukeboxArtwork">Find online</button><button class="secondary" id="chooseJukeboxArtwork">Choose file</button></div>
+        </div>
+      </div>
+      <div class="notice">Online lookup sends only the artist and song title to MusicBrainz. Custom artwork uses a launcher-managed reversible cover override.</div>
+      <div class="team-editor-actions"><button class="secondary" id="cancelJukeboxImport">Cancel</button><button class="primary" id="saveJukeboxImport">Convert &amp; add song</button></div>
+    </section>
+  </div>
+  <div class="modal-overlay hidden" id="jukeboxNewPlaylistModal">
+    <section class="team-editor jukebox-new-playlist" role="dialog" aria-modal="true" aria-labelledby="jukeboxNewPlaylistTitle">
+      <div class="team-editor-head">
+        <div><p class="eyebrow" id="jukeboxPlaylistModalEyebrow">NEW PLAYLIST</p><h2 id="jukeboxNewPlaylistTitle">Name your playlist</h2><small id="jukeboxPlaylistModalHelp">It starts empty unless you choose to include the default soundtrack.</small></div>
+        <button class="icon-button" id="closeJukeboxNewPlaylist" aria-label="Close">×</button>
+      </div>
+      <label class="mod-tag-field">Playlist name<input id="jukeboxNewPlaylistName" maxlength="60" placeholder="Warmup, Retro, MyNBA…"></label>
+      <label class="jukebox-default-toggle"><input id="jukeboxNewPlaylistDefaults" type="checkbox"> Add all default songs</label>
+      <div class="team-editor-actions"><button class="secondary" id="cancelJukeboxNewPlaylist">Cancel</button><button class="primary" id="createJukeboxNewPlaylist">Create playlist</button></div>
+    </section>
+  </div>
+  <div class="modal-overlay hidden" id="playerEditorModal">
+    <section class="team-editor player-studio" role="dialog" aria-modal="true" aria-labelledby="playerEditTitle">
+      <div class="team-editor-head">
+        <div><p class="eyebrow">ROSTER EDITOR</p><span class="studio-subtitle">Edit player</span><small class="mono hidden" id="playerEditIdentity"></small></div>
+        <button class="icon-button" id="closePlayerEditor" aria-label="Close">×</button>
+      </div>
+      <div class="player-hero">
+        <img id="playerHeroLogo" class="player-hero-logo hidden" alt="">
+        <div class="player-portrait"><svg id="playerPortraitFallback" viewBox="0 0 180 210" aria-hidden="true"><circle cx="90" cy="67" r="38"/><path d="M20 210v-42c0-35 31-60 70-60s70 25 70 60v42z"/></svg><img id="playerHeroPortrait" class="hidden" alt="Player portrait"><button type="button" class="secondary" id="choosePlayerPortrait">Add portrait</button></div>
+        <div class="player-hero-copy"><p class="eyebrow" id="playerHeroPosition">PLAYER</p><h2 id="playerEditTitle">Player</h2><div class="player-hero-bio"><div><span>Height<strong id="playerHeroHeight">—</strong></span><span>Weight<strong id="playerHeroWeight">—</strong></span></div><div><span>Age<strong id="playerHeroAge">—</strong></span><span>From<strong id="playerHeroFrom">—</strong></span></div><div><span>Years Pro<strong id="playerHeroYearsPro">—</strong></span><span>Personality<strong id="playerHeroPersonality">—</strong></span><span>Archetype<strong id="playerHeroArchetype">—</strong></span></div></div><button type="button" class="studio-art-button" id="choosePlayerLogo">Add team logo</button></div>
+        <div class="player-hero-team"><div class="player-team-heading"><img id="playerHeroTeamMark" class="hidden" alt=""><span id="playerHeroTeam">Team</span></div><div class="player-hero-overall"><span>OVR</span><strong id="playerHeroOverall">—</strong></div></div>
+      </div>
+      <p class="studio-art-status" id="playerArtStatus" role="status"></p>
+      <div class="studio-workspace">
+      <nav class="studio-tabs" role="tablist" aria-label="Player editor sections" aria-orientation="vertical">
+        <button type="button" id="studioTabInfo" role="tab" aria-controls="studioInfo" aria-selected="true">Player info</button>
+        <button type="button" id="studioTabAttributes" role="tab" aria-controls="studioAttributes" aria-selected="false" tabindex="-1">Attributes</button>
+        <button type="button" id="studioTabDevelopment" role="tab" aria-controls="studioDevelopment" aria-selected="false" tabindex="-1">Development</button>
+        <button type="button" id="studioTabDraft" role="tab" aria-controls="studioDraft" aria-selected="false" tabindex="-1">Draft info</button>
+        <button type="button" id="studioTabInjuries" role="tab" aria-controls="studioInjuries" aria-selected="false" tabindex="-1">Injuries</button>
+        <button type="button" id="studioTabTendencies" role="tab" aria-controls="studioTendencies" aria-selected="false" tabindex="-1">Tendencies</button>
+        <button type="button" id="studioTabPlaytypes" role="tab" aria-controls="studioPlaytypes" aria-selected="false" tabindex="-1">Play types</button>
+        <button type="button" id="studioTabBadges" role="tab" aria-controls="studioBadges" aria-selected="false" tabindex="-1">Badges</button>
+        <button type="button" id="studioTabHotZones" role="tab" aria-controls="studioHotZones" aria-selected="false" tabindex="-1">Hot zones</button>
+        <button type="button" id="studioTabSignature" role="tab" aria-controls="studioSignature" aria-selected="false" tabindex="-1">Signature</button>
+        <button type="button" id="studioTabContract" role="tab" aria-controls="studioContract" aria-selected="false" tabindex="-1">Contract</button>
+        <button type="button" id="studioTabEquipment" role="tab" aria-controls="studioEquipment" aria-selected="false" tabindex="-1">Equipment</button>
+        <button type="button" id="studioTabStats" role="tab" aria-controls="studioStats" aria-selected="false" tabindex="-1">Stats</button>
+        <button type="button" id="studioTabAwards" role="tab" aria-controls="studioAwards" aria-selected="false" tabindex="-1">Awards</button>
+        <button type="button" id="studioTabDNA" role="tab" aria-controls="studioDNA" aria-selected="false" tabindex="-1">Player DNA</button>
+      </nav>
+      <div class="studio-panels">
+      <section id="studioInfo" role="tabpanel" aria-labelledby="studioTabInfo">
+      <div class="studio-section-title">Player information</div>
+      <div class="team-edit-grid">
+        <label>First name<input id="playerEditFirstName" maxlength="19"></label>
+        <label>Last name<input id="playerEditLastName" maxlength="19"></label>
+        <label>Cyberface ID<input id="playerEditCyberface" type="number" min="0" max="65535" step="1"></label>
+        <label>Jersey number<input id="playerEditJersey" inputmode="numeric" maxlength="2" placeholder="0–99 or 00"></label>
+        <label>Primary position<select id="playerEditPosition"></select></label>
+        <label>Secondary position<select id="playerEditSecondary"></select></label>
+        <label>From<select id="playerEditFrom" aria-label="From (college or origin)"></select></label>
+        <label>Birthday<input id="playerEditBirthDate" type="date" min="0001-01-01" max="4095-12-31"></label>
+        <label>Years pro<input id="playerEditYearsPro" type="number" min="0" max="31" step="1"></label>
+        <label>Height<span class="studio-height-control"><span><input id="playerEditHeight" type="number" min="3" max="8" step="1" aria-label="Height feet"><span aria-hidden="true">ft</span></span><span><input id="playerEditHeightInches" type="number" min="0" max="11.999" step="0.001" aria-label="Height inches"><span aria-hidden="true">in</span></span></span></label>
+        <label>Wingspan (in)<input id="playerEditWingspan" type="number" min="47.244" max="125.984" step="0.001"></label>
+        <label>Weight (lb)<input id="playerEditWeight" type="number" min="70" max="500" step="0.01"></label>
+      </div>
+      <div id="studioAppearance">
+        <div class="team-edit-grid" id="studioAppearanceFields"></div>
+      </div>
+      <details id="studioPersonality" class="studio-subsection"><summary>Personality</summary></details>
+      <details id="playerAudioDetails" class="studio-subsection">
+        <summary>Player audio mappings</summary>
+        <div class="team-edit-grid">
+          <label>Full-name sound ID<input id="playerAudioFullName" type="number" min="-1" max="32767" step="1"></label>
+          <label>Name override<input id="playerAudioOverride" readonly></label>
+          <label>First name · commentary<input id="playerAudioFirstCommentary" readonly></label>
+          <label>First name · PA<input id="playerAudioFirstPa" readonly></label>
+          <label>Last name · commentary<input id="playerAudioLastCommentary" readonly></label>
+          <label>Last name · PA<input id="playerAudioLastPa" readonly></label>
+        </div>
+        <small>Full-name ID affects only this player; -1 means unassigned. Shared first/last-name mappings remain read-only. An assigned ID does not guarantee playable audio.</small>
+      </details>
+      <details id="studioHidden" class="studio-subsection">
+        <summary>Hidden</summary>
+        <div class="team-edit-grid" id="studioHiddenFields"></div>
+      </details>
+      </section>
+      </div>
+      </div>
+      <div class="editor-metadata hidden" aria-hidden="true">
+        <input id="playerEditPotential" type="hidden">
+        <input id="playerEditOverall" type="hidden">
+        <input id="playerEditTeam" type="hidden">
+        <h3>Verified record details</h3>
+        <div class="team-edit-grid">
+          <label>Source<input id="playerEditSource" readonly></label>
+          <label>Player record<input id="playerEditRecord" readonly class="mono"></label>
+          <label>Team record link<input id="playerEditTeamRecord" readonly class="mono"></label>
+          <label>Asset availability<input id="playerEditAssets" readonly></label>
+          <label>Raw height / wingspan<input id="playerEditBodyRaw" readonly class="mono"></label>
+          <label>Raw potential byte<input id="playerEditPotentialRaw" readonly class="mono"></label>
+          <label class="span-two">Reference Face IDs<input id="playerEditReferences" readonly class="mono"></label>
+        </div>
+      </div>
+      <div class="notice" id="playerEditBoundary">Changes are checked before writing and read back afterward. Cached overall and team assignment remain read-only. Save the roster in-game to retain your edits.</div>
+      <div class="team-editor-actions"><button class="secondary" id="cancelPlayerEdit">Cancel</button><button class="primary" id="savePlayerEdit">Save &amp; verify</button></div>
+    </section>
+  </div>
+  <div class="modal-overlay hidden" id="teamEditorModal">
+    <section class="team-editor" role="dialog" aria-modal="true" aria-labelledby="teamEditTitle">
+      <div class="team-editor-head">
+        <div><p class="eyebrow">LIVE TEAM RECORD</p><h2 id="teamEditTitle">Team</h2><small class="mono" id="teamEditIdentity"></small></div>
+        <button class="icon-button" id="closeTeamEditor" aria-label="Close">×</button>
+      </div>
+      <div class="team-studio-workspace">
+        <nav class="team-editor-tabs" role="tablist" aria-label="Team editor sections">
+          <button id="teamTabInfo" role="tab" aria-selected="true" aria-controls="teamPanelInfo" data-team-tab="info">Team info</button>
+          <button id="teamTabUniforms" role="tab" aria-selected="false" aria-controls="teamPanelUniforms" data-team-tab="uniforms">Uniforms</button>
+          <button id="teamTabArena" role="tab" aria-selected="false" aria-controls="teamPanelArena" data-team-tab="arena">Arena</button>
+          <button id="teamTabStaff" role="tab" aria-selected="false" aria-controls="teamPanelStaff" data-team-tab="staff">Coaches &amp; staff</button>
+          <button id="teamTabRotations" role="tab" aria-selected="false" aria-controls="teamPanelRotations" data-team-tab="rotations">Rotations</button>
+          <button id="teamTabDNA" role="tab" aria-selected="false" aria-controls="teamPanelDNA" data-team-tab="dna">Team DNA</button>
+        </nav>
+        <div class="team-editor-panels">
+          <section id="teamPanelInfo" role="tabpanel" aria-labelledby="teamTabInfo">
+            <div class="team-edit-grid">
+              <label>Team name<input id="teamEditName" maxlength="23"></label>
+              <label>City name<input id="teamEditCity" maxlength="17"></label>
+              <label>City abbreviation<input id="teamEditCityShort" maxlength="6"></label>
+              <label>State abbreviation<input id="teamEditStateShort" maxlength="6"></label>
+              <label class="span-two">Main logo reference<input id="teamEditLogo" maxlength="35" class="mono"></label>
+              <label>Roster type<select id="teamEditRosterType"></select></label>
+              <label>Historic year code<input id="teamEditHistoricYear" type="number" min="0" max="127" step="1"></label>
+            </div>
+            <div class="editor-metadata">
+              <h3>Verified team record details</h3>
+              <div class="team-edit-grid">
+                <label>Team ID<input id="teamEditVerifiedId" readonly class="mono"></label>
+                <label>Record index<input id="teamEditVerifiedRecord" readonly class="mono"></label>
+                <label>Source<input id="teamEditSource" readonly></label>
+                <label>Record address<input id="teamEditAddress" readonly class="mono"></label>
+              </div>
+            </div>
+          </section>
+          <section id="teamPanelUniforms" role="tabpanel" aria-labelledby="teamTabUniforms" hidden>
+            <div class="team-uniforms-panel">
+              <div class="team-uniform-panel-head"><span>Owned uniform slots</span><small id="teamUniformSummary">Verifying owned slots</small></div>
+              <div class="team-uniform-list" id="teamUniformList"></div>
+            </div>
+            <div class="team-uniforms-panel team-uniform-available-panel">
+              <div class="team-uniform-panel-head"><span>Available jerseys</span><small id="teamAvailableUniformSummary">Checking unreferenced records</small></div>
+              <p class="team-uniform-available-help">Adds an existing same-team roster record to a verified empty slot in the active roster table. Enter Play Now first when adding a Play Now jersey; changing modes can rebuild unsaved roster tables. Stock art is checked before the roster is changed.</p>
+              <div class="team-uniform-list" id="teamAvailableUniformList"></div>
+            </div>
+          </section>
+          <section id="teamPanelStaff" role="tabpanel" aria-labelledby="teamTabStaff" hidden><div id="teamStaffPanel"></div></section>
+          <section id="teamPanelRotations" role="tabpanel" aria-labelledby="teamTabRotations" hidden><div id="teamRotationsPanel"></div></section>
+          <section id="teamPanelDNA" role="tabpanel" aria-labelledby="teamTabDNA" hidden>
+            <h3>Team DNA</h3>
+            <p class="team-staff-note">Import or export mapped team information, arena/floor references and staff settings. Imports are staged for review. The destination Team ID and staff assignments stay unchanged.</p>
+            <div class="studio-dna-sections" id="teamDnaSections">
+              <label><input type="checkbox" value="info" checked>Team info</label>
+              <label><input type="checkbox" value="arena" checked>Arena &amp; floor</label>
+              <label><input type="checkbox" value="staff" checked>Coaches &amp; staff settings</label>
+              <label><input type="checkbox" value="uniforms" checked>Uniform settings (matching destination slots)</label>
+              <label><input type="checkbox" value="rotations">Rotations (matching destination players)</label>
+            </div>
+            <div class="studio-dna-actions"><button type="button" class="secondary" id="teamDnaImport">Import .2kteam</button><button type="button" class="secondary" id="teamDnaExport">Export .2kteam</button></div>
+            <p class="team-staff-note" role="status" id="teamDnaStatus"></p>
+          </section>
+          <section id="teamPanelArena" role="tabpanel" aria-labelledby="teamTabArena" hidden>
+            <div class="team-edit-grid">
+              <label>Arena<select id="teamEditArenaModel"></select><small id="teamEditArenaHelp"></small></label>
+              <label>Floor<select id="teamEditFloor"></select><small>Independent court selection; shared stock arenas are not overwritten.</small></label>
+              <label>Linked arena ID<input id="teamEditArenaId" readonly class="mono"></label>
+            </div>
+            <div class="editor-metadata">
+              <h3>Verified arena link</h3>
+              <div class="team-edit-grid">
+                <label>Linked arena name<input id="teamEditArenaName" readonly></label>
+                <label>Arena asset<input id="teamEditArenaAssets" readonly class="mono"></label>
+                <label>Floor asset<input id="teamEditFloorAsset" readonly class="mono"></label>
+              </div>
+            </div>
+            <div class="custom-arena-box hidden" id="experimentalArenaCreator" aria-hidden="true">
+              <div class="card-title"><span>Create or replace a custom arena</span><span class="pill amber">CLONE + LINK</span></div>
+              <p>Clone a working arena’s behavior into a reserved ID and link this team once. The saved arena profile then repopulates that ID automatically at every launcher Play, independent of roster; other rosters can point any team to the same ID.</p>
+              <div class="team-edit-grid">
+                <label>Reserved custom ID<select id="customArenaTarget"></select></label>
+                <label>Clone behavior from<select id="customArenaDonor"></select></label>
+                <label class="span-two">Arena display name<input id="customArenaName" maxlength="32" placeholder="Fiserv Forum"></label>
+                <label>Arena asset stem<input id="customArenaFile" maxlength="37" class="mono" placeholder="arenatest"></label>
+                <label>Floor asset stem<input id="customArenaFloor" maxlength="39" class="mono" placeholder="arenatest_floor"></label>
+              </div>
+              <small class="custom-arena-path">Both corresponding `.iff` files must already exist under the Mods `levels` folder.</small>
+              <button class="secondary" id="createCustomArena">Create, verify &amp; link</button>
+            </div>
+          </section>
+        </div>
+      </div>
+      <div class="notice" id="teamEditBoundary"></div>
+      <div class="team-editor-actions"><button type="button" class="secondary" id="reviewTeamEdit">Review changes</button><button class="secondary" id="cancelTeamEdit">Cancel</button><button class="primary" id="saveTeamEdit">Save &amp; verify</button></div>
+    </section>
+  </div>
+  <div class="toast hidden" id="toast"></div>
+  <dialog id="blacktopOverlayPreview" class="blacktop-overlay-preview" aria-labelledby="blacktopOverlayPreviewTitle">
+    <div class="blacktop-preview-head"><div><strong id="blacktopOverlayPreviewTitle">F8 overlay preview</strong><small>Interactive preview · dummy player · no game changes</small></div><button id="closeBlacktopOverlayPreview" type="button" aria-label="Close overlay preview">×</button></div>
+    <iframe id="blacktopOverlayPreviewFrame" class="blacktop-preview-frame" title="Blacktop F8 overlay example" src="blacktop-overlay-preview-frame.html"></iframe>
+  </dialog>
+  <script src="artwork-batch.js"></script>
+  <link rel="stylesheet" href="team-editor.css"><script src="team-uniforms.js"></script><script src="team-uniform-transfer.js"></script>
+    <script src="team-staff.js"></script>
+    <link rel="stylesheet" href="editor-expansion.css"><script src="editor-presets.js"></script><script src="editor-review.js"></script>
+    <script src="team-rotations.js"></script>
+  <script src="player-measurements.js"></script>
+  <script src="player-bio.js"></script>
+  
+  <dialog id="launcherHelpDialog" class="launcher-help-dialog" aria-labelledby="launcherHelpTitle">
+    <div class="launcher-help-header"><h2 id="launcherHelpTitle">What Play does</h2><button type="button" class="secondary small" id="closeLauncherHelp" autofocus>Close</button></div>
+    <div class="boundary">
+              <div><span class="check">✓</span><p><strong>Loads your selected mod profile</strong><small>The profile checked under Profiles becomes the game's mods folder for this session.</small></p></div>
+              <div><span class="check">✓</span><p><strong>Loads unique assets</strong><small>Local players and arenas that are missing from the stock manifest can load automatically.</small></p></div>
+              <div><span class="check">✓</span><p><strong>Starts your saved cameras</strong><small>Your selected camera unlocks and settings activate after the game starts.</small></p></div>
+              <div><span class="check">✓</span><p><strong>Cleans up when you quit</strong><small>The temporary loader and profile redirect are removed after NBA 2K27 closes.</small></p></div>
+            </div>
+    <div class="launcher-help-footer"><p>For current loader, game and camera progress, open Session diagnostics.</p><button type="button" class="secondary" id="openSessionDiagnostics">Session diagnostics</button></div>
+  </dialog>
+
+  <script src="list-view-state.js"></script>
+  <script src="import-review.js"></script>
+  <script src="app.js"></script>
+  <script src="launcher-updates.js"></script>
+  <script src="launcher-quality.js"></script>
+  <script src="launcher-closing.js"></script>
+  <script src="debug-menus.js"></script>
+  <script src="blacktop-presentation.js"></script>
+  <script src="blacktop-crowd.js"></script>
+  <script src="player-audio-preview.js"></script>
+  <link rel="stylesheet" href="player-studio.css"><script src="player-rating-schema.js"></script><script src="player-studio.js"></script><script src="player-editor-layout.js"></script><script src="player-ratings.js"></script><script src="twokdb-apply.js"></script><script src="player-dna.js"></script><script src="player-season-math.js"></script><script src="player-season-awards.js"></script><script src="player-seasons.js"></script>
+  <link rel="stylesheet" href="scaler.css"><script src="scaler.js"></script>
+  <script src="playlist-order.js"></script>
+  <link rel="stylesheet" href="clothing-picker.css">
+  <script src="clothing-catalog-ui.js"></script>
+  <script src="preview-image-url.js"></script>
+  <script src="sock-preview-catalog.js"></script>
+  <script src="shoe-preview-catalog.js"></script>
+  <script src="accessory-preview-catalog.js"></script>
+  <script src="top-preview-catalog.js"></script>
+  <script src="bottom-preview-catalog.js"></script>
+  <script src="clothing-picker.js"></script>
+  <link rel="stylesheet" href="fit-preview.css"><script src="fit-preview-ui.js"></script>
+  <script src="../shared/accessory-slots.js"></script><script src="../shared/mannequin-random.js"></script><script src="../shared/accessory-preview-support.js"></script><script src="accessory-controls.js"></script><script src="outfit-creator.js"></script>
+  <script src="blacktop-batch.js"></script><script src="blacktop.js"></script>
+  <script src="blacktop-overlay-preview.js"></script>
+  <script src="clothing-cache.js"></script>
+  <link rel="stylesheet" href="scoreboard-picker.css">
+  <script src="../shared/arena-browser.js"></script><script src="scoreboard-preview-catalog.js"></script><script src="blacktop-setup-picker.js"></script>
+<script src="roster-workspace.js"></script>
+<script src="player-edit-session.js"></script>
+<script src="player-season-transfer.js"></script>
+<script src="player23-catalog-ui.js"></script>
+<script src="player-season-import-ui.js"></script>
+<script src="player-stats-import-ui.js"></script>
+<link rel="stylesheet" href="player-animation-preview.css">
+<script src="animation-preview-fields.js"></script>
+<script src="player-animation-preview.js"></script>
+</body>
+</html>

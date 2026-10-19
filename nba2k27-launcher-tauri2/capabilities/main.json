@@ -1,0 +1,6 @@
+{
+  "identifier": "main",
+  "description": "Bundled launcher windows only; no filesystem, shell, network or process plugins.",
+  "windows": ["main", "overlay", "live-overlay"],
+  "permissions": ["allow-launcher", "allow-preview-resource", "allow-finish-smoke", "core:event:allow-listen", "core:event:allow-unlisten"]
+}

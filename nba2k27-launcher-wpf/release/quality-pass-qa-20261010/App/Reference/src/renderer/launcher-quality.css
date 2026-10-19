@@ -1,0 +1,14 @@
+.quality-table { width:100%;border-collapse:collapse;font-size:12px; }
+.quality-table th,.quality-table td { text-align:left;padding:8px;border-bottom:1px solid var(--line);vertical-align:top; }
+.quality-table td:last-child { overflow-wrap:anywhere; }
+.quality-table [data-state="Failed"],.quality-warning { color:var(--amber,#ffc36a); }
+.quality-table [data-state="Active"] { color:var(--court,#88eaa0); }
+.quality-scroll { overflow:auto;max-height:340px; }
+.quality-disabled { opacity:.5; }
+.import-review { width:min(980px,calc(100vw - 48px));max-height:calc(100vh - 48px);padding:20px;border:1px solid var(--line,#34505d);border-radius:10px;background:var(--panel,#10202a);color:var(--text,#eef4f7); }
+.import-review::backdrop { background:#0009; }
+.import-review h2 { margin:0 0 10px;font-size:20px; }
+.import-review p { font-size:12px;color:var(--muted,#a1bac9); }
+.import-review .quality-scroll { max-height:55vh; }
+.import-review footer { display:flex;justify-content:flex-end;gap:10px;margin-top:15px; }
+.import-review [data-changed="true"] td:last-child { color:var(--court,#88eaa0); }

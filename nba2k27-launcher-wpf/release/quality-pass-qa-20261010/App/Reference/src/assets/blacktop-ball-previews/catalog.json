@@ -1,0 +1,3757 @@
+{
+  "schema": "blacktop-ball-preview-catalog-v1",
+  "generatedAt": "2026-09-24T20:18:41.186Z",
+  "gameResourceCount": 468,
+  "imageSize": 512,
+  "thumbnailSize": 256,
+  "count": 468,
+  "items": [
+    {
+      "id": "balls/ball_gameplay_official_allstar_allstar.iff",
+      "stem": "ball_gameplay_official_allstar_allstar",
+      "label": "Allstar",
+      "group": "All-Star",
+      "image": "images/ball_gameplay_official_allstar_allstar.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_allstar_allstar.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_allstar_allstar_2022.iff",
+      "stem": "ball_gameplay_official_allstar_allstar_2022",
+      "label": "Allstar 2022",
+      "group": "All-Star",
+      "image": "images/ball_gameplay_official_allstar_allstar_2022.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_allstar_allstar_2022.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_allstar_allstar_celeb.iff",
+      "stem": "ball_gameplay_official_allstar_allstar_celeb",
+      "label": "Allstar Celeb",
+      "group": "All-Star",
+      "image": "images/ball_gameplay_official_allstar_allstar_celeb.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_allstar_allstar_celeb.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_allstar_allstar_flaming.iff",
+      "stem": "ball_gameplay_official_allstar_allstar_flaming",
+      "label": "Allstar Flaming",
+      "group": "All-Star",
+      "image": "images/ball_gameplay_official_allstar_allstar_flaming.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_allstar_allstar_flaming.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_allstar_allstar_moneyball.iff",
+      "stem": "ball_gameplay_official_allstar_allstar_moneyball",
+      "label": "Allstar Moneyball",
+      "group": "All-Star",
+      "image": "images/ball_gameplay_official_allstar_allstar_moneyball.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_allstar_allstar_moneyball.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_allstar_allstar_threepoint.iff",
+      "stem": "ball_gameplay_official_allstar_allstar_threepoint",
+      "label": "Allstar Threepoint",
+      "group": "All-Star",
+      "image": "images/ball_gameplay_official_allstar_allstar_threepoint.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_allstar_allstar_threepoint.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_allstar_allstarmoney_2022.iff",
+      "stem": "ball_gameplay_official_allstar_allstarmoney_2022",
+      "label": "Allstarmoney 2022",
+      "group": "All-Star",
+      "image": "images/ball_gameplay_official_allstar_allstarmoney_2022.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_allstar_allstarmoney_2022.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_animal_alligator.iff",
+      "stem": "ball_gameplay_official_animal_alligator",
+      "label": "Alligator",
+      "group": "Animals",
+      "image": "images/ball_gameplay_official_animal_alligator.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_animal_alligator.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_animal_cheetah.iff",
+      "stem": "ball_gameplay_official_animal_cheetah",
+      "label": "Cheetah",
+      "group": "Animals",
+      "image": "images/ball_gameplay_official_animal_cheetah.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_animal_cheetah.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_animal_dragon.iff",
+      "stem": "ball_gameplay_official_animal_dragon",
+      "label": "Dragon",
+      "group": "Animals",
+      "image": "images/ball_gameplay_official_animal_dragon.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_animal_dragon.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_animal_giraffe.iff",
+      "stem": "ball_gameplay_official_animal_giraffe",
+      "label": "Giraffe",
+      "group": "Animals",
+      "image": "images/ball_gameplay_official_animal_giraffe.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_animal_giraffe.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_animal_ostrich.iff",
+      "stem": "ball_gameplay_official_animal_ostrich",
+      "label": "Ostrich",
+      "group": "Animals",
+      "image": "images/ball_gameplay_official_animal_ostrich.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_animal_ostrich.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_animal_skunk.iff",
+      "stem": "ball_gameplay_official_animal_skunk",
+      "label": "Skunk",
+      "group": "Animals",
+      "image": "images/ball_gameplay_official_animal_skunk.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_animal_skunk.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_animal_snake.iff",
+      "stem": "ball_gameplay_official_animal_snake",
+      "label": "Snake",
+      "group": "Animals",
+      "image": "images/ball_gameplay_official_animal_snake.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_animal_snake.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_animal_tiger.iff",
+      "stem": "ball_gameplay_official_animal_tiger",
+      "label": "Tiger",
+      "group": "Animals",
+      "image": "images/ball_gameplay_official_animal_tiger.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_animal_tiger.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_animal_whale.iff",
+      "stem": "ball_gameplay_official_animal_whale",
+      "label": "Whale",
+      "group": "Animals",
+      "image": "images/ball_gameplay_official_animal_whale.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_animal_whale.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_animal_zebra.iff",
+      "stem": "ball_gameplay_official_animal_zebra",
+      "label": "Zebra",
+      "group": "Animals",
+      "image": "images/ball_gameplay_official_animal_zebra.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_animal_zebra.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_camo_bootcamp.iff",
+      "stem": "ball_gameplay_official_camo_bootcamp",
+      "label": "Bootcamp",
+      "group": "Camo",
+      "image": "images/ball_gameplay_official_camo_bootcamp.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_camo_bootcamp.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_camo_cash.iff",
+      "stem": "ball_gameplay_official_camo_cash",
+      "label": "Cash",
+      "group": "Camo",
+      "image": "images/ball_gameplay_official_camo_cash.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_camo_cash.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_camo_city.iff",
+      "stem": "ball_gameplay_official_camo_city",
+      "label": "City",
+      "group": "Camo",
+      "image": "images/ball_gameplay_official_camo_city.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_camo_city.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_camo_drab.iff",
+      "stem": "ball_gameplay_official_camo_drab",
+      "label": "Drab",
+      "group": "Camo",
+      "image": "images/ball_gameplay_official_camo_drab.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_camo_drab.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_camo_nautical.iff",
+      "stem": "ball_gameplay_official_camo_nautical",
+      "label": "Nautical",
+      "group": "Camo",
+      "image": "images/ball_gameplay_official_camo_nautical.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_camo_nautical.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_camo_night.iff",
+      "stem": "ball_gameplay_official_camo_night",
+      "label": "Night",
+      "group": "Camo",
+      "image": "images/ball_gameplay_official_camo_night.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_camo_night.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_camo_olive.iff",
+      "stem": "ball_gameplay_official_camo_olive",
+      "label": "Olive",
+      "group": "Camo",
+      "image": "images/ball_gameplay_official_camo_olive.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_camo_olive.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_camo_woods.iff",
+      "stem": "ball_gameplay_official_camo_woods",
+      "label": "Woods",
+      "group": "Camo",
+      "image": "images/ball_gameplay_official_camo_woods.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_camo_woods.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_solid_black.iff",
+      "stem": "ball_gameplay_official_solid_black",
+      "label": "Black",
+      "group": "Colors",
+      "image": "images/ball_gameplay_official_solid_black.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_solid_black.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_solid_blackgold.iff",
+      "stem": "ball_gameplay_official_solid_blackgold",
+      "label": "Blackgold",
+      "group": "Colors",
+      "image": "images/ball_gameplay_official_solid_blackgold.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_solid_blackgold.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_solid_blacklight.iff",
+      "stem": "ball_gameplay_official_solid_blacklight",
+      "label": "Blacklight",
+      "group": "Colors",
+      "image": "images/ball_gameplay_official_solid_blacklight.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_solid_blacklight.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_solid_blackwhite.iff",
+      "stem": "ball_gameplay_official_solid_blackwhite",
+      "label": "Blackwhite",
+      "group": "Colors",
+      "image": "images/ball_gameplay_official_solid_blackwhite.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_solid_blackwhite.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_solid_blue.iff",
+      "stem": "ball_gameplay_official_solid_blue",
+      "label": "Blue",
+      "group": "Colors",
+      "image": "images/ball_gameplay_official_solid_blue.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_solid_blue.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_solid_bluesilver.iff",
+      "stem": "ball_gameplay_official_solid_bluesilver",
+      "label": "Bluesilver",
+      "group": "Colors",
+      "image": "images/ball_gameplay_official_solid_bluesilver.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_solid_bluesilver.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_solid_green.iff",
+      "stem": "ball_gameplay_official_solid_green",
+      "label": "Green",
+      "group": "Colors",
+      "image": "images/ball_gameplay_official_solid_green.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_solid_green.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_solid_green_gold.iff",
+      "stem": "ball_gameplay_official_solid_green_gold",
+      "label": "Green Gold",
+      "group": "Colors",
+      "image": "images/ball_gameplay_official_solid_green_gold.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_solid_green_gold.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_solid_greenwhitered.iff",
+      "stem": "ball_gameplay_official_solid_greenwhitered",
+      "label": "Greenwhitered",
+      "group": "Colors",
+      "image": "images/ball_gameplay_official_solid_greenwhitered.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_solid_greenwhitered.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_solid_greenyellowblue.iff",
+      "stem": "ball_gameplay_official_solid_greenyellowblue",
+      "label": "Greenyellowblue",
+      "group": "Colors",
+      "image": "images/ball_gameplay_official_solid_greenyellowblue.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_solid_greenyellowblue.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_solid_metalbronze.iff",
+      "stem": "ball_gameplay_official_solid_metalbronze",
+      "label": "Metalbronze",
+      "group": "Colors",
+      "image": "images/ball_gameplay_official_solid_metalbronze.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_solid_metalbronze.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_solid_metalgold.iff",
+      "stem": "ball_gameplay_official_solid_metalgold",
+      "label": "Metalgold",
+      "group": "Colors",
+      "image": "images/ball_gameplay_official_solid_metalgold.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_solid_metalgold.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_solid_metalsilver.iff",
+      "stem": "ball_gameplay_official_solid_metalsilver",
+      "label": "Metalsilver",
+      "group": "Colors",
+      "image": "images/ball_gameplay_official_solid_metalsilver.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_solid_metalsilver.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_solid_neonblue.iff",
+      "stem": "ball_gameplay_official_solid_neonblue",
+      "label": "Neonblue",
+      "group": "Colors",
+      "image": "images/ball_gameplay_official_solid_neonblue.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_solid_neonblue.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_solid_neongreen.iff",
+      "stem": "ball_gameplay_official_solid_neongreen",
+      "label": "Neongreen",
+      "group": "Colors",
+      "image": "images/ball_gameplay_official_solid_neongreen.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_solid_neongreen.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_solid_neonorange.iff",
+      "stem": "ball_gameplay_official_solid_neonorange",
+      "label": "Neonorange",
+      "group": "Colors",
+      "image": "images/ball_gameplay_official_solid_neonorange.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_solid_neonorange.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_solid_neonpurple.iff",
+      "stem": "ball_gameplay_official_solid_neonpurple",
+      "label": "Neonpurple",
+      "group": "Colors",
+      "image": "images/ball_gameplay_official_solid_neonpurple.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_solid_neonpurple.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_solid_neonred.iff",
+      "stem": "ball_gameplay_official_solid_neonred",
+      "label": "Neonred",
+      "group": "Colors",
+      "image": "images/ball_gameplay_official_solid_neonred.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_solid_neonred.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_solid_neonyellow.iff",
+      "stem": "ball_gameplay_official_solid_neonyellow",
+      "label": "Neonyellow",
+      "group": "Colors",
+      "image": "images/ball_gameplay_official_solid_neonyellow.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_solid_neonyellow.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_solid_orange.iff",
+      "stem": "ball_gameplay_official_solid_orange",
+      "label": "Orange",
+      "group": "Colors",
+      "image": "images/ball_gameplay_official_solid_orange.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_solid_orange.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_solid_pink.iff",
+      "stem": "ball_gameplay_official_solid_pink",
+      "label": "Pink",
+      "group": "Colors",
+      "image": "images/ball_gameplay_official_solid_pink.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_solid_pink.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_solid_pinklavender.iff",
+      "stem": "ball_gameplay_official_solid_pinklavender",
+      "label": "Pinklavender",
+      "group": "Colors",
+      "image": "images/ball_gameplay_official_solid_pinklavender.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_solid_pinklavender.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_solid_purple.iff",
+      "stem": "ball_gameplay_official_solid_purple",
+      "label": "Purple",
+      "group": "Colors",
+      "image": "images/ball_gameplay_official_solid_purple.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_solid_purple.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_solid_purplegold.iff",
+      "stem": "ball_gameplay_official_solid_purplegold",
+      "label": "Purplegold",
+      "group": "Colors",
+      "image": "images/ball_gameplay_official_solid_purplegold.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_solid_purplegold.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_solid_red.iff",
+      "stem": "ball_gameplay_official_solid_red",
+      "label": "Red",
+      "group": "Colors",
+      "image": "images/ball_gameplay_official_solid_red.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_solid_red.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_solid_redgreen.iff",
+      "stem": "ball_gameplay_official_solid_redgreen",
+      "label": "Redgreen",
+      "group": "Colors",
+      "image": "images/ball_gameplay_official_solid_redgreen.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_solid_redgreen.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_solid_redsilver.iff",
+      "stem": "ball_gameplay_official_solid_redsilver",
+      "label": "Redsilver",
+      "group": "Colors",
+      "image": "images/ball_gameplay_official_solid_redsilver.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_solid_redsilver.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_solid_redwhiteblue.iff",
+      "stem": "ball_gameplay_official_solid_redwhiteblue",
+      "label": "Redwhiteblue",
+      "group": "Colors",
+      "image": "images/ball_gameplay_official_solid_redwhiteblue.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_solid_redwhiteblue.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_solid_white.iff",
+      "stem": "ball_gameplay_official_solid_white",
+      "label": "White",
+      "group": "Colors",
+      "image": "images/ball_gameplay_official_solid_white.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_solid_white.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_solid_yellow.iff",
+      "stem": "ball_gameplay_official_solid_yellow",
+      "label": "Yellow",
+      "group": "Colors",
+      "image": "images/ball_gameplay_official_solid_yellow.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_solid_yellow.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_solid_yellowsilver.iff",
+      "stem": "ball_gameplay_official_solid_yellowsilver",
+      "label": "Yellowsilver",
+      "group": "Colors",
+      "image": "images/ball_gameplay_official_solid_yellowsilver.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_solid_yellowsilver.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_country_flag_argentina.iff",
+      "stem": "ball_gameplay_official_country_flag_argentina",
+      "label": "Flag Argentina",
+      "group": "Countries",
+      "image": "images/ball_gameplay_official_country_flag_argentina.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_country_flag_argentina.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_country_flag_australia.iff",
+      "stem": "ball_gameplay_official_country_flag_australia",
+      "label": "Flag Australia",
+      "group": "Countries",
+      "image": "images/ball_gameplay_official_country_flag_australia.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_country_flag_australia.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_country_flag_brazil.iff",
+      "stem": "ball_gameplay_official_country_flag_brazil",
+      "label": "Flag Brazil",
+      "group": "Countries",
+      "image": "images/ball_gameplay_official_country_flag_brazil.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_country_flag_brazil.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_country_flag_canada.iff",
+      "stem": "ball_gameplay_official_country_flag_canada",
+      "label": "Flag Canada",
+      "group": "Countries",
+      "image": "images/ball_gameplay_official_country_flag_canada.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_country_flag_canada.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_country_flag_china.iff",
+      "stem": "ball_gameplay_official_country_flag_china",
+      "label": "Flag China",
+      "group": "Countries",
+      "image": "images/ball_gameplay_official_country_flag_china.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_country_flag_china.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_country_flag_filipino.iff",
+      "stem": "ball_gameplay_official_country_flag_filipino",
+      "label": "Flag Filipino",
+      "group": "Countries",
+      "image": "images/ball_gameplay_official_country_flag_filipino.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_country_flag_filipino.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_country_flag_france.iff",
+      "stem": "ball_gameplay_official_country_flag_france",
+      "label": "Flag France",
+      "group": "Countries",
+      "image": "images/ball_gameplay_official_country_flag_france.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_country_flag_france.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_country_flag_germany.iff",
+      "stem": "ball_gameplay_official_country_flag_germany",
+      "label": "Flag Germany",
+      "group": "Countries",
+      "image": "images/ball_gameplay_official_country_flag_germany.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_country_flag_germany.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_country_flag_international.iff",
+      "stem": "ball_gameplay_official_country_flag_international",
+      "label": "Flag International",
+      "group": "Countries",
+      "image": "images/ball_gameplay_official_country_flag_international.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_country_flag_international.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_country_flag_italy.iff",
+      "stem": "ball_gameplay_official_country_flag_italy",
+      "label": "Flag Italy",
+      "group": "Countries",
+      "image": "images/ball_gameplay_official_country_flag_italy.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_country_flag_italy.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_country_flag_mexico.iff",
+      "stem": "ball_gameplay_official_country_flag_mexico",
+      "label": "Flag Mexico",
+      "group": "Countries",
+      "image": "images/ball_gameplay_official_country_flag_mexico.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_country_flag_mexico.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_country_flag_spain.iff",
+      "stem": "ball_gameplay_official_country_flag_spain",
+      "label": "Flag Spain",
+      "group": "Countries",
+      "image": "images/ball_gameplay_official_country_flag_spain.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_country_flag_spain.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_country_flag_uae.iff",
+      "stem": "ball_gameplay_official_country_flag_uae",
+      "label": "Flag Uae",
+      "group": "Countries",
+      "image": "images/ball_gameplay_official_country_flag_uae.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_country_flag_uae.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_country_flag_uk.iff",
+      "stem": "ball_gameplay_official_country_flag_uk",
+      "label": "Flag Uk",
+      "group": "Countries",
+      "image": "images/ball_gameplay_official_country_flag_uk.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_country_flag_uk.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_country_flag_usa.iff",
+      "stem": "ball_gameplay_official_country_flag_usa",
+      "label": "Flag Usa",
+      "group": "Countries",
+      "image": "images/ball_gameplay_official_country_flag_usa.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_country_flag_usa.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_emoji_afraid.iff",
+      "stem": "ball_gameplay_official_emoji_afraid",
+      "label": "Afraid",
+      "group": "Emoji",
+      "image": "images/ball_gameplay_official_emoji_afraid.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_emoji_afraid.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_emoji_happy.iff",
+      "stem": "ball_gameplay_official_emoji_happy",
+      "label": "Happy",
+      "group": "Emoji",
+      "image": "images/ball_gameplay_official_emoji_happy.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_emoji_happy.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_event_2kl_season06.iff",
+      "stem": "ball_gameplay_official_event_2kl_season06",
+      "label": "2kl Season06",
+      "group": "Events",
+      "image": "images/ball_gameplay_official_event_2kl_season06.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_event_2kl_season06.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_event_aircraftflyers.iff",
+      "stem": "ball_gameplay_official_event_aircraftflyers",
+      "label": "Aircraftflyers",
+      "group": "Events",
+      "image": "images/ball_gameplay_official_event_aircraftflyers.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_event_aircraftflyers.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_event_battleofthebay.iff",
+      "stem": "ball_gameplay_official_event_battleofthebay",
+      "label": "Battleofthebay",
+      "group": "Events",
+      "image": "images/ball_gameplay_official_event_battleofthebay.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_event_battleofthebay.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_event_blackoutbingo.iff",
+      "stem": "ball_gameplay_official_event_blackoutbingo",
+      "label": "Blackoutbingo",
+      "group": "Events",
+      "image": "images/ball_gameplay_official_event_blackoutbingo.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_event_blackoutbingo.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_event_cagematch.iff",
+      "stem": "ball_gameplay_official_event_cagematch",
+      "label": "Cagematch",
+      "group": "Events",
+      "image": "images/ball_gameplay_official_event_cagematch.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_event_cagematch.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_event_coldsnap.iff",
+      "stem": "ball_gameplay_official_event_coldsnap",
+      "label": "Coldsnap",
+      "group": "Events",
+      "image": "images/ball_gameplay_official_event_coldsnap.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_event_coldsnap.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_event_courtconqueror.iff",
+      "stem": "ball_gameplay_official_event_courtconqueror",
+      "label": "Courtconqueror",
+      "group": "Events",
+      "image": "images/ball_gameplay_official_event_courtconqueror.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_event_courtconqueror.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_event_deepend.iff",
+      "stem": "ball_gameplay_official_event_deepend",
+      "label": "Deepend",
+      "group": "Events",
+      "image": "images/ball_gameplay_official_event_deepend.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_event_deepend.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_event_dimetime.iff",
+      "stem": "ball_gameplay_official_event_dimetime",
+      "label": "Dimetime",
+      "group": "Events",
+      "image": "images/ball_gameplay_official_event_dimetime.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_event_dimetime.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_event_dunkfest.iff",
+      "stem": "ball_gameplay_official_event_dunkfest",
+      "label": "Dunkfest",
+      "group": "Events",
+      "image": "images/ball_gameplay_official_event_dunkfest.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_event_dunkfest.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_event_erachallenge.iff",
+      "stem": "ball_gameplay_official_event_erachallenge",
+      "label": "Erachallenge",
+      "group": "Events",
+      "image": "images/ball_gameplay_official_event_erachallenge.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_event_erachallenge.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_event_formula2k.iff",
+      "stem": "ball_gameplay_official_event_formula2k",
+      "label": "Formula2k",
+      "group": "Events",
+      "image": "images/ball_gameplay_official_event_formula2k.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_event_formula2k.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_event_letitride.iff",
+      "stem": "ball_gameplay_official_event_letitride",
+      "label": "Letitride",
+      "group": "Events",
+      "image": "images/ball_gameplay_official_event_letitride.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_event_letitride.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_event_megabonus.iff",
+      "stem": "ball_gameplay_official_event_megabonus",
+      "label": "Megabonus",
+      "group": "Events",
+      "image": "images/ball_gameplay_official_event_megabonus.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_event_megabonus.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_event_midway.iff",
+      "stem": "ball_gameplay_official_event_midway",
+      "label": "Midway",
+      "group": "Events",
+      "image": "images/ball_gameplay_official_event_midway.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_event_midway.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_event_oldtownflyers.iff",
+      "stem": "ball_gameplay_official_event_oldtownflyers",
+      "label": "Oldtownflyers",
+      "group": "Events",
+      "image": "images/ball_gameplay_official_event_oldtownflyers.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_event_oldtownflyers.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_event_poseidonsreef.iff",
+      "stem": "ball_gameplay_official_event_poseidonsreef",
+      "label": "Poseidonsreef",
+      "group": "Events",
+      "image": "images/ball_gameplay_official_event_poseidonsreef.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_event_poseidonsreef.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_event_powersurge.iff",
+      "stem": "ball_gameplay_official_event_powersurge",
+      "label": "Powersurge",
+      "group": "Events",
+      "image": "images/ball_gameplay_official_event_powersurge.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_event_powersurge.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_event_rivetcityriders.iff",
+      "stem": "ball_gameplay_official_event_rivetcityriders",
+      "label": "Rivetcityriders",
+      "group": "Events",
+      "image": "images/ball_gameplay_official_event_rivetcityriders.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_event_rivetcityriders.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_event_rumbleinthecay.iff",
+      "stem": "ball_gameplay_official_event_rumbleinthecay",
+      "label": "Rumbleinthecay",
+      "group": "Events",
+      "image": "images/ball_gameplay_official_event_rumbleinthecay.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_event_rumbleinthecay.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_event_rush.iff",
+      "stem": "ball_gameplay_official_event_rush",
+      "label": "Rush",
+      "group": "Events",
+      "image": "images/ball_gameplay_official_event_rush.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_event_rush.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_event_strikeout.iff",
+      "stem": "ball_gameplay_official_event_strikeout",
+      "label": "Strikeout",
+      "group": "Events",
+      "image": "images/ball_gameplay_official_event_strikeout.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_event_strikeout.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_event_sunsetballers.iff",
+      "stem": "ball_gameplay_official_event_sunsetballers",
+      "label": "Sunsetballers",
+      "group": "Events",
+      "image": "images/ball_gameplay_official_event_sunsetballers.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_event_sunsetballers.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_gem_amethyst.iff",
+      "stem": "ball_gameplay_official_gem_amethyst",
+      "label": "Amethyst",
+      "group": "Gems",
+      "image": "images/ball_gameplay_official_gem_amethyst.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_gem_amethyst.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_gem_default.iff",
+      "stem": "ball_gameplay_official_gem_default",
+      "label": "Default",
+      "group": "Gems",
+      "image": "images/ball_gameplay_official_gem_default.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_gem_default.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_gem_diamond.iff",
+      "stem": "ball_gameplay_official_gem_diamond",
+      "label": "Diamond",
+      "group": "Gems",
+      "image": "images/ball_gameplay_official_gem_diamond.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_gem_diamond.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_gem_emerald.iff",
+      "stem": "ball_gameplay_official_gem_emerald",
+      "label": "Emerald",
+      "group": "Gems",
+      "image": "images/ball_gameplay_official_gem_emerald.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_gem_emerald.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_gem_galaxy_opal.iff",
+      "stem": "ball_gameplay_official_gem_galaxy_opal",
+      "label": "Galaxy Opal",
+      "group": "Gems",
+      "image": "images/ball_gameplay_official_gem_galaxy_opal.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_gem_galaxy_opal.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_gem_kintsugi.iff",
+      "stem": "ball_gameplay_official_gem_kintsugi",
+      "label": "Kintsugi",
+      "group": "Gems",
+      "image": "images/ball_gameplay_official_gem_kintsugi.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_gem_kintsugi.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_gem_magma.iff",
+      "stem": "ball_gameplay_official_gem_magma",
+      "label": "Magma",
+      "group": "Gems",
+      "image": "images/ball_gameplay_official_gem_magma.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_gem_magma.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_gem_pearl.iff",
+      "stem": "ball_gameplay_official_gem_pearl",
+      "label": "Pearl",
+      "group": "Gems",
+      "image": "images/ball_gameplay_official_gem_pearl.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_gem_pearl.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_gem_pinkdiamond.iff",
+      "stem": "ball_gameplay_official_gem_pinkdiamond",
+      "label": "Pinkdiamond",
+      "group": "Gems",
+      "image": "images/ball_gameplay_official_gem_pinkdiamond.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_gem_pinkdiamond.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_gem_pixelcut.iff",
+      "stem": "ball_gameplay_official_gem_pixelcut",
+      "label": "Pixelcut",
+      "group": "Gems",
+      "image": "images/ball_gameplay_official_gem_pixelcut.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_gem_pixelcut.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_gem_ruby.iff",
+      "stem": "ball_gameplay_official_gem_ruby",
+      "label": "Ruby",
+      "group": "Gems",
+      "image": "images/ball_gameplay_official_gem_ruby.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_gem_ruby.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_gem_sapphire.iff",
+      "stem": "ball_gameplay_official_gem_sapphire",
+      "label": "Sapphire",
+      "group": "Gems",
+      "image": "images/ball_gameplay_official_gem_sapphire.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_gem_sapphire.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_gem_uranium.iff",
+      "stem": "ball_gameplay_official_gem_uranium",
+      "label": "Uranium",
+      "group": "Gems",
+      "image": "images/ball_gameplay_official_gem_uranium.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_gem_uranium.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_holiday_aprilfools.iff",
+      "stem": "ball_gameplay_official_holiday_aprilfools",
+      "label": "Aprilfools",
+      "group": "Holiday",
+      "image": "images/ball_gameplay_official_holiday_aprilfools.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_holiday_aprilfools.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_holiday_chinese_new_year_dog.iff",
+      "stem": "ball_gameplay_official_holiday_chinese_new_year_dog",
+      "label": "Chinese New Year Dog",
+      "group": "Holiday",
+      "image": "images/ball_gameplay_official_holiday_chinese_new_year_dog.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_holiday_chinese_new_year_dog.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_holiday_chinese_new_year_dragon.iff",
+      "stem": "ball_gameplay_official_holiday_chinese_new_year_dragon",
+      "label": "Chinese New Year Dragon",
+      "group": "Holiday",
+      "image": "images/ball_gameplay_official_holiday_chinese_new_year_dragon.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_holiday_chinese_new_year_dragon.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_holiday_chinese_new_year_goat.iff",
+      "stem": "ball_gameplay_official_holiday_chinese_new_year_goat",
+      "label": "Chinese New Year Goat",
+      "group": "Holiday",
+      "image": "images/ball_gameplay_official_holiday_chinese_new_year_goat.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_holiday_chinese_new_year_goat.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_holiday_chinese_new_year_horse.iff",
+      "stem": "ball_gameplay_official_holiday_chinese_new_year_horse",
+      "label": "Chinese New Year Horse",
+      "group": "Holiday",
+      "image": "images/ball_gameplay_official_holiday_chinese_new_year_horse.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_holiday_chinese_new_year_horse.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_holiday_chinese_new_year_lantern.iff",
+      "stem": "ball_gameplay_official_holiday_chinese_new_year_lantern",
+      "label": "Chinese New Year Lantern",
+      "group": "Holiday",
+      "image": "images/ball_gameplay_official_holiday_chinese_new_year_lantern.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_holiday_chinese_new_year_lantern.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_holiday_chinese_new_year_monkey.iff",
+      "stem": "ball_gameplay_official_holiday_chinese_new_year_monkey",
+      "label": "Chinese New Year Monkey",
+      "group": "Holiday",
+      "image": "images/ball_gameplay_official_holiday_chinese_new_year_monkey.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_holiday_chinese_new_year_monkey.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_holiday_chinese_new_year_ox.iff",
+      "stem": "ball_gameplay_official_holiday_chinese_new_year_ox",
+      "label": "Chinese New Year Ox",
+      "group": "Holiday",
+      "image": "images/ball_gameplay_official_holiday_chinese_new_year_ox.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_holiday_chinese_new_year_ox.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_holiday_chinese_new_year_pig.iff",
+      "stem": "ball_gameplay_official_holiday_chinese_new_year_pig",
+      "label": "Chinese New Year Pig",
+      "group": "Holiday",
+      "image": "images/ball_gameplay_official_holiday_chinese_new_year_pig.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_holiday_chinese_new_year_pig.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_holiday_chinese_new_year_rabbit.iff",
+      "stem": "ball_gameplay_official_holiday_chinese_new_year_rabbit",
+      "label": "Chinese New Year Rabbit",
+      "group": "Holiday",
+      "image": "images/ball_gameplay_official_holiday_chinese_new_year_rabbit.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_holiday_chinese_new_year_rabbit.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_holiday_chinese_new_year_rat.iff",
+      "stem": "ball_gameplay_official_holiday_chinese_new_year_rat",
+      "label": "Chinese New Year Rat",
+      "group": "Holiday",
+      "image": "images/ball_gameplay_official_holiday_chinese_new_year_rat.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_holiday_chinese_new_year_rat.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_holiday_chinese_new_year_rooster.iff",
+      "stem": "ball_gameplay_official_holiday_chinese_new_year_rooster",
+      "label": "Chinese New Year Rooster",
+      "group": "Holiday",
+      "image": "images/ball_gameplay_official_holiday_chinese_new_year_rooster.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_holiday_chinese_new_year_rooster.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_holiday_chinese_new_year_snake.iff",
+      "stem": "ball_gameplay_official_holiday_chinese_new_year_snake",
+      "label": "Chinese New Year Snake",
+      "group": "Holiday",
+      "image": "images/ball_gameplay_official_holiday_chinese_new_year_snake.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_holiday_chinese_new_year_snake.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_holiday_chinese_new_year_tiger.iff",
+      "stem": "ball_gameplay_official_holiday_chinese_new_year_tiger",
+      "label": "Chinese New Year Tiger",
+      "group": "Holiday",
+      "image": "images/ball_gameplay_official_holiday_chinese_new_year_tiger.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_holiday_chinese_new_year_tiger.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_holiday_christmas_christmas1.iff",
+      "stem": "ball_gameplay_official_holiday_christmas_christmas1",
+      "label": "Christmas Christmas1",
+      "group": "Holiday",
+      "image": "images/ball_gameplay_official_holiday_christmas_christmas1.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_holiday_christmas_christmas1.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_holiday_christmas_christmas2.iff",
+      "stem": "ball_gameplay_official_holiday_christmas_christmas2",
+      "label": "Christmas Christmas2",
+      "group": "Holiday",
+      "image": "images/ball_gameplay_official_holiday_christmas_christmas2.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_holiday_christmas_christmas2.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_holiday_christmas_christmas3.iff",
+      "stem": "ball_gameplay_official_holiday_christmas_christmas3",
+      "label": "Christmas Christmas3",
+      "group": "Holiday",
+      "image": "images/ball_gameplay_official_holiday_christmas_christmas3.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_holiday_christmas_christmas3.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_holiday_christmas_christmas4.iff",
+      "stem": "ball_gameplay_official_holiday_christmas_christmas4",
+      "label": "Christmas Christmas4",
+      "group": "Holiday",
+      "image": "images/ball_gameplay_official_holiday_christmas_christmas4.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_holiday_christmas_christmas4.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_holiday_christmas_elf_shirt.iff",
+      "stem": "ball_gameplay_official_holiday_christmas_elf_shirt",
+      "label": "Christmas Elf Shirt",
+      "group": "Holiday",
+      "image": "images/ball_gameplay_official_holiday_christmas_elf_shirt.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_holiday_christmas_elf_shirt.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_holiday_christmas_nutcracker.iff",
+      "stem": "ball_gameplay_official_holiday_christmas_nutcracker",
+      "label": "Christmas Nutcracker",
+      "group": "Holiday",
+      "image": "images/ball_gameplay_official_holiday_christmas_nutcracker.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_holiday_christmas_nutcracker.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_holiday_christmas_santa.iff",
+      "stem": "ball_gameplay_official_holiday_christmas_santa",
+      "label": "Christmas Santa",
+      "group": "Holiday",
+      "image": "images/ball_gameplay_official_holiday_christmas_santa.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_holiday_christmas_santa.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_holiday_christmas_snowflake.iff",
+      "stem": "ball_gameplay_official_holiday_christmas_snowflake",
+      "label": "Christmas Snowflake",
+      "group": "Holiday",
+      "image": "images/ball_gameplay_official_holiday_christmas_snowflake.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_holiday_christmas_snowflake.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_holiday_christmas_snowman.iff",
+      "stem": "ball_gameplay_official_holiday_christmas_snowman",
+      "label": "Christmas Snowman",
+      "group": "Holiday",
+      "image": "images/ball_gameplay_official_holiday_christmas_snowman.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_holiday_christmas_snowman.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_holiday_coal.iff",
+      "stem": "ball_gameplay_official_holiday_coal",
+      "label": "Coal",
+      "group": "Holiday",
+      "image": "images/ball_gameplay_official_holiday_coal.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_holiday_coal.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_holiday_earthdayglobe.iff",
+      "stem": "ball_gameplay_official_holiday_earthdayglobe",
+      "label": "Earthdayglobe",
+      "group": "Holiday",
+      "image": "images/ball_gameplay_official_holiday_earthdayglobe.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_holiday_earthdayglobe.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_holiday_earthdaytree.iff",
+      "stem": "ball_gameplay_official_holiday_earthdaytree",
+      "label": "Earthdaytree",
+      "group": "Holiday",
+      "image": "images/ball_gameplay_official_holiday_earthdaytree.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_holiday_earthdaytree.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_holiday_easterbasket.iff",
+      "stem": "ball_gameplay_official_holiday_easterbasket",
+      "label": "Easterbasket",
+      "group": "Holiday",
+      "image": "images/ball_gameplay_official_holiday_easterbasket.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_holiday_easterbasket.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_holiday_easterbunny.iff",
+      "stem": "ball_gameplay_official_holiday_easterbunny",
+      "label": "Easterbunny",
+      "group": "Holiday",
+      "image": "images/ball_gameplay_official_holiday_easterbunny.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_holiday_easterbunny.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_holiday_easteregg.iff",
+      "stem": "ball_gameplay_official_holiday_easteregg",
+      "label": "Easteregg",
+      "group": "Holiday",
+      "image": "images/ball_gameplay_official_holiday_easteregg.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_holiday_easteregg.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_holiday_halloween_eye.iff",
+      "stem": "ball_gameplay_official_holiday_halloween_eye",
+      "label": "Halloween Eye",
+      "group": "Holiday",
+      "image": "images/ball_gameplay_official_holiday_halloween_eye.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_holiday_halloween_eye.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_holiday_halloween_halloween.iff",
+      "stem": "ball_gameplay_official_holiday_halloween_halloween",
+      "label": "Halloween Halloween",
+      "group": "Holiday",
+      "image": "images/ball_gameplay_official_holiday_halloween_halloween.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_holiday_halloween_halloween.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_holiday_halloween_jack_o_lantern.iff",
+      "stem": "ball_gameplay_official_holiday_halloween_jack_o_lantern",
+      "label": "Halloween Jack O Lantern",
+      "group": "Holiday",
+      "image": "images/ball_gameplay_official_holiday_halloween_jack_o_lantern.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_holiday_halloween_jack_o_lantern.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_holiday_halloween_mummy.iff",
+      "stem": "ball_gameplay_official_holiday_halloween_mummy",
+      "label": "Halloween Mummy",
+      "group": "Holiday",
+      "image": "images/ball_gameplay_official_holiday_halloween_mummy.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_holiday_halloween_mummy.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_holiday_mlk_dreamball.iff",
+      "stem": "ball_gameplay_official_holiday_mlk_dreamball",
+      "label": "Mlk Dreamball",
+      "group": "Holiday",
+      "image": "images/ball_gameplay_official_holiday_mlk_dreamball.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_holiday_mlk_dreamball.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_holiday_nyedate.iff",
+      "stem": "ball_gameplay_official_holiday_nyedate",
+      "label": "Nyedate",
+      "group": "Holiday",
+      "image": "images/ball_gameplay_official_holiday_nyedate.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_holiday_nyedate.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_holiday_stpatricksday1.iff",
+      "stem": "ball_gameplay_official_holiday_stpatricksday1",
+      "label": "Stpatricksday1",
+      "group": "Holiday",
+      "image": "images/ball_gameplay_official_holiday_stpatricksday1.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_holiday_stpatricksday1.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_holiday_stpatricksday2.iff",
+      "stem": "ball_gameplay_official_holiday_stpatricksday2",
+      "label": "Stpatricksday2",
+      "group": "Holiday",
+      "image": "images/ball_gameplay_official_holiday_stpatricksday2.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_holiday_stpatricksday2.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_holiday_thanksgiving1.iff",
+      "stem": "ball_gameplay_official_holiday_thanksgiving1",
+      "label": "Thanksgiving1",
+      "group": "Holiday",
+      "image": "images/ball_gameplay_official_holiday_thanksgiving1.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_holiday_thanksgiving1.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_holiday_valentines1.iff",
+      "stem": "ball_gameplay_official_holiday_valentines1",
+      "label": "Valentines1",
+      "group": "Holiday",
+      "image": "images/ball_gameplay_official_holiday_valentines1.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_holiday_valentines1.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_holiday_valentines2.iff",
+      "stem": "ball_gameplay_official_holiday_valentines2",
+      "label": "Valentines2",
+      "group": "Holiday",
+      "image": "images/ball_gameplay_official_holiday_valentines2.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_holiday_valentines2.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_holiday_valentines3.iff",
+      "stem": "ball_gameplay_official_holiday_valentines3",
+      "label": "Valentines3",
+      "group": "Holiday",
+      "image": "images/ball_gameplay_official_holiday_valentines3.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_holiday_valentines3.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_default.iff",
+      "stem": "ball_gameplay_official_default",
+      "label": "2K Default",
+      "group": "League",
+      "image": "images/ball_gameplay_official_default.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_default.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_wnba_allstar2024.iff",
+      "stem": "ball_gameplay_official_wnba_allstar2024",
+      "label": "Allstar2024",
+      "group": "League",
+      "image": "images/ball_gameplay_official_wnba_allstar2024.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_wnba_allstar2024.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_wnba_allstarw_threepoint.iff",
+      "stem": "ball_gameplay_official_wnba_allstarw_threepoint",
+      "label": "Allstarw Threepoint",
+      "group": "League",
+      "image": "images/ball_gameplay_official_wnba_allstarw_threepoint.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_wnba_allstarw_threepoint.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_nba_authentic_authentic_chicago.iff",
+      "stem": "ball_gameplay_official_nba_authentic_authentic_chicago",
+      "label": "Authentic Authentic Chicago",
+      "group": "League",
+      "image": "images/ball_gameplay_official_nba_authentic_authentic_chicago.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_nba_authentic_authentic_chicago.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_nba_authentic_authentic_london.iff",
+      "stem": "ball_gameplay_official_nba_authentic_authentic_london",
+      "label": "Authentic Authentic London",
+      "group": "League",
+      "image": "images/ball_gameplay_official_nba_authentic_authentic_london.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_nba_authentic_authentic_london.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_nba_authentic_authentic_ny.iff",
+      "stem": "ball_gameplay_official_nba_authentic_authentic_ny",
+      "label": "Authentic Authentic Ny",
+      "group": "League",
+      "image": "images/ball_gameplay_official_nba_authentic_authentic_ny.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_nba_authentic_authentic_ny.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_nba_authentic_authentic_tokyo.iff",
+      "stem": "ball_gameplay_official_nba_authentic_authentic_tokyo",
+      "label": "Authentic Authentic Tokyo",
+      "group": "League",
+      "image": "images/ball_gameplay_official_nba_authentic_authentic_tokyo.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_nba_authentic_authentic_tokyo.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_nba_ball_teamlogo_11_no.iff",
+      "stem": "ball_gameplay_official_nba_ball_teamlogo_11_no",
+      "label": "Ball Teamlogo 11 No",
+      "group": "League",
+      "image": "images/ball_gameplay_official_nba_ball_teamlogo_11_no.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_nba_ball_teamlogo_11_no.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_nba_city_city_celtics.iff",
+      "stem": "ball_gameplay_official_nba_city_city_celtics",
+      "label": "City City Celtics",
+      "group": "League",
+      "image": "images/ball_gameplay_official_nba_city_city_celtics.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_nba_city_city_celtics.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_nba_city_city_knicks.iff",
+      "stem": "ball_gameplay_official_nba_city_city_knicks",
+      "label": "City City Knicks",
+      "group": "League",
+      "image": "images/ball_gameplay_official_nba_city_city_knicks.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_nba_city_city_knicks.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_nba_city_city_lakers.iff",
+      "stem": "ball_gameplay_official_nba_city_city_lakers",
+      "label": "City City Lakers",
+      "group": "League",
+      "image": "images/ball_gameplay_official_nba_city_city_lakers.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_nba_city_city_lakers.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_nba_city_city_mavericks.iff",
+      "stem": "ball_gameplay_official_nba_city_city_mavericks",
+      "label": "City City Mavericks",
+      "group": "League",
+      "image": "images/ball_gameplay_official_nba_city_city_mavericks.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_nba_city_city_mavericks.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_wnba_commissionerscup2024.iff",
+      "stem": "ball_gameplay_official_wnba_commissionerscup2024",
+      "label": "Commissionerscup2024",
+      "group": "League",
+      "image": "images/ball_gameplay_official_wnba_commissionerscup2024.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_wnba_commissionerscup2024.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_nba_forge_forgeplus_burgundy.iff",
+      "stem": "ball_gameplay_official_nba_forge_forgeplus_burgundy",
+      "label": "Forge Forgeplus Burgundy",
+      "group": "League",
+      "image": "images/ball_gameplay_official_nba_forge_forgeplus_burgundy.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_nba_forge_forgeplus_burgundy.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_nba_forge_forgeplus_darkgrey.iff",
+      "stem": "ball_gameplay_official_nba_forge_forgeplus_darkgrey",
+      "label": "Forge Forgeplus Darkgrey",
+      "group": "League",
+      "image": "images/ball_gameplay_official_nba_forge_forgeplus_darkgrey.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_nba_forge_forgeplus_darkgrey.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_nba_forge_forgeplus_navy.iff",
+      "stem": "ball_gameplay_official_nba_forge_forgeplus_navy",
+      "label": "Forge Forgeplus Navy",
+      "group": "League",
+      "image": "images/ball_gameplay_official_nba_forge_forgeplus_navy.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_nba_forge_forgeplus_navy.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_wnba_heir_blueorange.iff",
+      "stem": "ball_gameplay_official_wnba_heir_blueorange",
+      "label": "Heir Blueorange",
+      "group": "League",
+      "image": "images/ball_gameplay_official_wnba_heir_blueorange.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_wnba_heir_blueorange.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_nba_league_official_2018.iff",
+      "stem": "ball_gameplay_official_nba_league_official_2018",
+      "label": "League Official 2018",
+      "group": "League",
+      "image": "images/ball_gameplay_official_nba_league_official_2018.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_nba_league_official_2018.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_nba_nba_draft2k23.iff",
+      "stem": "ball_gameplay_official_nba_nba_draft2k23",
+      "label": "NBA Draft2k23",
+      "group": "League",
+      "image": "images/ball_gameplay_official_nba_nba_draft2k23.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_nba_nba_draft2k23.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_nba_nba_official.iff",
+      "stem": "ball_gameplay_official_nba_nba_official",
+      "label": "NBA Official",
+      "group": "League",
+      "image": "images/ball_gameplay_official_nba_nba_official.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_nba_nba_official.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_nba_nba_official_spalding.iff",
+      "stem": "ball_gameplay_official_nba_nba_official_spalding",
+      "label": "NBA Official Spalding",
+      "group": "League",
+      "image": "images/ball_gameplay_official_nba_nba_official_spalding.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_nba_nba_official_spalding.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_nba_nba_playoffs.iff",
+      "stem": "ball_gameplay_official_nba_nba_playoffs",
+      "label": "NBA Playoffs",
+      "group": "League",
+      "image": "images/ball_gameplay_official_nba_nba_playoffs.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_nba_nba_playoffs.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_nba_retro_retro_000phl76ers.iff",
+      "stem": "ball_gameplay_official_nba_retro_retro_000phl76ers",
+      "label": "Retro Retro 000phl76ers",
+      "group": "League",
+      "image": "images/ball_gameplay_official_nba_retro_retro_000phl76ers.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_nba_retro_retro_000phl76ers.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_nba_retro_retro_001milbucks.iff",
+      "stem": "ball_gameplay_official_nba_retro_retro_001milbucks",
+      "label": "Retro Retro 001milbucks",
+      "group": "League",
+      "image": "images/ball_gameplay_official_nba_retro_retro_001milbucks.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_nba_retro_retro_001milbucks.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_nba_retro_retro_002waswizards.iff",
+      "stem": "ball_gameplay_official_nba_retro_retro_002waswizards",
+      "label": "Retro Retro 002waswizards",
+      "group": "League",
+      "image": "images/ball_gameplay_official_nba_retro_retro_002waswizards.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_nba_retro_retro_002waswizards.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_nba_retro_retro_003chibulls.iff",
+      "stem": "ball_gameplay_official_nba_retro_retro_003chibulls",
+      "label": "Retro Retro 003chibulls",
+      "group": "League",
+      "image": "images/ball_gameplay_official_nba_retro_retro_003chibulls.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_nba_retro_retro_003chibulls.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_nba_retro_retro_004clecavaliers.iff",
+      "stem": "ball_gameplay_official_nba_retro_retro_004clecavaliers",
+      "label": "Retro Retro 004clecavaliers",
+      "group": "League",
+      "image": "images/ball_gameplay_official_nba_retro_retro_004clecavaliers.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_nba_retro_retro_004clecavaliers.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_nba_retro_retro_005bosceltics.iff",
+      "stem": "ball_gameplay_official_nba_retro_retro_005bosceltics",
+      "label": "Retro Retro 005bosceltics",
+      "group": "League",
+      "image": "images/ball_gameplay_official_nba_retro_retro_005bosceltics.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_nba_retro_retro_005bosceltics.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_nba_retro_retro_006laclippers.iff",
+      "stem": "ball_gameplay_official_nba_retro_retro_006laclippers",
+      "label": "Retro Retro 006laclippers",
+      "group": "League",
+      "image": "images/ball_gameplay_official_nba_retro_retro_006laclippers.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_nba_retro_retro_006laclippers.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_nba_retro_retro_008vangrizzlies.iff",
+      "stem": "ball_gameplay_official_nba_retro_retro_008vangrizzlies",
+      "label": "Retro Retro 008vangrizzlies",
+      "group": "League",
+      "image": "images/ball_gameplay_official_nba_retro_retro_008vangrizzlies.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_nba_retro_retro_008vangrizzlies.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_nba_retro_retro_009atlhawks.iff",
+      "stem": "ball_gameplay_official_nba_retro_retro_009atlhawks",
+      "label": "Retro Retro 009atlhawks",
+      "group": "League",
+      "image": "images/ball_gameplay_official_nba_retro_retro_009atlhawks.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_nba_retro_retro_009atlhawks.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_nba_retro_retro_010miaheat.iff",
+      "stem": "ball_gameplay_official_nba_retro_retro_010miaheat",
+      "label": "Retro Retro 010miaheat",
+      "group": "League",
+      "image": "images/ball_gameplay_official_nba_retro_retro_010miaheat.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_nba_retro_retro_010miaheat.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_nba_retro_retro_011nopelicans.iff",
+      "stem": "ball_gameplay_official_nba_retro_retro_011nopelicans",
+      "label": "Retro Retro 011nopelicans",
+      "group": "League",
+      "image": "images/ball_gameplay_official_nba_retro_retro_011nopelicans.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_nba_retro_retro_011nopelicans.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_nba_retro_retro_012utajazz.iff",
+      "stem": "ball_gameplay_official_nba_retro_retro_012utajazz",
+      "label": "Retro Retro 012utajazz",
+      "group": "League",
+      "image": "images/ball_gameplay_official_nba_retro_retro_012utajazz.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_nba_retro_retro_012utajazz.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_nba_retro_retro_013sackings.iff",
+      "stem": "ball_gameplay_official_nba_retro_retro_013sackings",
+      "label": "Retro Retro 013sackings",
+      "group": "League",
+      "image": "images/ball_gameplay_official_nba_retro_retro_013sackings.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_nba_retro_retro_013sackings.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_nba_retro_retro_014nyknicks.iff",
+      "stem": "ball_gameplay_official_nba_retro_retro_014nyknicks",
+      "label": "Retro Retro 014nyknicks",
+      "group": "League",
+      "image": "images/ball_gameplay_official_nba_retro_retro_014nyknicks.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_nba_retro_retro_014nyknicks.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_nba_retro_retro_015lalakers.iff",
+      "stem": "ball_gameplay_official_nba_retro_retro_015lalakers",
+      "label": "Retro Retro 015lalakers",
+      "group": "League",
+      "image": "images/ball_gameplay_official_nba_retro_retro_015lalakers.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_nba_retro_retro_015lalakers.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_nba_retro_retro_016orlmagic.iff",
+      "stem": "ball_gameplay_official_nba_retro_retro_016orlmagic",
+      "label": "Retro Retro 016orlmagic",
+      "group": "League",
+      "image": "images/ball_gameplay_official_nba_retro_retro_016orlmagic.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_nba_retro_retro_016orlmagic.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_nba_retro_retro_017dalmavericks.iff",
+      "stem": "ball_gameplay_official_nba_retro_retro_017dalmavericks",
+      "label": "Retro Retro 017dalmavericks",
+      "group": "League",
+      "image": "images/ball_gameplay_official_nba_retro_retro_017dalmavericks.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_nba_retro_retro_017dalmavericks.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_nba_retro_retro_018njnets.iff",
+      "stem": "ball_gameplay_official_nba_retro_retro_018njnets",
+      "label": "Retro Retro 018njnets",
+      "group": "League",
+      "image": "images/ball_gameplay_official_nba_retro_retro_018njnets.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_nba_retro_retro_018njnets.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_nba_retro_retro_019dennuggets.iff",
+      "stem": "ball_gameplay_official_nba_retro_retro_019dennuggets",
+      "label": "Retro Retro 019dennuggets",
+      "group": "League",
+      "image": "images/ball_gameplay_official_nba_retro_retro_019dennuggets.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_nba_retro_retro_019dennuggets.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_nba_retro_retro_020indpacers.iff",
+      "stem": "ball_gameplay_official_nba_retro_retro_020indpacers",
+      "label": "Retro Retro 020indpacers",
+      "group": "League",
+      "image": "images/ball_gameplay_official_nba_retro_retro_020indpacers.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_nba_retro_retro_020indpacers.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_nba_retro_retro_021detpistons.iff",
+      "stem": "ball_gameplay_official_nba_retro_retro_021detpistons",
+      "label": "Retro Retro 021detpistons",
+      "group": "League",
+      "image": "images/ball_gameplay_official_nba_retro_retro_021detpistons.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_nba_retro_retro_021detpistons.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_nba_retro_retro_022torraptors.iff",
+      "stem": "ball_gameplay_official_nba_retro_retro_022torraptors",
+      "label": "Retro Retro 022torraptors",
+      "group": "League",
+      "image": "images/ball_gameplay_official_nba_retro_retro_022torraptors.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_nba_retro_retro_022torraptors.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_nba_retro_retro_023hourockets.iff",
+      "stem": "ball_gameplay_official_nba_retro_retro_023hourockets",
+      "label": "Retro Retro 023hourockets",
+      "group": "League",
+      "image": "images/ball_gameplay_official_nba_retro_retro_023hourockets.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_nba_retro_retro_023hourockets.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_nba_retro_retro_024okcthunder.iff",
+      "stem": "ball_gameplay_official_nba_retro_retro_024okcthunder",
+      "label": "Retro Retro 024okcthunder",
+      "group": "League",
+      "image": "images/ball_gameplay_official_nba_retro_retro_024okcthunder.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_nba_retro_retro_024okcthunder.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_nba_retro_retro_025saspurs.iff",
+      "stem": "ball_gameplay_official_nba_retro_retro_025saspurs",
+      "label": "Retro Retro 025saspurs",
+      "group": "League",
+      "image": "images/ball_gameplay_official_nba_retro_retro_025saspurs.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_nba_retro_retro_025saspurs.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_nba_retro_retro_026phxsuns.iff",
+      "stem": "ball_gameplay_official_nba_retro_retro_026phxsuns",
+      "label": "Retro Retro 026phxsuns",
+      "group": "League",
+      "image": "images/ball_gameplay_official_nba_retro_retro_026phxsuns.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_nba_retro_retro_026phxsuns.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_nba_retro_retro_027mintimberwolves.iff",
+      "stem": "ball_gameplay_official_nba_retro_retro_027mintimberwolves",
+      "label": "Retro Retro 027mintimberwolves",
+      "group": "League",
+      "image": "images/ball_gameplay_official_nba_retro_retro_027mintimberwolves.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_nba_retro_retro_027mintimberwolves.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_nba_retro_retro_028portrailblazers.iff",
+      "stem": "ball_gameplay_official_nba_retro_retro_028portrailblazers",
+      "label": "Retro Retro 028portrailblazers",
+      "group": "League",
+      "image": "images/ball_gameplay_official_nba_retro_retro_028portrailblazers.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_nba_retro_retro_028portrailblazers.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_nba_retro_retro_029gswarriors.iff",
+      "stem": "ball_gameplay_official_nba_retro_retro_029gswarriors",
+      "label": "Retro Retro 029gswarriors",
+      "group": "League",
+      "image": "images/ball_gameplay_official_nba_retro_retro_029gswarriors.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_nba_retro_retro_029gswarriors.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_nba_retro_retro_031chahornets.iff",
+      "stem": "ball_gameplay_official_nba_retro_retro_031chahornets",
+      "label": "Retro Retro 031chahornets",
+      "group": "League",
+      "image": "images/ball_gameplay_official_nba_retro_retro_031chahornets.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_nba_retro_retro_031chahornets.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_nba_retro_retro_562seasupersonics.iff",
+      "stem": "ball_gameplay_official_nba_retro_retro_562seasupersonics",
+      "label": "Retro Retro 562seasupersonics",
+      "group": "League",
+      "image": "images/ball_gameplay_official_nba_retro_retro_562seasupersonics.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_nba_retro_retro_562seasupersonics.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_nba_sickle_cell.iff",
+      "stem": "ball_gameplay_official_nba_sickle_cell",
+      "label": "Sickle Cell",
+      "group": "League",
+      "image": "images/ball_gameplay_official_nba_sickle_cell.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_nba_sickle_cell.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_wnba_teamlogo_teamlogo_300lvaces.iff",
+      "stem": "ball_gameplay_official_wnba_teamlogo_teamlogo_300lvaces",
+      "label": "Teamlogo Teamlogo 300lvaces",
+      "group": "League",
+      "image": "images/ball_gameplay_official_wnba_teamlogo_teamlogo_300lvaces.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_wnba_teamlogo_teamlogo_300lvaces.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_wnba_teamlogo_teamlogo_301atldream.iff",
+      "stem": "ball_gameplay_official_wnba_teamlogo_teamlogo_301atldream",
+      "label": "Teamlogo Teamlogo 301atldream",
+      "group": "League",
+      "image": "images/ball_gameplay_official_wnba_teamlogo_teamlogo_301atldream.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_wnba_teamlogo_teamlogo_301atldream.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_wnba_teamlogo_teamlogo_302indfever.iff",
+      "stem": "ball_gameplay_official_wnba_teamlogo_teamlogo_302indfever",
+      "label": "Teamlogo Teamlogo 302indfever",
+      "group": "League",
+      "image": "images/ball_gameplay_official_wnba_teamlogo_teamlogo_302indfever.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_wnba_teamlogo_teamlogo_302indfever.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_wnba_teamlogo_teamlogo_303nyliberty.iff",
+      "stem": "ball_gameplay_official_wnba_teamlogo_teamlogo_303nyliberty",
+      "label": "Teamlogo Teamlogo 303nyliberty",
+      "group": "League",
+      "image": "images/ball_gameplay_official_wnba_teamlogo_teamlogo_303nyliberty.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_wnba_teamlogo_teamlogo_303nyliberty.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_wnba_teamlogo_teamlogo_304minlynx.iff",
+      "stem": "ball_gameplay_official_wnba_teamlogo_teamlogo_304minlynx",
+      "label": "Teamlogo Teamlogo 304minlynx",
+      "group": "League",
+      "image": "images/ball_gameplay_official_wnba_teamlogo_teamlogo_304minlynx.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_wnba_teamlogo_teamlogo_304minlynx.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_wnba_teamlogo_teamlogo_305phxmercury.iff",
+      "stem": "ball_gameplay_official_wnba_teamlogo_teamlogo_305phxmercury",
+      "label": "Teamlogo Teamlogo 305phxmercury",
+      "group": "League",
+      "image": "images/ball_gameplay_official_wnba_teamlogo_teamlogo_305phxmercury.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_wnba_teamlogo_teamlogo_305phxmercury.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_wnba_teamlogo_teamlogo_306wasmystics.iff",
+      "stem": "ball_gameplay_official_wnba_teamlogo_teamlogo_306wasmystics",
+      "label": "Teamlogo Teamlogo 306wasmystics",
+      "group": "League",
+      "image": "images/ball_gameplay_official_wnba_teamlogo_teamlogo_306wasmystics.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_wnba_teamlogo_teamlogo_306wasmystics.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_wnba_teamlogo_teamlogo_307chisky.iff",
+      "stem": "ball_gameplay_official_wnba_teamlogo_teamlogo_307chisky",
+      "label": "Teamlogo Teamlogo 307chisky",
+      "group": "League",
+      "image": "images/ball_gameplay_official_wnba_teamlogo_teamlogo_307chisky.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_wnba_teamlogo_teamlogo_307chisky.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_wnba_teamlogo_teamlogo_308lasparks.iff",
+      "stem": "ball_gameplay_official_wnba_teamlogo_teamlogo_308lasparks",
+      "label": "Teamlogo Teamlogo 308lasparks",
+      "group": "League",
+      "image": "images/ball_gameplay_official_wnba_teamlogo_teamlogo_308lasparks.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_wnba_teamlogo_teamlogo_308lasparks.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_wnba_teamlogo_teamlogo_309seastorm.iff",
+      "stem": "ball_gameplay_official_wnba_teamlogo_teamlogo_309seastorm",
+      "label": "Teamlogo Teamlogo 309seastorm",
+      "group": "League",
+      "image": "images/ball_gameplay_official_wnba_teamlogo_teamlogo_309seastorm.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_wnba_teamlogo_teamlogo_309seastorm.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_wnba_teamlogo_teamlogo_310consun.iff",
+      "stem": "ball_gameplay_official_wnba_teamlogo_teamlogo_310consun",
+      "label": "Teamlogo Teamlogo 310consun",
+      "group": "League",
+      "image": "images/ball_gameplay_official_wnba_teamlogo_teamlogo_310consun.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_wnba_teamlogo_teamlogo_310consun.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_wnba_teamlogo_teamlogo_311dalwings.iff",
+      "stem": "ball_gameplay_official_wnba_teamlogo_teamlogo_311dalwings",
+      "label": "Teamlogo Teamlogo 311dalwings",
+      "group": "League",
+      "image": "images/ball_gameplay_official_wnba_teamlogo_teamlogo_311dalwings.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_wnba_teamlogo_teamlogo_311dalwings.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_wnba_teamlogo_teamlogo_315gsvalkyries.iff",
+      "stem": "ball_gameplay_official_wnba_teamlogo_teamlogo_315gsvalkyries",
+      "label": "Teamlogo Teamlogo 315gsvalkyries",
+      "group": "League",
+      "image": "images/ball_gameplay_official_wnba_teamlogo_teamlogo_315gsvalkyries.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_wnba_teamlogo_teamlogo_315gsvalkyries.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_wnba_teamlogo_teamlogo_316tortempo.iff",
+      "stem": "ball_gameplay_official_wnba_teamlogo_teamlogo_316tortempo",
+      "label": "Teamlogo Teamlogo 316tortempo",
+      "group": "League",
+      "image": "images/ball_gameplay_official_wnba_teamlogo_teamlogo_316tortempo.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_wnba_teamlogo_teamlogo_316tortempo.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_wnba_teamlogo_teamlogo_317porfire.iff",
+      "stem": "ball_gameplay_official_wnba_teamlogo_teamlogo_317porfire",
+      "label": "Teamlogo Teamlogo 317porfire",
+      "group": "League",
+      "image": "images/ball_gameplay_official_wnba_teamlogo_teamlogo_317porfire.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_wnba_teamlogo_teamlogo_317porfire.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_nba_wilson_evo90s.iff",
+      "stem": "ball_gameplay_official_nba_wilson_evo90s",
+      "label": "Wilson Evo90s",
+      "group": "League",
+      "image": "images/ball_gameplay_official_nba_wilson_evo90s.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_nba_wilson_evo90s.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_nba_wilson_evogold.iff",
+      "stem": "ball_gameplay_official_nba_wilson_evogold",
+      "label": "Wilson Evogold",
+      "group": "League",
+      "image": "images/ball_gameplay_official_nba_wilson_evogold.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_nba_wilson_evogold.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_nba_wilson_worn.iff",
+      "stem": "ball_gameplay_official_nba_wilson_worn",
+      "label": "Wilson Worn",
+      "group": "League",
+      "image": "images/ball_gameplay_official_nba_wilson_worn.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_nba_wilson_worn.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_wnba_wnba_official.iff",
+      "stem": "ball_gameplay_official_wnba_wnba_official",
+      "label": "Wnba Official",
+      "group": "League",
+      "image": "images/ball_gameplay_official_wnba_wnba_official.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_wnba_wnba_official.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_cloth_denim.iff",
+      "stem": "ball_gameplay_official_cloth_denim",
+      "label": "Denim",
+      "group": "Materials",
+      "image": "images/ball_gameplay_official_cloth_denim.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_cloth_denim.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_cloth_tiedye.iff",
+      "stem": "ball_gameplay_official_cloth_tiedye",
+      "label": "Tiedye",
+      "group": "Materials",
+      "image": "images/ball_gameplay_official_cloth_tiedye.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_cloth_tiedye.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_cloth_yarn.iff",
+      "stem": "ball_gameplay_official_cloth_yarn",
+      "label": "Yarn",
+      "group": "Materials",
+      "image": "images/ball_gameplay_official_cloth_yarn.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_cloth_yarn.png"
+    },
+    {
+      "id": "balls/ball_airless_wilson.iff",
+      "stem": "ball_airless_wilson",
+      "label": "Airless Wilson",
+      "group": "Other",
+      "image": "images/ball_airless_wilson.png",
+      "thumbnail": "thumbnails/ball_airless_wilson.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_eye_human.iff",
+      "stem": "ball_gameplay_official_eye_human",
+      "label": "Eye Human",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_eye_human.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_eye_human.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_eye_reptile.iff",
+      "stem": "ball_gameplay_official_eye_reptile",
+      "label": "Eye Reptile",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_eye_reptile.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_eye_reptile.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_face_duck.iff",
+      "stem": "ball_gameplay_official_face_duck",
+      "label": "Face Duck",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_face_duck.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_face_duck.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_face_elephant.iff",
+      "stem": "ball_gameplay_official_face_elephant",
+      "label": "Face Elephant",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_face_elephant.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_face_elephant.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_face_panda.iff",
+      "stem": "ball_gameplay_official_face_panda",
+      "label": "Face Panda",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_face_panda.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_face_panda.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_face_pig.iff",
+      "stem": "ball_gameplay_official_face_pig",
+      "label": "Face Pig",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_face_pig.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_face_pig.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_food_orange.iff",
+      "stem": "ball_gameplay_official_food_orange",
+      "label": "Food Orange",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_food_orange.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_food_orange.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_food_strawberry.iff",
+      "stem": "ball_gameplay_official_food_strawberry",
+      "label": "Food Strawberry",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_food_strawberry.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_food_strawberry.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_food_watermelon.iff",
+      "stem": "ball_gameplay_official_food_watermelon",
+      "label": "Food Watermelon",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_food_watermelon.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_food_watermelon.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_gemsports_ball_gem_darkmatter.iff",
+      "stem": "ball_gameplay_official_gemsports_ball_gem_darkmatter",
+      "label": "Gemsports Ball Gem Darkmatter",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_gemsports_ball_gem_darkmatter.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_gemsports_ball_gem_darkmatter.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_gemsports_ball_gem_galaxyopal.iff",
+      "stem": "ball_gameplay_official_gemsports_ball_gem_galaxyopal",
+      "label": "Gemsports Ball Gem Galaxyopal",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_gemsports_ball_gem_galaxyopal.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_gemsports_ball_gem_galaxyopal.png"
+    },
+    {
+      "id": "balls/ball_gravity_geo.iff",
+      "stem": "ball_gravity_geo",
+      "label": "Gravity Geo",
+      "group": "Other",
+      "image": "images/ball_gravity_geo.png",
+      "thumbnail": "thumbnails/ball_gravity_geo.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_ink_gold.iff",
+      "stem": "ball_gameplay_official_ink_gold",
+      "label": "Ink Gold",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_ink_gold.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_ink_gold.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_ink_gold_silver.iff",
+      "stem": "ball_gameplay_official_ink_gold_silver",
+      "label": "Ink Gold Silver",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_ink_gold_silver.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_ink_gold_silver.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_ink_ink_silver.iff",
+      "stem": "ball_gameplay_official_ink_ink_silver",
+      "label": "Ink Ink Silver",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_ink_ink_silver.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_ink_ink_silver.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_lightning_blue.iff",
+      "stem": "ball_gameplay_official_lightning_blue",
+      "label": "Lightning Blue",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_lightning_blue.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_lightning_blue.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_lightning_green.iff",
+      "stem": "ball_gameplay_official_lightning_green",
+      "label": "Lightning Green",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_lightning_green.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_lightning_green.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_lightning_lightning.iff",
+      "stem": "ball_gameplay_official_lightning_lightning",
+      "label": "Lightning Lightning",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_lightning_lightning.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_lightning_lightning.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_lightning_pink.iff",
+      "stem": "ball_gameplay_official_lightning_pink",
+      "label": "Lightning Pink",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_lightning_pink.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_lightning_pink.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_magna_magna_logo.iff",
+      "stem": "ball_gameplay_official_magna_magna_logo",
+      "label": "Magna Magna Logo",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_magna_magna_logo.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_magna_magna_logo.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_marble_blackgold.iff",
+      "stem": "ball_gameplay_official_marble_blackgold",
+      "label": "Marble Blackgold",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_marble_blackgold.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_marble_blackgold.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_marble_bluegray.iff",
+      "stem": "ball_gameplay_official_marble_bluegray",
+      "label": "Marble Bluegray",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_marble_bluegray.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_marble_bluegray.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_marble_purple.iff",
+      "stem": "ball_gameplay_official_marble_purple",
+      "label": "Marble Purple",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_marble_purple.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_marble_purple.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_marble_toy.iff",
+      "stem": "ball_gameplay_official_marble_toy",
+      "label": "Marble Toy",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_marble_toy.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_marble_toy.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_misc_2k_day.iff",
+      "stem": "ball_gameplay_official_misc_2k_day",
+      "label": "Misc 2k Day",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_misc_2k_day.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_misc_2k_day.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_misc_90s.iff",
+      "stem": "ball_gameplay_official_misc_90s",
+      "label": "Misc 90s",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_misc_90s.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_misc_90s.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_misc_action_figure_basketball.iff",
+      "stem": "ball_gameplay_official_misc_action_figure_basketball",
+      "label": "Misc Action Figure Basketball",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_misc_action_figure_basketball.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_misc_action_figure_basketball.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_misc_blm.iff",
+      "stem": "ball_gameplay_official_misc_blm",
+      "label": "Misc Blm",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_misc_blm.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_misc_blm.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_misc_checker_blackred.iff",
+      "stem": "ball_gameplay_official_misc_checker_blackred",
+      "label": "Misc Checker Blackred",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_misc_checker_blackred.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_misc_checker_blackred.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_misc_college.iff",
+      "stem": "ball_gameplay_official_misc_college",
+      "label": "Misc College",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_misc_college.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_misc_college.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_misc_dance_fever.iff",
+      "stem": "ball_gameplay_official_misc_dance_fever",
+      "label": "Misc Dance Fever",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_misc_dance_fever.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_misc_dance_fever.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_misc_eightball.iff",
+      "stem": "ball_gameplay_official_misc_eightball",
+      "label": "Misc Eightball",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_misc_eightball.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_misc_eightball.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_misc_fireball.iff",
+      "stem": "ball_gameplay_official_misc_fireball",
+      "label": "Misc Fireball",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_misc_fireball.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_misc_fireball.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_misc_fireworks.iff",
+      "stem": "ball_gameplay_official_misc_fireworks",
+      "label": "Misc Fireworks",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_misc_fireworks.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_misc_fireworks.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_misc_flag_america.iff",
+      "stem": "ball_gameplay_official_misc_flag_america",
+      "label": "Misc Flag America",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_misc_flag_america.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_misc_flag_america.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_misc_globe1.iff",
+      "stem": "ball_gameplay_official_misc_globe1",
+      "label": "Misc Globe1",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_misc_globe1.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_misc_globe1.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_misc_globe2.iff",
+      "stem": "ball_gameplay_official_misc_globe2",
+      "label": "Misc Globe2",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_misc_globe2.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_misc_globe2.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_misc_holo_loop.iff",
+      "stem": "ball_gameplay_official_misc_holo_loop",
+      "label": "Misc Holo Loop",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_misc_holo_loop.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_misc_holo_loop.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_misc_lavacrust.iff",
+      "stem": "ball_gameplay_official_misc_lavacrust",
+      "label": "Misc Lavacrust",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_misc_lavacrust.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_misc_lavacrust.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_misc_mirrorball.iff",
+      "stem": "ball_gameplay_official_misc_mirrorball",
+      "label": "Misc Mirrorball",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_misc_mirrorball.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_misc_mirrorball.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_misc_moneyball.iff",
+      "stem": "ball_gameplay_official_misc_moneyball",
+      "label": "Misc Moneyball",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_misc_moneyball.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_misc_moneyball.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_misc_portraitball.iff",
+      "stem": "ball_gameplay_official_misc_portraitball",
+      "label": "Misc Portraitball",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_misc_portraitball.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_misc_portraitball.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_misc_portraitball_wnba.iff",
+      "stem": "ball_gameplay_official_misc_portraitball_wnba",
+      "label": "Misc Portraitball Wnba",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_misc_portraitball_wnba.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_misc_portraitball_wnba.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_misc_rivals1v1.iff",
+      "stem": "ball_gameplay_official_misc_rivals1v1",
+      "label": "Misc Rivals1v1",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_misc_rivals1v1.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_misc_rivals1v1.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_misc_rivals3v3.iff",
+      "stem": "ball_gameplay_official_misc_rivals3v3",
+      "label": "Misc Rivals3v3",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_misc_rivals3v3.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_misc_rivals3v3.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_misc_tko.iff",
+      "stem": "ball_gameplay_official_misc_tko",
+      "label": "Misc Tko",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_misc_tko.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_misc_tko.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_misc_unicorn.iff",
+      "stem": "ball_gameplay_official_misc_unicorn",
+      "label": "Misc Unicorn",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_misc_unicorn.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_misc_unicorn.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_moon_blood.iff",
+      "stem": "ball_gameplay_official_moon_blood",
+      "label": "Moon Blood",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_moon_blood.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_moon_blood.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_moon_moon.iff",
+      "stem": "ball_gameplay_official_moon_moon",
+      "label": "Moon Moon",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_moon_moon.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_moon_moon.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_mycareer_opencourtathletics.iff",
+      "stem": "ball_gameplay_official_mycareer_opencourtathletics",
+      "label": "Mycareer Opencourtathletics",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_mycareer_opencourtathletics.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_mycareer_opencourtathletics.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_mycareer_ruckerpark.iff",
+      "stem": "ball_gameplay_official_mycareer_ruckerpark",
+      "label": "Mycareer Ruckerpark",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_mycareer_ruckerpark.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_mycareer_ruckerpark.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_mycareer_soapbubble.iff",
+      "stem": "ball_gameplay_official_mycareer_soapbubble",
+      "label": "Mycareer Soapbubble",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_mycareer_soapbubble.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_mycareer_soapbubble.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_myteam_aqua.iff",
+      "stem": "ball_gameplay_official_myteam_aqua",
+      "label": "Myteam Aqua",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_myteam_aqua.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_myteam_aqua.png"
+    },
+    {
+      "id": "balls/ball_myteam_blackhole.iff",
+      "stem": "ball_myteam_blackhole",
+      "label": "Myteam Blackhole",
+      "group": "Other",
+      "image": "images/ball_myteam_blackhole.png",
+      "thumbnail": "thumbnails/ball_myteam_blackhole.png",
+      "renderNote": "The game resource has no color texture; rendered with its emissive texture. In-game shader effects may differ."
+    },
+    {
+      "id": "balls/ball_gameplay_official_myteam_camo_monster.iff",
+      "stem": "ball_gameplay_official_myteam_camo_monster",
+      "label": "Myteam Camo Monster",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_myteam_camo_monster.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_myteam_camo_monster.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_myteam_carbonfiber.iff",
+      "stem": "ball_gameplay_official_myteam_carbonfiber",
+      "label": "Myteam Carbonfiber",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_myteam_carbonfiber.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_myteam_carbonfiber.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_myteam_classic_kicks.iff",
+      "stem": "ball_gameplay_official_myteam_classic_kicks",
+      "label": "Myteam Classic Kicks",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_myteam_classic_kicks.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_myteam_classic_kicks.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_myteam_cyber1.iff",
+      "stem": "ball_gameplay_official_myteam_cyber1",
+      "label": "Myteam Cyber1",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_myteam_cyber1.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_myteam_cyber1.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_myteam_cyber2.iff",
+      "stem": "ball_gameplay_official_myteam_cyber2",
+      "label": "Myteam Cyber2",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_myteam_cyber2.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_myteam_cyber2.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_myteam_cyber3.iff",
+      "stem": "ball_gameplay_official_myteam_cyber3",
+      "label": "Myteam Cyber3",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_myteam_cyber3.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_myteam_cyber3.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_myteam_cyber4.iff",
+      "stem": "ball_gameplay_official_myteam_cyber4",
+      "label": "Myteam Cyber4",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_myteam_cyber4.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_myteam_cyber4.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_myteam_cyber5.iff",
+      "stem": "ball_gameplay_official_myteam_cyber5",
+      "label": "Myteam Cyber5",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_myteam_cyber5.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_myteam_cyber5.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_myteam_fish_scale1.iff",
+      "stem": "ball_gameplay_official_myteam_fish_scale1",
+      "label": "Myteam Fish Scale1",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_myteam_fish_scale1.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_myteam_fish_scale1.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_myteam_fish_scale2.iff",
+      "stem": "ball_gameplay_official_myteam_fish_scale2",
+      "label": "Myteam Fish Scale2",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_myteam_fish_scale2.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_myteam_fish_scale2.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_myteam_fish_scale3.iff",
+      "stem": "ball_gameplay_official_myteam_fish_scale3",
+      "label": "Myteam Fish Scale3",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_myteam_fish_scale3.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_myteam_fish_scale3.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_myteam_fish_scale4.iff",
+      "stem": "ball_gameplay_official_myteam_fish_scale4",
+      "label": "Myteam Fish Scale4",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_myteam_fish_scale4.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_myteam_fish_scale4.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_myteam_fish_scale5.iff",
+      "stem": "ball_gameplay_official_myteam_fish_scale5",
+      "label": "Myteam Fish Scale5",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_myteam_fish_scale5.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_myteam_fish_scale5.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_myteam_fish_scale6.iff",
+      "stem": "ball_gameplay_official_myteam_fish_scale6",
+      "label": "Myteam Fish Scale6",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_myteam_fish_scale6.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_myteam_fish_scale6.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_myteam_glowing_seams_blue.iff",
+      "stem": "ball_gameplay_official_myteam_glowing_seams_blue",
+      "label": "Myteam Glowing Seams Blue",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_myteam_glowing_seams_blue.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_myteam_glowing_seams_blue.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_myteam_glowing_seams_green.iff",
+      "stem": "ball_gameplay_official_myteam_glowing_seams_green",
+      "label": "Myteam Glowing Seams Green",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_myteam_glowing_seams_green.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_myteam_glowing_seams_green.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_myteam_glowing_seams_red.iff",
+      "stem": "ball_gameplay_official_myteam_glowing_seams_red",
+      "label": "Myteam Glowing Seams Red",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_myteam_glowing_seams_red.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_myteam_glowing_seams_red.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_myteam_gold_marbleinlay1.iff",
+      "stem": "ball_gameplay_official_myteam_gold_marbleinlay1",
+      "label": "Myteam Gold Marbleinlay1",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_myteam_gold_marbleinlay1.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_myteam_gold_marbleinlay1.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_myteam_gold_marbleinlay2.iff",
+      "stem": "ball_gameplay_official_myteam_gold_marbleinlay2",
+      "label": "Myteam Gold Marbleinlay2",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_myteam_gold_marbleinlay2.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_myteam_gold_marbleinlay2.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_myteam_gold_marbleinlay3.iff",
+      "stem": "ball_gameplay_official_myteam_gold_marbleinlay3",
+      "label": "Myteam Gold Marbleinlay3",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_myteam_gold_marbleinlay3.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_myteam_gold_marbleinlay3.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_myteam_graffiti_tag1.iff",
+      "stem": "ball_gameplay_official_myteam_graffiti_tag1",
+      "label": "Myteam Graffiti Tag1",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_myteam_graffiti_tag1.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_myteam_graffiti_tag1.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_myteam_graffiti_tag2.iff",
+      "stem": "ball_gameplay_official_myteam_graffiti_tag2",
+      "label": "Myteam Graffiti Tag2",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_myteam_graffiti_tag2.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_myteam_graffiti_tag2.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_myteam_graffiti_tag3.iff",
+      "stem": "ball_gameplay_official_myteam_graffiti_tag3",
+      "label": "Myteam Graffiti Tag3",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_myteam_graffiti_tag3.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_myteam_graffiti_tag3.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_myteam_greenalien.iff",
+      "stem": "ball_gameplay_official_myteam_greenalien",
+      "label": "Myteam Greenalien",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_myteam_greenalien.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_myteam_greenalien.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_myteam_kids_party.iff",
+      "stem": "ball_gameplay_official_myteam_kids_party",
+      "label": "Myteam Kids Party",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_myteam_kids_party.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_myteam_kids_party.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_myteam_lava.iff",
+      "stem": "ball_gameplay_official_myteam_lava",
+      "label": "Myteam Lava",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_myteam_lava.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_myteam_lava.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_myteam_logo_myteam.iff",
+      "stem": "ball_gameplay_official_myteam_logo_myteam",
+      "label": "Myteam Logo Myteam",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_myteam_logo_myteam.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_myteam_logo_myteam.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_myteam_logo_myteam_breakout.iff",
+      "stem": "ball_gameplay_official_myteam_logo_myteam_breakout",
+      "label": "Myteam Logo Myteam Breakout",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_myteam_logo_myteam_breakout.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_myteam_logo_myteam_breakout.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_myteam_logo_myteam_challenges.iff",
+      "stem": "ball_gameplay_official_myteam_logo_myteam_challenges",
+      "label": "Myteam Logo Myteam Challenges",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_myteam_logo_myteam_challenges.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_myteam_logo_myteam_challenges.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_myteam_logo_myteam_clutchtime.iff",
+      "stem": "ball_gameplay_official_myteam_logo_myteam_clutchtime",
+      "label": "Myteam Logo Myteam Clutchtime",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_myteam_logo_myteam_clutchtime.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_myteam_logo_myteam_clutchtime.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_myteam_logo_myteam_domination.iff",
+      "stem": "ball_gameplay_official_myteam_logo_myteam_domination",
+      "label": "Myteam Logo Myteam Domination",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_myteam_logo_myteam_domination.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_myteam_logo_myteam_domination.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_myteam_logo_myteam_kingofthecourt.iff",
+      "stem": "ball_gameplay_official_myteam_logo_myteam_kingofthecourt",
+      "label": "Myteam Logo Myteam Kingofthecourt",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_myteam_logo_myteam_kingofthecourt.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_myteam_logo_myteam_kingofthecourt.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_myteam_logo_myteam_salarycap.iff",
+      "stem": "ball_gameplay_official_myteam_logo_myteam_salarycap",
+      "label": "Myteam Logo Myteam Salarycap",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_myteam_logo_myteam_salarycap.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_myteam_logo_myteam_salarycap.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_myteam_logo_myteam_showdown.iff",
+      "stem": "ball_gameplay_official_myteam_logo_myteam_showdown",
+      "label": "Myteam Logo Myteam Showdown",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_myteam_logo_myteam_showdown.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_myteam_logo_myteam_showdown.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_myteam_logo_myteam_triplethreatpark.iff",
+      "stem": "ball_gameplay_official_myteam_logo_myteam_triplethreatpark",
+      "label": "Myteam Logo Myteam Triplethreatpark",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_myteam_logo_myteam_triplethreatpark.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_myteam_logo_myteam_triplethreatpark.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_myteam_logo_myteam_unlimited.iff",
+      "stem": "ball_gameplay_official_myteam_logo_myteam_unlimited",
+      "label": "Myteam Logo Myteam Unlimited",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_myteam_logo_myteam_unlimited.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_myteam_logo_myteam_unlimited.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_myteam_mech1.iff",
+      "stem": "ball_gameplay_official_myteam_mech1",
+      "label": "Myteam Mech1",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_myteam_mech1.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_myteam_mech1.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_myteam_mech2.iff",
+      "stem": "ball_gameplay_official_myteam_mech2",
+      "label": "Myteam Mech2",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_myteam_mech2.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_myteam_mech2.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_myteam_metal_spaceship.iff",
+      "stem": "ball_gameplay_official_myteam_metal_spaceship",
+      "label": "Myteam Metal Spaceship",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_myteam_metal_spaceship.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_myteam_metal_spaceship.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_myteam_purplealien.iff",
+      "stem": "ball_gameplay_official_myteam_purplealien",
+      "label": "Myteam Purplealien",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_myteam_purplealien.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_myteam_purplealien.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_myteam_redalien.iff",
+      "stem": "ball_gameplay_official_myteam_redalien",
+      "label": "Myteam Redalien",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_myteam_redalien.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_myteam_redalien.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_myteam_redwhite.iff",
+      "stem": "ball_gameplay_official_myteam_redwhite",
+      "label": "Myteam Redwhite",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_myteam_redwhite.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_myteam_redwhite.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_myteam_tie_dye.iff",
+      "stem": "ball_gameplay_official_myteam_tie_dye",
+      "label": "Myteam Tie Dye",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_myteam_tie_dye.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_myteam_tie_dye.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_myteam_turkey_run.iff",
+      "stem": "ball_gameplay_official_myteam_turkey_run",
+      "label": "Myteam Turkey Run",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_myteam_turkey_run.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_myteam_turkey_run.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_myteam_whiteblack_dots.iff",
+      "stem": "ball_gameplay_official_myteam_whiteblack_dots",
+      "label": "Myteam Whiteblack Dots",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_myteam_whiteblack_dots.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_myteam_whiteblack_dots.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_myteam_wood_leaves.iff",
+      "stem": "ball_gameplay_official_myteam_wood_leaves",
+      "label": "Myteam Wood Leaves",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_myteam_wood_leaves.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_myteam_wood_leaves.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_myteam_wrong_balls.iff",
+      "stem": "ball_gameplay_official_myteam_wrong_balls",
+      "label": "Myteam Wrong Balls",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_myteam_wrong_balls.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_myteam_wrong_balls.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_myteam_xmas_ornament.iff",
+      "stem": "ball_gameplay_official_myteam_xmas_ornament",
+      "label": "Myteam Xmas Ornament",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_myteam_xmas_ornament.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_myteam_xmas_ornament.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_myteam_xmas_snowball.iff",
+      "stem": "ball_gameplay_official_myteam_xmas_snowball",
+      "label": "Myteam Xmas Snowball",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_myteam_xmas_snowball.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_myteam_xmas_snowball.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_myteam_xmas1.iff",
+      "stem": "ball_gameplay_official_myteam_xmas1",
+      "label": "Myteam Xmas1",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_myteam_xmas1.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_myteam_xmas1.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_nature_flames.iff",
+      "stem": "ball_gameplay_official_nature_flames",
+      "label": "Nature Flames",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_nature_flames.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_nature_flames.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_nature_flames_green.iff",
+      "stem": "ball_gameplay_official_nature_flames_green",
+      "label": "Nature Flames Green",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_nature_flames_green.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_nature_flames_green.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_nature_galaxy_cloud.iff",
+      "stem": "ball_gameplay_official_nature_galaxy_cloud",
+      "label": "Nature Galaxy Cloud",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_nature_galaxy_cloud.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_nature_galaxy_cloud.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_nature_northern_lights.iff",
+      "stem": "ball_gameplay_official_nature_northern_lights",
+      "label": "Nature Northern Lights",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_nature_northern_lights.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_nature_northern_lights.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_nature_plasma.iff",
+      "stem": "ball_gameplay_official_nature_plasma",
+      "label": "Nature Plasma",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_nature_plasma.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_nature_plasma.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_nature_rain.iff",
+      "stem": "ball_gameplay_official_nature_rain",
+      "label": "Nature Rain",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_nature_rain.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_nature_rain.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_nature_wood_grain1.iff",
+      "stem": "ball_gameplay_official_nature_wood_grain1",
+      "label": "Nature Wood Grain1",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_nature_wood_grain1.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_nature_wood_grain1.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_nba2kl_grey.iff",
+      "stem": "ball_gameplay_official_nba2kl_grey",
+      "label": "Nba2kl Grey",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_nba2kl_grey.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_nba2kl_grey.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_nba2kl_orange.iff",
+      "stem": "ball_gameplay_official_nba2kl_orange",
+      "label": "Nba2kl Orange",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_nba2kl_orange.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_nba2kl_orange.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_ornament_ornament_000phl76ers.iff",
+      "stem": "ball_gameplay_official_ornament_ornament_000phl76ers",
+      "label": "Ornament Ornament 000phl76ers",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_ornament_ornament_000phl76ers.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_ornament_ornament_000phl76ers.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_ornament_ornament_001milbucks.iff",
+      "stem": "ball_gameplay_official_ornament_ornament_001milbucks",
+      "label": "Ornament Ornament 001milbucks",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_ornament_ornament_001milbucks.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_ornament_ornament_001milbucks.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_ornament_ornament_002waswizards.iff",
+      "stem": "ball_gameplay_official_ornament_ornament_002waswizards",
+      "label": "Ornament Ornament 002waswizards",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_ornament_ornament_002waswizards.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_ornament_ornament_002waswizards.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_ornament_ornament_003chibulls.iff",
+      "stem": "ball_gameplay_official_ornament_ornament_003chibulls",
+      "label": "Ornament Ornament 003chibulls",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_ornament_ornament_003chibulls.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_ornament_ornament_003chibulls.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_ornament_ornament_004clecavaliers.iff",
+      "stem": "ball_gameplay_official_ornament_ornament_004clecavaliers",
+      "label": "Ornament Ornament 004clecavaliers",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_ornament_ornament_004clecavaliers.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_ornament_ornament_004clecavaliers.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_ornament_ornament_005bosceltics.iff",
+      "stem": "ball_gameplay_official_ornament_ornament_005bosceltics",
+      "label": "Ornament Ornament 005bosceltics",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_ornament_ornament_005bosceltics.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_ornament_ornament_005bosceltics.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_ornament_ornament_006laclippers.iff",
+      "stem": "ball_gameplay_official_ornament_ornament_006laclippers",
+      "label": "Ornament Ornament 006laclippers",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_ornament_ornament_006laclippers.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_ornament_ornament_006laclippers.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_ornament_ornament_008memgrizzlies.iff",
+      "stem": "ball_gameplay_official_ornament_ornament_008memgrizzlies",
+      "label": "Ornament Ornament 008memgrizzlies",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_ornament_ornament_008memgrizzlies.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_ornament_ornament_008memgrizzlies.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_ornament_ornament_009atlhawks.iff",
+      "stem": "ball_gameplay_official_ornament_ornament_009atlhawks",
+      "label": "Ornament Ornament 009atlhawks",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_ornament_ornament_009atlhawks.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_ornament_ornament_009atlhawks.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_ornament_ornament_010miaheat.iff",
+      "stem": "ball_gameplay_official_ornament_ornament_010miaheat",
+      "label": "Ornament Ornament 010miaheat",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_ornament_ornament_010miaheat.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_ornament_ornament_010miaheat.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_ornament_ornament_011nopelicans.iff",
+      "stem": "ball_gameplay_official_ornament_ornament_011nopelicans",
+      "label": "Ornament Ornament 011nopelicans",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_ornament_ornament_011nopelicans.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_ornament_ornament_011nopelicans.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_ornament_ornament_012utajazz.iff",
+      "stem": "ball_gameplay_official_ornament_ornament_012utajazz",
+      "label": "Ornament Ornament 012utajazz",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_ornament_ornament_012utajazz.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_ornament_ornament_012utajazz.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_ornament_ornament_013sackings.iff",
+      "stem": "ball_gameplay_official_ornament_ornament_013sackings",
+      "label": "Ornament Ornament 013sackings",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_ornament_ornament_013sackings.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_ornament_ornament_013sackings.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_ornament_ornament_014nyknicks.iff",
+      "stem": "ball_gameplay_official_ornament_ornament_014nyknicks",
+      "label": "Ornament Ornament 014nyknicks",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_ornament_ornament_014nyknicks.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_ornament_ornament_014nyknicks.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_ornament_ornament_015lalakers.iff",
+      "stem": "ball_gameplay_official_ornament_ornament_015lalakers",
+      "label": "Ornament Ornament 015lalakers",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_ornament_ornament_015lalakers.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_ornament_ornament_015lalakers.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_ornament_ornament_016orlmagic.iff",
+      "stem": "ball_gameplay_official_ornament_ornament_016orlmagic",
+      "label": "Ornament Ornament 016orlmagic",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_ornament_ornament_016orlmagic.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_ornament_ornament_016orlmagic.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_ornament_ornament_017dalmavericks.iff",
+      "stem": "ball_gameplay_official_ornament_ornament_017dalmavericks",
+      "label": "Ornament Ornament 017dalmavericks",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_ornament_ornament_017dalmavericks.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_ornament_ornament_017dalmavericks.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_ornament_ornament_018bknnets.iff",
+      "stem": "ball_gameplay_official_ornament_ornament_018bknnets",
+      "label": "Ornament Ornament 018bknnets",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_ornament_ornament_018bknnets.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_ornament_ornament_018bknnets.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_ornament_ornament_019dennuggets.iff",
+      "stem": "ball_gameplay_official_ornament_ornament_019dennuggets",
+      "label": "Ornament Ornament 019dennuggets",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_ornament_ornament_019dennuggets.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_ornament_ornament_019dennuggets.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_ornament_ornament_020indpacers.iff",
+      "stem": "ball_gameplay_official_ornament_ornament_020indpacers",
+      "label": "Ornament Ornament 020indpacers",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_ornament_ornament_020indpacers.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_ornament_ornament_020indpacers.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_ornament_ornament_021detpistons.iff",
+      "stem": "ball_gameplay_official_ornament_ornament_021detpistons",
+      "label": "Ornament Ornament 021detpistons",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_ornament_ornament_021detpistons.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_ornament_ornament_021detpistons.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_ornament_ornament_022torraptors.iff",
+      "stem": "ball_gameplay_official_ornament_ornament_022torraptors",
+      "label": "Ornament Ornament 022torraptors",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_ornament_ornament_022torraptors.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_ornament_ornament_022torraptors.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_ornament_ornament_023hourockets.iff",
+      "stem": "ball_gameplay_official_ornament_ornament_023hourockets",
+      "label": "Ornament Ornament 023hourockets",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_ornament_ornament_023hourockets.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_ornament_ornament_023hourockets.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_ornament_ornament_024okcthunder.iff",
+      "stem": "ball_gameplay_official_ornament_ornament_024okcthunder",
+      "label": "Ornament Ornament 024okcthunder",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_ornament_ornament_024okcthunder.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_ornament_ornament_024okcthunder.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_ornament_ornament_025saspurs.iff",
+      "stem": "ball_gameplay_official_ornament_ornament_025saspurs",
+      "label": "Ornament Ornament 025saspurs",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_ornament_ornament_025saspurs.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_ornament_ornament_025saspurs.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_ornament_ornament_026phxsuns.iff",
+      "stem": "ball_gameplay_official_ornament_ornament_026phxsuns",
+      "label": "Ornament Ornament 026phxsuns",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_ornament_ornament_026phxsuns.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_ornament_ornament_026phxsuns.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_ornament_ornament_027mintimberwolves.iff",
+      "stem": "ball_gameplay_official_ornament_ornament_027mintimberwolves",
+      "label": "Ornament Ornament 027mintimberwolves",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_ornament_ornament_027mintimberwolves.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_ornament_ornament_027mintimberwolves.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_ornament_ornament_028portrailblazers.iff",
+      "stem": "ball_gameplay_official_ornament_ornament_028portrailblazers",
+      "label": "Ornament Ornament 028portrailblazers",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_ornament_ornament_028portrailblazers.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_ornament_ornament_028portrailblazers.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_ornament_ornament_029gswarriors.iff",
+      "stem": "ball_gameplay_official_ornament_ornament_029gswarriors",
+      "label": "Ornament Ornament 029gswarriors",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_ornament_ornament_029gswarriors.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_ornament_ornament_029gswarriors.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_ornament_ornament_031chahornets.iff",
+      "stem": "ball_gameplay_official_ornament_ornament_031chahornets",
+      "label": "Ornament Ornament 031chahornets",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_ornament_ornament_031chahornets.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_ornament_ornament_031chahornets.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_ornament_ornament_300lvaces.iff",
+      "stem": "ball_gameplay_official_ornament_ornament_300lvaces",
+      "label": "Ornament Ornament 300lvaces",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_ornament_ornament_300lvaces.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_ornament_ornament_300lvaces.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_ornament_ornament_301atldream.iff",
+      "stem": "ball_gameplay_official_ornament_ornament_301atldream",
+      "label": "Ornament Ornament 301atldream",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_ornament_ornament_301atldream.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_ornament_ornament_301atldream.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_ornament_ornament_302indfever.iff",
+      "stem": "ball_gameplay_official_ornament_ornament_302indfever",
+      "label": "Ornament Ornament 302indfever",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_ornament_ornament_302indfever.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_ornament_ornament_302indfever.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_ornament_ornament_303nyliberty.iff",
+      "stem": "ball_gameplay_official_ornament_ornament_303nyliberty",
+      "label": "Ornament Ornament 303nyliberty",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_ornament_ornament_303nyliberty.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_ornament_ornament_303nyliberty.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_ornament_ornament_304minlynx.iff",
+      "stem": "ball_gameplay_official_ornament_ornament_304minlynx",
+      "label": "Ornament Ornament 304minlynx",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_ornament_ornament_304minlynx.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_ornament_ornament_304minlynx.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_ornament_ornament_305phxmercury.iff",
+      "stem": "ball_gameplay_official_ornament_ornament_305phxmercury",
+      "label": "Ornament Ornament 305phxmercury",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_ornament_ornament_305phxmercury.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_ornament_ornament_305phxmercury.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_ornament_ornament_306wasmystics.iff",
+      "stem": "ball_gameplay_official_ornament_ornament_306wasmystics",
+      "label": "Ornament Ornament 306wasmystics",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_ornament_ornament_306wasmystics.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_ornament_ornament_306wasmystics.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_ornament_ornament_307chisky.iff",
+      "stem": "ball_gameplay_official_ornament_ornament_307chisky",
+      "label": "Ornament Ornament 307chisky",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_ornament_ornament_307chisky.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_ornament_ornament_307chisky.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_ornament_ornament_308lasparks.iff",
+      "stem": "ball_gameplay_official_ornament_ornament_308lasparks",
+      "label": "Ornament Ornament 308lasparks",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_ornament_ornament_308lasparks.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_ornament_ornament_308lasparks.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_ornament_ornament_309seastorm.iff",
+      "stem": "ball_gameplay_official_ornament_ornament_309seastorm",
+      "label": "Ornament Ornament 309seastorm",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_ornament_ornament_309seastorm.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_ornament_ornament_309seastorm.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_ornament_ornament_310consun.iff",
+      "stem": "ball_gameplay_official_ornament_ornament_310consun",
+      "label": "Ornament Ornament 310consun",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_ornament_ornament_310consun.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_ornament_ornament_310consun.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_ornament_ornament_311dalwings.iff",
+      "stem": "ball_gameplay_official_ornament_ornament_311dalwings",
+      "label": "Ornament Ornament 311dalwings",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_ornament_ornament_311dalwings.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_ornament_ornament_311dalwings.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_ornament_ornament_315gsvalkyries.iff",
+      "stem": "ball_gameplay_official_ornament_ornament_315gsvalkyries",
+      "label": "Ornament Ornament 315gsvalkyries",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_ornament_ornament_315gsvalkyries.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_ornament_ornament_315gsvalkyries.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_ornament_ornament_316tortempo.iff",
+      "stem": "ball_gameplay_official_ornament_ornament_316tortempo",
+      "label": "Ornament Ornament 316tortempo",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_ornament_ornament_316tortempo.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_ornament_ornament_316tortempo.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_ornament_ornament_317porfire.iff",
+      "stem": "ball_gameplay_official_ornament_ornament_317porfire",
+      "label": "Ornament Ornament 317porfire",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_ornament_ornament_317porfire.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_ornament_ornament_317porfire.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_pad_pink.iff",
+      "stem": "ball_gameplay_official_pad_pink",
+      "label": "Pad Pink",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_pad_pink.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_pad_pink.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_pad_yellow.iff",
+      "stem": "ball_gameplay_official_pad_yellow",
+      "label": "Pad Yellow",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_pad_yellow.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_pad_yellow.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_pad_yellowblacklight.iff",
+      "stem": "ball_gameplay_official_pad_yellowblacklight",
+      "label": "Pad Yellowblacklight",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_pad_yellowblacklight.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_pad_yellowblacklight.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_player_caitlinclark_blue.iff",
+      "stem": "ball_gameplay_official_player_caitlinclark_blue",
+      "label": "Player Caitlinclark Blue",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_player_caitlinclark_blue.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_player_caitlinclark_blue.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_player_caitlinclark_bw.iff",
+      "stem": "ball_gameplay_official_player_caitlinclark_bw",
+      "label": "Player Caitlinclark Bw",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_player_caitlinclark_bw.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_player_caitlinclark_bw.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_player_chrisbrickley_dribbleblue.iff",
+      "stem": "ball_gameplay_official_player_chrisbrickley_dribbleblue",
+      "label": "Player Chrisbrickley Dribbleblue",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_player_chrisbrickley_dribbleblue.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_player_chrisbrickley_dribbleblue.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_player_chrisbrickley_dribblegreen.iff",
+      "stem": "ball_gameplay_official_player_chrisbrickley_dribblegreen",
+      "label": "Player Chrisbrickley Dribblegreen",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_player_chrisbrickley_dribblegreen.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_player_chrisbrickley_dribblegreen.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_player_chrisbrickley_dribblered.iff",
+      "stem": "ball_gameplay_official_player_chrisbrickley_dribblered",
+      "label": "Player Chrisbrickley Dribblered",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_player_chrisbrickley_dribblered.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_player_chrisbrickley_dribblered.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_player_giannisantetokounmpo_nbpaoutdoor.iff",
+      "stem": "ball_gameplay_official_player_giannisantetokounmpo_nbpaoutdoor",
+      "label": "Player Giannisantetokounmpo Nbpaoutdoor",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_player_giannisantetokounmpo_nbpaoutdoor.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_player_giannisantetokounmpo_nbpaoutdoor.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_player_lameloball_nbpaoutdoor.iff",
+      "stem": "ball_gameplay_official_player_lameloball_nbpaoutdoor",
+      "label": "Player Lameloball Nbpaoutdoor",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_player_lameloball_nbpaoutdoor.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_player_lameloball_nbpaoutdoor.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_player_lebronjames_marquee.iff",
+      "stem": "ball_gameplay_official_player_lebronjames_marquee",
+      "label": "Player Lebronjames Marquee",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_player_lebronjames_marquee.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_player_lebronjames_marquee.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_player_lukadoncic_nbpaoutdoor.iff",
+      "stem": "ball_gameplay_official_player_lukadoncic_nbpaoutdoor",
+      "label": "Player Lukadoncic Nbpaoutdoor",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_player_lukadoncic_nbpaoutdoor.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_player_lukadoncic_nbpaoutdoor.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_player_stephcurry_nbpaoutdoor.iff",
+      "stem": "ball_gameplay_official_player_stephcurry_nbpaoutdoor",
+      "label": "Player Stephcurry Nbpaoutdoor",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_player_stephcurry_nbpaoutdoor.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_player_stephcurry_nbpaoutdoor.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_player_traeyoung_nbpaoutdoor.iff",
+      "stem": "ball_gameplay_official_player_traeyoung_nbpaoutdoor",
+      "label": "Player Traeyoung Nbpaoutdoor",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_player_traeyoung_nbpaoutdoor.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_player_traeyoung_nbpaoutdoor.png"
+    },
+    {
+      "id": "balls/ball_shock_wave.iff",
+      "stem": "ball_shock_wave",
+      "label": "Shock Wave",
+      "group": "Other",
+      "image": "images/ball_shock_wave.png",
+      "thumbnail": "thumbnails/ball_shock_wave.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_spalding_extreme.iff",
+      "stem": "ball_gameplay_official_spalding_extreme",
+      "label": "Spalding Extreme",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_spalding_extreme.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_spalding_extreme.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_spalding_graffiti.iff",
+      "stem": "ball_gameplay_official_spalding_graffiti",
+      "label": "Spalding Graffiti",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_spalding_graffiti.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_spalding_graffiti.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_spalding_instinct.iff",
+      "stem": "ball_gameplay_official_spalding_instinct",
+      "label": "Spalding Instinct",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_spalding_instinct.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_spalding_instinct.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_spalding_shattered.iff",
+      "stem": "ball_gameplay_official_spalding_shattered",
+      "label": "Spalding Shattered",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_spalding_shattered.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_spalding_shattered.png"
+    },
+    {
+      "id": "balls/ball_gameplay_sphere_default.iff",
+      "stem": "ball_gameplay_sphere_default",
+      "label": "Sphere Default",
+      "group": "Other",
+      "image": "images/ball_gameplay_sphere_default.png",
+      "thumbnail": "thumbnails/ball_gameplay_sphere_default.png"
+    },
+    {
+      "id": "balls/ball_gameplay_sphere_dogtoya.iff",
+      "stem": "ball_gameplay_sphere_dogtoya",
+      "label": "Sphere Dogtoya",
+      "group": "Other",
+      "image": "images/ball_gameplay_sphere_dogtoya.png",
+      "thumbnail": "thumbnails/ball_gameplay_sphere_dogtoya.png"
+    },
+    {
+      "id": "balls/ball_gameplay_sphere_dogtoyb.iff",
+      "stem": "ball_gameplay_sphere_dogtoyb",
+      "label": "Sphere Dogtoyb",
+      "group": "Other",
+      "image": "images/ball_gameplay_sphere_dogtoyb.png",
+      "thumbnail": "thumbnails/ball_gameplay_sphere_dogtoyb.png"
+    },
+    {
+      "id": "balls/ball_gameplay_sphere_dogtoyc.iff",
+      "stem": "ball_gameplay_sphere_dogtoyc",
+      "label": "Sphere Dogtoyc",
+      "group": "Other",
+      "image": "images/ball_gameplay_sphere_dogtoyc.png",
+      "thumbnail": "thumbnails/ball_gameplay_sphere_dogtoyc.png"
+    },
+    {
+      "id": "balls/ball_gameplay_sphere_myteam_indentedcircles.iff",
+      "stem": "ball_gameplay_sphere_myteam_indentedcircles",
+      "label": "Sphere Myteam Indentedcircles",
+      "group": "Other",
+      "image": "images/ball_gameplay_sphere_myteam_indentedcircles.png",
+      "thumbnail": "thumbnails/ball_gameplay_sphere_myteam_indentedcircles.png"
+    },
+    {
+      "id": "balls/ball_gameplay_sphere_myteam_oldbrick.iff",
+      "stem": "ball_gameplay_sphere_myteam_oldbrick",
+      "label": "Sphere Myteam Oldbrick",
+      "group": "Other",
+      "image": "images/ball_gameplay_sphere_myteam_oldbrick.png",
+      "thumbnail": "thumbnails/ball_gameplay_sphere_myteam_oldbrick.png"
+    },
+    {
+      "id": "balls/ball_gameplay_sphere_myteam_sponge.iff",
+      "stem": "ball_gameplay_sphere_myteam_sponge",
+      "label": "Sphere Myteam Sponge",
+      "group": "Other",
+      "image": "images/ball_gameplay_sphere_myteam_sponge.png",
+      "thumbnail": "thumbnails/ball_gameplay_sphere_myteam_sponge.png"
+    },
+    {
+      "id": "balls/ball_gameplay_sphere_myteam_waterball.iff",
+      "stem": "ball_gameplay_sphere_myteam_waterball",
+      "label": "Sphere Myteam Waterball",
+      "group": "Other",
+      "image": "images/ball_gameplay_sphere_myteam_waterball.png",
+      "thumbnail": "thumbnails/ball_gameplay_sphere_myteam_waterball.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_sponsor_mountaindew.iff",
+      "stem": "ball_gameplay_official_sponsor_mountaindew",
+      "label": "Sponsor Mountaindew",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_sponsor_mountaindew.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_sponsor_mountaindew.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_sponsor_ruffles.iff",
+      "stem": "ball_gameplay_official_sponsor_ruffles",
+      "label": "Sponsor Ruffles",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_sponsor_ruffles.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_sponsor_ruffles.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_sponsor_state_farm.iff",
+      "stem": "ball_gameplay_official_sponsor_state_farm",
+      "label": "Sponsor State Farm",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_sponsor_state_farm.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_sponsor_state_farm.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_sponsor_vclogo.iff",
+      "stem": "ball_gameplay_official_sponsor_vclogo",
+      "label": "Sponsor Vclogo",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_sponsor_vclogo.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_sponsor_vclogo.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_sponsor_vcmoney.iff",
+      "stem": "ball_gameplay_official_sponsor_vcmoney",
+      "label": "Sponsor Vcmoney",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_sponsor_vcmoney.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_sponsor_vcmoney.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_sponsor_victorsolomon.iff",
+      "stem": "ball_gameplay_official_sponsor_victorsolomon",
+      "label": "Sponsor Victorsolomon",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_sponsor_victorsolomon.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_sponsor_victorsolomon.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_sports_ball_baseball.iff",
+      "stem": "ball_gameplay_official_sports_ball_baseball",
+      "label": "Sports Ball Baseball",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_sports_ball_baseball.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_sports_ball_baseball.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_sports_ball_beach.iff",
+      "stem": "ball_gameplay_official_sports_ball_beach",
+      "label": "Sports Ball Beach",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_sports_ball_beach.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_sports_ball_beach.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_sports_ball_football.iff",
+      "stem": "ball_gameplay_official_sports_ball_football",
+      "label": "Sports Ball Football",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_sports_ball_football.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_sports_ball_football.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_sports_ball_golf.iff",
+      "stem": "ball_gameplay_official_sports_ball_golf",
+      "label": "Sports Ball Golf",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_sports_ball_golf.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_sports_ball_golf.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_sports_ball_soccer.iff",
+      "stem": "ball_gameplay_official_sports_ball_soccer",
+      "label": "Sports Ball Soccer",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_sports_ball_soccer.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_sports_ball_soccer.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_sports_ball_tennis.iff",
+      "stem": "ball_gameplay_official_sports_ball_tennis",
+      "label": "Sports Ball Tennis",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_sports_ball_tennis.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_sports_ball_tennis.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_sports_ball_volley.iff",
+      "stem": "ball_gameplay_official_sports_ball_volley",
+      "label": "Sports Ball Volley",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_sports_ball_volley.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_sports_ball_volley.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_teamlogo_teamlogo_000phl76ers.iff",
+      "stem": "ball_gameplay_official_teamlogo_teamlogo_000phl76ers",
+      "label": "Teamlogo Teamlogo 000phl76ers",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_teamlogo_teamlogo_000phl76ers.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_teamlogo_teamlogo_000phl76ers.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_teamlogo_teamlogo_001milbucks.iff",
+      "stem": "ball_gameplay_official_teamlogo_teamlogo_001milbucks",
+      "label": "Teamlogo Teamlogo 001milbucks",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_teamlogo_teamlogo_001milbucks.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_teamlogo_teamlogo_001milbucks.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_teamlogo_teamlogo_002waswizards.iff",
+      "stem": "ball_gameplay_official_teamlogo_teamlogo_002waswizards",
+      "label": "Teamlogo Teamlogo 002waswizards",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_teamlogo_teamlogo_002waswizards.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_teamlogo_teamlogo_002waswizards.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_teamlogo_teamlogo_003chibulls.iff",
+      "stem": "ball_gameplay_official_teamlogo_teamlogo_003chibulls",
+      "label": "Teamlogo Teamlogo 003chibulls",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_teamlogo_teamlogo_003chibulls.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_teamlogo_teamlogo_003chibulls.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_teamlogo_teamlogo_004clecavaliers.iff",
+      "stem": "ball_gameplay_official_teamlogo_teamlogo_004clecavaliers",
+      "label": "Teamlogo Teamlogo 004clecavaliers",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_teamlogo_teamlogo_004clecavaliers.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_teamlogo_teamlogo_004clecavaliers.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_teamlogo_teamlogo_005bosceltics.iff",
+      "stem": "ball_gameplay_official_teamlogo_teamlogo_005bosceltics",
+      "label": "Teamlogo Teamlogo 005bosceltics",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_teamlogo_teamlogo_005bosceltics.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_teamlogo_teamlogo_005bosceltics.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_teamlogo_teamlogo_006laclippers.iff",
+      "stem": "ball_gameplay_official_teamlogo_teamlogo_006laclippers",
+      "label": "Teamlogo Teamlogo 006laclippers",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_teamlogo_teamlogo_006laclippers.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_teamlogo_teamlogo_006laclippers.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_teamlogo_teamlogo_008memgrizzlies.iff",
+      "stem": "ball_gameplay_official_teamlogo_teamlogo_008memgrizzlies",
+      "label": "Teamlogo Teamlogo 008memgrizzlies",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_teamlogo_teamlogo_008memgrizzlies.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_teamlogo_teamlogo_008memgrizzlies.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_teamlogo_teamlogo_009atlhawks.iff",
+      "stem": "ball_gameplay_official_teamlogo_teamlogo_009atlhawks",
+      "label": "Teamlogo Teamlogo 009atlhawks",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_teamlogo_teamlogo_009atlhawks.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_teamlogo_teamlogo_009atlhawks.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_teamlogo_teamlogo_010miaheat.iff",
+      "stem": "ball_gameplay_official_teamlogo_teamlogo_010miaheat",
+      "label": "Teamlogo Teamlogo 010miaheat",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_teamlogo_teamlogo_010miaheat.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_teamlogo_teamlogo_010miaheat.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_teamlogo_teamlogo_011nopelicans.iff",
+      "stem": "ball_gameplay_official_teamlogo_teamlogo_011nopelicans",
+      "label": "Teamlogo Teamlogo 011nopelicans",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_teamlogo_teamlogo_011nopelicans.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_teamlogo_teamlogo_011nopelicans.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_teamlogo_teamlogo_012utajazz.iff",
+      "stem": "ball_gameplay_official_teamlogo_teamlogo_012utajazz",
+      "label": "Teamlogo Teamlogo 012utajazz",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_teamlogo_teamlogo_012utajazz.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_teamlogo_teamlogo_012utajazz.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_teamlogo_teamlogo_013sackings.iff",
+      "stem": "ball_gameplay_official_teamlogo_teamlogo_013sackings",
+      "label": "Teamlogo Teamlogo 013sackings",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_teamlogo_teamlogo_013sackings.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_teamlogo_teamlogo_013sackings.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_teamlogo_teamlogo_014nyknicks.iff",
+      "stem": "ball_gameplay_official_teamlogo_teamlogo_014nyknicks",
+      "label": "Teamlogo Teamlogo 014nyknicks",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_teamlogo_teamlogo_014nyknicks.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_teamlogo_teamlogo_014nyknicks.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_teamlogo_teamlogo_015lallakers.iff",
+      "stem": "ball_gameplay_official_teamlogo_teamlogo_015lallakers",
+      "label": "Teamlogo Teamlogo 015lallakers",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_teamlogo_teamlogo_015lallakers.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_teamlogo_teamlogo_015lallakers.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_teamlogo_teamlogo_016orlmagic.iff",
+      "stem": "ball_gameplay_official_teamlogo_teamlogo_016orlmagic",
+      "label": "Teamlogo Teamlogo 016orlmagic",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_teamlogo_teamlogo_016orlmagic.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_teamlogo_teamlogo_016orlmagic.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_teamlogo_teamlogo_017dalmavericks.iff",
+      "stem": "ball_gameplay_official_teamlogo_teamlogo_017dalmavericks",
+      "label": "Teamlogo Teamlogo 017dalmavericks",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_teamlogo_teamlogo_017dalmavericks.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_teamlogo_teamlogo_017dalmavericks.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_teamlogo_teamlogo_018bknnets.iff",
+      "stem": "ball_gameplay_official_teamlogo_teamlogo_018bknnets",
+      "label": "Teamlogo Teamlogo 018bknnets",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_teamlogo_teamlogo_018bknnets.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_teamlogo_teamlogo_018bknnets.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_teamlogo_teamlogo_019dennuggets.iff",
+      "stem": "ball_gameplay_official_teamlogo_teamlogo_019dennuggets",
+      "label": "Teamlogo Teamlogo 019dennuggets",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_teamlogo_teamlogo_019dennuggets.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_teamlogo_teamlogo_019dennuggets.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_teamlogo_teamlogo_020indpacers.iff",
+      "stem": "ball_gameplay_official_teamlogo_teamlogo_020indpacers",
+      "label": "Teamlogo Teamlogo 020indpacers",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_teamlogo_teamlogo_020indpacers.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_teamlogo_teamlogo_020indpacers.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_teamlogo_teamlogo_021detpistons.iff",
+      "stem": "ball_gameplay_official_teamlogo_teamlogo_021detpistons",
+      "label": "Teamlogo Teamlogo 021detpistons",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_teamlogo_teamlogo_021detpistons.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_teamlogo_teamlogo_021detpistons.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_teamlogo_teamlogo_022torraptors.iff",
+      "stem": "ball_gameplay_official_teamlogo_teamlogo_022torraptors",
+      "label": "Teamlogo Teamlogo 022torraptors",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_teamlogo_teamlogo_022torraptors.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_teamlogo_teamlogo_022torraptors.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_teamlogo_teamlogo_023hourockets.iff",
+      "stem": "ball_gameplay_official_teamlogo_teamlogo_023hourockets",
+      "label": "Teamlogo Teamlogo 023hourockets",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_teamlogo_teamlogo_023hourockets.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_teamlogo_teamlogo_023hourockets.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_teamlogo_teamlogo_024okcthunder.iff",
+      "stem": "ball_gameplay_official_teamlogo_teamlogo_024okcthunder",
+      "label": "Teamlogo Teamlogo 024okcthunder",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_teamlogo_teamlogo_024okcthunder.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_teamlogo_teamlogo_024okcthunder.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_teamlogo_teamlogo_025saspurs.iff",
+      "stem": "ball_gameplay_official_teamlogo_teamlogo_025saspurs",
+      "label": "Teamlogo Teamlogo 025saspurs",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_teamlogo_teamlogo_025saspurs.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_teamlogo_teamlogo_025saspurs.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_teamlogo_teamlogo_026phxsuns.iff",
+      "stem": "ball_gameplay_official_teamlogo_teamlogo_026phxsuns",
+      "label": "Teamlogo Teamlogo 026phxsuns",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_teamlogo_teamlogo_026phxsuns.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_teamlogo_teamlogo_026phxsuns.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_teamlogo_teamlogo_027mintimberwolves.iff",
+      "stem": "ball_gameplay_official_teamlogo_teamlogo_027mintimberwolves",
+      "label": "Teamlogo Teamlogo 027mintimberwolves",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_teamlogo_teamlogo_027mintimberwolves.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_teamlogo_teamlogo_027mintimberwolves.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_teamlogo_teamlogo_028portrailblazers.iff",
+      "stem": "ball_gameplay_official_teamlogo_teamlogo_028portrailblazers",
+      "label": "Teamlogo Teamlogo 028portrailblazers",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_teamlogo_teamlogo_028portrailblazers.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_teamlogo_teamlogo_028portrailblazers.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_teamlogo_teamlogo_029gswarriors.iff",
+      "stem": "ball_gameplay_official_teamlogo_teamlogo_029gswarriors",
+      "label": "Teamlogo Teamlogo 029gswarriors",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_teamlogo_teamlogo_029gswarriors.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_teamlogo_teamlogo_029gswarriors.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_teamlogo_teamlogo_031chhornets.iff",
+      "stem": "ball_gameplay_official_teamlogo_teamlogo_031chhornets",
+      "label": "Teamlogo Teamlogo 031chhornets",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_teamlogo_teamlogo_031chhornets.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_teamlogo_teamlogo_031chhornets.png"
+    },
+    {
+      "id": "balls/ball_transparent_crown.iff",
+      "stem": "ball_transparent_crown",
+      "label": "Transparent Crown",
+      "group": "Other",
+      "image": "images/ball_transparent_crown.png",
+      "thumbnail": "thumbnails/ball_transparent_crown.png"
+    },
+    {
+      "id": "balls/ball_transparent_iverson.iff",
+      "stem": "ball_transparent_iverson",
+      "label": "Transparent Iverson",
+      "group": "Other",
+      "image": "images/ball_transparent_iverson.png",
+      "thumbnail": "thumbnails/ball_transparent_iverson.png"
+    },
+    {
+      "id": "balls/ball_transparent_myteamlogo.iff",
+      "stem": "ball_transparent_myteamlogo",
+      "label": "Transparent Myteamlogo",
+      "group": "Other",
+      "image": "images/ball_transparent_myteamlogo.png",
+      "thumbnail": "thumbnails/ball_transparent_myteamlogo.png"
+    },
+    {
+      "id": "balls/ball_transparent_nbalogo.iff",
+      "stem": "ball_transparent_nbalogo",
+      "label": "Transparent Nbalogo",
+      "group": "Other",
+      "image": "images/ball_transparent_nbalogo.png",
+      "thumbnail": "thumbnails/ball_transparent_nbalogo.png"
+    },
+    {
+      "id": "balls/ball_transparent_rose.iff",
+      "stem": "ball_transparent_rose",
+      "label": "Transparent Rose",
+      "group": "Other",
+      "image": "images/ball_transparent_rose.png",
+      "thumbnail": "thumbnails/ball_transparent_rose.png"
+    },
+    {
+      "id": "balls/ball_transparent_solar.iff",
+      "stem": "ball_transparent_solar",
+      "label": "Transparent Solar",
+      "group": "Other",
+      "image": "images/ball_transparent_solar.png",
+      "thumbnail": "thumbnails/ball_transparent_solar.png"
+    },
+    {
+      "id": "balls/ball_transparent_wnbalogo.iff",
+      "stem": "ball_transparent_wnbalogo",
+      "label": "Transparent Wnbalogo",
+      "group": "Other",
+      "image": "images/ball_transparent_wnbalogo.png",
+      "thumbnail": "thumbnails/ball_transparent_wnbalogo.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_wilson_airless.iff",
+      "stem": "ball_gameplay_official_wilson_airless",
+      "label": "Wilson Airless",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_wilson_airless.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_wilson_airless.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_wilson_cpugray.iff",
+      "stem": "ball_gameplay_official_wilson_cpugray",
+      "label": "Wilson Cpugray",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_wilson_cpugray.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_wilson_cpugray.png",
+      "renderNote": "The game resource has no color texture; rendered with a neutral gray material."
+    },
+    {
+      "id": "balls/ball_gameplay_official_wilson_ghost.iff",
+      "stem": "ball_gameplay_official_wilson_ghost",
+      "label": "Wilson Ghost",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_wilson_ghost.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_wilson_ghost.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_wilson_nbalogos.iff",
+      "stem": "ball_gameplay_official_wilson_nbalogos",
+      "label": "Wilson Nbalogos",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_wilson_nbalogos.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_wilson_nbalogos.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_wilson_off_white.iff",
+      "stem": "ball_gameplay_official_wilson_off_white",
+      "label": "Wilson Off White",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_wilson_off_white.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_wilson_off_white.png"
+    },
+    {
+      "id": "balls/ball_gameplay_official_wilson_titleshot.iff",
+      "stem": "ball_gameplay_official_wilson_titleshot",
+      "label": "Wilson Titleshot",
+      "group": "Other",
+      "image": "images/ball_gameplay_official_wilson_titleshot.png",
+      "thumbnail": "thumbnails/ball_gameplay_official_wilson_titleshot.png"
+    }
+  ],
+  "missing": []
+}

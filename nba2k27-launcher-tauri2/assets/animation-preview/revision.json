@@ -1,0 +1,62 @@
+{
+  "version": 1,
+  "executable_sha256": "0ca3734d217d62197a2a88ea7485fc8f761c8b6862d3bce44616f5bf75e97c89",
+  "source_schema_sha256": "9520f2657f057d5c8531ebfcb21c3b76a93f91337b3784a3b7e60027ff534577",
+  "decoder_sha256": "6d8e8a5392e4d58d832f82e1105b2fc9023b453258040a021fbe05f0bad1047c",
+  "assets": {
+    "nba_animations.iff": {
+      "resource": "animations/nba_animations.iff",
+      "sha256": "f3abbf0c32a81f4cc7c2df2e02ee3feb88542728e0745dde113da39b1d550328"
+    },
+    "animations_pregame_single.iff": {
+      "resource": "animations/animations_pregame_single.iff",
+      "sha256": "17ec56d6065d6d25ea9f2531ce2bdceb9aa82085151babcfab72863a441a7a0a"
+    },
+    "animations_pregame_multi.iff": {
+      "resource": "animations/animations_pregame_multi.iff",
+      "sha256": "6f6b69a3689b0fe9d389be9dec81d3fce1c50d00c9837b92e15246120e6d3e40"
+    },
+    "animations_blacktop.iff": {
+      "resource": "animations/animations_blacktop.iff",
+      "sha256": "47b2644ed3b4f0e3cc31c60559d8dec8c20d4374f6bd02d8f7aaeccd9fe339a9"
+    },
+    "animations_slamball.iff": {
+      "resource": "animations/animations_slamball.iff",
+      "sha256": "b9ad308cc79180084b361af9c3d2ea3de54f1dc98db26ad898f057fcb0e351fa"
+    },
+    "sigtable.iff": {
+      "resource": "ai_metadata/sigtable.iff",
+      "sha256": "c99402dfd99ae16d3b6c7239b6947e264676c912d4e20ed32fa47301ce5c73b0",
+      "verified_source_archive_sha256": "2780d801ce30915f0f955339fb827220ee9b434c883847c94cba5b2f8091c496",
+      "verified_member_sha256": {
+        "sigtable.SigTable": "7a381d6b9491905361d7f7f5239456703084dee16f14c7fe52b70234c9991b47"
+      }
+    },
+    "shotdata.iff": {
+      "resource": "ai_metadata/shotdata.iff",
+      "sha256": "8516d7e11ace7cf9469cc436e7c85dba3a6deed6a6aec9432e5444251446062e",
+      "verified_source_archive_sha256": "0fd5653a19c26b8a7fb6b8da6e1728072625360a86fc8b6fb7942be7c3d6568e",
+      "verified_member_sha256": {
+        "layuptable.LayupTable": "e0b361e89cf2a167ba8e4c1a0422fcde579a08a73f0a744869a1fff415220668",
+        "freethrowtable.FreeThrowTable": "93281772a4cd99da1dd62e4099b01f2f28be0db5545e5d6bfc606d204a672812",
+        "gathertable.GatherTable": "b899fa19bee1043a6fda668e8ea4cb16581a542e7c18a5efb914975a4102c058"
+      }
+    },
+    "hands.iff": {
+      "resource": "localbuildglobal.iff",
+      "raw_bytes": 188712116,
+      "sha256": "8edad4623be78ef130f7663c981cbd5509aa6eb6b438e903834f2ffb49383450"
+    },
+    "character.iff": {
+      "resource": "char/sig/png04090.iff",
+      "canonical_zip": true,
+      "sha256": "5319497b02c62b47912a0955b5c81b42d02f26240486f958655996371e69a897"
+    }
+  },
+  "metadata_sha256": {
+    "catalog.json.gz": "d0193be8eb1f7daeb36f04da76ac706e1251b78c24560cd855ed2f0ba2f5edf5",
+    "schema.json": "a25579d85a90f7d4b4539f216e740b503174cb794d3cd033bcff2a150459e254",
+    "timing.json": "dd333525621615f7b9e755a1c9229c9b7e81817dc876bfedff39aaf0e757f93b"
+  },
+  "decoder_config_sha256": "9f60ae73ff4f6136a6efa897d07b500445042dc60510fb595468b52b3721776d"
+}

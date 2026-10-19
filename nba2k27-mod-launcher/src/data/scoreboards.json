@@ -1,0 +1,1243 @@
+{
+  "schema": 1,
+  "manifestSha256": "d43480da57a807a0357c775ccf76f8fcf27d2e4bed00a6c2954585d844d2ae01",
+  "choices": [
+    {
+      "id": "default",
+      "label": "Default",
+      "resource": "2kwScorebugGenericReduced",
+      "tested": true,
+      "nativeController": "MYPARK_BLACKTOP_SCOREBUG",
+      "textHandler": null,
+      "nativeSetup": false,
+      "evidence": "User verified team presentation, scores and clocks in Blacktop on 0.35.111"
+    },
+    {
+      "id": "simple",
+      "label": "Simple",
+      "resource": "2kwScorebugGenericSimple",
+      "tested": true,
+      "nativeController": "MYPARK_BLACKTOP_SCOREBUG",
+      "textHandler": null,
+      "nativeSetup": false,
+      "evidence": "User verified team presentation, scores and clocks in Blacktop on 0.35.111"
+    },
+    {
+      "id": "team-colors",
+      "label": "Team colors",
+      "resource": "2kwScorebugTeamcolorsReduced",
+      "tested": true,
+      "nativeController": "MYPARK_BLACKTOP_SCOREBUG",
+      "textHandler": null,
+      "nativeSetup": false,
+      "evidence": "User verified team presentation, scores and clocks in Blacktop on 0.35.111"
+    },
+    {
+      "id": "proving-grounds",
+      "label": "Proving Grounds",
+      "resource": "2kwScorebugProvingGroundsReduced",
+      "tested": true,
+      "nativeController": "MYPARK_BLACKTOP_SCOREBUG",
+      "textHandler": null,
+      "nativeSetup": false,
+      "evidence": "User verified team presentation, scores and clocks in Blacktop on 0.35.111"
+    },
+    {
+      "id": "mypark",
+      "label": "MyPark classic",
+      "resource": "MyParkScorebug",
+      "tested": true,
+      "evidence": "User verified team presentation, scores and clocks in Blacktop on 0.35.111",
+      "nativeController": "MYPARK_BLACKTOP_SCOREBUG",
+      "textHandler": null,
+      "nativeSetup": false
+    },
+    {
+      "id": "world-full",
+      "label": "2K World full",
+      "resource": "2kwScorebugFull",
+      "tested": true,
+      "evidence": "User verified team presentation, scores and clocks in Blacktop on 0.35.111",
+      "nativeController": "SCOREBUG_MAIN_GAME",
+      "textHandler": null,
+      "nativeSetup": true
+    },
+    {
+      "id": "proving-grounds-full",
+      "label": "Proving Grounds full",
+      "resource": "2kwScorebugProvingGroundsFull",
+      "tested": true,
+      "evidence": "User verified team presentation, scores and clocks in Blacktop on 0.35.111",
+      "nativeController": "SCOREBUG_MAIN_GAME",
+      "textHandler": null,
+      "nativeSetup": true
+    },
+    {
+      "id": "broadcast",
+      "label": "Broadcast",
+      "resource": "NewScorebug",
+      "tested": true,
+      "evidence": "User verified team presentation, scores and clocks in Blacktop on 0.35.111",
+      "nativeController": "SCOREBUG_MAIN_GAME",
+      "textHandler": null,
+      "nativeSetup": true
+    },
+    {
+      "id": "mycareer-story",
+      "label": "MyCareer story",
+      "resource": "MyCareerStoryScorebug",
+      "tested": true,
+      "evidence": "User verified team presentation, scores and clocks in Blacktop on 0.35.111",
+      "nativeController": "MYPARK_BLACKTOP_SCOREBUG",
+      "textHandler": null,
+      "nativeSetup": false
+    },
+    {
+      "id": "era-1980",
+      "label": "1980s",
+      "resource": "Scorebug1980",
+      "tested": true,
+      "evidence": "User verified team presentation, scores and clocks in Blacktop on 0.35.111",
+      "widerTest": true,
+      "nativeController": "ERAS_SCOREBUG",
+      "textHandler": "ERAS_SCOREBUG_HANDLER",
+      "nativeSetup": true
+    },
+    {
+      "id": "era-1990",
+      "label": "1990s",
+      "resource": "Scorebug1990",
+      "tested": true,
+      "evidence": "User verified team presentation, scores and clocks in Blacktop on 0.35.111",
+      "widerTest": true,
+      "nativeController": "ERAS_SCOREBUG",
+      "textHandler": "ERAS_SCOREBUG_HANDLER",
+      "nativeSetup": true
+    },
+    {
+      "id": "era-2000",
+      "label": "2000s",
+      "resource": "Scorebug2000",
+      "tested": true,
+      "evidence": "User verified team presentation, scores and clocks in Blacktop on 0.35.111",
+      "widerTest": true,
+      "nativeController": "ERAS_SCOREBUG",
+      "textHandler": "ERAS_SCOREBUG_HANDLER",
+      "nativeSetup": true
+    },
+    {
+      "id": "era-2010",
+      "label": "2010s",
+      "resource": "Scorebug2010",
+      "tested": true,
+      "evidence": "User verified team presentation, scores and clocks in Blacktop on 0.35.111",
+      "widerTest": true,
+      "nativeController": "ERAS_SCOREBUG",
+      "textHandler": "ERAS_SCOREBUG_HANDLER",
+      "nativeSetup": true
+    },
+    {
+      "id": "euro",
+      "label": "Euro",
+      "resource": "ScorebugEuro",
+      "tested": true,
+      "evidence": "User verified team presentation, scores and clocks in Blacktop on 0.35.111",
+      "widerTest": true,
+      "nativeController": "MYPARK_BLACKTOP_SCOREBUG",
+      "textHandler": null,
+      "nativeSetup": false
+    },
+    {
+      "id": "mycourt-scrimmage",
+      "label": "MyCourt scrimmage",
+      "resource": "MyCourtScrimmageScorebug",
+      "tested": true,
+      "evidence": "User confirmed fully working in Blacktop on 0.35.112; layout-local adapter retained",
+      "widerTest": true,
+      "nativeController": "ERAS_SCOREBUG",
+      "textHandler": "ERAS_SCOREBUG_HANDLER",
+      "nativeSetup": true,
+      "requiresLayoutAdapter": true
+    },
+    {
+      "id": "mypark-simple",
+      "label": "MyPark simple classic",
+      "resource": "MyParkScorebugSimple",
+      "tested": true,
+      "evidence": "User confirmed fully working in Blacktop on 0.35.112; layout-local adapter retained",
+      "widerTest": true,
+      "nativeController": "ERAS_SCOREBUG",
+      "textHandler": "ERAS_SCOREBUG_HANDLER",
+      "nativeSetup": true,
+      "requiresLayoutAdapter": true
+    },
+    {
+      "id": "proam-spectator",
+      "label": "Pro-Am spectator",
+      "resource": "ProAmSpectatorScorebug",
+      "tested": true,
+      "evidence": "User confirmed fully working in Blacktop on 0.35.112; layout-local adapter retained",
+      "widerTest": true,
+      "nativeController": "ERAS_SCOREBUG",
+      "textHandler": "ERAS_SCOREBUG_HANDLER",
+      "nativeSetup": true,
+      "requiresLayoutAdapter": true
+    },
+    {
+      "id": "flashback-openrun",
+      "label": "Flashback NBA open run",
+      "resource": "ScorebugFamilyFlashbackNBAOpenRun",
+      "tested": true,
+      "evidence": "User confirmed fully working in Blacktop on 0.35.112; layout-local adapter retained",
+      "widerTest": true,
+      "nativeController": "ERAS_SCOREBUG",
+      "textHandler": "ERAS_SCOREBUG_HANDLER",
+      "nativeSetup": true,
+      "requiresLayoutAdapter": true
+    },
+    {
+      "id": "highschool",
+      "label": "High school · Experimental",
+      "resource": "ScorebugHighSchool",
+      "tested": false,
+      "evidence": "Inspected match layout; different bindings, compatibility unknown",
+      "widerTest": true,
+      "nativeController": "MYPARK_BLACKTOP_SCOREBUG",
+      "textHandler": null,
+      "nativeSetup": false
+    },
+    {
+      "id": "shut-it-down",
+      "label": "Shut It Down · Experimental",
+      "resource": "ShutItDownScorebug",
+      "tested": false,
+      "evidence": "Experimental layout-local data binding adapter; in-game compatibility unknown",
+      "widerTest": true,
+      "nativeController": "ERAS_SCOREBUG",
+      "textHandler": "ERAS_SCOREBUG_HANDLER",
+      "nativeSetup": true,
+      "requiresLayoutAdapter": true
+    },
+    {
+      "id": "w-scrimmage",
+      "label": "The W scrimmage",
+      "resource": "TheWScrimmageScorebug",
+      "tested": true,
+      "evidence": "User confirmed fully working in Blacktop on 0.35.112; layout-local adapter retained",
+      "widerTest": true,
+      "nativeController": "ERAS_SCOREBUG",
+      "textHandler": "ERAS_SCOREBUG_HANDLER",
+      "nativeSetup": true,
+      "requiresLayoutAdapter": true
+    }
+  ],
+  "assets": [
+    {
+      "asset": "gooey/2kuminigamesscorebug1ttles1values.iff",
+      "descriptors": [
+        {
+          "file": "learn2kscorebug_1titles1values.OJSON",
+          "name": "2KUMiniGamesScorebug1Ttles1Values",
+          "controller": "LEARN2K_SCOREBUG_1TILES1VALUES",
+          "mode": null
+        }
+      ],
+      "picker": null
+    },
+    {
+      "asset": "gooey/2kuminigamesscorebug2ttles2values.iff",
+      "descriptors": [
+        {
+          "file": "learn2kscorebug_2titles2values.OJSON",
+          "name": "2KUMiniGamesScorebug2Ttles2Values",
+          "controller": "LEARN2K_SCOREBUG_2TILES2VALUES",
+          "mode": null
+        },
+        {
+          "file": "outletpassingscorebug.OJSON",
+          "name": "2KUMiniGamesScorebug2Ttles2Values",
+          "controller": "DRILL_COUNTER_GOOEY_OVERLAY",
+          "mode": null
+        }
+      ],
+      "picker": null
+    },
+    {
+      "asset": "gooey/2kuminigamesscorebug3ttles3values.iff",
+      "descriptors": [
+        {
+          "file": "learn2kscorebug_3titles3values.OJSON",
+          "name": "2KUMiniGamesScorebug3Ttles3Values",
+          "controller": "LEARN2K_SCOREBUG_3TILES3VALUES",
+          "mode": null
+        }
+      ],
+      "picker": null
+    },
+    {
+      "asset": "gooey/2kuminigamesscorebugstars.iff",
+      "descriptors": [
+        {
+          "file": "learn2kscorebug_starsonly.OJSON",
+          "name": "2KUMiniGamesScorebugStars",
+          "controller": "LEARN2K_SCOREBUG_STARONLY",
+          "mode": null
+        }
+      ],
+      "picker": null
+    },
+    {
+      "asset": "gooey/2kwscorebugfull.iff",
+      "descriptors": [
+        {
+          "file": "generictkworldscorebug_full.OJSON",
+          "name": "2kwScorebugFull",
+          "controller": "SCOREBUG_MAIN_GAME",
+          "mode": null
+        }
+      ],
+      "picker": "world-full"
+    },
+    {
+      "asset": "gooey/2kwscorebuggenericreduced.iff",
+      "descriptors": [
+        {
+          "file": "generictkworldscorebug_reduced.OJSON",
+          "name": "2kwScorebugGenericReduced",
+          "controller": "MYPARK_BLACKTOP_SCOREBUG",
+          "mode": "INDOOR_PARK"
+        }
+      ],
+      "picker": "default"
+    },
+    {
+      "asset": "gooey/2kwscorebuggenericsimple.iff",
+      "descriptors": [
+        {
+          "file": "generictkworldscorebug_simple.OJSON",
+          "name": "2kwScorebugGenericSimple",
+          "controller": "MYPARK_BLACKTOP_SCOREBUG",
+          "mode": "PARK"
+        }
+      ],
+      "picker": "simple"
+    },
+    {
+      "asset": "gooey/2kwscorebugprovinggroundsfull.iff",
+      "descriptors": [
+        {
+          "file": "provinggroundsscorebug_full.OJSON",
+          "name": "2kwScorebugProvingGroundsFull",
+          "controller": "SCOREBUG_MAIN_GAME",
+          "mode": null
+        }
+      ],
+      "picker": "proving-grounds-full"
+    },
+    {
+      "asset": "gooey/2kwscorebugprovinggroundsreduced.iff",
+      "descriptors": [
+        {
+          "file": "provinggroundsscorebug_reduced.OJSON",
+          "name": "2kwScorebugProvingGroundsReduced",
+          "controller": "MYPARK_BLACKTOP_SCOREBUG",
+          "mode": "PROVING_GROUNDS"
+        }
+      ],
+      "picker": "proving-grounds"
+    },
+    {
+      "asset": "gooey/2kwscorebugteamcolorsreduced.iff",
+      "descriptors": [
+        {
+          "file": "generictkworldscorebug_teamcolorreduced.OJSON",
+          "name": "2kwScorebugTeamcolorsReduced",
+          "controller": "MYPARK_BLACKTOP_SCOREBUG",
+          "mode": "CREW_HQ"
+        }
+      ],
+      "picker": "team-colors"
+    },
+    {
+      "asset": "gooey/3ptcontestscorebug.iff",
+      "descriptors": [
+        {
+          "file": "threepointshootoutscorebug.OJSON",
+          "name": "3PTContestScorebug",
+          "controller": "SCOREBUG_THREE_POINT_SHOOTOUT",
+          "mode": null
+        }
+      ],
+      "picker": null
+    },
+    {
+      "asset": "gooey/drillsscorebugdrillstipsgolf.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey/drillsscorebugdrillstipssprint.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey/drillsscorebugdrillstipstip.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey/dunkcontestscorebug.iff",
+      "descriptors": [
+        {
+          "file": "dunkcontestscorebug.OJSON",
+          "name": "DunkContestScorebug",
+          "controller": "SCOREBUG_DUNK_CONTEST",
+          "mode": null
+        }
+      ],
+      "picker": null
+    },
+    {
+      "asset": "gooey/livepracticescorebug.iff",
+      "descriptors": [
+        {
+          "file": "livepracticescorebug.OJSON",
+          "name": "LivePracticeScorebug",
+          "controller": "DRILL_COUNTER_GOOEY_OVERLAY",
+          "mode": null
+        }
+      ],
+      "picker": null
+    },
+    {
+      "asset": "gooey/livepracticescorebug2.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey/livepracticescorebug_1title1values.iff",
+      "descriptors": [
+        {
+          "file": "livepracticescorebug_1title1values.OJSON",
+          "name": "LivePracticeScorebug_1Title1Values",
+          "controller": "DRILL_COUNTER_GOOEY_OVERLAY",
+          "mode": null
+        }
+      ],
+      "picker": null
+    },
+    {
+      "asset": "gooey/livepracticescorebug_1title2values.iff",
+      "descriptors": [
+        {
+          "file": "livepracticescorebug_1title2values.OJSON",
+          "name": "LivePracticeScorebug_1Title2Values",
+          "controller": "DRILL_COUNTER_GOOEY_OVERLAY",
+          "mode": null
+        }
+      ],
+      "picker": null
+    },
+    {
+      "asset": "gooey/livepracticescorebug_1title3values.iff",
+      "descriptors": [
+        {
+          "file": "livepracticescorebug_1title3values.OJSON",
+          "name": "LivePracticeScorebug_1Title3Values",
+          "controller": "DRILL_COUNTER_GOOEY_OVERLAY",
+          "mode": null
+        }
+      ],
+      "picker": null
+    },
+    {
+      "asset": "gooey/livepracticescorebug_2title2values.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey/livepracticescorebug_2title3values.iff",
+      "descriptors": [
+        {
+          "file": "livepracticescorebug_2title3values.OJSON",
+          "name": "LivePracticeScorebug_2Title3Values",
+          "controller": "DRILL_COUNTER_GOOEY_OVERLAY",
+          "mode": null
+        }
+      ],
+      "picker": null
+    },
+    {
+      "asset": "gooey/livepracticescorebug_3title3values.iff",
+      "descriptors": [
+        {
+          "file": "livepracticescorebug_3title3values.OJSON",
+          "name": "LivePracticeScorebug_3Title3Values",
+          "controller": "DRILL_COUNTER_GOOEY_OVERLAY",
+          "mode": null
+        }
+      ],
+      "picker": null
+    },
+    {
+      "asset": "gooey/livepracticescorebug_3title4values.iff",
+      "descriptors": [
+        {
+          "file": "livepracticescorebug_3title4values.OJSON",
+          "name": "LivePracticeScorebug_3Title4Values",
+          "controller": "DRILL_COUNTER_GOOEY_OVERLAY",
+          "mode": null
+        }
+      ],
+      "picker": null
+    },
+    {
+      "asset": "gooey/livepracticescorebug_full.iff",
+      "descriptors": [
+        {
+          "file": "livepracticescorebug_full.OJSON",
+          "name": "LivePracticeScorebug_Full",
+          "controller": "DRILL_COUNTER_GOOEY_OVERLAY",
+          "mode": null
+        }
+      ],
+      "picker": null
+    },
+    {
+      "asset": "gooey/minigamesscorebug.iff",
+      "descriptors": [
+        {
+          "file": "drillsminigame1on1scorebug.OJSON",
+          "name": "MiniGamesScorebug",
+          "controller": "MINIGAME_1ON1_SCOREBUG",
+          "mode": null
+        }
+      ],
+      "picker": null
+    },
+    {
+      "asset": "gooey/mycareerstory1v1scorebug.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey/mycareerstoryblacktopscorebug.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey/mycareerstoryscorebug.iff",
+      "descriptors": [],
+      "picker": "mycareer-story"
+    },
+    {
+      "asset": "gooey/mycourtscorebug.iff",
+      "descriptors": [
+        {
+          "file": "freethrowscorebug.OJSON",
+          "name": "MyCourtScorebug",
+          "controller": "FREETHROW_DRILL_COUNTER",
+          "mode": null
+        }
+      ],
+      "picker": null
+    },
+    {
+      "asset": "gooey/mycourtscorebugaroundtheworld.iff",
+      "descriptors": [
+        {
+          "file": "aroundtheworldcounter.OJSON",
+          "name": "MyCourtScorebugAroundTheWorld",
+          "controller": "AROUND_THE_WORLD_DRILL_COUNTER",
+          "mode": null
+        }
+      ],
+      "picker": null
+    },
+    {
+      "asset": "gooey/mycourtscorebugbestoften.iff",
+      "descriptors": [
+        {
+          "file": "bestoftencounter.OJSON",
+          "name": "MyCourtScorebugBestOfTen",
+          "controller": "BEST_OF_TEN_DRILL_COUNTER",
+          "mode": null
+        },
+        {
+          "file": "partnershootingscorebug.OJSON",
+          "name": "MyCourtScorebugBestOfTen",
+          "controller": "PARTNER_SHOOTING_DRILL_COUNTER",
+          "mode": null
+        }
+      ],
+      "picker": null
+    },
+    {
+      "asset": "gooey/mycourtscorebughorse.iff",
+      "descriptors": [
+        {
+          "file": "horsescorebug.OJSON",
+          "name": "MyCourtScorebugHorse",
+          "controller": "HORSE_DRILL_COUNTER",
+          "mode": null
+        }
+      ],
+      "picker": null
+    },
+    {
+      "asset": "gooey/mycourtscrimmagescorebug.iff",
+      "descriptors": [],
+      "picker": "mycourt-scrimmage"
+    },
+    {
+      "asset": "gooey/myparkscorebug.iff",
+      "descriptors": [
+        {
+          "file": "myparkscorebug.OJSON",
+          "name": "MyParkScorebug",
+          "controller": "MYPARK_BLACKTOP_SCOREBUG",
+          "mode": "INDOOR_PARK"
+        }
+      ],
+      "picker": "mypark"
+    },
+    {
+      "asset": "gooey/myparkscorebuginthebank.iff",
+      "descriptors": [
+        {
+          "file": "inthebankscorebugoverlay.OJSON",
+          "name": "MyParkScorebugInTheBank",
+          "controller": "IN_THE_BANK_SCOREBUG_OVERLAY",
+          "mode": null
+        }
+      ],
+      "picker": null
+    },
+    {
+      "asset": "gooey/myparkscorebugsimple.iff",
+      "descriptors": [
+        {
+          "file": "courtsparkscorebug.OJSON",
+          "name": "MyParkScorebugSimple",
+          "controller": "COURTS_PARK_SCOREBUG",
+          "mode": null
+        }
+      ],
+      "picker": "mypark-simple"
+    },
+    {
+      "asset": "gooey/newscorebug.iff",
+      "descriptors": [
+        {
+          "file": "scorebugmaingame.OJSON",
+          "name": "NewScorebug",
+          "controller": "SCOREBUG_MAIN_GAME",
+          "mode": null
+        }
+      ],
+      "picker": "broadcast"
+    },
+    {
+      "asset": "gooey/proamspectatorscorebug.iff",
+      "descriptors": [],
+      "picker": "proam-spectator"
+    },
+    {
+      "asset": "gooey/proamtournamentspectatorscorebug.iff",
+      "descriptors": [
+        {
+          "file": "proamspectatorscorebug.OJSON",
+          "name": "ProAmTournamentSpectatorScorebug",
+          "controller": "PROAM_SPECTATOR_SCOREBUG",
+          "mode": null
+        }
+      ],
+      "picker": null
+    },
+    {
+      "asset": "gooey/scorebug1980.iff",
+      "descriptors": [
+        {
+          "file": "scorebug1980.OJSON",
+          "name": "Scorebug1980",
+          "controller": "ERAS_SCOREBUG",
+          "mode": null
+        }
+      ],
+      "picker": "era-1980"
+    },
+    {
+      "asset": "gooey/scorebug1990.iff",
+      "descriptors": [
+        {
+          "file": "scorebug1990.OJSON",
+          "name": "Scorebug1990",
+          "controller": "ERAS_SCOREBUG",
+          "mode": null
+        }
+      ],
+      "picker": "era-1990"
+    },
+    {
+      "asset": "gooey/scorebug2000.iff",
+      "descriptors": [
+        {
+          "file": "scorebug2000.OJSON",
+          "name": "Scorebug2000",
+          "controller": "ERAS_SCOREBUG",
+          "mode": null
+        }
+      ],
+      "picker": "era-2000"
+    },
+    {
+      "asset": "gooey/scorebug2010.iff",
+      "descriptors": [
+        {
+          "file": "scorebug2010.OJSON",
+          "name": "Scorebug2010",
+          "controller": "ERAS_SCOREBUG",
+          "mode": null
+        }
+      ],
+      "picker": "era-2010"
+    },
+    {
+      "asset": "gooey/scorebugeuro.iff",
+      "descriptors": [
+        {
+          "file": "scorebugeuro.OJSON",
+          "name": "ScorebugEuro",
+          "controller": "SCOREBUG_EURO",
+          "mode": null
+        }
+      ],
+      "picker": "euro"
+    },
+    {
+      "asset": "gooey/scorebugfamilyflashbackaau.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey/scorebugfamilyflashbackhighschool.iff",
+      "descriptors": [
+        {
+          "file": "familyflashback_highschoolscorebug.OJSON",
+          "name": "ScorebugFamilyFlashbackHighSchool",
+          "controller": "FAMILYFLASHBACK_HIGHSCHOOL_SCOREBUG",
+          "mode": null
+        }
+      ],
+      "picker": null
+    },
+    {
+      "asset": "gooey/scorebugfamilyflashbacknbaopenrun.iff",
+      "descriptors": [],
+      "picker": "flashback-openrun"
+    },
+    {
+      "asset": "gooey/scorebughighschool.iff",
+      "descriptors": [],
+      "picker": "highschool"
+    },
+    {
+      "asset": "gooey/scorebugmaingame_fake.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey/shutitdownscorebug.iff",
+      "descriptors": [],
+      "picker": "shut-it-down"
+    },
+    {
+      "asset": "gooey/thewscrimmagescorebug.iff",
+      "descriptors": [],
+      "picker": "w-scrimmage"
+    },
+    {
+      "asset": "gooey/trainingcampscorebug.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey/triplethreatonlinescorebug.iff",
+      "descriptors": [
+        {
+          "file": "myteamcoopscorebug.OJSON",
+          "name": "TripleThreatOnlineScorebug",
+          "controller": "MYTEAM_TRIPLE_THREAT_COOP_SCOREBUG",
+          "mode": null
+        }
+      ],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/1980s_scorebug.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/1980s_scorebug_timeout_message.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/1990s_scorebug.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/1990s_scorebug_timeout_message.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/2000s_scorebug.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/2000s_scorebug_timeout_message.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/2010_scorebug.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/2010_scorebug_violation.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/2010s_scorebug_timeout_message.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/2kw_scorebug_bonus_livepractice_a.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/2kw_scorebug_bonus_livepractice_b.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/2kw_scorebug_bonus_livepractice_c.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/2kw_scorebug_bonus_livepractice_scorechange.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/2kw_scorebug_bonus_livepractice_streakicon.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/2kw_scorebug_full.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/2kw_scorebug_generic_notification.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/2kw_scorebug_generic_notification_home.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/2kw_scorebug_generic_reduced.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/2kw_scorebug_generic_simple.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/2kw_scorebug_generic_simple_notification.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/2kw_scorebug_provinggrounds_full.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/2kw_scorebug_provinggrounds_reduced.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/2kw_scorebug_teamcolors_reduced.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/3pt_contest_scorebug_deep_zone.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/3pt_contest_scorebug_zone.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/3ptcontestscorebug_lightinggroup_0@3ptcontestscorebug.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/abcoverlay3dpanellighting_0@dunkcontestscorebug.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/cct_clock_scorebug.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/cct_clock_scorebug_box.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/cct_clock_scorebug_wipe.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/drills_live_practice_scorebug_star_progression.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/drills_scorebug_circuit.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/drills_scorebug_drills_tips_golf.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/drills_scorebug_drills_tips_sprint.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/drills_scorebug_drills_tips_tip.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/drills_scorebug_fx_teal.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/drills_scorebug_panel.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/drills_scorebug_scorechange.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/euro_scorebug.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/euro_scorebug_popup.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/gatorade_scorebug.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/gatorade_scorebug_violation.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/live_practice_scorebug2_event_log.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/live_practice_scorebug2_metal_panel.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/live_practice_scorebug_1title1value.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/live_practice_scorebug_1title2value.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/live_practice_scorebug_1title3value.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/live_practice_scorebug_2title2value.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/live_practice_scorebug_3title3value.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/live_practice_scorebug_bg.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/live_practice_scorebug_clock_2value.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/live_practice_scorebug_clock_3value.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/live_practice_scorebug_event_log.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/live_practice_scorebug_player_content.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/live_practice_scorebug_stars_four.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/live_practice_scorebug_stars_three.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/live_practice_scorebug_streak.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/live_practice_scorebug_tile.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/live_practice_scorebug_titlebar.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/live_practice_scorebug_titlebar_b.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/mini_games_scorebug.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/mycourt_scorebug.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/mycourt_scorebug_aroundtheworld.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/mycourt_scorebug_horse.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/mycourt_scorebug_horse_bg.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/mycourt_scorebug_scrimmage.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/mycourt_scorebug_scrimmage_scorefx.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/mycourt_scorebug_violation.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/mypark_scorebug.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/mypark_scorebug_bank_vault.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/mypark_scorebug_simple.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/mypark_scorebug_simple_violation.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/mypark_scorebug_violation2.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/myteam_triplethreat_online_scorebug.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/myteam_triplethreat_online_scorebug_violation.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/scorebug_broadcast.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/scorebug_broadcast_gameinfo.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/scorebug_familyflashback_aau.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/scorebug_familyflashback_high_school.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/scorebug_familyflashback_high_school_foulviolation.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/scorebug_familyflashback_nba_open_run.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/scorebug_familyflashback_nba_open_run_foulviolation.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/scorebug_highschool.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/scorebug_holiday_dressing.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/scorebug_notification.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/scorebug_notification_home.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/scorebug_number_bulb.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/scorebug_opt.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/scorebug_opt_follow.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/scorebug_period_bulb.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/shut_it_down_scorebug.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/thew_scorebug_scrimmage.iff",
+      "descriptors": [],
+      "picker": null
+    },
+    {
+      "asset": "gooey_scenes/threept_scorebug_base.iff",
+      "descriptors": [],
+      "picker": null
+    }
+  ],
+  "note": "Default, Simple, Broadcast and 1980s verified. Eras and main-game families automatically use descriptor-derived native controllers and text handlers. Other layouts retain experimental resource-only behavior; untested controllers are not enabled. No preview images found in the 54 inspected top-level archives."
+}

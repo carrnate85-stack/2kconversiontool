@@ -1,0 +1,282 @@
+{
+  "schema": "nba2k27-scoreboard-native-catalog-v1",
+  "sourceSha256": [
+    "91670167A9C56493CEDDC7B373F18B3A55AEF45CE67D16B014EA53E57FA1C811",
+    "AC5B3BA6A56955076DC80C4BB0B6A646DD049FC1E18BFB1F12517AD11B713765"
+  ],
+  "choices": [
+    {
+      "id": "default",
+      "label": "Default",
+      "resource": 958809232,
+      "file": "2kwscorebuggenericreduced.iff",
+      "profile": [
+        706928588,
+        4274579763,
+        2946668594
+      ],
+      "requiresLayoutAdapter": false,
+      "selectable": true
+    },
+    {
+      "id": "simple",
+      "label": "Simple",
+      "resource": 3630861739,
+      "file": "2kwscorebuggenericsimple.iff",
+      "profile": [
+        706928588,
+        4274579763,
+        2946668594
+      ],
+      "requiresLayoutAdapter": false,
+      "selectable": true
+    },
+    {
+      "id": "team-colors",
+      "label": "Team colors",
+      "resource": 1083503505,
+      "file": "2kwscorebugteamcolorsreduced.iff",
+      "profile": [
+        706928588,
+        4274579763,
+        2946668594
+      ],
+      "requiresLayoutAdapter": false,
+      "selectable": true
+    },
+    {
+      "id": "proving-grounds",
+      "label": "Proving Grounds",
+      "resource": 3393150244,
+      "file": "2kwscorebugprovinggroundsreduced.iff",
+      "profile": [
+        706928588,
+        4274579763,
+        2946668594
+      ],
+      "requiresLayoutAdapter": false,
+      "selectable": true
+    },
+    {
+      "id": "mypark",
+      "label": "MyPark classic",
+      "resource": 1178606691,
+      "file": "myparkscorebug.iff",
+      "profile": [
+        706928588,
+        4274579763,
+        2946668594
+      ],
+      "requiresLayoutAdapter": false,
+      "selectable": true
+    },
+    {
+      "id": "world-full",
+      "label": "2K World full",
+      "resource": 1579970922,
+      "file": "2kwscorebugfull.iff",
+      "profile": [
+        973710118,
+        4274579763,
+        2946668594
+      ],
+      "requiresLayoutAdapter": false,
+      "selectable": true
+    },
+    {
+      "id": "proving-grounds-full",
+      "label": "Proving Grounds full",
+      "resource": 2723073139,
+      "file": "2kwscorebugprovinggroundsfull.iff",
+      "profile": [
+        973710118,
+        4274579763,
+        2946668594
+      ],
+      "requiresLayoutAdapter": false,
+      "selectable": true
+    },
+    {
+      "id": "broadcast",
+      "label": "Broadcast",
+      "resource": 2445750119,
+      "file": "newscorebug.iff",
+      "profile": [
+        973710118,
+        4274579763,
+        2946668594
+      ],
+      "requiresLayoutAdapter": false,
+      "selectable": true
+    },
+    {
+      "id": "mycareer-story",
+      "label": "MyCareer story",
+      "resource": 1716209883,
+      "file": "mycareerstoryscorebug.iff",
+      "profile": [
+        706928588,
+        4274579763,
+        2946668594
+      ],
+      "requiresLayoutAdapter": false,
+      "selectable": false
+    },
+    {
+      "id": "era-1980",
+      "label": "1980s",
+      "resource": 2701853620,
+      "file": "scorebug1980.iff",
+      "profile": [
+        1974462010,
+        3325366512,
+        1973361334
+      ],
+      "requiresLayoutAdapter": false,
+      "selectable": true
+    },
+    {
+      "id": "era-1990",
+      "label": "1990s",
+      "resource": 3088069365,
+      "file": "scorebug1990.iff",
+      "profile": [
+        1974462010,
+        3325366512,
+        1973361334
+      ],
+      "requiresLayoutAdapter": false,
+      "selectable": true
+    },
+    {
+      "id": "era-2000",
+      "label": "2000s",
+      "resource": 1958092253,
+      "file": "scorebug2000.iff",
+      "profile": [
+        1974462010,
+        3325366512,
+        1973361334
+      ],
+      "requiresLayoutAdapter": false,
+      "selectable": true
+    },
+    {
+      "id": "era-2010",
+      "label": "2010s",
+      "resource": 1840065692,
+      "file": "scorebug2010.iff",
+      "profile": [
+        1974462010,
+        3325366512,
+        1973361334
+      ],
+      "requiresLayoutAdapter": false,
+      "selectable": true
+    },
+    {
+      "id": "euro",
+      "label": "Euro",
+      "resource": 3449072433,
+      "file": "scorebugeuro.iff",
+      "profile": [
+        706928588,
+        4274579763,
+        2946668594
+      ],
+      "requiresLayoutAdapter": false,
+      "selectable": true
+    },
+    {
+      "id": "mycourt-scrimmage",
+      "label": "MyCourt scrimmage",
+      "resource": 3352086225,
+      "file": "mycourtscrimmagescorebug.iff",
+      "profile": [
+        1974462010,
+        3325366512,
+        1973361334
+      ],
+      "requiresLayoutAdapter": true,
+      "selectable": true
+    },
+    {
+      "id": "mypark-simple",
+      "label": "MyPark simple classic",
+      "resource": 44340748,
+      "file": "myparkscorebugsimple.iff",
+      "profile": [
+        1974462010,
+        3325366512,
+        1973361334
+      ],
+      "requiresLayoutAdapter": true,
+      "selectable": true
+    },
+    {
+      "id": "proam-spectator",
+      "label": "Pro-Am spectator",
+      "resource": 971793223,
+      "file": "proamspectatorscorebug.iff",
+      "profile": [
+        1974462010,
+        3325366512,
+        1973361334
+      ],
+      "requiresLayoutAdapter": true,
+      "selectable": true
+    },
+    {
+      "id": "flashback-openrun",
+      "label": "Flashback NBA open run",
+      "resource": 2229794918,
+      "file": "scorebugfamilyflashbacknbaopenrun.iff",
+      "profile": [
+        1974462010,
+        3325366512,
+        1973361334
+      ],
+      "requiresLayoutAdapter": true,
+      "selectable": false
+    },
+    {
+      "id": "highschool",
+      "label": "High school · Experimental",
+      "resource": 3544247798,
+      "file": "scorebughighschool.iff",
+      "profile": [
+        706928588,
+        4274579763,
+        2946668594
+      ],
+      "requiresLayoutAdapter": false,
+      "selectable": true
+    },
+    {
+      "id": "shut-it-down",
+      "label": "Shut It Down · Experimental",
+      "resource": 2650017352,
+      "file": "shutitdownscorebug.iff",
+      "profile": [
+        1974462010,
+        3325366512,
+        1973361334
+      ],
+      "requiresLayoutAdapter": true,
+      "selectable": true
+    },
+    {
+      "id": "w-scrimmage",
+      "label": "The W scrimmage",
+      "resource": 1840350370,
+      "file": "thewscrimmagescorebug.iff",
+      "profile": [
+        1974462010,
+        3325366512,
+        1973361334
+      ],
+      "requiresLayoutAdapter": true,
+      "selectable": true
+    }
+  ]
+}

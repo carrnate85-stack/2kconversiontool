@@ -1,0 +1,78 @@
+QA073 WORK IN PROGRESS - 2026-10-18
+NOT DELIVERED. Latest ready starter is QA072; read NEXT-CHAT-HANDOFF-QA072.txt.
+Same2hour window ends21:53:37UTC; automationtwo-hour-dev-parity-work remainsACTIVE.
+No userQA beforedeadline, noinstall/promote/activation/gamecontrol/livewrites.
+
+AGENTS
+wnba_toggle_ui: approvedtypedWNBAjournalcapacitydiagnostic, owns core/result/
+coordinator/bridge/statusparser+focusedtests. Exactlytwo preeffectbudgetrefusals,
+logLIMIT_REACHED onceafterbothownershipflagsfalse, continuecleanup, HELDpriority,
+Rustexistingreloadphase; nofrontendchanges. Working, sourceNOTfrozen.
+wnba_integration: researchBasicProcessInformation252freshglobalprocesssnapshot.
+Currentprototype strictfull48Bparser~0.25msguardvs8-13msToolhelp.11stablebracketed
+PID/namecomparisons0mismatch. NootherPIDhandles/gameaccess. Awaitingproposal+fault
+fixturesbeforeproductionapproval. PreferBasic252->oldToolhelpdirect; class5research
+isstrictunsupportedandnetslower. OfficialMicrosoftdocs+localSDKprovenanceverified.
+outfit_latency_qa066: independentC++snapshotreview; preparingRustBasic252-first
+proposalfor src/session_safety.rs (alreadyhasfreshclass5thenToolhelpfallback).
+NoRustproductionapprovalyet. Mustpreservefreshidentityqueries+unknownowner/retry.
+
+PRIMARY PROVENANCE
+MicrosoftLearnNtQuerySystemInformation documentsBasicProcessInformation since
+Win11build26100.4770 and recommendsitslowercost. OfficialSDK10.0.26100.0um/winternl.h
+lines286-292Basicstruct,403enum252; SHA
+A43424486349C38F697C009512DFE4EB8FCA733D7665AFAB42F50752170B9785.
+https://learn.microsoft.com/en-us/windows/win32/api/winternl/nf-winternl-ntquerysysteminformation
+https://raw.githubusercontent.com/microsoft/win32metadata/main/generation/WinSDK/RecompiledIdlHeaders/um/winternl.h
+Nevercacheprocessrows/identityoromitfreshguard; runtimefallbackonanyuncertainty.
+
+QA072stagefixed:0FC793FBF4433FE55A9FCEC1BDBBBEA48D249042986303441A6C1A97CD479F35/
+52820992bytes; payloadDE06738A948896D8EAC2C1F4147B65D34068314B32D26F061305EBA4A972EB0C/
+1179136bytes. DoNOToverwrite stage; nextcandidateQA073requiresnewDLLpins andexact
+QA072recovery-onlyadmission+size±1fixture, backuppins/payloadfirst. Fullsuite/devbuild
+andstrictnativefixturesafterfrozenedits; create-onlystage+starter, neveractivate.
+
+UPDATE20:20UTC
+Both Basic252productionproposals NOWAPPROVED afterroot/peerprimarySDKreview.
+wnba_integration ownsnewnativeBasic252header+minimalbridgewrapper+tests; freshBasic
+thenEXACToldToolhelpdirect, noclass5; shareoldpredicate; olddiagnosticnamesmaystay.
+wnba_toggle_ui capacity8filesFROZEN, allstrictnativePASS/encodingfixedASCII/rustfmt.
+ItnowdoesREADONLYindependentreviewofnativeBasicintegration.
+outfit_latency_qa066 ownssession_safety.rs+newtests; Basic252first thenUNCHANGED
+class5 thenToolhelp. Freshqueried_identity,refresh_unresolved,parentnameadmission
+andallcallersunchanged. Bounded4queryattempts/16MiB/newkernelqueryeachguard. Tests
+mustincludecompletePID/PARENT/namebracketcomparisonsnotjustC++pid/namepredicate.
+NoCargo/DLLbuilduntilbothagentsfreeze. Rootwillrunonceallfinalchangespresent.
+Rootwarnedresearchbenchmarkfallbackbridgeprotected_processesmustbeexplicitold
+ToolhelpafterintegrationtoavoidrecursiveBasic/doublequeryandfalsebenchlabels.
+
+QA072historicaltestAVqualificationwasappended; parityartifactnow82.3weighted/
+52.4liveweight aftercorrectingBlacktopDIS->PARTonlyfromUSERliveacceptance.
+Nooffline-onlyfeaturepromotedLIVE. Data/Library/buildsuntouched.
+
+URGENT UPDATE20:25UTC - FULL RUST AV, QA073 NOT READY
+AllQA073native/RustsourcesareFROZEN; finalnativeDLLbuild+versionforwardingsmokePASS.
+Newpayload4FB74B375BE6DE36411574FAB624722F85121AEF1F0DE286E9C9EEC6B879A3FA/1190912bytes.
+Bothcurrentpinsupdated; EXACTQA072DE067...EB0C/1179136recovery-only+size±1fixture.
+Backups/qa073-final-payload-20261018. FinaltestbuildPASS15.43sec,12warnings.
+SixnewRustBasicfocusedtestsPASS+1explicitbenchmarkPASS(.678msBasicvs6.281msclass5/
+7.320Toolhelp medians). Sourceencoding/nonempty/noNUL+allsourcefsyncverified.
+BUT finalwholeRustsuite --test-threads=4 NATURALLY EXITED0xC0000005 after7.083sec.
+Lastprintedtestcamera_v2publicationclassificationISNOTprovencrashingthread.
+HistoricalQA054sameintermittentAVunexplained; doNOTassignhardware/newBasiccause.
+Originalfailurelog artifacts/qa073-final-full-rust-tests.log preserved (neveroverwrite).
+ExactEXE+PDB+logZIPdurable+roundtriphashverified:
+Backups/qa073-natural-test-av-20261018/exact-test-image.zip (97971093bytes).
+Identity artifact qa073-natural-test-av-identity.json:
+EXEBC3B784A828DC5149C28A7F8D9688ECA302CCD46E7F5294D101C0CF99AE82D21/101145600
+PDBA97CB0292EA39E292C81400E5F77DF4F3AC658AA0614F0DBB7E2DFBF3804556A/337530880.
+NoQA073devbuild/stageyet; QA072 remainslatestreadycandidate.
+ONEboundedexistingallowlisteddebuggerchildcapturerunning execsession29109:
+artifacts/qa073-bounded-debug-capture.log and-stdout.log; _NO_DEBUG_HEAP=1 processonly.
+Mustpollcompletionbeforefurthersteps. DoNOTlooprerununtilgreen orcallpassaFIX.
+Agentoutfit_latency_qa066researchestest-onlynaturalSEH/minidumpcapturewithoutglobal
+WER/PageHeap/BIOS/registry/debugger. Proposalonly,noedits/Cargo. Syntheticfixturefirst.
+wnba_toggle_uiQA074Freestyleauditfinds lifetime4DWORD/OFFnextPlay/Bothmatrixcorrect;
+onlynewconcretereadonlygap isstatusneverrenews15clubs/sourceproofafterfirstapply.
+wnba_integrationresearchesproposal (NOnewproductionapproval). AllQA073sourcesfrozen.
+Twohourdeadline21:53:37UTC/heartbeatstillACTIVE; no usertests/activation/install.

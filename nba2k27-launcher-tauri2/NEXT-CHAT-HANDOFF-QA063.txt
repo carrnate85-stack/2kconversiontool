@@ -1,0 +1,72 @@
+QA063 DEV checkpoint - 2026-10-18
+
+User requested working Freestyle toggle and Blacktop via same method + toggle.
+No installation/promotion, UI/game launch, game controls or new agent livewrites.
+
+FREESTYLE READY FOR NEXT DEV TEST
+Visible enabled switch uses canonical settings.unlockWnbaFreestyle. Next-Play
+Plan.wnba_priority_categories follows this flag in DEV; OFF requests no WNBA
+work. Legacy mixed/variant preferences remain saved but unused; old key-capture,
+provider roster building and sibling callback route remain disabled. Variant
+selector removed. User already confirmed QA062 selection AND on-court success.
+ON validates/pins the existing prepared private pack before Steam, then after
+exact owned game/lease bind atomically publishes separate PID/birth/nonce-bound
+source/category tokens. No manual scripts/dialogs required. No existing tokens
+are overwritten/adopted. Native file pins/source proof and existing four-DWORD
+journal/readback/rollback remain mandatory. Missing/changed pack fails before
+launch. No roster/key bundled. Source pending waits without category Access;
+REGISTERED required; exact REFUSED/FAILED holds visibly; foreign receipt rejects.
+Settings apply NEXT Play; turning OFF does not restore a running game's tables.
+
+Start QA063 Dev.vbs with current game/launcher CLOSED normally. Enable WNBA
+Freestyle toggle, Play, stay at Home/QuickPlay during source initialization,
+then enter Freestyle and verify WNBA selection/court. No source/category test
+scripts needed. A separate toggle-OFF next-Play should issue no WNBA requests.
+Automatic orchestration needs fresh live testing; existing native route passed.
+
+STAGED ARTIFACT
+Dev/Pending/QA063/launcher.exe 52164096bytes
+SHA256 40655A8739F907BA19D737303590F0A40A97CECA05564478DF511C2BDAEF6BBA
+NativeDLL unchanged D39E5745655C8FE6EDACBA1C56BC12B232A2F101DC18A292D300EC8A2B27136A.
+Current running DEV stays QA062 E7742094...; no activation performed.
+Starter backs up/replaces DEV only and refuses active game/launcher/EAC.
+CheckOnly refused current game24948,UI3404/worker21548 as intended.
+
+BLACKTOP NOT ENABLED / NOT READY
+User's fresh Blacktop selection read-only double sample has370teams/30NBA/
+0WNBA while registered priority source has1entry. Learn2K source alone doesn't
+populate Blacktop. Verified source lead: second native WAD lookup alias
+roster/roster.iff FE5CBA7819830553 to same403payload avoids callback swap, but
+is GLOBAL to default-roster consumers and doesn't reload the initially resident
+stock roster. Need separate metadata/profile pins and natural Freestyle exit,
+Home, Blacktop reload experiment. Category3 is empty; stock masks are instruction
+immediates, no verified data-only WNBA slot. WPF's process-lifetime RX bridge
+needs a separately gated V2 executor/dispatch/continuation/pins/restoration.
+Cached-list mutation has unproven consumer/unload concurrency. No Blacktop
+patch or two-entry pack activated; toggle stays visible/disabled. Do NOT enable
+old callback route or substitute Freestyle DWORDs. UI blacktopAvailable prop
+prepared but remainsfalse until real native route is ready.
+
+VALIDATION
+83Rust tests passed:launch3,sourcegate3,plan11,runtime25,journal4,provider22,
+Freestyle15;2explicit disk-only ignored. Frontend10tests +tsc passed. Python
+roster probe6tests passed including Blacktop inactive-selection/reject-active.
+Offline/locked/-j4 test and dev builds passed,12/47existing warnings.
+PSstarter parses/VBS /check passes; working src/frontend NULscan clean. Changed
+files durablyflushed. No broad suite/release qualification claimed.
+
+SOURCES/EVIDENCE
+src/wnba_priority_launch.rs new;categories.rs pack preparer;provider_launch.rs
+owned predispatch/bind;main.rs;feature_plan.rs;feature_runtime.rs.
+frontend/UnlocksPanel.tsx;App.tsx scoped props;feature-availability.ts/tests.
+Backups/qa063-wnba-auto-launch-20261018
+Backups/qa063-wnba-freestyle-toggle-20261018
+Backups/qa063-wnba-toggle-ui-20261018
+artifacts/qa063-focused-tests.log;qa063-final-test-build.log;qa063-dev-build.log
+artifacts/qa063-blacktop-loaded-roster-readonly-20261018-1.json
+artifacts/qa062-blacktop-native-priority-next-steps-20261018.md
+artifacts/qa062-blacktop-priority-alias-disk-audit-20261018.json
+Read-only probe new --blacktop option; needs exact dev lease/selection screen.
+No keys read; current Blacktop probe6300bytes; no writes/calls.
+User WNBA court success: earlier "yup it works" confirms QA062 gameplay trial,
+no general Blacktop or other-mode compatibility claim. Estimated overall80.2%.

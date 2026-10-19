@@ -1,0 +1,361 @@
+{
+    "schema":  "nba2k27-freestyle-category-oracle-v1",
+    "gameAccess":  false,
+    "sourceUnmodified":  true,
+    "original":  [
+                     [
+                         4,
+                         0,
+                         1,
+                         3,
+                         2,
+                         5
+                     ],
+                     [
+                         1,
+                         2,
+                         4,
+                         3,
+                         0,
+                         5
+                     ]
+                 ],
+    "enabled":  [
+                    [
+                        4,
+                        0,
+                        1,
+                        2,
+                        3,
+                        5
+                    ],
+                    [
+                        1,
+                        2,
+                        3,
+                        4,
+                        0,
+                        5
+                    ]
+                ],
+    "mixtures":  [
+                     {
+                         "bits":  0,
+                         "owned":  true,
+                         "original":  true,
+                         "enabled":  false
+                     },
+                     {
+                         "bits":  1,
+                         "owned":  true,
+                         "original":  false,
+                         "enabled":  false
+                     },
+                     {
+                         "bits":  2,
+                         "owned":  true,
+                         "original":  false,
+                         "enabled":  false
+                     },
+                     {
+                         "bits":  3,
+                         "owned":  true,
+                         "original":  false,
+                         "enabled":  false
+                     },
+                     {
+                         "bits":  4,
+                         "owned":  true,
+                         "original":  false,
+                         "enabled":  false
+                     },
+                     {
+                         "bits":  5,
+                         "owned":  true,
+                         "original":  false,
+                         "enabled":  false
+                     },
+                     {
+                         "bits":  6,
+                         "owned":  true,
+                         "original":  false,
+                         "enabled":  false
+                     },
+                     {
+                         "bits":  7,
+                         "owned":  true,
+                         "original":  false,
+                         "enabled":  false
+                     },
+                     {
+                         "bits":  8,
+                         "owned":  true,
+                         "original":  false,
+                         "enabled":  false
+                     },
+                     {
+                         "bits":  9,
+                         "owned":  true,
+                         "original":  false,
+                         "enabled":  false
+                     },
+                     {
+                         "bits":  10,
+                         "owned":  true,
+                         "original":  false,
+                         "enabled":  false
+                     },
+                     {
+                         "bits":  11,
+                         "owned":  true,
+                         "original":  false,
+                         "enabled":  false
+                     },
+                     {
+                         "bits":  12,
+                         "owned":  true,
+                         "original":  false,
+                         "enabled":  false
+                     },
+                     {
+                         "bits":  13,
+                         "owned":  true,
+                         "original":  false,
+                         "enabled":  false
+                     },
+                     {
+                         "bits":  14,
+                         "owned":  true,
+                         "original":  false,
+                         "enabled":  false
+                     },
+                     {
+                         "bits":  15,
+                         "owned":  true,
+                         "original":  false,
+                         "enabled":  true
+                     }
+                 ],
+    "foreign":  [
+                    {
+                        "table":  0,
+                        "index":  0,
+                        "value":  6,
+                        "owned":  false
+                    },
+                    {
+                        "table":  0,
+                        "index":  0,
+                        "value":  99,
+                        "owned":  false
+                    },
+                    {
+                        "table":  0,
+                        "index":  0,
+                        "value":  4294967295,
+                        "owned":  false
+                    },
+                    {
+                        "table":  0,
+                        "index":  1,
+                        "value":  6,
+                        "owned":  false
+                    },
+                    {
+                        "table":  0,
+                        "index":  1,
+                        "value":  99,
+                        "owned":  false
+                    },
+                    {
+                        "table":  0,
+                        "index":  1,
+                        "value":  4294967295,
+                        "owned":  false
+                    },
+                    {
+                        "table":  0,
+                        "index":  2,
+                        "value":  6,
+                        "owned":  false
+                    },
+                    {
+                        "table":  0,
+                        "index":  2,
+                        "value":  99,
+                        "owned":  false
+                    },
+                    {
+                        "table":  0,
+                        "index":  2,
+                        "value":  4294967295,
+                        "owned":  false
+                    },
+                    {
+                        "table":  0,
+                        "index":  3,
+                        "value":  6,
+                        "owned":  false
+                    },
+                    {
+                        "table":  0,
+                        "index":  3,
+                        "value":  99,
+                        "owned":  false
+                    },
+                    {
+                        "table":  0,
+                        "index":  3,
+                        "value":  4294967295,
+                        "owned":  false
+                    },
+                    {
+                        "table":  0,
+                        "index":  4,
+                        "value":  6,
+                        "owned":  false
+                    },
+                    {
+                        "table":  0,
+                        "index":  4,
+                        "value":  99,
+                        "owned":  false
+                    },
+                    {
+                        "table":  0,
+                        "index":  4,
+                        "value":  4294967295,
+                        "owned":  false
+                    },
+                    {
+                        "table":  0,
+                        "index":  5,
+                        "value":  6,
+                        "owned":  false
+                    },
+                    {
+                        "table":  0,
+                        "index":  5,
+                        "value":  99,
+                        "owned":  false
+                    },
+                    {
+                        "table":  0,
+                        "index":  5,
+                        "value":  4294967295,
+                        "owned":  false
+                    },
+                    {
+                        "table":  1,
+                        "index":  0,
+                        "value":  6,
+                        "owned":  false
+                    },
+                    {
+                        "table":  1,
+                        "index":  0,
+                        "value":  99,
+                        "owned":  false
+                    },
+                    {
+                        "table":  1,
+                        "index":  0,
+                        "value":  4294967295,
+                        "owned":  false
+                    },
+                    {
+                        "table":  1,
+                        "index":  1,
+                        "value":  6,
+                        "owned":  false
+                    },
+                    {
+                        "table":  1,
+                        "index":  1,
+                        "value":  99,
+                        "owned":  false
+                    },
+                    {
+                        "table":  1,
+                        "index":  1,
+                        "value":  4294967295,
+                        "owned":  false
+                    },
+                    {
+                        "table":  1,
+                        "index":  2,
+                        "value":  6,
+                        "owned":  false
+                    },
+                    {
+                        "table":  1,
+                        "index":  2,
+                        "value":  99,
+                        "owned":  false
+                    },
+                    {
+                        "table":  1,
+                        "index":  2,
+                        "value":  4294967295,
+                        "owned":  false
+                    },
+                    {
+                        "table":  1,
+                        "index":  3,
+                        "value":  6,
+                        "owned":  false
+                    },
+                    {
+                        "table":  1,
+                        "index":  3,
+                        "value":  99,
+                        "owned":  false
+                    },
+                    {
+                        "table":  1,
+                        "index":  3,
+                        "value":  4294967295,
+                        "owned":  false
+                    },
+                    {
+                        "table":  1,
+                        "index":  4,
+                        "value":  6,
+                        "owned":  false
+                    },
+                    {
+                        "table":  1,
+                        "index":  4,
+                        "value":  99,
+                        "owned":  false
+                    },
+                    {
+                        "table":  1,
+                        "index":  4,
+                        "value":  4294967295,
+                        "owned":  false
+                    },
+                    {
+                        "table":  1,
+                        "index":  5,
+                        "value":  6,
+                        "owned":  false
+                    },
+                    {
+                        "table":  1,
+                        "index":  5,
+                        "value":  99,
+                        "owned":  false
+                    },
+                    {
+                        "table":  1,
+                        "index":  5,
+                        "value":  4294967295,
+                        "owned":  false
+                    }
+                ],
+    "sourceSha256":  [
+                         "FA4D228BD35E6A17AE22901B27ED3AA14BBC1DD52BFC8FCF4D9D01C93EC808AB",
+                         "5C4A4AA44A088A5BD602A3EE06F550090B3BA630D4F7FA31BE9CED2B1AEAFD17"
+                     ]
+}

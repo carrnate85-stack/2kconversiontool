@@ -1,0 +1,68 @@
+QA056 DEV CHECKPOINT — 2026-10-18
+Read QA054 and QA055 handoffs first for constraints and prior source changes.
+
+USER'S QA055 RESULTS
+- Outfit carry now works visibly, confirmed by user; native report PID 31984
+  REBUILT, PLAYERS_REBUILT=2. Walk-in cutscene still shows regular clothes;
+  replacement appears later. First match success only; rearm not certified.
+- Selected-player reading is much slower than WPF.
+- Checking-game-build label still seen at 30 seconds into launch.
+- Overlay Ready/Waiting status alternates every few seconds.
+- Overlay remains over other PC apps after Alt-Tab: prioritized for QA056.
+- WNBA is NOT ready; still disabled with delivery unimplemented/unverified.
+Full evidence and open performance leads: artifacts/qa055-live-results-20261018.txt.
+No mouse/keyboard/UI use, game restart or new live memory writes authorized.
+
+QA056 FIX
+Only app source changed since QA055: src/native_overlay.rs.
+1. Independent 20 ms input loop physically hides overlay on external focus,
+   regardless of slow observer/model reads, heartbeat or stale visible flag.
+2. Render physically hides an existing topmost overlay whenever fresh foreground
+   classification disallows it; no longer checks focus only when showing hidden UI.
+3. Previous worker classification as a WebView overlay child can be reused only
+   for the same nonzero foreground PID. Previously any Other foreground could
+   inherit stale overlay authorization and allow overlay over a different app.
+4. User visibility intent survives Alt-Tab; display restoration remains gated.
+WPF divergence: physical focus hide is now immediate rather than waiting for
+the observer's 350 ms logical debounce. This prevents covering unrelated apps;
+logical user intent/debounce and all game write gates remain separate.
+
+TESTS / BUILD
+- 26/26 offline overlay tests passed outside sandbox, including stale foreground
+  PID regression, focus visibility, Alt-Tab restore, F8, hide and epoch/revision.
+- Restricted initial run: 25 pass / 1 fixture AccessDenied replacing diagnostic
+  JSON; retained in artifacts/qa056-overlay-tests-sandbox.log.
+- Final passing output: artifacts/qa056-overlay-tests.log.
+- Debug dev build succeeded, 21.22 s; artifacts/qa056-dev-build.log.
+- No actual QA056 GUI/gameplay retest. Do not claim Alt-Tab proven live yet.
+- No full suite rerun; earlier intermittent test-process AV remains unresolved.
+
+DELIVERY — STAGED, CURRENT APP UNCHANGED
+Click Start QA056 Dev.vbs after closing game and launcher normally.
+Uses Start QA056 Dev.ps1: verifies staged hash, refuses active game/launcher,
+backs up previous dev EXE, updates only Dev/Portable/App and opens dev app.
+Same portable data and localhost Vite workflow. No process kill or Main install.
+Staged Dev/Pending/QA056/launcher.exe: 52004352 bytes,
+SHA256 E906D3C7F0755BA6A14497AFC2D2DEAD83BA8686F52D6F54C5D09623D45530BC.
+Current QA055 dev EXE still SHA AEF97153130FF2C010805BBC2BF1DEDC5B6ADBA79820A44FD42A52CC5E7A6F9E.
+Source version remains 0.53.1. DLL unchanged from QA055.
+Backup: Backups/qa056-overlay-focus-20261018/native_overlay.rs.
+No installation/promotion or existing session writes occurred.
+
+NEXT
+1. Test QA056 Alt-Tab away/back with compact bar, catalog and dropdown open;
+   verify overlay never remains over another app and F8/hide still behave.
+2. Profile exact slow selected-player read before changing any authorization
+   checks. Existing read-only ignored selection probe requires selection screen.
+3. Trace raw boundary/current/alternate/stage alongside Ready/Waiting status.
+   Current diagnostics alternate match/transition; frontend badge follows raw
+   boundary. Do not mask a genuine ownership failure with sticky Ready.
+4. Add parent launch timing before provider clock; current 9.65 s worker build
+   verification excludes parent preflight/build verification. Preserve full
+   identity/hash gates. A stale checking label remains a lead, not reproduced UI.
+5. Measure carry readiness/plan/consume/rebuild relative to walk-in; Rust and
+   native both require three >=250 ms observations (minimum ~500 ms each,
+   partly overlapping). Do not confuse four >=500 ms REARM samples with match
+   readiness. Do not reduce gates speculatively or add new live write types.
+6. WNBA offline research remains open; no runtime enable or archive patching.
+Completion estimate remains 80.2%; no new promotion or release qualification.

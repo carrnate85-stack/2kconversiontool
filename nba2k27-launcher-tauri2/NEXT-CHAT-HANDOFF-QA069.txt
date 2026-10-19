@@ -1,0 +1,125 @@
+QA069 DEV CHECKPOINT - 2026-10-18
+Read QA068 then QA067 for the larger baseline. Canonical root is this project.
+DEV ONLY: never install/promote without approval. No agent game launch/stop,
+desktop control, or ad hoc live-memory writes. Normal toggles+Play only;
+exact retained-identity read-only probes are authorized. Preserve Data/Library,
+all builds/backups and owned journals. Back up/fsync every change.
+
+USER'S LATEST ACCEPTANCE GOAL
+Clothes still take about5seconds; WPF was effectively instantaneous. Do not
+present5seconds as acceptable parity or claim a speed fix from read counts.
+Also: initial automatic Random All gave every player the same clothes; overlay
+did not disappear when MATCH starts. WNBA still absent in QA068 Blacktop.
+
+QA068 LIVE FINDINGS (game17224, session
+000000000000000018dfb5528edc51c00000000000000002)
+- Exact QA068 binary DED4...C28A activated by user, not agent.
+- WNBA previous COW rejection fixed: LABEL_RESOLVED, ROSTER_ARMED8457078,
+  ROSTER_RESTORED8469609, WAITING_ROSTER8473359. Live double inventory370teams,
+  30NBA/0WNBA, priority present2entries. Callback was published/restored; this
+  does NOT prove game invoked it. All44 later admission checks passed. At
+  picker installed/playnowdelegate9B31BB0; requesteddelegate8AE67D8; stockD30
+  callback236E510 restored. Both source aliases/hashes and mixed payload valid.
+- Exact callback/input at restore was not logged in QA068. WPF retains until
+  bothBlacktop/stage3 or60s; Tauri has more intermediate release predicates.
+  This is a real code difference but3.75s toWAITING_ROSTER does NOT prove early
+  restore, since that message additionally requires completed370team inventory.
+  Do not relax retention blindly. No separate permanent WNBA unlock found.
+- Exact-lease loader probe verifies7complete native service methods, class,
+  queue submission and8bounded typedrequests; UID64 globals/read semantics
+  proved. Picker UID29/emptyqueue; later bounded15s match samples UID60/empty.
+  Completed empty queue/globalUID cannot prove General callback execution.
+- Outfit native report REBUILT2, no code/object hooks. User still sees5sec.
+  firstMatch219798; firstReady221369; stableAdmission222539; freeze222546..223628;
+  publish223628..225184 =>5386ms first-match-to-publication. Native completion
+  may overlap publication. readinessFailures0, longestready302ms,3samples.
+  Do NOT call first1571ms purely game-readiness delay: failed lineup reads lack
+  a counter; it includes owner/profile work. Freeze2fullchecks/publish3fullchecks.
+- Match overlay logicalvisible=false at1792350778921 but windowVisible remained
+  true through match, later physical hide. autoHideOverlay=true. User's report
+  concerns actual presentation, not just wanted-policy. Exact evidence saved.
+
+QA069 CHANGES
+1. backend.rs random-outfit no longer seeds solely from wall clock (same clock
+   value deterministically produced same outfit; OR1 also merged adjacentseeds).
+   Each call uses BCryptGenRandom plus independent atomic sequence + SplitMix64
+   and unbiased bounded selection. No new dependency. Preserve pool, current
+   shoes, clothes/accessories mode and initial3streetwear/noaccessories behavior.
+   Fixed-entropy64parallel regression plus male/female streetwear compatibility.
+2. Overlay: explicit first-confirmed-match edge closes once and clears catalog/
+   dropdown, while later F8 reopen stays open. Physical presentation now checks
+   IsWindowVisible and performs synchronous owner-thread ShowWindow(SW_HIDE)
+   with hidden readback. Requires exact launcher PID+actual HWND owner thread.
+   Catalog physical show also completes on owner thread; compact no-activate.
+   Preserve20ms F8, latest-state projection, foreground scoping and QA068 stale
+   hide prevention. No live UI operations used to claim success. Five newtests.
+3. rules_v2.rs fresh code proof batches39complete getters into6same-page spans
+   (10153bytes total,max3903). Full verify_profile50reads->17. Every invocation
+   still re-reads live code; all39full byte comparisons/ownerRIP/field mappings,
+   executable header/context/class anchors/finalcheckpoint remain exact. No
+   persistent live cache/TTL, no skipped publication boundary or flush.
+   Partial/error group retries ALL39original scalar proofs. Each SUCCESSFUL
+   group compares its bytes immediately; mismatch cannot be erased by a later
+   transport error and successful scalar fallback. Three meaningful tests.
+   This targets1320guarded getter reads across freeze+publication; actual speed
+   improvement still needs next normal live match timing, not a synthetic claim.
+4. WNBA telemetry ONLY: arm/restore intent+applied journals/progress include
+   stable/raw current/other/stage/active/kind, installed/requested/playnow RVAs,
+   and64bit native request UID. Fixed read-only metadata, retainedidentity
+   before/after, explicit unknown/null/foreign. NO retention/write-guard change.
+   Current WNBA remains unresolved; next normal launch should expose actual
+   restore boundary. Do not label this a WNBA functionality fix.
+
+NEW NATIVE PAYLOAD
+EE2D90AF316717231C455346F62E0F3190CF2B48B3682CAA7189F7408E82C0B9
+1142784bytes. Strict C++ build/forwarding smoke + formatter/no-call tests pass.
+Exact QA06881952...CB04/1137152 recovery-only admitted; all earlier exact pins
+retained. New publication admits only exact current embedded payload.
+
+FINAL STAGE / VALIDATION
+Authoritative final binary/source/assets/tests are in
+artifacts/qa069-final-stage-20261018.json, created only after successful stage.
+Logs: qa069-final-test-build.log,qa069-final-full-rust-tests.log,
+qa069-final-dev-build.log. Earlier before-* logs do NOT validate final batching
+mismatch guard. UI tsc passed; frontend source unchanged from QA068223passing.
+Starter Start QA069 Dev.vbs/.ps1 exacthash/size+idle guards, backup and durable
+copy ONLY Dev/Portable/App. Agent never activates/installs/promotes. User closes
+current game and launcher normally first. Source must remain frozen duringtest.
+
+REPORTS / PROBES
+qa068-random-outfit-entropy-review.txt
+qa069-overlay-match-start-before.json / qa069-overlay-match-start-review.txt
+qa069-rules-getter-batching-20261018.json
+qa069-carry-latency-source-audit-20261018.json
+qa069-outfit-publication-latency-source-counts.json + review.txt
+qa069-wpf-v2-outfit-carry-flow-review-20261018.json
+qa068-wpf-blacktop-wnba-source-comparison-20261018.json
+qa068-blacktop-source-unconsumed-readonly-20261018-1.json
+qa068-blacktop-restored-callback-readonly-20261018-1.json
+qa068-native-roster-request-readonly-20261018-1.json
+qa068-native-roster-request-natural-transition-20261018-2.json
+tools/wnba_roster_request_readonly_probe.py (bounded, exactlease, no calls/writes)
+tools/wnba_blacktop_roster_readonly_probe.py now mirrorsQA068delegateCOW policy,
+  plus fixed requested/playnow metadata. It is diagnostic only.
+
+NEXT
+Normal fresh dev launch/toggles+Play; no trial scripts. Capture new WNBA arm/
+restore telemetry. Check independent initial streetwear, automatic duplicate
+suppression, overlay disappearance at match/F8reopen, actual outfit timing.
+Current held/carry/source state is never replayed by agent. User controls game.
+If stillslow, compare post-batching stages before broader optimization. Proposed
+future fresh composite validation can bracket one context+lineup+match capture
+with pre/post ownership, eliminating redundant owner scans within each of the
+same5durable boundaries. NOT IMPLEMENTED. No TTL/prewrite-proof caching.
+Do not weaken match/identity gates merely to match old WPF. WPF starts with
+mode6+loadedstockactors; V2 stricter mode/stage/context stability is another
+measurable difference requiring first-ready observations before changing.
+Overall weighted parity remains81.8%; no new live parity promotion.
+
+FINAL VERIFIED19:23UTC: Rust1257passed/0failed/52ignored, finaldevbuildPASS.
+416source hashes and staged EXE verified; frontend identical toQA068223passing.
+TscPASS. PSstarterAST/VBScheckPASS, no activation/install/promotion.
+EXE B9225441F75BA5D12C3757E6A3874B957A2AD1F7F3D053C1B92F9DAEE5DE7C83
+52696576bytes. ActiveDev remained QA068DED4...C28A.
+Clothing speed and native match overlay behavior await live QA069 acceptance.
+WNBA still unresolved; native telem nexttest mustnotbe represented asfix.

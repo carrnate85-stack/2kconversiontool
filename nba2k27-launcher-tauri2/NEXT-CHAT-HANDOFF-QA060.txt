@@ -1,0 +1,43 @@
+QA060 — 2026-10-18. Read QA054 safety and QA058/059 handoffs for history.
+Full report: artifacts/qa060-outfit-speed-20261018.txt.
+
+User confirmed player reading/random faster, asked further speed. New changes:
+100ms visible status/selection scans, immediate condition-variable queue wake,
+pool-template reuse per random batch, background catalog preparation. Hidden
+cadence1s; V2refresh20ms and idlecarry100ms retained. All live-write gates,
+journals, expiry, readback and stability counts unchanged. Initial automatic
+random remains streetwear only, empty accessories, roster shoes. Button toggle
+and QA059 no-full-file-audit-on-normal-Play changes preserved.
+
+STAGED ONLY: Start QA060 Dev.vbs / .ps1
+Dev/Pending/QA060/launcher.exe52061184bytes
+SHA46D50C305103726BFEA48D72A9D98DA77A473DCADCA00EC8571E451F60DE3806
+Native DLL unchanged4B03D0EAD15EB5CE562C434CD304017ADAD09DEFA96C1B4AAF30AA656830886F
+Starter refuses active game/launcher; final CheckOnly refused because game12948
+and DEV25300/44636 still running. No kill, launch, activation, install/promotion.
+User must close normally before using new starter. Never overwrite active app.
+
+Validation:29frontend,tsc,9runtime+fresh-status regression and test/dev builds
+passed. Final one-line background catalog preparation compiled in final DEV
+after runtime tests. New sync tests exercise wakeups/coalescing/stop/held waits.
+Read-only sample had zero players, guarded56-79ms; catalog cold259ms/warm1us.
+Not an end-to-end or random-apply speed measurement; user live confirmation next.
+
+WNBA PENDING: user said 'ok run' authorizing the exact source-admission test.
+The current game was already15min old and watcher expires10min after activation,
+so no registration was attempted/no approval token created. That approval
+persists: do not ask user to authorize again. Need a fresh owned DEV Play at
+inactive Home/Quick Play; no current game stop/restart was authorized by agent.
+Current QA058 Freestyle read:334teams,30NBA,0WNBA,priority absent.
+New matching wrappers Test QA060 WNBA Source.vbs/.ps1 and Approve QA060 WNBA
+Source Test.ps1 retain exact hashes/session gate; native fixed pack path stays
+Data/wnba-priority-v2/qa058-wpf-era. User running wrapper normally gets explicit
+dialog. For agent execution of already-approved action, add/use an explicit
+approved noninteractive invocation with backup, preserving default dialog and
+all native gates; do not silently automate the desktop or write token ad hoc.
+Never bypass expired watcher by new injection/game calls. Read-only verification
+after REGISTERED must prove403/30NBA/15WNBA and reentry before categories enabled.
+Existing53unindexed-player gap and all QA058 caveats remain.
+
+No actual native WNBA calls/gameplay tests. Full-suite natural AV unresolved.
+No live outfit apply this turn. User Data/Library preserved. Estimate80.2%.

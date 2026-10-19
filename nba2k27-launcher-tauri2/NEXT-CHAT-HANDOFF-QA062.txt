@@ -1,0 +1,94 @@
+QA062 DEV checkpoint - 2026-10-18
+
+User scope: keep WNBA integration moving until testable in DEV. No installation,
+promotion, game/UI launch or live category write performed by the agent.
+
+CURRENT VALIDATED LIVE BASELINE
+QA061 game42716 source registration succeeded. Native priority backend present,
+1entry, vtableRva812d868. User's Freestyle initial+Home/re-entry probes both
+reported403teams/30NBA/15WNBA, exact clubIDs and no duplicates. These are source
+load/re-entry proofs, not category navigation/player validity/gameplay proofs.
+Evidence artifacts/qa061-wnba-live-source-success-20261018.txt and its JSON/logs.
+
+NEW QA062 DEV CATEGORY TEST
+- New default-false Plan.wnba_priority_categories; debug freeze enables only a
+  waiting metadata watcher. Release plans reject this mode. Legacy callback
+  loader remains disabled; legacy mixed build/provider/key capture routes stayoff.
+- With no exact category approval and no other feature work, Runner opens no
+  game Access, consumes no access retry budget, creates no journal and makes
+  no category write. The ordinary source approval does not grant this mode.
+- Separate72byte categories-<nonce>.bin token magicC27WNPC1, exactPID/birth/nonce,
+  zero reserved bytes. Script validates current+stagedEXE, game/DLL hashes,
+  exact Play lease/parent/worker/game births+paths, and native REGISTERED receipt.
+- Gate pins ordinary single-link pack0A/0B and immutable terminal source receipt,
+  hashes pack once, retains directories/files denying replacement/write/delete,
+  and rechecks current category approval+fileidentities+receipt each verification.
+- Repeated native chain proof: V2 manager, native WAD type/backpointer/counts,
+  raw24byte Learn2K entry, original48byte header, immutable file descriptorfields,
+  exact portable privatepack directory prefix. No native calls or key reads.
+- Existing freestyle_v2 strict mixed-roster deep capture checks initialized
+  names,15exactclubs and nationalIDs69/361 with two stable snapshots. Existing
+  exact FOUR-DWORD feature writer journals intent/readback/prefix rollback.
+  Source proof brackets deep snapshots and runs immediately before eachscalar.
+  Once applied, observes owned categorytables for game lifetime; no live retry
+  or adoption of foreign category values. Existing restoration guards retained.
+- Saved UI toggle staysdisabled; wording now identifies the separate dev test.
+  New category helper shows pending/active/held status from exact-session worker.
+
+ARTIFACTS / NEXT USER TEST
+Staged Dev/Pending/QA062/launcher.exe 52135424bytes
+SHA256 E77420948B8E29C4186F9FC5512508B673389E7AA9DCAD8F681E265DB52AD924
+NativeDLL unchanged from QA061:
+D39E5745655C8FE6EDACBA1C56BC12B232A2F101DC18A292D300EC8A2B27136A
+Current Dev/Portable EXE remains QA061(7219D...), not overwritten/activated.
+1.Start QA062 Dev.vbs with game/launcher closed, then click Play.
+2.At Home/QuickPlay run Test QA062 WNBA Source.vbs; wait REGISTERED.
+3.Run Test QA062 WNBA Categories.vbs, then enter Freestyle's team picker.
+  Wait ACTIVE before cycling team categories. First report WNBA team names and
+  player list; gameplay/player validity still unverified (53unindexed appends).
+No Main installation/promotion. Starter backs up/replaces DEV only and refuses
+any active game/launcher/EAC beforeactivation. One launcher at a time.
+
+VALIDATION
+Recovered test build and dev build passed offline/locked/-j4.
+80focused Rust tests passed: sourcegate3,plan10,runtime22,journal4,
+Freestyle15,writer4,provider22.2explicit disk-only tests ignored.
+Frontend10tests plus TypeScript --noEmit passed.
+All5PowerShell scripts parse;3VBS /check scripts pass.
+Start -CheckOnly verified stagedhash and idle state; no activation.
+Category -CheckOnly correctly refused older currentDEV EXE beforeapproval.
+Explicit ignored read-only deep liveprobe added for next session, but NOT RUN:
+PC reboot ended the livegame before its compilation. Category source assumptions
+were independently checked against retained native disassembly. Livecategory
+navigation/gameplay remains pending. No broad releasequalification claimed.
+
+PC CRASH / RECOVERY
+User clarified whole PC crashed, not just NBA2K27. SystemEvent1001 at12:49:34EDT
+records bugcheck0x50 and C:/Windows/Minidump/101826-21359-01.dmp. Cause unverified.
+Windows event details saved artifacts/qa062-pc-crash-system-events-20261018.json.
+Reboot zero-filled5recent source/script files and corrupted the testlinkerPDB.
+Preserved damagedfiles/PDB under Backups/qa062-post-crash-corrupt-20261018.
+Runtime restoredfrom intact immediate-source-recheck backup and reapplied final
+check, then durablyflushed. Parent probe/scripts reconstructed and flushed.
+Working source/script NULscan nowclean (qa062-recovered-source-integrity.json).
+Corrupt testPDB moved/preserved; rebuilt fresh; no oldbuilds/cachetrees deleted.
+Initial failed builds/logs preserved, successful recovered builds are authoritative.
+
+SOURCES/BACKUPS
+src/feature_plan.rs;src/feature_runtime.rs
+src/wnba_priority_categories.rs;src/wnba_priority_categories_tests.rs
+src/freestyle_v2_live_probe.rs;src/main.rs
+frontend/feature-availability.ts +existingtest;frontend/UnlocksPanel.tsx
+Backups/qa062-wnba-categories-20261018
+Backups/qa062-category-parent-20261018
+artifacts/qa062-focused-tests.log;qa062-test-build-new-pdb.log;qa062-dev-build.log
+Estimated overall completion remains80.2%, no live-gameplaycertified increase.
+
+LIVE UPDATE: QA062 source REGISTERED PID28496; category runtime ACTIVE.
+Exact dev EXE E77420948B8E29C4186F9FC5512508B673389E7AA9DCAD8F681E265DB52AD924.
+User confirms: "yes its there and it works" after category test.
+This confirms Freestyle WNBA category visibility/navigation; court/player/gameplay
+compatibility still not explicitly confirmed. See artifacts/qa062-wnba-category-live-success-20261018.json.
+Next test: select WNBA team and enter practice court; check player list, models,
+uniforms, movement, exit and re-entry. Blacktop integration remains separate.
+No installation/promotion or new agent live writes.

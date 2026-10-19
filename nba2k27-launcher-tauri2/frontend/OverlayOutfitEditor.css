@@ -1,0 +1,263 @@
+/* F8 Edit outfit: WPF Reference renderer rules (blacktop-panel.css,
+   clothing-picker.css, release-theme.css, blacktop-topbar.css) as resolved on
+   the expanded overlay, extracted from the rendered WPF page and scoped to
+   .wpf-outfit. Keep in source order: later rules override earlier ones. */
+.overlay-demo .wpf-outfit {
+  --court: #b8ed93;
+  --muted: #a0ada4;
+  --line: #303c34;
+  --panel: #141b18;
+  --text: #f0eee5;
+  --bg: #0c100f;
+  --amber: #e3bc76;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  color: #f0eee5;
+  font-family: "Segoe UI Variable Text", "Segoe UI", sans-serif;
+  font-size: 16px;
+  background: #101611;
+}
+.overlay-demo .wpf-outfit .wpf-main p,
+.overlay-demo .wpf-outfit .wpf-main h2 {
+  margin: 0;
+}
+.overlay-demo .wpf-outfit * { box-sizing: border-box; }
+.overlay-demo .wpf-outfit button, .overlay-demo .wpf-outfit select { app-region: no-drag; font: inherit; color: inherit; border: 1px solid rgb(64, 80, 106); border-radius: 7px; background: rgb(32, 45, 61); padding: 8px 11px; }
+.overlay-demo .wpf-outfit button { cursor: pointer; font-weight: 600; }
+.overlay-demo .wpf-outfit button:hover { background: rgb(48, 65, 89); }
+.overlay-demo .wpf-outfit button:disabled, .overlay-demo .wpf-outfit select:disabled { opacity: 0.45; cursor: default; }
+.overlay-demo .wpf-outfit button:focus-visible, .overlay-demo .wpf-outfit select:focus-visible { outline: rgb(115, 222, 179) solid 2px; outline-offset: 2px; }
+.overlay-demo .wpf-outfit .wpf-main { padding: 10px 14px; overflow: hidden; flex: 1 1 0%; min-height: 0px; display: flex; flex-direction: column; }
+.overlay-demo .wpf-outfit .blacktop-workspace { display: grid; grid-template-columns: 156px minmax(0px, 1fr); gap: 12px; min-height: 0px; flex: 1 1 0%; }
+.overlay-demo .wpf-outfit .wpf-player-picker, .overlay-demo .wpf-outfit .wpf-players { min-height: 0px; overflow-y: auto; scrollbar-width: thin; }
+.overlay-demo .wpf-outfit .wpf-player-picker { display: flex; flex-direction: column; gap: 5px; padding-right: 3px; }
+.overlay-demo .wpf-outfit .blacktop-player-button { flex-shrink: 0; text-align: left; padding: 7px 9px; font-size: 12px; min-height: 49px; }
+.overlay-demo .wpf-outfit .blacktop-player-button span { display: block; overflow-wrap: anywhere; }
+.overlay-demo .wpf-outfit .blacktop-player-button small { display: block; color: rgb(163, 178, 200); font-size: 10px; margin-bottom: 2px; font-weight: 400; }
+.overlay-demo .wpf-outfit .blacktop-player-button[aria-pressed="true"] { background: rgb(33, 73, 57); border-color: rgb(115, 222, 179); }
+.overlay-demo .wpf-outfit .blacktop-outfit-row[hidden] { display: none; }
+.overlay-demo .wpf-outfit .wpf-status { font-size: 12px; color: rgb(180, 193, 211); min-height: 16px; overflow-wrap: anywhere; margin: 8px 0px 12px; flex-shrink: 0; max-height: 72px; overflow-y: auto; }
+.overlay-demo .wpf-outfit .blacktop-outfit-row { display: grid; grid-template-columns: minmax(0px, 1fr) minmax(0px, 1fr); gap: 9px; padding: 13px; background: rgb(25, 34, 46); border: 1px solid rgb(44, 59, 80); border-radius: 9px; margin-bottom: 10px; }
+.overlay-demo .wpf-outfit .blacktop-outfit-row > div { grid-column: 1 / -1; }
+.overlay-demo .wpf-outfit .blacktop-outfit-row small { display: block; margin-top: 3px; color: rgb(145, 161, 183); font-size: 11px; }
+.overlay-demo .wpf-outfit .blacktop-outfit-row select { min-width: 0px; width: 100%; font-size: 12px; }
+.overlay-demo .wpf-outfit .blacktop-outfit-row p { grid-column: 1 / -1; font-size: 12px; }
+.overlay-demo .wpf-outfit .blacktop-piece { min-width: 0px; }
+.overlay-demo .wpf-outfit .blacktop-piece span { display: block; font-size: 11px; color: rgb(145, 161, 183); margin-bottom: 4px; }
+.overlay-demo .wpf-outfit .blacktop-player-heading { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 10px; }
+.overlay-demo .wpf-outfit .blacktop-player-identity { flex: 1 1 140px; min-width: 0px; overflow-wrap: anywhere; }
+.overlay-demo .wpf-outfit .blacktop-player-heading .blacktop-auto-apply-note { flex-basis: 100%; margin: 0px; }
+.overlay-demo .wpf-outfit .blacktop-piece-hint { margin: 0px; color: rgb(228, 198, 141); }
+.overlay-demo .wpf-outfit .wpf-footer { padding: 10px 18px; border-top: 1px solid rgb(43, 55, 74); font-size: 11px; line-height: 1.8; color: rgb(163, 178, 200); }
+@media (max-width: 520px) { .overlay-demo .wpf-outfit .blacktop-workspace { grid-template-columns: 125px minmax(0px, 1fr); gap: 8px; } }
+@media (max-width: 520px) { .overlay-demo .wpf-outfit .blacktop-outfit-row { grid-template-columns: minmax(0px, 1fr); padding: 10px; } }
+.overlay-demo .wpf-outfit .clothing-picker { color: rgb(238, 242, 248); background: rgb(20, 29, 41); border: 1px solid rgb(70, 88, 113); border-radius: 12px; width: min(1120px, -24px + 100vw); max-height: calc(-24px + 100vh); padding: 16px; box-sizing: border-box; }
+.overlay-demo .wpf-outfit .clothing-picker::backdrop { background: rgba(0, 0, 0, 0.733); }
+.overlay-demo .wpf-outfit .clothing-picker-heading, .overlay-demo .wpf-outfit .clothing-picker-filters, .overlay-demo .wpf-outfit .clothing-picker-pager { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.overlay-demo .wpf-outfit .clothing-picker-heading { justify-content: space-between; }
+.overlay-demo .wpf-outfit .clothing-picker-heading h2 { margin: 0px; font-size: 18px; }
+.overlay-demo .wpf-outfit .clothing-picker input, .overlay-demo .wpf-outfit .clothing-picker select { min-width: 0px; padding: 8px; font: inherit; color: inherit; background: rgb(14, 20, 28); border: 1px solid rgb(64, 80, 106); border-radius: 6px; }
+.overlay-demo .wpf-outfit .clothing-picker input { flex: 1 1 0%; }
+.overlay-demo .wpf-outfit .clothing-picker button { font: inherit; color: inherit; background: rgb(32, 45, 61); border: 1px solid rgb(64, 80, 106); border-radius: 7px; cursor: pointer; padding: 8px; }
+.overlay-demo .wpf-outfit .clothing-picker button:disabled { opacity: 0.45; cursor: default; }
+.overlay-demo .wpf-outfit .clothing-picker :focus-visible { outline: rgb(115, 222, 179) solid 2px; outline-offset: 2px; }
+.overlay-demo .wpf-outfit .clothing-picker-note { font-size: 11px; line-height: 1.5; color: rgb(189, 201, 216); margin: 0px; }
+.overlay-demo .wpf-outfit .clothing-category-filters { display: flex; flex-wrap: wrap; gap: 5px; width: 100%; }
+.overlay-demo .wpf-outfit .clothing-category-filters button { padding: 5px 9px; font-size: 11px; border: 1px solid rgb(52, 65, 84); border-radius: 7px; color: rgb(186, 200, 220); background: rgb(22, 30, 42); }
+.overlay-demo .wpf-outfit .clothing-category-filters button[aria-pressed="true"] { color: rgb(255, 255, 255); border-color: rgb(215, 53, 75); background: rgb(102, 32, 49); }
+.overlay-demo .wpf-outfit .clothing-picker-filters { flex-wrap: wrap; }
+.overlay-demo .wpf-outfit .clothing-picker-grid { display: grid; grid-template-columns: repeat(4, minmax(0px, 1fr)); gap: 8px; flex: 1 1 0%; min-height: 0px; overflow: auto; scrollbar-gutter: stable; align-content: start; padding: 3px; }
+.overlay-demo .wpf-outfit .clothing-tile { display: flex; flex-direction: column; align-items: center; gap: 5px; min-width: 0px; }
+.overlay-demo .wpf-outfit .clothing-tile[aria-pressed="true"] { border-color: rgb(115, 222, 179); background: rgb(33, 73, 57); }
+.overlay-demo .wpf-outfit .clothing-picture { display: flex; align-items: center; justify-content: center; width: 100%; height: 100px; background: rgb(11, 16, 24); border-radius: 5px; font-size: 10px; color: rgb(152, 171, 194); }
+.overlay-demo .wpf-outfit .clothing-tile-name { font-size: 11px; overflow-wrap: anywhere; text-align: center; }
+.overlay-demo .wpf-outfit .clothing-selected { font-size: 10px; font-weight: 700; color: var(--text,#b4df94); }
+.overlay-demo .wpf-outfit .accessory-slots { grid-column: 1 / -1; min-width: 0px; border-top: 1px solid var(--border,#354a39); padding-top: 10px; }
+.overlay-demo .wpf-outfit .accessory-slots-heading { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 8px; font-size: 12px; }
+.overlay-demo .wpf-outfit .accessory-slots-heading span { color: var(--muted,#a7b6c9); font-size: 11px; }
+.overlay-demo .wpf-outfit .accessory-slots-heading button { margin-left: auto; padding: 5px 8px !important; font-size: 11px !important; }
+.overlay-demo .wpf-outfit .accessory-slots-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(145px, 1fr)); gap: 8px; }
+.overlay-demo .wpf-outfit .accessory-slot { min-width: 0px; }
+.overlay-demo .wpf-outfit .accessory-slot label { display: block; font-size: 11px; color: var(--muted,#a7b6c9); }
+.overlay-demo .wpf-outfit .accessory-slot select { width: 100%; min-width: 0px; margin-top: 4px; font-size: 11px; height: 32px; padding: 5px; }
+.overlay-demo .wpf-outfit .clothing-picker-pager { justify-content: space-between; font-size: 12px; }
+.overlay-demo .wpf-outfit .clothing-picker-pager button { font-size: 12px; }
+.overlay-demo .wpf-outfit .blacktop-browse { margin-top: 5px; width: 100%; font-size: 11px !important; padding: 6px !important; }
+@media (max-width: 780px) { .overlay-demo .wpf-outfit .clothing-picker-grid { grid-template-columns: repeat(3, minmax(0px, 1fr)); } }
+@media (max-width: 480px) { .overlay-demo .wpf-outfit .clothing-picker-grid { grid-template-columns: repeat(2, minmax(0px, 1fr)); } }
+@media (max-width: 480px) { .overlay-demo .wpf-outfit .clothing-picker { padding: 10px; } }
+.overlay-demo .wpf-outfit .outfit-item-icon { width: 38px; height: 38px; color: var(--muted); }
+.overlay-demo .wpf-outfit .accessory-cards { border-color: var(--line); padding-top: 16px; }
+.overlay-demo .wpf-outfit .accessory-cards [hidden] { display: none !important; }
+.overlay-demo .wpf-outfit .accessory-cards .accessory-slots-heading { margin-bottom: 14px; }
+.overlay-demo .wpf-outfit .accessory-cards .accessory-slots-heading > span { border: 1px solid var(--line); border-radius: 20px; padding: 3px 8px; }
+.overlay-demo .wpf-outfit .accessory-cards .accessory-slots-grid { grid-template-columns: 2fr 1fr 1fr; gap: 12px; align-items: start; }
+.overlay-demo .wpf-outfit .accessory-cards .accessory-slot { position: relative; }
+.overlay-demo .wpf-outfit .accessory-tile-preview { display: flex; align-items: center; justify-content: center; height: 30px; width: 100%; margin: 0px 0px 6px; flex-shrink: 0; }
+.overlay-demo .wpf-outfit .accessory-tile-category { font-size: 11px; font-weight: 600; }
+.overlay-demo .wpf-outfit .accessory-tile-name { font-size: 10px; color: var(--muted); margin-top: 5px; line-height: 14px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere; }
+.overlay-demo .wpf-outfit .accessory-cards .accessory-tile:focus-visible, .overlay-demo .wpf-outfit .accessory-cards .accessory-tile-remove:focus-visible { outline: 2px solid var(--court,#80ed9e); outline-offset: 2px; }
+.overlay-demo .wpf-outfit .blacktop-saved-outfit { flex-basis: 100%; display: flex; align-items: center; gap: 8px; }
+.overlay-demo .wpf-outfit .blacktop-saved-outfit select { flex: 1 1 0%; min-width: 0px; max-width: 420px; }
+@media (max-width: 1000px) { .overlay-demo .wpf-outfit .accessory-cards .accessory-slots-grid { grid-template-columns: repeat(2, minmax(0px, 1fr)); } }
+@media (max-width: 1000px) { .overlay-demo .wpf-outfit .accessory-tile-preview { height: 30px; margin: 0px 0px 6px; } }
+@media (max-width: 580px) { .overlay-demo .wpf-outfit .accessory-cards .accessory-slots-grid { grid-template-columns: 1fr; } }
+.overlay-demo .wpf-outfit .accessory-cards .accessory-slots-grid { grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
+.overlay-demo .wpf-outfit .accessory-cards .accessory-primary-grid { grid-template-columns: repeat(4, minmax(0px, 1fr)); gap: 8px; align-items: start; display: grid !important; }
+.overlay-demo .wpf-outfit .accessory-primary-grid .accessory-slot { min-width: 0px; }
+@media (max-width: 350px) { .overlay-demo .wpf-outfit .accessory-cards .accessory-primary-grid { grid-template-columns: repeat(2, minmax(0px, 1fr)); } }
+.overlay-demo .wpf-outfit button, .overlay-demo .wpf-outfit input, .overlay-demo .wpf-outfit select, .overlay-demo .wpf-outfit textarea { accent-color: var(--court); }
+.overlay-demo .wpf-outfit button:focus-visible, .overlay-demo .wpf-outfit input:focus-visible, .overlay-demo .wpf-outfit select:focus-visible, .overlay-demo .wpf-outfit textarea:focus-visible { outline: 2px solid var(--court); outline-offset: 3px; }
+.overlay-demo .wpf-outfit button { transition: background-color 0.12s, border-color 0.12s; }
+.overlay-demo .wpf-outfit h1, .overlay-demo .wpf-outfit h2 { font-family: Bahnschrift, "Arial Narrow", "Segoe UI", sans-serif; }
+.overlay-demo .wpf-outfit .card { background: var(--panel); border-radius: 6px; box-shadow: none; }
+.overlay-demo .wpf-outfit .primary, .overlay-demo .wpf-outfit .secondary, .overlay-demo .wpf-outfit .path-row button { border-radius: 6px; }
+.overlay-demo .wpf-outfit .secondary, .overlay-demo .wpf-outfit .path-row button { background: rgb(30, 40, 34); border-color: rgb(53, 71, 59); }
+.overlay-demo .wpf-outfit .secondary:hover, .overlay-demo .wpf-outfit .path-row button:hover { background: rgb(42, 56, 46); border-color: rgb(109, 134, 111); }
+.overlay-demo .wpf-outfit.blacktop-overlay button, .overlay-demo .wpf-outfit.blacktop-overlay select { border-radius: 4px; background: rgb(32, 45, 36); border-color: rgb(64, 83, 68); font-size: 12px; }
+.overlay-demo .wpf-outfit.blacktop-overlay button:hover:not(:disabled) { background: rgb(48, 67, 51); border-color: rgb(129, 158, 120); }
+.overlay-demo .wpf-outfit.blacktop-overlay .wpf-main { padding: 10px 12px; }
+.overlay-demo .wpf-outfit.blacktop-overlay .wpf-status { font-size: 11px; margin: 7px 0px 3px; min-height: 14px; max-height: 40px; }
+.overlay-demo .wpf-outfit.blacktop-overlay .blacktop-workspace { grid-template-columns: 144px minmax(0px, 1fr); gap: 10px; }
+.overlay-demo .wpf-outfit.blacktop-overlay .blacktop-player-button { min-height: 43px; padding: 6px 8px; border-color: rgb(51, 71, 58); }
+.overlay-demo .wpf-outfit.blacktop-overlay .blacktop-player-button small { font: 9px Consolas, monospace; color: rgb(145, 166, 148); }
+.overlay-demo .wpf-outfit.blacktop-overlay .blacktop-player-button[aria-pressed="true"] { background: rgb(42, 61, 41); border-color: rgb(140, 175, 119); box-shadow: inset 3px 0 var(--court); }
+.overlay-demo .wpf-outfit.blacktop-overlay .blacktop-outfit-row { background: rgb(24, 34, 28); border-color: rgb(53, 73, 59); border-radius: 5px; padding: 12px; gap: 10px; }
+.overlay-demo .wpf-outfit.blacktop-overlay .blacktop-player-heading { border-bottom: 1px solid rgb(52, 69, 55); padding-bottom: 9px; }
+.overlay-demo .wpf-outfit.blacktop-overlay .blacktop-player-identity strong { font-family: Bahnschrift, "Segoe UI", sans-serif; font-size: 18px; font-weight: 600; }
+.overlay-demo .wpf-outfit.blacktop-overlay .blacktop-player-identity small { display: none; }
+.overlay-demo .wpf-outfit.blacktop-overlay .blacktop-auto-apply-note { font-size: 10px; color: rgb(151, 173, 155); }
+.overlay-demo .wpf-outfit.blacktop-overlay .blacktop-piece { display: grid; grid-template-columns: minmax(0px, 1fr) auto; gap: 0px 5px; }
+.overlay-demo .wpf-outfit.blacktop-overlay .blacktop-piece select { padding: 8px; }
+.overlay-demo .wpf-outfit.blacktop-overlay .blacktop-piece select { grid-column: 1 / -1; }
+.overlay-demo .wpf-outfit.blacktop-overlay .blacktop-browse { grid-column: 1 / -1; padding: 6px 8px; font-size: 11px; white-space: normal; overflow-wrap: anywhere; }
+.overlay-demo .wpf-outfit.blacktop-overlay .blacktop-piece-hint { font-size: 10px; color: rgb(205, 185, 141); line-height: 1.45; }
+.overlay-demo .wpf-outfit.blacktop-overlay .blacktop-saved-outfit { display: flex; gap: 6px; border-top: 1px solid rgb(52, 69, 55); padding-top: 9px; }
+.overlay-demo .wpf-outfit.blacktop-overlay .blacktop-saved-outfit select { flex: 1 1 0%; min-width: 0px; }
+.overlay-demo .wpf-outfit.blacktop-overlay .blacktop-saved-outfit button { white-space: nowrap; }
+.overlay-demo .wpf-outfit.blacktop-overlay .wpf-footer { padding: 7px 12px; font-size: 10px; line-height: 1.5; border-color: rgb(53, 71, 59); display: flex; justify-content: space-between; gap: 12px; }
+@media (max-width: 600px) { .overlay-demo .wpf-outfit.blacktop-overlay .blacktop-workspace { grid-template-columns: 114px minmax(0px, 1fr); } }
+@media (max-width: 600px) { .overlay-demo .wpf-outfit.blacktop-overlay .blacktop-outfit-row { grid-template-columns: 1fr; } }
+@media (max-width: 600px) { .overlay-demo .wpf-outfit.blacktop-overlay .wpf-footer { flex-wrap: wrap; gap: 2px; } }
+@media (prefers-reduced-motion: reduce) { .overlay-demo .wpf-outfit button { transition: none; } }
+.overlay-demo .wpf-outfit.blacktop-overlay .wpf-status { margin: 0px; padding: 3px 14px 6px; font-size: 11px; max-height: 36px; }
+.overlay-demo .wpf-outfit.blacktop-overlay .wpf-status:empty { display: none; }
+.overlay-demo .wpf-outfit.blacktop-overlay .blacktop-workspace { grid-template-columns: 180px minmax(0px, 1fr); }
+.overlay-demo .wpf-outfit.blacktop-overlay .clothing-picker { width: calc(-32px + 100vw); max-width: none; }
+.overlay-demo .wpf-outfit.blacktop-overlay .clothing-picker-grid { grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); grid-auto-rows: minmax(180px, 1fr); align-content: stretch; }
+.overlay-demo .wpf-outfit.blacktop-overlay .clothing-tile { height: 100%; min-height: 180px; }
+.overlay-demo .wpf-outfit.blacktop-overlay .clothing-picture { height: auto; min-height: 120px; flex: 1 1 0%; }
+.overlay-demo .wpf-outfit .wardrobe-editor { min-height: 0px; display: flex; flex-direction: column; gap: 12px; overflow: auto; }
+.overlay-demo .wpf-outfit.blacktop-overlay .wardrobe-editor .wpf-players { overflow: visible; flex-shrink: 0; }
+.overlay-demo .wpf-outfit.blacktop-overlay .blacktop-outfit-row { grid-template-columns: repeat(4, minmax(0px, 1fr)); margin: 0px; gap: 10px; }
+.overlay-demo .wpf-outfit.blacktop-overlay .blacktop-player-heading .blacktop-player-identity { flex: 0 1 auto; min-width: 120px; }
+.overlay-demo .wpf-outfit.blacktop-overlay .blacktop-player-heading .blacktop-saved-outfit { display: flex; flex: 1 1 280px; align-items: center; gap: 8px; margin: 0px; padding: 0px; border: 0px; }
+.overlay-demo .wpf-outfit.blacktop-overlay .blacktop-player-heading .blacktop-saved-outfit select { width: auto; min-width: 160px; max-width: 300px; flex: 1 1 0%; }
+.overlay-demo .wpf-outfit.blacktop-overlay .blacktop-player-heading .blacktop-saved-outfit button { white-space: nowrap; }
+.overlay-demo .wpf-outfit.blacktop-overlay .blacktop-auto-apply-note, .overlay-demo .wpf-outfit.blacktop-overlay .blacktop-piece-hint, .overlay-demo .wpf-outfit.blacktop-overlay .blacktop-session-status { display: none; }
+.overlay-demo .wpf-outfit.blacktop-overlay:not(.compact-bar) .wpf-main { padding: 12px 14px 14px; background: rgb(12, 16, 15); }
+.overlay-demo .wpf-outfit.blacktop-overlay:not(.compact-bar) .blacktop-workspace { grid-template-columns: 168px minmax(0px, 1fr); gap: 14px; }
+.overlay-demo .wpf-outfit.blacktop-overlay:not(.compact-bar) .wpf-player-picker { gap: 6px; padding: 10px; background: rgb(20, 27, 24); border: 1px solid rgb(53, 71, 59); border-radius: 8px; }
+.overlay-demo .wpf-outfit.blacktop-overlay:not(.compact-bar) .wpf-player-picker::before { content: "Players"; padding: 2px 3px 7px; color: rgb(169, 183, 173); font-size: 10px; font-weight: 650; letter-spacing: 0.08em; text-transform: uppercase; }
+.overlay-demo .wpf-outfit.blacktop-overlay:not(.compact-bar) .blacktop-player-button { min-height: 46px; background: rgb(16, 22, 17); border-color: rgb(48, 63, 52); border-radius: 6px; }
+.overlay-demo .wpf-outfit.blacktop-overlay:not(.compact-bar) .blacktop-player-button:hover:not(:disabled) { background: rgb(29, 41, 33); border-color: rgb(83, 107, 85); }
+.overlay-demo .wpf-outfit.blacktop-overlay:not(.compact-bar) .blacktop-player-button[aria-pressed="true"] { background: rgb(34, 50, 38); border-color: rgb(96, 120, 94); box-shadow: inset 3px 0 var(--court); }
+.overlay-demo .wpf-outfit.blacktop-overlay:not(.compact-bar) .wardrobe-editor { gap: 14px; min-width: 0px; overflow: hidden auto; scrollbar-width: thin; scrollbar-gutter: stable; container-type: inline-size; }
+.overlay-demo .wpf-outfit.blacktop-overlay:not(.compact-bar) .blacktop-outfit-row { padding: 14px; background: rgb(20, 27, 24); border-color: rgb(53, 71, 59); border-radius: 8px; gap: 12px; }
+.overlay-demo .wpf-outfit.blacktop-overlay:not(.compact-bar) .blacktop-player-heading { min-height: 46px; padding-bottom: 12px; border-bottom: 1px solid rgb(53, 71, 59); gap: 8px 12px; }
+.overlay-demo .wpf-outfit.blacktop-overlay:not(.compact-bar) .blacktop-player-identity strong { font-size: 17px; }
+.overlay-demo .wpf-outfit.blacktop-overlay:not(.compact-bar) .blacktop-player-heading .blacktop-saved-outfit { display: grid; grid-template-columns: auto minmax(150px, 1fr) auto; align-items: center; gap: 7px; flex: 1 1 360px; }
+.overlay-demo .wpf-outfit.blacktop-overlay:not(.compact-bar) .blacktop-player-heading .blacktop-saved-outfit::before { content: "Saved outfit"; color: rgb(169, 183, 173); font-size: 10px; font-weight: 650; letter-spacing: 0.06em; text-transform: uppercase; }
+.overlay-demo .wpf-outfit.blacktop-overlay:not(.compact-bar) .blacktop-player-heading .blacktop-saved-outfit select { width: 100%; max-width: none; height: 34px; }
+.overlay-demo .wpf-outfit.blacktop-overlay:not(.compact-bar) .blacktop-player-heading .blacktop-saved-outfit button { height: 34px; }
+.overlay-demo .wpf-outfit.blacktop-overlay:not(.compact-bar) .blacktop-piece { position: relative; display: block; min-width: 0px; }
+.overlay-demo .wpf-outfit.blacktop-overlay:not(.compact-bar) .blacktop-piece-select { position: absolute !important; width: 1px !important; height: 1px !important; padding: 0px !important; margin: -1px !important; overflow: hidden !important; clip-path: inset(50%) !important; white-space: nowrap !important; border: 0px !important; }
+.overlay-demo .wpf-outfit.blacktop-overlay:not(.compact-bar) .blacktop-browse.blacktop-piece-tile { display: flex; flex-direction: column; align-items: stretch; width: 100%; height: 158px; margin: 0px; padding: 11px 12px; color: rgb(240, 238, 229); background: rgb(15, 21, 18); border: 1px solid rgb(48, 63, 52); border-radius: 8px; text-align: left; white-space: normal; }
+.overlay-demo .wpf-outfit.blacktop-overlay:not(.compact-bar) .blacktop-browse.blacktop-piece-tile:hover:not(:disabled) { background: rgb(25, 35, 28); border-color: rgb(110, 138, 102); }
+.overlay-demo .wpf-outfit.blacktop-overlay:not(.compact-bar) .blacktop-piece-category { color: rgb(169, 183, 173); font-size: 10px; font-weight: 650; }
+.overlay-demo .wpf-outfit.blacktop-overlay:not(.compact-bar) .blacktop-piece-preview { display: flex; align-items: center; justify-content: center; height: 60px; margin: 5px 0px; color: rgb(143, 161, 151); }
+.overlay-demo .wpf-outfit.blacktop-overlay:not(.compact-bar) .blacktop-piece-preview .outfit-item-icon { width: 34px; height: 34px; }
+.overlay-demo .wpf-outfit.blacktop-overlay:not(.compact-bar) .blacktop-piece-name { min-height: 29px; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; overflow-wrap: anywhere; font-size: 11px; font-weight: 600; line-height: 14px; }
+.overlay-demo .wpf-outfit.blacktop-overlay:not(.compact-bar) .blacktop-piece-change { display: flex; align-items: center; justify-content: space-between; margin-top: auto; padding-top: 7px; border-top: 1px solid rgb(48, 63, 52); color: rgb(184, 237, 147); font-size: 10px; font-weight: 500; }
+.overlay-demo .wpf-outfit.blacktop-overlay:not(.compact-bar) .accessory-cards { padding-top: 12px; border-color: rgb(53, 71, 59); }
+.overlay-demo .wpf-outfit.blacktop-overlay:not(.compact-bar) .accessory-cards .accessory-slots-heading { margin-bottom: 10px; }
+.overlay-demo .wpf-outfit.blacktop-overlay:not(.compact-bar) .accessory-cards .accessory-slots-heading > span { padding: 3px 8px; border: 1px solid rgb(53, 71, 59); border-radius: 999px; }
+.overlay-demo .wpf-outfit.blacktop-overlay:not(.compact-bar) .accessory-cards .accessory-slots-grid { grid-template-columns: repeat(4, minmax(0px, 1fr)); gap: 10px; align-items: start; }
+.overlay-demo .wpf-outfit.blacktop-overlay:not(.compact-bar) .accessory-cards .accessory-slot { position: relative; }
+.overlay-demo .wpf-outfit.blacktop-overlay:not(.compact-bar) button.accessory-tile { display: grid; grid-template-rows: 30px 14px 24px; align-content: center; justify-items: center; gap: 4px; width: 100%; height: 94px; padding: 7px 8px; background: rgb(15, 21, 18); border: 1px solid rgb(48, 63, 52); border-radius: 7px; white-space: normal; text-align: center; }
+.overlay-demo .wpf-outfit.blacktop-overlay:not(.compact-bar) button.accessory-tile:hover:not(:disabled) { background: rgb(25, 35, 28); border-color: rgb(110, 138, 102); }
+.overlay-demo .wpf-outfit.blacktop-overlay:not(.compact-bar) .accessory-tile-preview { display: flex; align-items: center; justify-content: center; width: 100%; height: 30px; margin: 0px; }
+.overlay-demo .wpf-outfit.blacktop-overlay:not(.compact-bar) .accessory-tile-preview .outfit-item-icon { width: 27px; height: 27px; color: rgb(143, 161, 151); }
+.overlay-demo .wpf-outfit.blacktop-overlay:not(.compact-bar) .accessory-tile-category { font-size: 10px; font-weight: 600; line-height: 14px; }
+.overlay-demo .wpf-outfit.blacktop-overlay:not(.compact-bar) .accessory-tile-name { max-width: 100%; margin: 0px; color: rgb(143, 161, 151); font-size: 9px; line-height: 12px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere; }
+.overlay-demo .wpf-outfit.blacktop-overlay:not(.compact-bar) .accessory-tile-remove { position: absolute; top: 3px; right: 3px; width: 28px; height: 28px; padding: 0px; border-radius: 50%; font-size: 14px; line-height: 1; }
+@media (max-width: 1000px) { .overlay-demo .wpf-outfit.blacktop-overlay .blacktop-outfit-row { grid-template-columns: repeat(2, minmax(0px, 1fr)); } }
+@media (max-width: 1000px) { .overlay-demo .wpf-outfit.blacktop-overlay:not(.compact-bar) .accessory-cards .accessory-slots-grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 1000px) { .overlay-demo .wpf-outfit.blacktop-overlay:not(.compact-bar) .wardrobe-editor { overflow: auto; } }
+@media (max-width: 700px) { .overlay-demo .wpf-outfit.blacktop-overlay .blacktop-workspace { grid-template-columns: 130px minmax(0px, 1fr); } }
+@media (max-width: 700px) { .overlay-demo .wpf-outfit.blacktop-overlay:not(.compact-bar) .blacktop-player-heading .blacktop-saved-outfit { grid-template-columns: 1fr auto; } }
+@media (max-width: 700px) { .overlay-demo .wpf-outfit.blacktop-overlay:not(.compact-bar) .blacktop-player-heading .blacktop-saved-outfit::before { grid-column: 1 / -1; } }
+@media (max-width: 700px) { .overlay-demo .wpf-outfit.blacktop-overlay:not(.compact-bar) .accessory-cards .accessory-slots-grid { grid-template-columns: 1fr; } }
+/* Open picker sizing (rules keyed on dialog[open] in WPF). */
+.overlay-demo .wpf-outfit .clothing-picker[open] {
+  position: fixed;
+  inset: 16px;
+  z-index: 50;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: auto;
+  height: auto;
+  max-height: none;
+}
+.overlay-demo .wpf-outfit .clothing-picker-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 49;
+  background: rgba(0, 0, 0, 0.733);
+}
+.overlay-demo .wpf-outfit .clothing-picture img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.overlay-demo .wpf-outfit .accessory-tile-preview img,
+.overlay-demo .wpf-outfit .blacktop-piece-preview img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+/* Rust-only: Save/Apply/Restore (WPF auto-applied each change). */
+.overlay-demo .wpf-outfit .wpf-outfit-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 12px;
+  color: #a9b7ad;
+}
+.overlay-demo .wpf-outfit .wpf-outfit-actions label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-right: auto;
+}
+.overlay-demo .wpf-outfit .wpf-outfit-actions button {
+  height: 30px;
+  padding: 5px 10px;
+}
+.overlay-demo .wpf-outfit .wpf-outfit-actions .primary {
+  color: #182716;
+  background: #b4df94;
+  border-color: #d0edbd;
+}
+.overlay-demo .overlay-catalog .catalog-content:has(> .wpf-outfit) {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  overflow: hidden;
+}

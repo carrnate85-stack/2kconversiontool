@@ -1,0 +1,3116 @@
+{
+    "schema":  "nba2k27-scaler-policy-oracle-v1",
+    "gameAccess":  false,
+    "targets":  [
+                    {
+                        "percent":  95,
+                        "bits":  1064195588
+                    },
+                    {
+                        "percent":  96,
+                        "bits":  1064360005
+                    },
+                    {
+                        "percent":  97,
+                        "bits":  1064524422
+                    },
+                    {
+                        "percent":  98,
+                        "bits":  1064688839
+                    },
+                    {
+                        "percent":  99,
+                        "bits":  1064853255
+                    },
+                    {
+                        "percent":  100,
+                        "bits":  1065017672
+                    }
+                ],
+    "owned":  [
+                  {
+                      "current":  1064195588,
+                      "applied":  1064195588,
+                      "requested":  1064195588,
+                      "result":  true
+                  },
+                  {
+                      "current":  1064360005,
+                      "applied":  1064195588,
+                      "requested":  1064195588,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064524422,
+                      "applied":  1064195588,
+                      "requested":  1064195588,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064688839,
+                      "applied":  1064195588,
+                      "requested":  1064195588,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064853255,
+                      "applied":  1064195588,
+                      "requested":  1064195588,
+                      "result":  false
+                  },
+                  {
+                      "current":  1065017672,
+                      "applied":  1064195588,
+                      "requested":  1064195588,
+                      "result":  true
+                  },
+                  {
+                      "current":  0,
+                      "applied":  1064195588,
+                      "requested":  1064195588,
+                      "result":  false
+                  },
+                  {
+                      "current":  2143289344,
+                      "applied":  1064195588,
+                      "requested":  1064195588,
+                      "result":  false
+                  },
+                  {
+                      "current":  1065353216,
+                      "applied":  1064195588,
+                      "requested":  1064195588,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064195588,
+                      "applied":  1064195588,
+                      "requested":  1064360005,
+                      "result":  true
+                  },
+                  {
+                      "current":  1064360005,
+                      "applied":  1064195588,
+                      "requested":  1064360005,
+                      "result":  true
+                  },
+                  {
+                      "current":  1064524422,
+                      "applied":  1064195588,
+                      "requested":  1064360005,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064688839,
+                      "applied":  1064195588,
+                      "requested":  1064360005,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064853255,
+                      "applied":  1064195588,
+                      "requested":  1064360005,
+                      "result":  false
+                  },
+                  {
+                      "current":  1065017672,
+                      "applied":  1064195588,
+                      "requested":  1064360005,
+                      "result":  true
+                  },
+                  {
+                      "current":  0,
+                      "applied":  1064195588,
+                      "requested":  1064360005,
+                      "result":  false
+                  },
+                  {
+                      "current":  2143289344,
+                      "applied":  1064195588,
+                      "requested":  1064360005,
+                      "result":  false
+                  },
+                  {
+                      "current":  1065353216,
+                      "applied":  1064195588,
+                      "requested":  1064360005,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064195588,
+                      "applied":  1064195588,
+                      "requested":  1064524422,
+                      "result":  true
+                  },
+                  {
+                      "current":  1064360005,
+                      "applied":  1064195588,
+                      "requested":  1064524422,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064524422,
+                      "applied":  1064195588,
+                      "requested":  1064524422,
+                      "result":  true
+                  },
+                  {
+                      "current":  1064688839,
+                      "applied":  1064195588,
+                      "requested":  1064524422,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064853255,
+                      "applied":  1064195588,
+                      "requested":  1064524422,
+                      "result":  false
+                  },
+                  {
+                      "current":  1065017672,
+                      "applied":  1064195588,
+                      "requested":  1064524422,
+                      "result":  true
+                  },
+                  {
+                      "current":  0,
+                      "applied":  1064195588,
+                      "requested":  1064524422,
+                      "result":  false
+                  },
+                  {
+                      "current":  2143289344,
+                      "applied":  1064195588,
+                      "requested":  1064524422,
+                      "result":  false
+                  },
+                  {
+                      "current":  1065353216,
+                      "applied":  1064195588,
+                      "requested":  1064524422,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064195588,
+                      "applied":  1064195588,
+                      "requested":  1064688839,
+                      "result":  true
+                  },
+                  {
+                      "current":  1064360005,
+                      "applied":  1064195588,
+                      "requested":  1064688839,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064524422,
+                      "applied":  1064195588,
+                      "requested":  1064688839,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064688839,
+                      "applied":  1064195588,
+                      "requested":  1064688839,
+                      "result":  true
+                  },
+                  {
+                      "current":  1064853255,
+                      "applied":  1064195588,
+                      "requested":  1064688839,
+                      "result":  false
+                  },
+                  {
+                      "current":  1065017672,
+                      "applied":  1064195588,
+                      "requested":  1064688839,
+                      "result":  true
+                  },
+                  {
+                      "current":  0,
+                      "applied":  1064195588,
+                      "requested":  1064688839,
+                      "result":  false
+                  },
+                  {
+                      "current":  2143289344,
+                      "applied":  1064195588,
+                      "requested":  1064688839,
+                      "result":  false
+                  },
+                  {
+                      "current":  1065353216,
+                      "applied":  1064195588,
+                      "requested":  1064688839,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064195588,
+                      "applied":  1064195588,
+                      "requested":  1064853255,
+                      "result":  true
+                  },
+                  {
+                      "current":  1064360005,
+                      "applied":  1064195588,
+                      "requested":  1064853255,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064524422,
+                      "applied":  1064195588,
+                      "requested":  1064853255,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064688839,
+                      "applied":  1064195588,
+                      "requested":  1064853255,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064853255,
+                      "applied":  1064195588,
+                      "requested":  1064853255,
+                      "result":  true
+                  },
+                  {
+                      "current":  1065017672,
+                      "applied":  1064195588,
+                      "requested":  1064853255,
+                      "result":  true
+                  },
+                  {
+                      "current":  0,
+                      "applied":  1064195588,
+                      "requested":  1064853255,
+                      "result":  false
+                  },
+                  {
+                      "current":  2143289344,
+                      "applied":  1064195588,
+                      "requested":  1064853255,
+                      "result":  false
+                  },
+                  {
+                      "current":  1065353216,
+                      "applied":  1064195588,
+                      "requested":  1064853255,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064195588,
+                      "applied":  1064195588,
+                      "requested":  1065017672,
+                      "result":  true
+                  },
+                  {
+                      "current":  1064360005,
+                      "applied":  1064195588,
+                      "requested":  1065017672,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064524422,
+                      "applied":  1064195588,
+                      "requested":  1065017672,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064688839,
+                      "applied":  1064195588,
+                      "requested":  1065017672,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064853255,
+                      "applied":  1064195588,
+                      "requested":  1065017672,
+                      "result":  false
+                  },
+                  {
+                      "current":  1065017672,
+                      "applied":  1064195588,
+                      "requested":  1065017672,
+                      "result":  true
+                  },
+                  {
+                      "current":  0,
+                      "applied":  1064195588,
+                      "requested":  1065017672,
+                      "result":  false
+                  },
+                  {
+                      "current":  2143289344,
+                      "applied":  1064195588,
+                      "requested":  1065017672,
+                      "result":  false
+                  },
+                  {
+                      "current":  1065353216,
+                      "applied":  1064195588,
+                      "requested":  1065017672,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064195588,
+                      "applied":  1064360005,
+                      "requested":  1064195588,
+                      "result":  true
+                  },
+                  {
+                      "current":  1064360005,
+                      "applied":  1064360005,
+                      "requested":  1064195588,
+                      "result":  true
+                  },
+                  {
+                      "current":  1064524422,
+                      "applied":  1064360005,
+                      "requested":  1064195588,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064688839,
+                      "applied":  1064360005,
+                      "requested":  1064195588,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064853255,
+                      "applied":  1064360005,
+                      "requested":  1064195588,
+                      "result":  false
+                  },
+                  {
+                      "current":  1065017672,
+                      "applied":  1064360005,
+                      "requested":  1064195588,
+                      "result":  true
+                  },
+                  {
+                      "current":  0,
+                      "applied":  1064360005,
+                      "requested":  1064195588,
+                      "result":  false
+                  },
+                  {
+                      "current":  2143289344,
+                      "applied":  1064360005,
+                      "requested":  1064195588,
+                      "result":  false
+                  },
+                  {
+                      "current":  1065353216,
+                      "applied":  1064360005,
+                      "requested":  1064195588,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064195588,
+                      "applied":  1064360005,
+                      "requested":  1064360005,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064360005,
+                      "applied":  1064360005,
+                      "requested":  1064360005,
+                      "result":  true
+                  },
+                  {
+                      "current":  1064524422,
+                      "applied":  1064360005,
+                      "requested":  1064360005,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064688839,
+                      "applied":  1064360005,
+                      "requested":  1064360005,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064853255,
+                      "applied":  1064360005,
+                      "requested":  1064360005,
+                      "result":  false
+                  },
+                  {
+                      "current":  1065017672,
+                      "applied":  1064360005,
+                      "requested":  1064360005,
+                      "result":  true
+                  },
+                  {
+                      "current":  0,
+                      "applied":  1064360005,
+                      "requested":  1064360005,
+                      "result":  false
+                  },
+                  {
+                      "current":  2143289344,
+                      "applied":  1064360005,
+                      "requested":  1064360005,
+                      "result":  false
+                  },
+                  {
+                      "current":  1065353216,
+                      "applied":  1064360005,
+                      "requested":  1064360005,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064195588,
+                      "applied":  1064360005,
+                      "requested":  1064524422,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064360005,
+                      "applied":  1064360005,
+                      "requested":  1064524422,
+                      "result":  true
+                  },
+                  {
+                      "current":  1064524422,
+                      "applied":  1064360005,
+                      "requested":  1064524422,
+                      "result":  true
+                  },
+                  {
+                      "current":  1064688839,
+                      "applied":  1064360005,
+                      "requested":  1064524422,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064853255,
+                      "applied":  1064360005,
+                      "requested":  1064524422,
+                      "result":  false
+                  },
+                  {
+                      "current":  1065017672,
+                      "applied":  1064360005,
+                      "requested":  1064524422,
+                      "result":  true
+                  },
+                  {
+                      "current":  0,
+                      "applied":  1064360005,
+                      "requested":  1064524422,
+                      "result":  false
+                  },
+                  {
+                      "current":  2143289344,
+                      "applied":  1064360005,
+                      "requested":  1064524422,
+                      "result":  false
+                  },
+                  {
+                      "current":  1065353216,
+                      "applied":  1064360005,
+                      "requested":  1064524422,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064195588,
+                      "applied":  1064360005,
+                      "requested":  1064688839,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064360005,
+                      "applied":  1064360005,
+                      "requested":  1064688839,
+                      "result":  true
+                  },
+                  {
+                      "current":  1064524422,
+                      "applied":  1064360005,
+                      "requested":  1064688839,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064688839,
+                      "applied":  1064360005,
+                      "requested":  1064688839,
+                      "result":  true
+                  },
+                  {
+                      "current":  1064853255,
+                      "applied":  1064360005,
+                      "requested":  1064688839,
+                      "result":  false
+                  },
+                  {
+                      "current":  1065017672,
+                      "applied":  1064360005,
+                      "requested":  1064688839,
+                      "result":  true
+                  },
+                  {
+                      "current":  0,
+                      "applied":  1064360005,
+                      "requested":  1064688839,
+                      "result":  false
+                  },
+                  {
+                      "current":  2143289344,
+                      "applied":  1064360005,
+                      "requested":  1064688839,
+                      "result":  false
+                  },
+                  {
+                      "current":  1065353216,
+                      "applied":  1064360005,
+                      "requested":  1064688839,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064195588,
+                      "applied":  1064360005,
+                      "requested":  1064853255,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064360005,
+                      "applied":  1064360005,
+                      "requested":  1064853255,
+                      "result":  true
+                  },
+                  {
+                      "current":  1064524422,
+                      "applied":  1064360005,
+                      "requested":  1064853255,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064688839,
+                      "applied":  1064360005,
+                      "requested":  1064853255,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064853255,
+                      "applied":  1064360005,
+                      "requested":  1064853255,
+                      "result":  true
+                  },
+                  {
+                      "current":  1065017672,
+                      "applied":  1064360005,
+                      "requested":  1064853255,
+                      "result":  true
+                  },
+                  {
+                      "current":  0,
+                      "applied":  1064360005,
+                      "requested":  1064853255,
+                      "result":  false
+                  },
+                  {
+                      "current":  2143289344,
+                      "applied":  1064360005,
+                      "requested":  1064853255,
+                      "result":  false
+                  },
+                  {
+                      "current":  1065353216,
+                      "applied":  1064360005,
+                      "requested":  1064853255,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064195588,
+                      "applied":  1064360005,
+                      "requested":  1065017672,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064360005,
+                      "applied":  1064360005,
+                      "requested":  1065017672,
+                      "result":  true
+                  },
+                  {
+                      "current":  1064524422,
+                      "applied":  1064360005,
+                      "requested":  1065017672,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064688839,
+                      "applied":  1064360005,
+                      "requested":  1065017672,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064853255,
+                      "applied":  1064360005,
+                      "requested":  1065017672,
+                      "result":  false
+                  },
+                  {
+                      "current":  1065017672,
+                      "applied":  1064360005,
+                      "requested":  1065017672,
+                      "result":  true
+                  },
+                  {
+                      "current":  0,
+                      "applied":  1064360005,
+                      "requested":  1065017672,
+                      "result":  false
+                  },
+                  {
+                      "current":  2143289344,
+                      "applied":  1064360005,
+                      "requested":  1065017672,
+                      "result":  false
+                  },
+                  {
+                      "current":  1065353216,
+                      "applied":  1064360005,
+                      "requested":  1065017672,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064195588,
+                      "applied":  1064524422,
+                      "requested":  1064195588,
+                      "result":  true
+                  },
+                  {
+                      "current":  1064360005,
+                      "applied":  1064524422,
+                      "requested":  1064195588,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064524422,
+                      "applied":  1064524422,
+                      "requested":  1064195588,
+                      "result":  true
+                  },
+                  {
+                      "current":  1064688839,
+                      "applied":  1064524422,
+                      "requested":  1064195588,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064853255,
+                      "applied":  1064524422,
+                      "requested":  1064195588,
+                      "result":  false
+                  },
+                  {
+                      "current":  1065017672,
+                      "applied":  1064524422,
+                      "requested":  1064195588,
+                      "result":  true
+                  },
+                  {
+                      "current":  0,
+                      "applied":  1064524422,
+                      "requested":  1064195588,
+                      "result":  false
+                  },
+                  {
+                      "current":  2143289344,
+                      "applied":  1064524422,
+                      "requested":  1064195588,
+                      "result":  false
+                  },
+                  {
+                      "current":  1065353216,
+                      "applied":  1064524422,
+                      "requested":  1064195588,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064195588,
+                      "applied":  1064524422,
+                      "requested":  1064360005,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064360005,
+                      "applied":  1064524422,
+                      "requested":  1064360005,
+                      "result":  true
+                  },
+                  {
+                      "current":  1064524422,
+                      "applied":  1064524422,
+                      "requested":  1064360005,
+                      "result":  true
+                  },
+                  {
+                      "current":  1064688839,
+                      "applied":  1064524422,
+                      "requested":  1064360005,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064853255,
+                      "applied":  1064524422,
+                      "requested":  1064360005,
+                      "result":  false
+                  },
+                  {
+                      "current":  1065017672,
+                      "applied":  1064524422,
+                      "requested":  1064360005,
+                      "result":  true
+                  },
+                  {
+                      "current":  0,
+                      "applied":  1064524422,
+                      "requested":  1064360005,
+                      "result":  false
+                  },
+                  {
+                      "current":  2143289344,
+                      "applied":  1064524422,
+                      "requested":  1064360005,
+                      "result":  false
+                  },
+                  {
+                      "current":  1065353216,
+                      "applied":  1064524422,
+                      "requested":  1064360005,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064195588,
+                      "applied":  1064524422,
+                      "requested":  1064524422,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064360005,
+                      "applied":  1064524422,
+                      "requested":  1064524422,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064524422,
+                      "applied":  1064524422,
+                      "requested":  1064524422,
+                      "result":  true
+                  },
+                  {
+                      "current":  1064688839,
+                      "applied":  1064524422,
+                      "requested":  1064524422,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064853255,
+                      "applied":  1064524422,
+                      "requested":  1064524422,
+                      "result":  false
+                  },
+                  {
+                      "current":  1065017672,
+                      "applied":  1064524422,
+                      "requested":  1064524422,
+                      "result":  true
+                  },
+                  {
+                      "current":  0,
+                      "applied":  1064524422,
+                      "requested":  1064524422,
+                      "result":  false
+                  },
+                  {
+                      "current":  2143289344,
+                      "applied":  1064524422,
+                      "requested":  1064524422,
+                      "result":  false
+                  },
+                  {
+                      "current":  1065353216,
+                      "applied":  1064524422,
+                      "requested":  1064524422,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064195588,
+                      "applied":  1064524422,
+                      "requested":  1064688839,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064360005,
+                      "applied":  1064524422,
+                      "requested":  1064688839,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064524422,
+                      "applied":  1064524422,
+                      "requested":  1064688839,
+                      "result":  true
+                  },
+                  {
+                      "current":  1064688839,
+                      "applied":  1064524422,
+                      "requested":  1064688839,
+                      "result":  true
+                  },
+                  {
+                      "current":  1064853255,
+                      "applied":  1064524422,
+                      "requested":  1064688839,
+                      "result":  false
+                  },
+                  {
+                      "current":  1065017672,
+                      "applied":  1064524422,
+                      "requested":  1064688839,
+                      "result":  true
+                  },
+                  {
+                      "current":  0,
+                      "applied":  1064524422,
+                      "requested":  1064688839,
+                      "result":  false
+                  },
+                  {
+                      "current":  2143289344,
+                      "applied":  1064524422,
+                      "requested":  1064688839,
+                      "result":  false
+                  },
+                  {
+                      "current":  1065353216,
+                      "applied":  1064524422,
+                      "requested":  1064688839,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064195588,
+                      "applied":  1064524422,
+                      "requested":  1064853255,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064360005,
+                      "applied":  1064524422,
+                      "requested":  1064853255,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064524422,
+                      "applied":  1064524422,
+                      "requested":  1064853255,
+                      "result":  true
+                  },
+                  {
+                      "current":  1064688839,
+                      "applied":  1064524422,
+                      "requested":  1064853255,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064853255,
+                      "applied":  1064524422,
+                      "requested":  1064853255,
+                      "result":  true
+                  },
+                  {
+                      "current":  1065017672,
+                      "applied":  1064524422,
+                      "requested":  1064853255,
+                      "result":  true
+                  },
+                  {
+                      "current":  0,
+                      "applied":  1064524422,
+                      "requested":  1064853255,
+                      "result":  false
+                  },
+                  {
+                      "current":  2143289344,
+                      "applied":  1064524422,
+                      "requested":  1064853255,
+                      "result":  false
+                  },
+                  {
+                      "current":  1065353216,
+                      "applied":  1064524422,
+                      "requested":  1064853255,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064195588,
+                      "applied":  1064524422,
+                      "requested":  1065017672,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064360005,
+                      "applied":  1064524422,
+                      "requested":  1065017672,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064524422,
+                      "applied":  1064524422,
+                      "requested":  1065017672,
+                      "result":  true
+                  },
+                  {
+                      "current":  1064688839,
+                      "applied":  1064524422,
+                      "requested":  1065017672,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064853255,
+                      "applied":  1064524422,
+                      "requested":  1065017672,
+                      "result":  false
+                  },
+                  {
+                      "current":  1065017672,
+                      "applied":  1064524422,
+                      "requested":  1065017672,
+                      "result":  true
+                  },
+                  {
+                      "current":  0,
+                      "applied":  1064524422,
+                      "requested":  1065017672,
+                      "result":  false
+                  },
+                  {
+                      "current":  2143289344,
+                      "applied":  1064524422,
+                      "requested":  1065017672,
+                      "result":  false
+                  },
+                  {
+                      "current":  1065353216,
+                      "applied":  1064524422,
+                      "requested":  1065017672,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064195588,
+                      "applied":  1064688839,
+                      "requested":  1064195588,
+                      "result":  true
+                  },
+                  {
+                      "current":  1064360005,
+                      "applied":  1064688839,
+                      "requested":  1064195588,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064524422,
+                      "applied":  1064688839,
+                      "requested":  1064195588,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064688839,
+                      "applied":  1064688839,
+                      "requested":  1064195588,
+                      "result":  true
+                  },
+                  {
+                      "current":  1064853255,
+                      "applied":  1064688839,
+                      "requested":  1064195588,
+                      "result":  false
+                  },
+                  {
+                      "current":  1065017672,
+                      "applied":  1064688839,
+                      "requested":  1064195588,
+                      "result":  true
+                  },
+                  {
+                      "current":  0,
+                      "applied":  1064688839,
+                      "requested":  1064195588,
+                      "result":  false
+                  },
+                  {
+                      "current":  2143289344,
+                      "applied":  1064688839,
+                      "requested":  1064195588,
+                      "result":  false
+                  },
+                  {
+                      "current":  1065353216,
+                      "applied":  1064688839,
+                      "requested":  1064195588,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064195588,
+                      "applied":  1064688839,
+                      "requested":  1064360005,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064360005,
+                      "applied":  1064688839,
+                      "requested":  1064360005,
+                      "result":  true
+                  },
+                  {
+                      "current":  1064524422,
+                      "applied":  1064688839,
+                      "requested":  1064360005,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064688839,
+                      "applied":  1064688839,
+                      "requested":  1064360005,
+                      "result":  true
+                  },
+                  {
+                      "current":  1064853255,
+                      "applied":  1064688839,
+                      "requested":  1064360005,
+                      "result":  false
+                  },
+                  {
+                      "current":  1065017672,
+                      "applied":  1064688839,
+                      "requested":  1064360005,
+                      "result":  true
+                  },
+                  {
+                      "current":  0,
+                      "applied":  1064688839,
+                      "requested":  1064360005,
+                      "result":  false
+                  },
+                  {
+                      "current":  2143289344,
+                      "applied":  1064688839,
+                      "requested":  1064360005,
+                      "result":  false
+                  },
+                  {
+                      "current":  1065353216,
+                      "applied":  1064688839,
+                      "requested":  1064360005,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064195588,
+                      "applied":  1064688839,
+                      "requested":  1064524422,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064360005,
+                      "applied":  1064688839,
+                      "requested":  1064524422,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064524422,
+                      "applied":  1064688839,
+                      "requested":  1064524422,
+                      "result":  true
+                  },
+                  {
+                      "current":  1064688839,
+                      "applied":  1064688839,
+                      "requested":  1064524422,
+                      "result":  true
+                  },
+                  {
+                      "current":  1064853255,
+                      "applied":  1064688839,
+                      "requested":  1064524422,
+                      "result":  false
+                  },
+                  {
+                      "current":  1065017672,
+                      "applied":  1064688839,
+                      "requested":  1064524422,
+                      "result":  true
+                  },
+                  {
+                      "current":  0,
+                      "applied":  1064688839,
+                      "requested":  1064524422,
+                      "result":  false
+                  },
+                  {
+                      "current":  2143289344,
+                      "applied":  1064688839,
+                      "requested":  1064524422,
+                      "result":  false
+                  },
+                  {
+                      "current":  1065353216,
+                      "applied":  1064688839,
+                      "requested":  1064524422,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064195588,
+                      "applied":  1064688839,
+                      "requested":  1064688839,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064360005,
+                      "applied":  1064688839,
+                      "requested":  1064688839,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064524422,
+                      "applied":  1064688839,
+                      "requested":  1064688839,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064688839,
+                      "applied":  1064688839,
+                      "requested":  1064688839,
+                      "result":  true
+                  },
+                  {
+                      "current":  1064853255,
+                      "applied":  1064688839,
+                      "requested":  1064688839,
+                      "result":  false
+                  },
+                  {
+                      "current":  1065017672,
+                      "applied":  1064688839,
+                      "requested":  1064688839,
+                      "result":  true
+                  },
+                  {
+                      "current":  0,
+                      "applied":  1064688839,
+                      "requested":  1064688839,
+                      "result":  false
+                  },
+                  {
+                      "current":  2143289344,
+                      "applied":  1064688839,
+                      "requested":  1064688839,
+                      "result":  false
+                  },
+                  {
+                      "current":  1065353216,
+                      "applied":  1064688839,
+                      "requested":  1064688839,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064195588,
+                      "applied":  1064688839,
+                      "requested":  1064853255,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064360005,
+                      "applied":  1064688839,
+                      "requested":  1064853255,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064524422,
+                      "applied":  1064688839,
+                      "requested":  1064853255,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064688839,
+                      "applied":  1064688839,
+                      "requested":  1064853255,
+                      "result":  true
+                  },
+                  {
+                      "current":  1064853255,
+                      "applied":  1064688839,
+                      "requested":  1064853255,
+                      "result":  true
+                  },
+                  {
+                      "current":  1065017672,
+                      "applied":  1064688839,
+                      "requested":  1064853255,
+                      "result":  true
+                  },
+                  {
+                      "current":  0,
+                      "applied":  1064688839,
+                      "requested":  1064853255,
+                      "result":  false
+                  },
+                  {
+                      "current":  2143289344,
+                      "applied":  1064688839,
+                      "requested":  1064853255,
+                      "result":  false
+                  },
+                  {
+                      "current":  1065353216,
+                      "applied":  1064688839,
+                      "requested":  1064853255,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064195588,
+                      "applied":  1064688839,
+                      "requested":  1065017672,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064360005,
+                      "applied":  1064688839,
+                      "requested":  1065017672,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064524422,
+                      "applied":  1064688839,
+                      "requested":  1065017672,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064688839,
+                      "applied":  1064688839,
+                      "requested":  1065017672,
+                      "result":  true
+                  },
+                  {
+                      "current":  1064853255,
+                      "applied":  1064688839,
+                      "requested":  1065017672,
+                      "result":  false
+                  },
+                  {
+                      "current":  1065017672,
+                      "applied":  1064688839,
+                      "requested":  1065017672,
+                      "result":  true
+                  },
+                  {
+                      "current":  0,
+                      "applied":  1064688839,
+                      "requested":  1065017672,
+                      "result":  false
+                  },
+                  {
+                      "current":  2143289344,
+                      "applied":  1064688839,
+                      "requested":  1065017672,
+                      "result":  false
+                  },
+                  {
+                      "current":  1065353216,
+                      "applied":  1064688839,
+                      "requested":  1065017672,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064195588,
+                      "applied":  1064853255,
+                      "requested":  1064195588,
+                      "result":  true
+                  },
+                  {
+                      "current":  1064360005,
+                      "applied":  1064853255,
+                      "requested":  1064195588,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064524422,
+                      "applied":  1064853255,
+                      "requested":  1064195588,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064688839,
+                      "applied":  1064853255,
+                      "requested":  1064195588,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064853255,
+                      "applied":  1064853255,
+                      "requested":  1064195588,
+                      "result":  true
+                  },
+                  {
+                      "current":  1065017672,
+                      "applied":  1064853255,
+                      "requested":  1064195588,
+                      "result":  true
+                  },
+                  {
+                      "current":  0,
+                      "applied":  1064853255,
+                      "requested":  1064195588,
+                      "result":  false
+                  },
+                  {
+                      "current":  2143289344,
+                      "applied":  1064853255,
+                      "requested":  1064195588,
+                      "result":  false
+                  },
+                  {
+                      "current":  1065353216,
+                      "applied":  1064853255,
+                      "requested":  1064195588,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064195588,
+                      "applied":  1064853255,
+                      "requested":  1064360005,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064360005,
+                      "applied":  1064853255,
+                      "requested":  1064360005,
+                      "result":  true
+                  },
+                  {
+                      "current":  1064524422,
+                      "applied":  1064853255,
+                      "requested":  1064360005,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064688839,
+                      "applied":  1064853255,
+                      "requested":  1064360005,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064853255,
+                      "applied":  1064853255,
+                      "requested":  1064360005,
+                      "result":  true
+                  },
+                  {
+                      "current":  1065017672,
+                      "applied":  1064853255,
+                      "requested":  1064360005,
+                      "result":  true
+                  },
+                  {
+                      "current":  0,
+                      "applied":  1064853255,
+                      "requested":  1064360005,
+                      "result":  false
+                  },
+                  {
+                      "current":  2143289344,
+                      "applied":  1064853255,
+                      "requested":  1064360005,
+                      "result":  false
+                  },
+                  {
+                      "current":  1065353216,
+                      "applied":  1064853255,
+                      "requested":  1064360005,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064195588,
+                      "applied":  1064853255,
+                      "requested":  1064524422,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064360005,
+                      "applied":  1064853255,
+                      "requested":  1064524422,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064524422,
+                      "applied":  1064853255,
+                      "requested":  1064524422,
+                      "result":  true
+                  },
+                  {
+                      "current":  1064688839,
+                      "applied":  1064853255,
+                      "requested":  1064524422,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064853255,
+                      "applied":  1064853255,
+                      "requested":  1064524422,
+                      "result":  true
+                  },
+                  {
+                      "current":  1065017672,
+                      "applied":  1064853255,
+                      "requested":  1064524422,
+                      "result":  true
+                  },
+                  {
+                      "current":  0,
+                      "applied":  1064853255,
+                      "requested":  1064524422,
+                      "result":  false
+                  },
+                  {
+                      "current":  2143289344,
+                      "applied":  1064853255,
+                      "requested":  1064524422,
+                      "result":  false
+                  },
+                  {
+                      "current":  1065353216,
+                      "applied":  1064853255,
+                      "requested":  1064524422,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064195588,
+                      "applied":  1064853255,
+                      "requested":  1064688839,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064360005,
+                      "applied":  1064853255,
+                      "requested":  1064688839,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064524422,
+                      "applied":  1064853255,
+                      "requested":  1064688839,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064688839,
+                      "applied":  1064853255,
+                      "requested":  1064688839,
+                      "result":  true
+                  },
+                  {
+                      "current":  1064853255,
+                      "applied":  1064853255,
+                      "requested":  1064688839,
+                      "result":  true
+                  },
+                  {
+                      "current":  1065017672,
+                      "applied":  1064853255,
+                      "requested":  1064688839,
+                      "result":  true
+                  },
+                  {
+                      "current":  0,
+                      "applied":  1064853255,
+                      "requested":  1064688839,
+                      "result":  false
+                  },
+                  {
+                      "current":  2143289344,
+                      "applied":  1064853255,
+                      "requested":  1064688839,
+                      "result":  false
+                  },
+                  {
+                      "current":  1065353216,
+                      "applied":  1064853255,
+                      "requested":  1064688839,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064195588,
+                      "applied":  1064853255,
+                      "requested":  1064853255,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064360005,
+                      "applied":  1064853255,
+                      "requested":  1064853255,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064524422,
+                      "applied":  1064853255,
+                      "requested":  1064853255,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064688839,
+                      "applied":  1064853255,
+                      "requested":  1064853255,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064853255,
+                      "applied":  1064853255,
+                      "requested":  1064853255,
+                      "result":  true
+                  },
+                  {
+                      "current":  1065017672,
+                      "applied":  1064853255,
+                      "requested":  1064853255,
+                      "result":  true
+                  },
+                  {
+                      "current":  0,
+                      "applied":  1064853255,
+                      "requested":  1064853255,
+                      "result":  false
+                  },
+                  {
+                      "current":  2143289344,
+                      "applied":  1064853255,
+                      "requested":  1064853255,
+                      "result":  false
+                  },
+                  {
+                      "current":  1065353216,
+                      "applied":  1064853255,
+                      "requested":  1064853255,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064195588,
+                      "applied":  1064853255,
+                      "requested":  1065017672,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064360005,
+                      "applied":  1064853255,
+                      "requested":  1065017672,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064524422,
+                      "applied":  1064853255,
+                      "requested":  1065017672,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064688839,
+                      "applied":  1064853255,
+                      "requested":  1065017672,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064853255,
+                      "applied":  1064853255,
+                      "requested":  1065017672,
+                      "result":  true
+                  },
+                  {
+                      "current":  1065017672,
+                      "applied":  1064853255,
+                      "requested":  1065017672,
+                      "result":  true
+                  },
+                  {
+                      "current":  0,
+                      "applied":  1064853255,
+                      "requested":  1065017672,
+                      "result":  false
+                  },
+                  {
+                      "current":  2143289344,
+                      "applied":  1064853255,
+                      "requested":  1065017672,
+                      "result":  false
+                  },
+                  {
+                      "current":  1065353216,
+                      "applied":  1064853255,
+                      "requested":  1065017672,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064195588,
+                      "applied":  1065017672,
+                      "requested":  1064195588,
+                      "result":  true
+                  },
+                  {
+                      "current":  1064360005,
+                      "applied":  1065017672,
+                      "requested":  1064195588,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064524422,
+                      "applied":  1065017672,
+                      "requested":  1064195588,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064688839,
+                      "applied":  1065017672,
+                      "requested":  1064195588,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064853255,
+                      "applied":  1065017672,
+                      "requested":  1064195588,
+                      "result":  false
+                  },
+                  {
+                      "current":  1065017672,
+                      "applied":  1065017672,
+                      "requested":  1064195588,
+                      "result":  true
+                  },
+                  {
+                      "current":  0,
+                      "applied":  1065017672,
+                      "requested":  1064195588,
+                      "result":  false
+                  },
+                  {
+                      "current":  2143289344,
+                      "applied":  1065017672,
+                      "requested":  1064195588,
+                      "result":  false
+                  },
+                  {
+                      "current":  1065353216,
+                      "applied":  1065017672,
+                      "requested":  1064195588,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064195588,
+                      "applied":  1065017672,
+                      "requested":  1064360005,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064360005,
+                      "applied":  1065017672,
+                      "requested":  1064360005,
+                      "result":  true
+                  },
+                  {
+                      "current":  1064524422,
+                      "applied":  1065017672,
+                      "requested":  1064360005,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064688839,
+                      "applied":  1065017672,
+                      "requested":  1064360005,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064853255,
+                      "applied":  1065017672,
+                      "requested":  1064360005,
+                      "result":  false
+                  },
+                  {
+                      "current":  1065017672,
+                      "applied":  1065017672,
+                      "requested":  1064360005,
+                      "result":  true
+                  },
+                  {
+                      "current":  0,
+                      "applied":  1065017672,
+                      "requested":  1064360005,
+                      "result":  false
+                  },
+                  {
+                      "current":  2143289344,
+                      "applied":  1065017672,
+                      "requested":  1064360005,
+                      "result":  false
+                  },
+                  {
+                      "current":  1065353216,
+                      "applied":  1065017672,
+                      "requested":  1064360005,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064195588,
+                      "applied":  1065017672,
+                      "requested":  1064524422,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064360005,
+                      "applied":  1065017672,
+                      "requested":  1064524422,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064524422,
+                      "applied":  1065017672,
+                      "requested":  1064524422,
+                      "result":  true
+                  },
+                  {
+                      "current":  1064688839,
+                      "applied":  1065017672,
+                      "requested":  1064524422,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064853255,
+                      "applied":  1065017672,
+                      "requested":  1064524422,
+                      "result":  false
+                  },
+                  {
+                      "current":  1065017672,
+                      "applied":  1065017672,
+                      "requested":  1064524422,
+                      "result":  true
+                  },
+                  {
+                      "current":  0,
+                      "applied":  1065017672,
+                      "requested":  1064524422,
+                      "result":  false
+                  },
+                  {
+                      "current":  2143289344,
+                      "applied":  1065017672,
+                      "requested":  1064524422,
+                      "result":  false
+                  },
+                  {
+                      "current":  1065353216,
+                      "applied":  1065017672,
+                      "requested":  1064524422,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064195588,
+                      "applied":  1065017672,
+                      "requested":  1064688839,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064360005,
+                      "applied":  1065017672,
+                      "requested":  1064688839,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064524422,
+                      "applied":  1065017672,
+                      "requested":  1064688839,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064688839,
+                      "applied":  1065017672,
+                      "requested":  1064688839,
+                      "result":  true
+                  },
+                  {
+                      "current":  1064853255,
+                      "applied":  1065017672,
+                      "requested":  1064688839,
+                      "result":  false
+                  },
+                  {
+                      "current":  1065017672,
+                      "applied":  1065017672,
+                      "requested":  1064688839,
+                      "result":  true
+                  },
+                  {
+                      "current":  0,
+                      "applied":  1065017672,
+                      "requested":  1064688839,
+                      "result":  false
+                  },
+                  {
+                      "current":  2143289344,
+                      "applied":  1065017672,
+                      "requested":  1064688839,
+                      "result":  false
+                  },
+                  {
+                      "current":  1065353216,
+                      "applied":  1065017672,
+                      "requested":  1064688839,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064195588,
+                      "applied":  1065017672,
+                      "requested":  1064853255,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064360005,
+                      "applied":  1065017672,
+                      "requested":  1064853255,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064524422,
+                      "applied":  1065017672,
+                      "requested":  1064853255,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064688839,
+                      "applied":  1065017672,
+                      "requested":  1064853255,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064853255,
+                      "applied":  1065017672,
+                      "requested":  1064853255,
+                      "result":  true
+                  },
+                  {
+                      "current":  1065017672,
+                      "applied":  1065017672,
+                      "requested":  1064853255,
+                      "result":  true
+                  },
+                  {
+                      "current":  0,
+                      "applied":  1065017672,
+                      "requested":  1064853255,
+                      "result":  false
+                  },
+                  {
+                      "current":  2143289344,
+                      "applied":  1065017672,
+                      "requested":  1064853255,
+                      "result":  false
+                  },
+                  {
+                      "current":  1065353216,
+                      "applied":  1065017672,
+                      "requested":  1064853255,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064195588,
+                      "applied":  1065017672,
+                      "requested":  1065017672,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064360005,
+                      "applied":  1065017672,
+                      "requested":  1065017672,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064524422,
+                      "applied":  1065017672,
+                      "requested":  1065017672,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064688839,
+                      "applied":  1065017672,
+                      "requested":  1065017672,
+                      "result":  false
+                  },
+                  {
+                      "current":  1064853255,
+                      "applied":  1065017672,
+                      "requested":  1065017672,
+                      "result":  false
+                  },
+                  {
+                      "current":  1065017672,
+                      "applied":  1065017672,
+                      "requested":  1065017672,
+                      "result":  true
+                  },
+                  {
+                      "current":  0,
+                      "applied":  1065017672,
+                      "requested":  1065017672,
+                      "result":  false
+                  },
+                  {
+                      "current":  2143289344,
+                      "applied":  1065017672,
+                      "requested":  1065017672,
+                      "result":  false
+                  },
+                  {
+                      "current":  1065353216,
+                      "applied":  1065017672,
+                      "requested":  1065017672,
+                      "result":  false
+                  }
+              ],
+    "pairs":  [
+                  {
+                      "scale":  1041170537,
+                      "inverse":  1088759024,
+                      "result":  true
+                  },
+                  {
+                      "scale":  1041269187,
+                      "inverse":  1088602595,
+                      "result":  true
+                  },
+                  {
+                      "scale":  1041367838,
+                      "inverse":  1088449389,
+                      "result":  true
+                  },
+                  {
+                      "scale":  1041466488,
+                      "inverse":  1088299312,
+                      "result":  true
+                  },
+                  {
+                      "scale":  1041565137,
+                      "inverse":  1088152269,
+                      "result":  true
+                  },
+                  {
+                      "scale":  1041663788,
+                      "inverse":  1088008163,
+                      "result":  true
+                  },
+                  {
+                      "scale":  1041865114,
+                      "inverse":  1087722837,
+                      "result":  true
+                  },
+                  {
+                      "scale":  1041865114,
+                      "inverse":  1087764780,
+                      "result":  false
+                  },
+                  {
+                      "scale":  1055806980,
+                      "inverse":  1074363536,
+                      "result":  true
+                  },
+                  {
+                      "scale":  1055971397,
+                      "inverse":  1074269678,
+                      "result":  true
+                  },
+                  {
+                      "scale":  1056135814,
+                      "inverse":  1074177756,
+                      "result":  true
+                  },
+                  {
+                      "scale":  1056300231,
+                      "inverse":  1074087710,
+                      "result":  true
+                  },
+                  {
+                      "scale":  1056464647,
+                      "inverse":  1073999483,
+                      "result":  true
+                  },
+                  {
+                      "scale":  1056629064,
+                      "inverse":  1073913020,
+                      "result":  true
+                  },
+                  {
+                      "scale":  1056964608,
+                      "inverse":  1073741824,
+                      "result":  true
+                  },
+                  {
+                      "scale":  1056964608,
+                      "inverse":  1073766990,
+                      "result":  false
+                  },
+                  {
+                      "scale":  1061071671,
+                      "inverse":  1068227508,
+                      "result":  true
+                  },
+                  {
+                      "scale":  1061203204,
+                      "inverse":  1068110186,
+                      "result":  true
+                  },
+                  {
+                      "scale":  1061334738,
+                      "inverse":  1067995283,
+                      "result":  true
+                  },
+                  {
+                      "scale":  1061466271,
+                      "inverse":  1067882725,
+                      "result":  true
+                  },
+                  {
+                      "scale":  1061597804,
+                      "inverse":  1067772441,
+                      "result":  true
+                  },
+                  {
+                      "scale":  1061729338,
+                      "inverse":  1067664363,
+                      "result":  true
+                  },
+                  {
+                      "scale":  1061997773,
+                      "inverse":  1067450368,
+                      "result":  true
+                  },
+                  {
+                      "scale":  1061997773,
+                      "inverse":  1067481826,
+                      "result":  false
+                  },
+                  {
+                      "scale":  1063883197,
+                      "inverse":  1066158812,
+                      "result":  true
+                  },
+                  {
+                      "scale":  1064044325,
+                      "inverse":  1066063039,
+                      "result":  true
+                  },
+                  {
+                      "scale":  1064205454,
+                      "inverse":  1065969240,
+                      "result":  true
+                  },
+                  {
+                      "scale":  1064366583,
+                      "inverse":  1065877356,
+                      "result":  true
+                  },
+                  {
+                      "scale":  1064527710,
+                      "inverse":  1065787329,
+                      "result":  true
+                  },
+                  {
+                      "scale":  1064688839,
+                      "inverse":  1065699102,
+                      "result":  true
+                  },
+                  {
+                      "scale":  1065017672,
+                      "inverse":  1065524412,
+                      "result":  true
+                  },
+                  {
+                      "scale":  1065017672,
+                      "inverse":  1065550092,
+                      "result":  false
+                  },
+                  {
+                      "scale":  1064195588,
+                      "inverse":  1065974928,
+                      "result":  true
+                  },
+                  {
+                      "scale":  1064360005,
+                      "inverse":  1065881070,
+                      "result":  true
+                  },
+                  {
+                      "scale":  1064524422,
+                      "inverse":  1065789148,
+                      "result":  true
+                  },
+                  {
+                      "scale":  1064688839,
+                      "inverse":  1065699102,
+                      "result":  true
+                  },
+                  {
+                      "scale":  1064853255,
+                      "inverse":  1065610875,
+                      "result":  true
+                  },
+                  {
+                      "scale":  1065017672,
+                      "inverse":  1065524412,
+                      "result":  true
+                  },
+                  {
+                      "scale":  1065353216,
+                      "inverse":  1065353216,
+                      "result":  true
+                  },
+                  {
+                      "scale":  1065353216,
+                      "inverse":  1065378382,
+                      "result":  false
+                  },
+                  {
+                      "scale":  1066336361,
+                      "inverse":  1063593200,
+                      "result":  true
+                  },
+                  {
+                      "scale":  1066435011,
+                      "inverse":  1063436771,
+                      "result":  true
+                  },
+                  {
+                      "scale":  1066533662,
+                      "inverse":  1063283565,
+                      "result":  true
+                  },
+                  {
+                      "scale":  1066632312,
+                      "inverse":  1063133488,
+                      "result":  true
+                  },
+                  {
+                      "scale":  1066730961,
+                      "inverse":  1062986445,
+                      "result":  true
+                  },
+                  {
+                      "scale":  1066829612,
+                      "inverse":  1062842339,
+                      "result":  true
+                  },
+                  {
+                      "scale":  1067030938,
+                      "inverse":  1062557013,
+                      "result":  true
+                  },
+                  {
+                      "scale":  1067030938,
+                      "inverse":  1062598956,
+                      "result":  false
+                  },
+                  {
+                      "scale":  1070241258,
+                      "inverse":  1059176376,
+                      "result":  true
+                  },
+                  {
+                      "scale":  1070381013,
+                      "inverse":  1059065955,
+                      "result":  true
+                  },
+                  {
+                      "scale":  1070520767,
+                      "inverse":  1058957812,
+                      "result":  true
+                  },
+                  {
+                      "scale":  1070660522,
+                      "inverse":  1058851874,
+                      "result":  true
+                  },
+                  {
+                      "scale":  1070800275,
+                      "inverse":  1058748078,
+                      "result":  true
+                  },
+                  {
+                      "scale":  1070940030,
+                      "inverse":  1058646357,
+                      "result":  true
+                  },
+                  {
+                      "scale":  1071225242,
+                      "inverse":  1058444950,
+                      "result":  true
+                  },
+                  {
+                      "scale":  1071225242,
+                      "inverse":  1058474557,
+                      "result":  false
+                  },
+                  {
+                      "scale":  1083504066,
+                      "inverse":  1046215297,
+                      "result":  true
+                  },
+                  {
+                      "scale":  1083606827,
+                      "inverse":  1046065124,
+                      "result":  true
+                  },
+                  {
+                      "scale":  1083709588,
+                      "inverse":  1045918048,
+                      "result":  true
+                  },
+                  {
+                      "scale":  1083812348,
+                      "inverse":  1045773974,
+                      "result":  true
+                  },
+                  {
+                      "scale":  1083915108,
+                      "inverse":  1045632811,
+                      "result":  true
+                  },
+                  {
+                      "scale":  1084017869,
+                      "inverse":  1045494470,
+                      "result":  true
+                  },
+                  {
+                      "scale":  1084227584,
+                      "inverse":  1045220557,
+                      "result":  true
+                  },
+                  {
+                      "scale":  1084227584,
+                      "inverse":  1045260823,
+                      "result":  false
+                  },
+                  {
+                      "scale":  1090916450,
+                      "inverse":  1039428523,
+                      "result":  true
+                  },
+                  {
+                      "scale":  1091008935,
+                      "inverse":  1039261665,
+                      "result":  true
+                  },
+                  {
+                      "scale":  1091101419,
+                      "inverse":  1039098248,
+                      "result":  true
+                  },
+                  {
+                      "scale":  1091193904,
+                      "inverse":  1038938164,
+                      "result":  true
+                  },
+                  {
+                      "scale":  1091286388,
+                      "inverse":  1038781317,
+                      "result":  true
+                  },
+                  {
+                      "scale":  1091378872,
+                      "inverse":  1038627606,
+                      "result":  true
+                  },
+                  {
+                      "scale":  1091567616,
+                      "inverse":  1038323257,
+                      "result":  true
+                  },
+                  {
+                      "scale":  1091567616,
+                      "inverse":  1038367997,
+                      "result":  false
+                  },
+                  {
+                      "scale":  0,
+                      "inverse":  1065353216,
+                      "result":  false
+                  },
+                  {
+                      "scale":  1065353216,
+                      "inverse":  0,
+                      "result":  false
+                  },
+                  {
+                      "scale":  1036831949,
+                      "inverse":  1065353216,
+                      "result":  false
+                  },
+                  {
+                      "scale":  1065353216,
+                      "inverse":  1036831949,
+                      "result":  false
+                  },
+                  {
+                      "scale":  1092616192,
+                      "inverse":  1065353216,
+                      "result":  false
+                  },
+                  {
+                      "scale":  1065353216,
+                      "inverse":  1092616192,
+                      "result":  false
+                  },
+                  {
+                      "scale":  2143289344,
+                      "inverse":  1065353216,
+                      "result":  false
+                  },
+                  {
+                      "scale":  1065353216,
+                      "inverse":  2143289344,
+                      "result":  false
+                  },
+                  {
+                      "scale":  2139095040,
+                      "inverse":  1065353216,
+                      "result":  false
+                  },
+                  {
+                      "scale":  1065353216,
+                      "inverse":  2139095040,
+                      "result":  false
+                  },
+                  {
+                      "scale":  4286578688,
+                      "inverse":  1065353216,
+                      "result":  false
+                  },
+                  {
+                      "scale":  1065353216,
+                      "inverse":  4286578688,
+                      "result":  false
+                  },
+                  {
+                      "scale":  2147483648,
+                      "inverse":  1065353216,
+                      "result":  false
+                  },
+                  {
+                      "scale":  1065353216,
+                      "inverse":  2147483648,
+                      "result":  false
+                  }
+              ],
+    "seeds":  [
+                  {
+                      "original":  1041865114,
+                      "target":  1064195588,
+                      "scale":  1041170537,
+                      "inverse":  1088759024
+                  },
+                  {
+                      "original":  1041865114,
+                      "target":  1064360005,
+                      "scale":  1041269187,
+                      "inverse":  1088602595
+                  },
+                  {
+                      "original":  1041865114,
+                      "target":  1064524422,
+                      "scale":  1041367838,
+                      "inverse":  1088449389
+                  },
+                  {
+                      "original":  1041865114,
+                      "target":  1064688839,
+                      "scale":  1041466488,
+                      "inverse":  1088299312
+                  },
+                  {
+                      "original":  1041865114,
+                      "target":  1064853255,
+                      "scale":  1041565137,
+                      "inverse":  1088152269
+                  },
+                  {
+                      "original":  1041865114,
+                      "target":  1065017672,
+                      "scale":  1041663788,
+                      "inverse":  1088008163
+                  },
+                  {
+                      "original":  1056964608,
+                      "target":  1064195588,
+                      "scale":  1055806980,
+                      "inverse":  1074363536
+                  },
+                  {
+                      "original":  1056964608,
+                      "target":  1064360005,
+                      "scale":  1055971397,
+                      "inverse":  1074269678
+                  },
+                  {
+                      "original":  1056964608,
+                      "target":  1064524422,
+                      "scale":  1056135814,
+                      "inverse":  1074177756
+                  },
+                  {
+                      "original":  1056964608,
+                      "target":  1064688839,
+                      "scale":  1056300231,
+                      "inverse":  1074087710
+                  },
+                  {
+                      "original":  1056964608,
+                      "target":  1064853255,
+                      "scale":  1056464647,
+                      "inverse":  1073999483
+                  },
+                  {
+                      "original":  1056964608,
+                      "target":  1065017672,
+                      "scale":  1056629064,
+                      "inverse":  1073913020
+                  },
+                  {
+                      "original":  1061997773,
+                      "target":  1064195588,
+                      "scale":  1061071671,
+                      "inverse":  1068227508
+                  },
+                  {
+                      "original":  1061997773,
+                      "target":  1064360005,
+                      "scale":  1061203204,
+                      "inverse":  1068110186
+                  },
+                  {
+                      "original":  1061997773,
+                      "target":  1064524422,
+                      "scale":  1061334738,
+                      "inverse":  1067995283
+                  },
+                  {
+                      "original":  1061997773,
+                      "target":  1064688839,
+                      "scale":  1061466271,
+                      "inverse":  1067882725
+                  },
+                  {
+                      "original":  1061997773,
+                      "target":  1064853255,
+                      "scale":  1061597804,
+                      "inverse":  1067772441
+                  },
+                  {
+                      "original":  1061997773,
+                      "target":  1065017672,
+                      "scale":  1061729338,
+                      "inverse":  1067664363
+                  },
+                  {
+                      "original":  1065017672,
+                      "target":  1064195588,
+                      "scale":  1063883197,
+                      "inverse":  1066158812
+                  },
+                  {
+                      "original":  1065017672,
+                      "target":  1064360005,
+                      "scale":  1064044325,
+                      "inverse":  1066063039
+                  },
+                  {
+                      "original":  1065017672,
+                      "target":  1064524422,
+                      "scale":  1064205454,
+                      "inverse":  1065969240
+                  },
+                  {
+                      "original":  1065017672,
+                      "target":  1064688839,
+                      "scale":  1064366583,
+                      "inverse":  1065877356
+                  },
+                  {
+                      "original":  1065017672,
+                      "target":  1064853255,
+                      "scale":  1064527710,
+                      "inverse":  1065787329
+                  },
+                  {
+                      "original":  1065017672,
+                      "target":  1065017672,
+                      "scale":  1064688839,
+                      "inverse":  1065699102
+                  },
+                  {
+                      "original":  1065353216,
+                      "target":  1064195588,
+                      "scale":  1064195588,
+                      "inverse":  1065974928
+                  },
+                  {
+                      "original":  1065353216,
+                      "target":  1064360005,
+                      "scale":  1064360005,
+                      "inverse":  1065881070
+                  },
+                  {
+                      "original":  1065353216,
+                      "target":  1064524422,
+                      "scale":  1064524422,
+                      "inverse":  1065789148
+                  },
+                  {
+                      "original":  1065353216,
+                      "target":  1064688839,
+                      "scale":  1064688839,
+                      "inverse":  1065699102
+                  },
+                  {
+                      "original":  1065353216,
+                      "target":  1064853255,
+                      "scale":  1064853255,
+                      "inverse":  1065610875
+                  },
+                  {
+                      "original":  1065353216,
+                      "target":  1065017672,
+                      "scale":  1065017672,
+                      "inverse":  1065524412
+                  },
+                  {
+                      "original":  1067030938,
+                      "target":  1064195588,
+                      "scale":  1066336361,
+                      "inverse":  1063593200
+                  },
+                  {
+                      "original":  1067030938,
+                      "target":  1064360005,
+                      "scale":  1066435011,
+                      "inverse":  1063436771
+                  },
+                  {
+                      "original":  1067030938,
+                      "target":  1064524422,
+                      "scale":  1066533662,
+                      "inverse":  1063283565
+                  },
+                  {
+                      "original":  1067030938,
+                      "target":  1064688839,
+                      "scale":  1066632312,
+                      "inverse":  1063133488
+                  },
+                  {
+                      "original":  1067030938,
+                      "target":  1064853255,
+                      "scale":  1066730961,
+                      "inverse":  1062986445
+                  },
+                  {
+                      "original":  1067030938,
+                      "target":  1065017672,
+                      "scale":  1066829612,
+                      "inverse":  1062842339
+                  },
+                  {
+                      "original":  1071225242,
+                      "target":  1064195588,
+                      "scale":  1070241258,
+                      "inverse":  1059176376
+                  },
+                  {
+                      "original":  1071225242,
+                      "target":  1064360005,
+                      "scale":  1070381013,
+                      "inverse":  1059065955
+                  },
+                  {
+                      "original":  1071225242,
+                      "target":  1064524422,
+                      "scale":  1070520767,
+                      "inverse":  1058957812
+                  },
+                  {
+                      "original":  1071225242,
+                      "target":  1064688839,
+                      "scale":  1070660522,
+                      "inverse":  1058851874
+                  },
+                  {
+                      "original":  1071225242,
+                      "target":  1064853255,
+                      "scale":  1070800275,
+                      "inverse":  1058748078
+                  },
+                  {
+                      "original":  1071225242,
+                      "target":  1065017672,
+                      "scale":  1070940030,
+                      "inverse":  1058646357
+                  },
+                  {
+                      "original":  1084227584,
+                      "target":  1064195588,
+                      "scale":  1083504066,
+                      "inverse":  1046215297
+                  },
+                  {
+                      "original":  1084227584,
+                      "target":  1064360005,
+                      "scale":  1083606827,
+                      "inverse":  1046065124
+                  },
+                  {
+                      "original":  1084227584,
+                      "target":  1064524422,
+                      "scale":  1083709588,
+                      "inverse":  1045918048
+                  },
+                  {
+                      "original":  1084227584,
+                      "target":  1064688839,
+                      "scale":  1083812348,
+                      "inverse":  1045773974
+                  },
+                  {
+                      "original":  1084227584,
+                      "target":  1064853255,
+                      "scale":  1083915108,
+                      "inverse":  1045632811
+                  },
+                  {
+                      "original":  1084227584,
+                      "target":  1065017672,
+                      "scale":  1084017869,
+                      "inverse":  1045494470
+                  },
+                  {
+                      "original":  1091567616,
+                      "target":  1064195588,
+                      "scale":  1090916450,
+                      "inverse":  1039428523
+                  },
+                  {
+                      "original":  1091567616,
+                      "target":  1064360005,
+                      "scale":  1091008935,
+                      "inverse":  1039261665
+                  },
+                  {
+                      "original":  1091567616,
+                      "target":  1064524422,
+                      "scale":  1091101419,
+                      "inverse":  1039098248
+                  },
+                  {
+                      "original":  1091567616,
+                      "target":  1064688839,
+                      "scale":  1091193904,
+                      "inverse":  1038938164
+                  },
+                  {
+                      "original":  1091567616,
+                      "target":  1064853255,
+                      "scale":  1091286388,
+                      "inverse":  1038781317
+                  },
+                  {
+                      "original":  1091567616,
+                      "target":  1065017672,
+                      "scale":  1091378872,
+                      "inverse":  1038627606
+                  }
+              ],
+    "arenaOwned":  [
+                       {
+                           "original":  1041865114,
+                           "originalInverse":  1087722837,
+                           "scale":  1041170537,
+                           "inverse":  1088759024,
+                           "result":  true
+                       },
+                       {
+                           "original":  1041865114,
+                           "originalInverse":  1087722837,
+                           "scale":  1041269187,
+                           "inverse":  1088602595,
+                           "result":  true
+                       },
+                       {
+                           "original":  1041865114,
+                           "originalInverse":  1087722837,
+                           "scale":  1041367838,
+                           "inverse":  1088449389,
+                           "result":  true
+                       },
+                       {
+                           "original":  1041865114,
+                           "originalInverse":  1087722837,
+                           "scale":  1041466488,
+                           "inverse":  1088299312,
+                           "result":  true
+                       },
+                       {
+                           "original":  1041865114,
+                           "originalInverse":  1087722837,
+                           "scale":  1041565137,
+                           "inverse":  1088152269,
+                           "result":  true
+                       },
+                       {
+                           "original":  1041865114,
+                           "originalInverse":  1087722837,
+                           "scale":  1041663788,
+                           "inverse":  1088008163,
+                           "result":  false
+                       },
+                       {
+                           "original":  1056964608,
+                           "originalInverse":  1073741824,
+                           "scale":  1055806980,
+                           "inverse":  1074363536,
+                           "result":  true
+                       },
+                       {
+                           "original":  1056964608,
+                           "originalInverse":  1073741824,
+                           "scale":  1055971397,
+                           "inverse":  1074269678,
+                           "result":  true
+                       },
+                       {
+                           "original":  1056964608,
+                           "originalInverse":  1073741824,
+                           "scale":  1056135814,
+                           "inverse":  1074177756,
+                           "result":  true
+                       },
+                       {
+                           "original":  1056964608,
+                           "originalInverse":  1073741824,
+                           "scale":  1056300231,
+                           "inverse":  1074087710,
+                           "result":  true
+                       },
+                       {
+                           "original":  1056964608,
+                           "originalInverse":  1073741824,
+                           "scale":  1056464647,
+                           "inverse":  1073999483,
+                           "result":  true
+                       },
+                       {
+                           "original":  1056964608,
+                           "originalInverse":  1073741824,
+                           "scale":  1056629064,
+                           "inverse":  1073913020,
+                           "result":  false
+                       },
+                       {
+                           "original":  1061997773,
+                           "originalInverse":  1067450368,
+                           "scale":  1061071671,
+                           "inverse":  1068227508,
+                           "result":  true
+                       },
+                       {
+                           "original":  1061997773,
+                           "originalInverse":  1067450368,
+                           "scale":  1061203204,
+                           "inverse":  1068110186,
+                           "result":  true
+                       },
+                       {
+                           "original":  1061997773,
+                           "originalInverse":  1067450368,
+                           "scale":  1061334738,
+                           "inverse":  1067995283,
+                           "result":  true
+                       },
+                       {
+                           "original":  1061997773,
+                           "originalInverse":  1067450368,
+                           "scale":  1061466271,
+                           "inverse":  1067882725,
+                           "result":  true
+                       },
+                       {
+                           "original":  1061997773,
+                           "originalInverse":  1067450368,
+                           "scale":  1061597804,
+                           "inverse":  1067772441,
+                           "result":  true
+                       },
+                       {
+                           "original":  1061997773,
+                           "originalInverse":  1067450368,
+                           "scale":  1061729338,
+                           "inverse":  1067664363,
+                           "result":  false
+                       },
+                       {
+                           "original":  1065017672,
+                           "originalInverse":  1065524412,
+                           "scale":  1063883197,
+                           "inverse":  1066158812,
+                           "result":  true
+                       },
+                       {
+                           "original":  1065017672,
+                           "originalInverse":  1065524412,
+                           "scale":  1064044325,
+                           "inverse":  1066063039,
+                           "result":  true
+                       },
+                       {
+                           "original":  1065017672,
+                           "originalInverse":  1065524412,
+                           "scale":  1064205454,
+                           "inverse":  1065969240,
+                           "result":  true
+                       },
+                       {
+                           "original":  1065017672,
+                           "originalInverse":  1065524412,
+                           "scale":  1064366583,
+                           "inverse":  1065877356,
+                           "result":  true
+                       },
+                       {
+                           "original":  1065017672,
+                           "originalInverse":  1065524412,
+                           "scale":  1064527710,
+                           "inverse":  1065787329,
+                           "result":  true
+                       },
+                       {
+                           "original":  1065017672,
+                           "originalInverse":  1065524412,
+                           "scale":  1064688839,
+                           "inverse":  1065699102,
+                           "result":  false
+                       },
+                       {
+                           "original":  1065353216,
+                           "originalInverse":  1065353216,
+                           "scale":  1064195588,
+                           "inverse":  1065974928,
+                           "result":  true
+                       },
+                       {
+                           "original":  1065353216,
+                           "originalInverse":  1065353216,
+                           "scale":  1064360005,
+                           "inverse":  1065881070,
+                           "result":  true
+                       },
+                       {
+                           "original":  1065353216,
+                           "originalInverse":  1065353216,
+                           "scale":  1064524422,
+                           "inverse":  1065789148,
+                           "result":  true
+                       },
+                       {
+                           "original":  1065353216,
+                           "originalInverse":  1065353216,
+                           "scale":  1064688839,
+                           "inverse":  1065699102,
+                           "result":  true
+                       },
+                       {
+                           "original":  1065353216,
+                           "originalInverse":  1065353216,
+                           "scale":  1064853255,
+                           "inverse":  1065610875,
+                           "result":  true
+                       },
+                       {
+                           "original":  1065353216,
+                           "originalInverse":  1065353216,
+                           "scale":  1065017672,
+                           "inverse":  1065524412,
+                           "result":  false
+                       },
+                       {
+                           "original":  1067030938,
+                           "originalInverse":  1062557013,
+                           "scale":  1066336361,
+                           "inverse":  1063593200,
+                           "result":  true
+                       },
+                       {
+                           "original":  1067030938,
+                           "originalInverse":  1062557013,
+                           "scale":  1066435011,
+                           "inverse":  1063436771,
+                           "result":  true
+                       },
+                       {
+                           "original":  1067030938,
+                           "originalInverse":  1062557013,
+                           "scale":  1066533662,
+                           "inverse":  1063283565,
+                           "result":  true
+                       },
+                       {
+                           "original":  1067030938,
+                           "originalInverse":  1062557013,
+                           "scale":  1066632312,
+                           "inverse":  1063133488,
+                           "result":  true
+                       },
+                       {
+                           "original":  1067030938,
+                           "originalInverse":  1062557013,
+                           "scale":  1066730961,
+                           "inverse":  1062986445,
+                           "result":  true
+                       },
+                       {
+                           "original":  1067030938,
+                           "originalInverse":  1062557013,
+                           "scale":  1066829612,
+                           "inverse":  1062842339,
+                           "result":  false
+                       },
+                       {
+                           "original":  1071225242,
+                           "originalInverse":  1058444950,
+                           "scale":  1070241258,
+                           "inverse":  1059176376,
+                           "result":  true
+                       },
+                       {
+                           "original":  1071225242,
+                           "originalInverse":  1058444950,
+                           "scale":  1070381013,
+                           "inverse":  1059065955,
+                           "result":  true
+                       },
+                       {
+                           "original":  1071225242,
+                           "originalInverse":  1058444950,
+                           "scale":  1070520767,
+                           "inverse":  1058957812,
+                           "result":  true
+                       },
+                       {
+                           "original":  1071225242,
+                           "originalInverse":  1058444950,
+                           "scale":  1070660522,
+                           "inverse":  1058851874,
+                           "result":  true
+                       },
+                       {
+                           "original":  1071225242,
+                           "originalInverse":  1058444950,
+                           "scale":  1070800275,
+                           "inverse":  1058748078,
+                           "result":  true
+                       },
+                       {
+                           "original":  1071225242,
+                           "originalInverse":  1058444950,
+                           "scale":  1070940030,
+                           "inverse":  1058646357,
+                           "result":  false
+                       },
+                       {
+                           "original":  1084227584,
+                           "originalInverse":  1045220557,
+                           "scale":  1083504066,
+                           "inverse":  1046215297,
+                           "result":  true
+                       },
+                       {
+                           "original":  1084227584,
+                           "originalInverse":  1045220557,
+                           "scale":  1083606827,
+                           "inverse":  1046065124,
+                           "result":  true
+                       },
+                       {
+                           "original":  1084227584,
+                           "originalInverse":  1045220557,
+                           "scale":  1083709588,
+                           "inverse":  1045918048,
+                           "result":  true
+                       },
+                       {
+                           "original":  1084227584,
+                           "originalInverse":  1045220557,
+                           "scale":  1083812348,
+                           "inverse":  1045773974,
+                           "result":  true
+                       },
+                       {
+                           "original":  1084227584,
+                           "originalInverse":  1045220557,
+                           "scale":  1083915108,
+                           "inverse":  1045632811,
+                           "result":  true
+                       },
+                       {
+                           "original":  1084227584,
+                           "originalInverse":  1045220557,
+                           "scale":  1084017869,
+                           "inverse":  1045494470,
+                           "result":  false
+                       },
+                       {
+                           "original":  1091567616,
+                           "originalInverse":  1038323257,
+                           "scale":  1090916450,
+                           "inverse":  1039428523,
+                           "result":  true
+                       },
+                       {
+                           "original":  1091567616,
+                           "originalInverse":  1038323257,
+                           "scale":  1091008935,
+                           "inverse":  1039261665,
+                           "result":  true
+                       },
+                       {
+                           "original":  1091567616,
+                           "originalInverse":  1038323257,
+                           "scale":  1091101419,
+                           "inverse":  1039098248,
+                           "result":  true
+                       },
+                       {
+                           "original":  1091567616,
+                           "originalInverse":  1038323257,
+                           "scale":  1091193904,
+                           "inverse":  1038938164,
+                           "result":  true
+                       },
+                       {
+                           "original":  1091567616,
+                           "originalInverse":  1038323257,
+                           "scale":  1091286388,
+                           "inverse":  1038781317,
+                           "result":  true
+                       },
+                       {
+                           "original":  1091567616,
+                           "originalInverse":  1038323257,
+                           "scale":  1091378872,
+                           "inverse":  1038627606,
+                           "result":  false
+                       }
+                   ],
+    "policySha256":  "5755486FCE052F59C0B2199F92E408935012BAC8FE934731B162A5747FB01C03",
+    "helperSha256":  "9F92540FAF8362706F7B7389E22CA6FD1634E30F7F29FEA7CB9BFE416C6F91DE"
+}

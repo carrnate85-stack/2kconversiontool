@@ -1,0 +1,40 @@
+NEW CHAT HANDOFF — 2026-10-17 — CAMERA QA 0.44
+
+SUPERSEDED: the subsequent 0.44 live camera test failed during partial publication. Read CLAUDE-HANDOFF.txt and artifacts/qa044-camera-live-failure.json for the current state. The offline passes below do not establish camera gameplay success.
+
+Project: C:\Users\carrn\CodexProjects\2kconversiontool\nba2k27-launcher-tauri2
+Stack: Rust + Tauri 2 + React/TypeScript. Preserve the old WPF features, look and quality; exact coding parity is not required. No active app goal was present when checked at handoff.
+
+PRIORITY: Test cameras first. Do not resume other feature work until that result is clear. User requested this concise handoff after the camera fix finished.
+
+READY TEST LAUNCHER
+C:\Users\carrn\CodexProjects\2kconversiontool\nba2k27-launcher-tauri2\Builds\0.44.0\Portable\App\2k Launcher Rust Prototype.exe
+SHA256: FD780885BEEEEB1DE38A4FC44A0E9DF38FF7A04360FAF78AB9329B6335F15DC7
+Separate QA only; not installed over Main. Its Data/Library were not copied from a running build. Keep the Portable folder together. Never copy session receipts between builds.
+
+CONFIRMED CAMERA BUG / FIX
+QA 0.43 received all seven selected cameras, initialized private data, then permanently held with "No verified inactive camera menu" before publishing the camera list. Menu readiness had changed during preparation.
+0.44 retains the fully initialized ownership plan before final readiness checks. A typed readiness loss before any public write now waits for stable Main/Quick Play and reuses that allocation. Source, private bytes, public ownership and Version 2 profile are revalidated. First publication and stock-reset rearming use the same guard. After any public write, transitions/errors still hold; no uncertain partial transaction is retried. Camera positions/tracking/height/zoom policies were not changed.
+Changed runtime: src/feature_runtime.rs and src/feature_writer.rs. Regression coverage also in src/camera_v2_tests.rs. Version metadata and docs updated. WNBA stays disabled.
+
+VERIFICATION
+922 native tests passed; 22 explicit/manual audits excluded. 139 frontend tests passed. Separate camera/scaler harness: 39 fixture checks plus both actual installed Version 2 disk audits passed. Packaged UI: 119 checks plus three fresh-process repeats; shared-file validators, HTTP isolation and helper cleanup passed. Evidence: QA-REPORT.md, Builds/0.44.0/QA-VERIFICATION.json and artifacts/qa044-*.log. Offline checks do NOT establish gameplay success.
+
+NEXT LIVE TEST
+1. Close NBA 2K27 and the previous launcher normally; do not kill or replace them without approval.
+2. Open QA 0.44, configure/enable cameras before Play, launch, and stay at Main until camera status is Active.
+3. Enter Freestyle and check camera names/order, tracking and height/zoom. Return to Quick Play and re-enter.
+4. If preparation was interrupted before publication, return to Main/Quick Play and confirm recovery rather than permanent Held. Inspect new session logs read-only if it fails. Never assume the previous live PID is current.
+
+ROLLBACK / SAFETY
+Pre-edit hash-checked files: Backups/qa044-before-camera-retry-20261017
+Complete prior source/EXE checkpoint: Backups/v0.43.0-workflow-layouts-20261017
+Installed Main: C:\Program Files (x86)\Steam\steamapps\common\NBA 2K27\2k Launcher\App\2k Launcher Rust.exe
+Main SHA256 remains B86C1AAFA291DA5850DA93A90796F15A84EA57B225393F83591761D56316F958.
+No game memory changes, Main installation or user Data/Library migration in this pass. Repo is broadly dirty/untracked; preserve unrelated work. Give an EXE link with each delivered update. Overall rebuild estimate remains about 75%; live acceptance is incomplete.
+
+WNBA CHECKPOINT — AFTER CAMERAS
+Old WPF Blacktop used general roster/learn2k_roster.iff; the withdrawn crashing experiment used WNBA-only learn2k_wnba_roster.iff. Category switches cannot add missing teams. Do not reenable the failed loader.
+Raw general roster extracted/verified from game 0B offset 0x3BFD2276, but not decrypted; both-league contents remain unverified. Scratch: C:\Users\carrn\Documents\Codex\2026-10-17\task\roster-scratch (asset-provenance.json, key-path-checkpoint.json, learn2k_roster.iff). Encrypted VCZ wrapper flag 0x84 requires a missing key; do not confuse extraction or synthetic tests with roster validation.
+Local research: tools/roster_key_offline_audit.py, tools/roster_wrapper_offline.py, tools/test_roster_wrapper_offline.py, tools/verify_roster_wrapper_controls.py; artifacts/roster-key-offline. Eleven decoder tests, plain stock music and a synthetic encrypted round-trip passed; actual roster remains undecoded. Game key setter candidate RVA 03C78030 sets manager 0BB9A8E8 +D8/+E0; key initialization source is unresolved.
+User's D:\Projects\2k Exporter was inspected read-only. Active Tauri exporter 0.1.26 handles ordinary Oodle/VCZ but lacks this roster-wrapper decryption/key path. Do not launch or modify it as a presumed fix.

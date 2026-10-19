@@ -1,0 +1,362 @@
+{
+  "schema": "nba2k27-v2-game-rules-getters-v1",
+  "sha256": "29A96471C55909FC2BCEA6C699C59238656A501C19B50C74ED64B0D842E576A1",
+  "timestamp": "6AC53765",
+  "imageSize": "35BDE000",
+  "fields": [
+    {
+      "id": "ShotClock",
+      "offset": 2070,
+      "width": 1,
+      "rva": 39493520,
+      "hex": "488B05892E5B080FB68016080000C3",
+      "ownerRva": 179686944,
+      "matchingOwnerGetters": 2
+    },
+    {
+      "id": "OutOfBounds",
+      "offset": 2084,
+      "width": 1,
+      "rva": 39492592,
+      "hex": "488B0529325B080FB68024080000C3",
+      "ownerRva": 179686944,
+      "matchingOwnerGetters": 2
+    },
+    {
+      "id": "BackcourtViolation",
+      "offset": 2085,
+      "width": 1,
+      "rva": 39487024,
+      "hex": "488B05E9475B080FB68025080000C3",
+      "ownerRva": 179686944,
+      "matchingOwnerGetters": 2
+    },
+    {
+      "id": "EightSecondsHalfCourt",
+      "offset": 2086,
+      "width": 1,
+      "rva": 39489376,
+      "hex": "488B05B93E5B080FB68026080000C3",
+      "ownerRva": 179686944,
+      "matchingOwnerGetters": 2
+    },
+    {
+      "id": "FiveSecondsInbounding",
+      "offset": 2677,
+      "width": 1,
+      "rva": 39489664,
+      "hex": "488B05993D5B080FB680750A0000C3",
+      "ownerRva": 179686944,
+      "matchingOwnerGetters": 2
+    },
+    {
+      "id": "OffensiveViolationInKey",
+      "offset": 2312,
+      "width": 4,
+      "rva": 39494624,
+      "hex": "488B05392A5B088B8008090000C3",
+      "ownerRva": 179686944,
+      "matchingOwnerGetters": 2
+    },
+    {
+      "id": "DefensiveViolationInKey",
+      "offset": 2316,
+      "width": 4,
+      "rva": 39488928,
+      "hex": "488B0579405B088B800C090000C3",
+      "ownerRva": 179686944,
+      "matchingOwnerGetters": 2
+    },
+    {
+      "id": "FiveSecondsBackToBasket",
+      "offset": 2087,
+      "width": 1,
+      "rva": 39489632,
+      "hex": "488B05B93D5B080FB68027080000C3",
+      "ownerRva": 179686944,
+      "matchingOwnerGetters": 2
+    },
+    {
+      "id": "CloselyGuarded",
+      "offset": 2638,
+      "width": 1,
+      "rva": 39488112,
+      "hex": "488B05A9435B080FB6804E0A0000C3",
+      "ownerRva": 179686944,
+      "matchingOwnerGetters": 2
+    },
+    {
+      "id": "OverTheBackRule",
+      "offset": 2096,
+      "width": 1,
+      "rva": 39521008,
+      "hex": "488B0529C35A080FB68030080000C3",
+      "ownerRva": 179686944,
+      "matchingOwnerGetters": 1
+    },
+    {
+      "id": "GenericPersonalFoulRule",
+      "offset": 2097,
+      "width": 1,
+      "rva": 39520144,
+      "hex": "488B0589C65A080FB68031080000C3",
+      "ownerRva": 179686944,
+      "matchingOwnerGetters": 1
+    },
+    {
+      "id": "ChargingRule",
+      "offset": 2098,
+      "width": 1,
+      "rva": 39520624,
+      "hex": "488B05A9C45A080FB68032080000C3",
+      "ownerRva": 179686944,
+      "matchingOwnerGetters": 1
+    },
+    {
+      "id": "OffensiveOffballFoulRule",
+      "offset": 2099,
+      "width": 1,
+      "rva": 39520720,
+      "hex": "488B0549C45A080FB68033080000C3",
+      "ownerRva": 179686944,
+      "matchingOwnerGetters": 1
+    },
+    {
+      "id": "DefensiveOffballFoulRule",
+      "offset": 2100,
+      "width": 1,
+      "rva": 39520816,
+      "hex": "488B05E9C35A080FB68034080000C3",
+      "ownerRva": 179686944,
+      "matchingOwnerGetters": 1
+    },
+    {
+      "id": "BlockingRule",
+      "offset": 2101,
+      "width": 1,
+      "rva": 39520528,
+      "hex": "488B0509C55A080FB68035080000C3",
+      "ownerRva": 179686944,
+      "matchingOwnerGetters": 1
+    },
+    {
+      "id": "ReachingFoulRule",
+      "offset": 2102,
+      "width": 1,
+      "rva": 39520240,
+      "hex": "488B0529C65A080FB68036080000C3",
+      "ownerRva": 179686944,
+      "matchingOwnerGetters": 1
+    },
+    {
+      "id": "LooseBallRule",
+      "offset": 2104,
+      "width": 1,
+      "rva": 39521104,
+      "hex": "488B05C9C25A080FB68038080000C3",
+      "ownerRva": 179686944,
+      "matchingOwnerGetters": 1
+    },
+    {
+      "id": "ShootingFoulRule",
+      "offset": 2103,
+      "width": 1,
+      "rva": 39520336,
+      "hex": "488B05C9C55A080FB68037080000C3",
+      "ownerRva": 179686944,
+      "matchingOwnerGetters": 1
+    },
+    {
+      "id": "IntentionalFoul",
+      "offset": 2105,
+      "width": 1,
+      "rva": 39521200,
+      "hex": "488B0569C25A080FB68039080000C3",
+      "ownerRva": 179686944,
+      "matchingOwnerGetters": 1
+    },
+    {
+      "id": "ClearPathRule",
+      "offset": 2112,
+      "width": 1,
+      "rva": 39488080,
+      "hex": "488B05C9435B080FB68040080000C3",
+      "ownerRva": 179686944,
+      "matchingOwnerGetters": 2
+    },
+    {
+      "id": "TransitionTakeFoulRule",
+      "offset": 2113,
+      "width": 1,
+      "rva": 39496032,
+      "hex": "488B05B9245B080FB68041080000C3",
+      "ownerRva": 179686944,
+      "matchingOwnerGetters": 2
+    },
+    {
+      "id": "KickBall",
+      "offset": 2106,
+      "width": 1,
+      "rva": 39491456,
+      "hex": "488B0599365B080FB6803A080000C3",
+      "ownerRva": 179686944,
+      "matchingOwnerGetters": 2
+    },
+    {
+      "id": "Goaltending",
+      "offset": 2088,
+      "width": 1,
+      "rva": 39490048,
+      "hex": "488B05193C5B080FB68028080000C3",
+      "ownerRva": 179686944,
+      "matchingOwnerGetters": 2
+    },
+    {
+      "id": "IllegalPick",
+      "offset": 2091,
+      "width": 1,
+      "rva": 39520912,
+      "hex": "488B0589C35A080FB6802B080000C3",
+      "ownerRva": 179686944,
+      "matchingOwnerGetters": 1
+    },
+    {
+      "id": "Traveling",
+      "offset": 2089,
+      "width": 1,
+      "rva": 39496064,
+      "hex": "488B0599245B080FB68029080000C3",
+      "ownerRva": 179686944,
+      "matchingOwnerGetters": 2
+    },
+    {
+      "id": "DoubleDribble",
+      "offset": 2090,
+      "width": 1,
+      "rva": 39489312,
+      "hex": "488B05F93E5B080FB6802A080000C3",
+      "ownerRva": 179686944,
+      "matchingOwnerGetters": 2
+    },
+    {
+      "id": "FoulOut",
+      "offset": 2092,
+      "width": 4,
+      "rva": 39482640,
+      "hex": "488B0509595B088B802C080000C3",
+      "ownerRva": 179686944,
+      "matchingOwnerGetters": 2
+    },
+    {
+      "id": "ThreePointShotRestriction",
+      "offset": 2712,
+      "width": 4,
+      "rva": 39494608,
+      "hex": "488B05492A5B088B80980A0000C3",
+      "ownerRva": 179686944,
+      "matchingOwnerGetters": 2
+    },
+    {
+      "id": "ZoneDefenseAllowed",
+      "offset": 2260,
+      "width": 1,
+      "rva": 39497120,
+      "hex": "488B0579205B080FB680D4080000C3",
+      "ownerRva": 179686944,
+      "matchingOwnerGetters": 2
+    },
+    {
+      "id": "NoChargeZone",
+      "offset": 2640,
+      "width": 1,
+      "rva": 39491872,
+      "hex": "488B05F9345B080FB680500A0000C3",
+      "ownerRva": 179686944,
+      "matchingOwnerGetters": 2
+    },
+    {
+      "id": "BuzzerBeaterReview",
+      "offset": 2121,
+      "width": 1,
+      "rva": 39487440,
+      "hex": "488B0549465B080FB68049080000C3",
+      "ownerRva": 179686944,
+      "matchingOwnerGetters": 2
+    },
+    {
+      "id": "ClearBallRequired",
+      "offset": 2641,
+      "width": 1,
+      "rva": 39488016,
+      "hex": "488B0509445B080FB680510A0000C3",
+      "ownerRva": 179686944,
+      "matchingOwnerGetters": 2
+    },
+    {
+      "id": "Timeouts",
+      "offset": 2653,
+      "width": 1,
+      "rva": 39494656,
+      "hex": "488B05192A5B080FB6805D0A0000C3",
+      "ownerRva": 179686944,
+      "matchingOwnerGetters": 2
+    },
+    {
+      "id": "ScreenOutOfBoundsViolation",
+      "offset": 2116,
+      "width": 1,
+      "rva": 39510224,
+      "hex": "488B0549ED5A080FB68044080000C3",
+      "ownerRva": 179686944,
+      "matchingOwnerGetters": 2
+    },
+    {
+      "id": "PlayerOutOfBoundsViolationRule",
+      "offset": 2118,
+      "width": 1,
+      "rva": 39510128,
+      "hex": "488B05A9ED5A080FB68046080000C3",
+      "ownerRva": 179686944,
+      "matchingOwnerGetters": 2
+    },
+    {
+      "id": "BallEnteredBasketFromBelow",
+      "offset": 2676,
+      "width": 1,
+      "rva": 39487152,
+      "hex": "488B0569475B080FB680740A0000C3",
+      "ownerRva": 179686944,
+      "matchingOwnerGetters": 2
+    },
+    {
+      "id": "TechnicalFoulRule",
+      "offset": 2107,
+      "width": 1,
+      "rva": 39520432,
+      "hex": "488B0569C55A080FB6803B080000C3",
+      "ownerRva": 179686944,
+      "matchingOwnerGetters": 1
+    },
+    {
+      "id": "FlagrantFoulRule",
+      "offset": 2108,
+      "width": 1,
+      "rva": 39520048,
+      "hex": "488B05E9C65A080FB6803C080000C3",
+      "ownerRva": 179686944,
+      "matchingOwnerGetters": 1
+    },
+    {
+      "id": "TechnicalFoulEjectionRule",
+      "offset": 2109,
+      "width": 1,
+      "rva": 39494544,
+      "hex": "488B05892A5B080FB6803D080000C3",
+      "ownerRva": 179686944,
+      "matchingOwnerGetters": 2
+    }
+  ],
+  "gameProcessAccess": false,
+  "gameFilesChanged": false,
+  "getterProofOnly": true
+}

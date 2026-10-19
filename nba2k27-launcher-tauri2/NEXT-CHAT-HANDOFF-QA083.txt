@@ -1,0 +1,109 @@
+QA083 FINAL - DEV CANDIDATE READY, NOT ACTIVATED / INSTALLED / PROMOTED
+User authorized remaining parity implementation without interruption while remote.
+Later permitted Steam/game launch if needed, requiring normal close afterward.
+No game was launched, no live game memory was read/written. Existing launcher was
+left open. User Data/Library/backups/journals/prior stages preserved. QA081 heartbeat
+remains PAUSED. This FINAL handoff supersedes QA083-WIP and individual earlier freezes.
+
+DEV STARTER
+Start QA083 Dev.vbs (or Start QA083 Dev.ps1)
+Candidate: Dev/Pending/QA083/launcher.exe
+55046656 bytes; SHA256 5040AA978A29AD809DDA889EF97D2B68FEA7AEBB3D5531FEF81DFD8FFE2CB765
+No automatic activation. User must normally close the existing launcher/game before
+using starter. VBS /check and PS syntax PASS. PS -CheckOnly correctly refused because
+2k Launcher Rust Prototype PID35872 remained open; nothing replaced or launched.
+Current active dev app remains untouched. No install or promotion authorization.
+
+DELIVERED IMPLEMENTATION
+- Team type: exact36 native enum names; changed writes only type6bits at123C bit26,
+  unknown36..63 preserved readonly. Historic season uses explicit calendar selector,
+  canonical0..100 raw, known duplicate encodings preserved on same-calendar no-op.
+  Exact8bit1548/19 mask. Legacy historicYearId neutral0, no heuristic negative domain.
+- Full-name audio signed16 atPlayer+2E8, exactly2B. Changed IDs -1..32767 only;
+  unknown negative baseline readonly exact echo. First/last audio mapping now captured
+  from native name tables for preview (readonly dictionaries), ambiguous names held.
+- Existing arena selection: captures full native catalog, unique valid IDs, private
+  typed source+target witnesses. Save changes only Team+EE0 pointer8B, no arena record
+  writes. Per-boundary sealed pair revalidation; no custom arena/floor allocation.
+- Existing From/origin selection: native source catalog token and real row indices;
+  only Player+B0 pointer8B. NULL distinct from row514; real row0 supported, no clear.
+  Stale/invalid original pointers refused; full external witnesses retained through
+  every effect/restore boundary. Backend remains final authority for paired ID/token.
+- Custom2K23 catalog import native chooser, unified/stats-only formats, actual built-in
+ 4274players/8605seasons/180mappedfields validated. Bounded parser, immutable hashed
+  objects and durable selection, retained file/ancestor identity, cancellation and
+  generation/ABA guards. Shared-source replacement invalidates stale window cache;
+  destination drafts remain unchanged. WPF pointer missingversion defaults1.
+- Saved ratings TEXT import: local JSON/HTML/text plus exact original 2KDB/Auction URL,
+  bounded passive decoding with retained WPF mappings and source identity matching.
+  No fetch, browser script execution or live online WebView capture. Stages reviewed
+  local fields only; explicit common Save retains native capability enforcement.
+- PlayerDNA career import explicitly selects one supported existing season, skip or
+  cancel, with exact destination/visit guards. UI capability feedback remains truthful.
+- Structural season owned-pool pure model+15groups implemented: add older/remove oldest,
+  narrow shared-COW/canonical chains/reserved-bit preservation/rollback proposals.
+  NO native executor/quiescence/IPC/undo authority and NOT UI-enabled. Nonzero private
+  history roots currently refused; not full structural season parity.
+
+GUARDS / JOURNALS
+Native identity, allocation, profile, exact source/target ownership and durable intent
+remain required. New proofs bind native methods/descriptors; ASLR relocation audits
+retain separate relocated enum-pointer check. QA082 legacy proof receipt inspection
+is explicitly bounded to old masks: it never gains new audio/type/year/arena/origin
+live authority. Pending old receipts still block; ended migration requires trusted
+no-game state and does not replay memory. Old builds fail closed on new receipts.
+No KindArena/origin-row writer and no caller-provided addresses.
+
+VALIDATION
+Final offline exact-image partition: 1411 passed,0 failed,54 ignored across ALL1465
+listed tests, complete disjoint enumeration coverage. Roster124pass4ignored44.49s;
+catalog13pass68.62s; rest1274pass50ignored105.04s. Same180s supervisor per group, no
+Debugger, all exit0/CLAIMED0/DUMP0. Four ordinarily ignored pinned EXE disk-only audits
+also PASS against installed EXE SHA29A96471C55909FC2BCEA6C699C59238656A501C19B50C74ED64B0D842E576A1.
+Frontend56PASS, TypeScriptPASS. Offline locked no-default-features cargo test/build
+PASS, -j1 conservative affinity. Browser pack132assets1043919compressed bytes.
+Normal ignored tests include live/synthetic opt-ins; they are not accepted implicitly.
+
+Initial full run timed out at180s and reported stale appearance/audio test assumptions.
+Exact initial EXE5417F65BB4275CB5943B0043A4A72D2A2D08E391996B653B2453A0DC3F5413B7 /
+PDB1CA1ED2ED19320D8D874D326CD9CA8C2A853D11D9FF53CAE3387C8ADF161E344 and logs preserved
+in Backups/qa083-initial-test-failures-20261019/exact-test-evidence.zip (roundtrip verified).
+Appearance fake used old2asset proof; now currentproof plus negative oldproof/zero-write
+regression. Audio adjacent2EA already has proven NoTradeDaysLeft mask; corrected test
+proves audio-onlyPlan leaves it unchanged. No production guard/mask weakened. First
+partition invocation lost scalar filter and timed out; preserved separately. Final
+explicit literal invocations and coverage manifest supersede it, no timeout accepted.
+
+Final test EXE EC4A215ED4B9B8A21FDE72FAB5E3025C80484E0B3E66FC8701B785412AB8F390
+Final test PDB 3374258525EC5A04BA0C37EEBFA9F7065E1A10DE99E5B4C45298186C01D47E16
+artifacts/qa083-final-build-inputs-20261019.json:573sources/configs+14scripts+78assets.
+665frozeninputs verified and fsynced, strictUTF8; preservation-v2 confirms QA080,
+QA082 and nativeDLL unchanged. Final input freeze supersedes individual agent freezes.
+NativeDLL remains1215488B SHA83AF5D0613D1E90D51933F382C22D215F766A61A198CAFEB41E80606A1722518.
+See artifacts/qa083-final-test-coverage.json, qa083-final-validation-20261019.json,
+qa083-final-stage-20261019.json and independent review reports.
+
+EXPLICIT REMAINING GAPS / LIVE QUALIFICATIONS
+Height/wingspan production masked-CAS executor/composite journal still unwired.
+Structural season native transaction/quiescence/COW/rollback remains. Live online
+2KDB/Auction isolated capture remains (saved text import works). Custom arena/floor
+cloning and saved custom-profile activation remain. Origin clear/allocation unsupported.
+Future ordinary UI tests: new editor saves/reopen/cancel/stale source scenarios,
+QA080 visible scaler, WNBA repeated entry and OFF. User previously reported WNBA both
+modes worked and outfits quick; QA083 makes no functional WNBA/outfit/scaler change.
+Do not infer gameplay acceptance from offline/disk tests. No parity percentage claimed.
+
+UNRESOLVED CRASH EVIDENCE
+QA073 natural Rust test AV remains UNRESOLVED; exact preserved old archive:
+Backups/qa073-natural-test-av-20261018/exact-test-image.zip
+EXE BC3B784A828DC5149C28A7F8D9688ECA302CCD46E7F5294D101C0CF99AE82D21
+PDB A97CB0292EA39E292C81400E5F77DF4F3AC658AA0614F0DBB7E2DFBF3804556A
+Passing changed natural image or debugger run does NOT resolve it.
+QA078 Clang O2 fixture crash also unexplained. No native DLL rebuild here.
+
+EXACT FINAL ARCHIVE
+Backups/qa083-passing-test-and-dev-20261019/exact-images-and-sources.zip intended after
+this handoff: exact final sources/assets/scripts, devEXE/PDB,testEXE/PDB,starters,
+reports and captures. Confirm roundtripVerified in
+artifacts/qa083-exact-evidence-archive-20261019.json after helper completes.
+Do not edit included sources/handoff after archive without fresh versioned evidence.

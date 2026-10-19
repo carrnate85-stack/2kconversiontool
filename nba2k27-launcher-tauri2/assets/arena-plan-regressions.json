@@ -1,0 +1,112 @@
+{
+    "schema":  "nba2k27-arena-plan-oracle-v1",
+    "gameAccess":  false,
+    "stockHex":  "B9030000BA0300008B030000C5020000C5020000",
+    "cases":  [
+                  {
+                      "file":  "arena_700_int",
+                      "floor":  "arena_700_int_floor",
+                      "accepted":  true,
+                      "bytesHex":  "6172656E615F3730305F696E74000000000000000000000000000000000000000000000000006172656E615F3730305F696E745F666C6F6F72000000000000000000000000000000000000000000"
+                  },
+                  {
+                      "file":  "arena_brickleyfacility_int",
+                      "floor":  "arena_brickleyfacility_int_floor",
+                      "accepted":  true,
+                      "bytesHex":  "6172656E615F627269636B6C6579666163696C6974795F696E740000000000000000000000006172656E615F627269636B6C6579666163696C6974795F696E745F666C6F6F720000000000000000"
+                  },
+                  {
+                      "file":  "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                      "floor":  "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa_floor",
+                      "accepted":  true,
+                      "bytesHex":  "61616161616161616161616161616161616161616161616161616161616161616100000000006161616161616161616161616161616161616161616161616161616161616161615F666C6F6F7200"
+                  },
+                  {
+                      "file":  "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                      "floor":  "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa_floor",
+                      "accepted":  false,
+                      "bytesHex":  null
+                  },
+                  {
+                      "file":  "arena",
+                      "floor":  "floor",
+                      "accepted":  false,
+                      "bytesHex":  null
+                  },
+                  {
+                      "file":  "../arena",
+                      "floor":  "../arena_floor",
+                      "accepted":  false,
+                      "bytesHex":  null
+                  },
+                  {
+                      "file":  "ARENA",
+                      "floor":  "ARENA_floor",
+                      "accepted":  false,
+                      "bytesHex":  null
+                  },
+                  {
+                      "file":  "arena\u0000",
+                      "floor":  "arena\u0000_floor",
+                      "accepted":  false,
+                      "bytesHex":  null
+                  },
+                  {
+                      "file":  "arena-1",
+                      "floor":  "arena-1_floor",
+                      "accepted":  false,
+                      "bytesHex":  null
+                  },
+                  {
+                      "file":  "aréna",
+                      "floor":  "aréna_floor",
+                      "accepted":  false,
+                      "bytesHex":  null
+                  },
+                  {
+                      "file":  "",
+                      "floor":  "_floor",
+                      "accepted":  false,
+                      "bytesHex":  null
+                  },
+                  {
+                      "file":  null,
+                      "floor":  "arena_floor",
+                      "accepted":  false,
+                      "bytesHex":  null
+                  },
+                  {
+                      "file":  "arena",
+                      "floor":  null,
+                      "accepted":  false,
+                      "bytesHex":  null
+                  }
+              ],
+    "builds":  [
+                   {
+                       "updated":  false,
+                       "values":  {
+                                      "RosterRootRva":  161758904,
+                                      "MappingRva":  126317040,
+                                      "BlacktopRva":  183183824,
+                                      "BlacktopVtable":  126528424,
+                                      "ModeCurrent":  180829736,
+                                      "ModeAlternate":  180829732,
+                                      "ModeTable":  180827744
+                                  }
+                   },
+                   {
+                       "updated":  true,
+                       "values":  {
+                                      "RosterRootRva":  161775288,
+                                      "MappingRva":  126332880,
+                                      "BlacktopRva":  183200208,
+                                      "BlacktopVtable":  126544456,
+                                      "ModeCurrent":  180846120,
+                                      "ModeAlternate":  180846116,
+                                      "ModeTable":  180844128
+                                  }
+                   }
+               ],
+    "sourceSha256":  "F53063C0699F18CF390240F805769525802035CBE5DD689B63251ACA19F8D31C"
+}

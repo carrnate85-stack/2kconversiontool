@@ -1,0 +1,419 @@
+{
+  "schema": 1,
+  "candidate": true,
+  "layouts": [
+    {
+      "id": "mycourt-scrimmage",
+      "asset": "gooey/mycourtscrimmagescorebug.iff",
+      "requiredController": "ERAS_SCOREBUG",
+      "requiredTextHandler": "ERAS_SCOREBUG_HANDLER",
+      "plans": [
+        {
+          "member": "MyCourtScrimmageScorebug.VCUIELEMENT",
+          "sourceSha256": "404655cfbf34afd7d1a0d8550f59109ec22e17b1b0a884bb0c68c5fc5b01dfbc",
+          "edits": [
+            {
+              "offset": 12356,
+              "before": "0000000000000000",
+              "after": "5cb274076c5bccbf",
+              "sourceExpression": "Unresolved legacy ID; field matched to W scrimmage",
+              "targetExpression": "{0:ERAS_SCOREBUG_HANDLER:AWAY_NAME}",
+              "control": "mycourt_scorebug_minigamesText_LABEL0",
+              "structuralReference": "w-scrimmage"
+            },
+            {
+              "offset": 12846,
+              "before": "0000000000000000",
+              "after": "c97ebd24bd7faffd",
+              "sourceExpression": "Unresolved legacy ID; field matched to W scrimmage",
+              "targetExpression": "{0:ERAS_SCOREBUG_HANDLER:HOME_NAME}",
+              "control": "mycourt_scorebug_minigamesText_LABEL1",
+              "structuralReference": "w-scrimmage"
+            },
+            {
+              "offset": 13336,
+              "before": "0000000000000000",
+              "after": "b14edf22558e2947",
+              "sourceExpression": "Unresolved legacy ID; field matched to W scrimmage",
+              "targetExpression": "{0:OVERLAY:ATTRIBUTE:SCORE_AWAY}",
+              "control": "mycourt_scorebug_minigamesText_VALUE0",
+              "structuralReference": "w-scrimmage"
+            },
+            {
+              "offset": 13826,
+              "before": "0000000000000000",
+              "after": "6fc15d1b50d88f23",
+              "sourceExpression": "Unresolved legacy ID; field matched to W scrimmage",
+              "targetExpression": "{0:OVERLAY:ATTRIBUTE:SCORE_HOME}",
+              "control": "mycourt_scorebug_minigamesText_VALUE1",
+              "structuralReference": "w-scrimmage"
+            },
+            {
+              "offset": 14316,
+              "before": "0000000000000000",
+              "after": "99dfebc60d9b6e22",
+              "sourceExpression": "Unresolved legacy ID; field matched to W scrimmage",
+              "targetExpression": "{0:OVERLAY:ATTRIBUTE:SHOT_CLOCK}",
+              "control": "mycourt_scorebug_minigamesText_SHOTCLOCK",
+              "structuralReference": "w-scrimmage"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mypark-simple",
+      "asset": "gooey/myparkscorebugsimple.iff",
+      "requiredController": "ERAS_SCOREBUG",
+      "requiredTextHandler": "ERAS_SCOREBUG_HANDLER",
+      "plans": [
+        {
+          "member": "MyParkScorebugSimple.VCUIELEMENT",
+          "sourceSha256": "69926226bcba11d53d3d7410ad3fd0d41aa2082cc58863320f883dfe5eccb880",
+          "edits": [
+            {
+              "offset": 14001,
+              "before": "6516e246df76b66f",
+              "after": "b14edf22558e2947",
+              "sourceExpression": "{0:COURTS_PARK_SCOREBUG_HANDLER:TEAM_SCORE:OPPONENT}",
+              "targetExpression": "{0:OVERLAY:ATTRIBUTE:SCORE_AWAY}",
+              "control": "mypark_scorebug_simpleText_score_away_txt"
+            },
+            {
+              "offset": 14419,
+              "before": "6516e246df76b66f",
+              "after": "b14edf22558e2947",
+              "sourceExpression": "{0:COURTS_PARK_SCOREBUG_HANDLER:TEAM_SCORE:OPPONENT}",
+              "targetExpression": "{0:OVERLAY:ATTRIBUTE:SCORE_AWAY}",
+              "control": "mypark_scorebug_simpleText_new_score_away_txt"
+            },
+            {
+              "offset": 14861,
+              "before": "1d38e45275abeaae",
+              "after": "5cb274076c5bccbf",
+              "sourceExpression": "{0:COURTS_PARK_SCOREBUG_HANDLER:TEAM_NAME:AWAY}",
+              "targetExpression": "{0:ERAS_SCOREBUG_HANDLER:AWAY_NAME}",
+              "control": "mypark_scorebug_simpleText_away_team_name_txt"
+            },
+            {
+              "offset": 15303,
+              "before": "e148c2c57640eb24",
+              "after": "c97ebd24bd7faffd",
+              "sourceExpression": "{0:COURTS_PARK_SCOREBUG_HANDLER:TEAM_NAME:HOME}",
+              "targetExpression": "{0:ERAS_SCOREBUG_HANDLER:HOME_NAME}",
+              "control": "mypark_scorebug_simpleText_home_team_name_txt"
+            },
+            {
+              "offset": 15745,
+              "before": "8aff20091df4d3d5",
+              "after": "6fc15d1b50d88f23",
+              "sourceExpression": "{0:COURTS_PARK_SCOREBUG_HANDLER:TEAM_SCORE:USER}",
+              "targetExpression": "{0:OVERLAY:ATTRIBUTE:SCORE_HOME}",
+              "control": "mypark_scorebug_simpleText_score_home_txt"
+            },
+            {
+              "offset": 16151,
+              "before": "8aff20091df4d3d5",
+              "after": "6fc15d1b50d88f23",
+              "sourceExpression": "{0:COURTS_PARK_SCOREBUG_HANDLER:TEAM_SCORE:USER}",
+              "targetExpression": "{0:OVERLAY:ATTRIBUTE:SCORE_HOME}",
+              "control": "mypark_scorebug_simpleText_new_score_home_txt"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "proam-spectator",
+      "asset": "gooey/proamspectatorscorebug.iff",
+      "requiredController": "ERAS_SCOREBUG",
+      "requiredTextHandler": "ERAS_SCOREBUG_HANDLER",
+      "plans": [
+        {
+          "member": "ProAmSpectatorScorebug.VCUIELEMENT",
+          "sourceSha256": "c26439816f242f00845cc1422006762b03f3b6e52a317ec0fcdde0f5d36d439e",
+          "edits": [
+            {
+              "offset": 40925,
+              "before": "543eaa7979fd91a2",
+              "after": "70272a0c4d096703",
+              "sourceExpression": "{0:MYPARK_PROAM_SPECTATOR_SCORESHOW:QUARTER}",
+              "targetExpression": "{0:OVERLAY:ATTRIBUTE:QUARTER}",
+              "control": "scorebug_optText_quarter_txt"
+            },
+            {
+              "offset": 41123,
+              "before": "5c3e281ec05400bb",
+              "after": "99dfebc60d9b6e22",
+              "sourceExpression": "{0:MYPARK_PROAM_SPECTATOR_SCORESHOW:SHOT_CLOCK}",
+              "targetExpression": "{0:OVERLAY:ATTRIBUTE:SHOT_CLOCK}",
+              "control": "scorebug_optText_shotclock_txt"
+            },
+            {
+              "offset": 41781,
+              "before": "b9fb2406b15a7436",
+              "after": "6fc15d1b50d88f23",
+              "sourceExpression": "{0:MYPARK_PROAM_SPECTATOR_SCORESHOW:SCORE:HOME}",
+              "targetExpression": "{0:OVERLAY:ATTRIBUTE:SCORE_HOME}",
+              "control": "scorebug_optText_score_home_txt"
+            },
+            {
+              "offset": 42177,
+              "before": "07ae2ea83a00d453",
+              "after": "b14edf22558e2947",
+              "sourceExpression": "{0:MYPARK_PROAM_SPECTATOR_SCORESHOW:SCORE:AWAY}",
+              "targetExpression": "{0:OVERLAY:ATTRIBUTE:SCORE_AWAY}",
+              "control": "scorebug_optText_score_away_txt"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "flashback-aau",
+      "asset": "gooey/scorebugfamilyflashbackaau.iff",
+      "requiredController": "ERAS_SCOREBUG",
+      "requiredTextHandler": "ERAS_SCOREBUG_HANDLER",
+      "plans": [
+        {
+          "member": "ScorebugFamilyFlashbackAAU.VCUIELEMENT",
+          "sourceSha256": "b0b13417ccc20c36c35a77ce3bc18e3dcd346381014e718e86ce1ed2f995ba9f",
+          "edits": [
+            {
+              "offset": 22451,
+              "before": "a35c76f1f2413e1a",
+              "after": "5cb274076c5bccbf",
+              "sourceExpression": "{0:FAMILYFLASHBACK_SCOREBUG:AWAY_NAME_TRI}",
+              "targetExpression": "{0:ERAS_SCOREBUG_HANDLER:AWAY_NAME}",
+              "control": "familyflashback_aau_scorebugText_team_name_away_txt"
+            },
+            {
+              "offset": 23431,
+              "before": "7b95e0dd6b68fc34",
+              "after": "c97ebd24bd7faffd",
+              "sourceExpression": "{0:FAMILYFLASHBACK_SCOREBUG:HOME_NAME_TRI}",
+              "targetExpression": "{0:ERAS_SCOREBUG_HANDLER:HOME_NAME}",
+              "control": "familyflashback_aau_scorebugText_team_name_home_txt"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "flashback-highschool",
+      "asset": "gooey/scorebugfamilyflashbackhighschool.iff",
+      "requiredController": "ERAS_SCOREBUG",
+      "requiredTextHandler": "ERAS_SCOREBUG_HANDLER",
+      "plans": [
+        {
+          "member": "ScorebugFamilyFlashbackHighSchool.VCUIELEMENT",
+          "sourceSha256": "a4014944dedd679e134a6f5d07317757d207709ccad21e9fa81a20c58db2874e",
+          "edits": [
+            {
+              "offset": 20022,
+              "before": "2257d16f502e9353",
+              "after": "5cb274076c5bccbf",
+              "sourceExpression": "{0:FAMILYFLASHBACK_SCOREBUG:AWAY_NAME_TRI}",
+              "targetExpression": "{0:ERAS_SCOREBUG_HANDLER:AWAY_NAME}",
+              "control": "familyflashback_high_school_scorebugText_team_name_away_txt"
+            },
+            {
+              "offset": 21002,
+              "before": "4c61c071afdc0bd7",
+              "after": "c97ebd24bd7faffd",
+              "sourceExpression": "{0:FAMILYFLASHBACK_SCOREBUG:HOME_NAME_TRI}",
+              "targetExpression": "{0:ERAS_SCOREBUG_HANDLER:HOME_NAME}",
+              "control": "familyflashback_high_school_scorebugText_team_name_home_txt"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "flashback-openrun",
+      "asset": "gooey/scorebugfamilyflashbacknbaopenrun.iff",
+      "requiredController": "ERAS_SCOREBUG",
+      "requiredTextHandler": "ERAS_SCOREBUG_HANDLER",
+      "plans": [
+        {
+          "member": "ScorebugFamilyFlashbackNBAOpenRun.VCUIELEMENT",
+          "sourceSha256": "a134113d8f5e1963da1f79e4405e538dcc6258d67bf442e47692690abda957a0",
+          "edits": [
+            {
+              "offset": 10527,
+              "before": "c17465630406023e",
+              "after": "5cb274076c5bccbf",
+              "sourceExpression": "{0:FAMILYFLASHBACK_SCOREBUG:AWAY_NAME_TRI}",
+              "targetExpression": "{0:ERAS_SCOREBUG_HANDLER:AWAY_NAME}",
+              "control": "familyflashback_nba_open_run_scorebugText_Away_txt"
+            },
+            {
+              "offset": 11017,
+              "before": "d33250ff6119432b",
+              "after": "c97ebd24bd7faffd",
+              "sourceExpression": "{0:FAMILYFLASHBACK_SCOREBUG:HOME_NAME_TRI}",
+              "targetExpression": "{0:ERAS_SCOREBUG_HANDLER:HOME_NAME}",
+              "control": "familyflashback_nba_open_run_scorebugText_Home_txt"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "shut-it-down",
+      "asset": "gooey/shutitdownscorebug.iff",
+      "requiredController": "ERAS_SCOREBUG",
+      "requiredTextHandler": "ERAS_SCOREBUG_HANDLER",
+      "plans": [
+        {
+          "member": "ShutItDownScorebug.VCUIELEMENT",
+          "sourceSha256": "4d5500bae037ea2761dc1c411778f23fe80ef7c3b371c4a3a85c5c8ef2e8d30b",
+          "edits": [
+            {
+              "offset": 40318,
+              "before": "6866b581a5e926b2",
+              "after": "c97ebd24bd7faffd",
+              "sourceExpression": "{0:SHUT_IT_DOWN_SCOREBUG_HANDLER:PLAYER_NAME}",
+              "targetExpression": "{0:ERAS_SCOREBUG_HANDLER:HOME_NAME}",
+              "control": "shut_it_down_scorebugText_mp_player_name_txt"
+            },
+            {
+              "offset": 40760,
+              "before": "dd42c39793c9fc6f",
+              "after": "6fc15d1b50d88f23",
+              "sourceExpression": "{0:SHUT_IT_DOWN_SCOREBUG_HANDLER:PLAYER_SCORE}",
+              "targetExpression": "{0:OVERLAY:ATTRIBUTE:SCORE_HOME}",
+              "control": "shut_it_down_scorebugText_mp_score_txt"
+            },
+            {
+              "offset": 41154,
+              "before": "48164b0f6a663288",
+              "after": "5cb274076c5bccbf",
+              "sourceExpression": "{0:SHUT_IT_DOWN_SCOREBUG_HANDLER:BOSS_NAME}",
+              "targetExpression": "{0:ERAS_SCOREBUG_HANDLER:AWAY_NAME}",
+              "control": "shut_it_down_scorebugText_boss_player_name_txt"
+            },
+            {
+              "offset": 41596,
+              "before": "3f702bfa6c9ff194",
+              "after": "b14edf22558e2947",
+              "sourceExpression": "{0:SHUT_IT_DOWN_SCOREBUG_HANDLER:BOSS_SCORE}",
+              "targetExpression": "{0:OVERLAY:ATTRIBUTE:SCORE_AWAY}",
+              "control": "shut_it_down_scorebugText_boss_score_txt"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "w-scrimmage",
+      "asset": "gooey/thewscrimmagescorebug.iff",
+      "requiredController": "ERAS_SCOREBUG",
+      "requiredTextHandler": "ERAS_SCOREBUG_HANDLER",
+      "plans": [
+        {
+          "member": "TheWScrimmageScorebug.VCUIELEMENT",
+          "sourceSha256": "7955c64a27be29656a76a13c61741b632eea4b502f927c58a0a3c7eb789c681b",
+          "edits": [
+            {
+              "offset": 12353,
+              "before": "fe4f1f935180a197",
+              "after": "5cb274076c5bccbf",
+              "sourceExpression": "{0:MYCOURT_SCOREBUG:SCOREBUG_AWAY_NAME}",
+              "targetExpression": "{0:ERAS_SCOREBUG_HANDLER:AWAY_NAME}",
+              "control": "mycourt_scorebug_minigamesText_LABEL0"
+            },
+            {
+              "offset": 12843,
+              "before": "4519031692861353",
+              "after": "c97ebd24bd7faffd",
+              "sourceExpression": "{0:MYCOURT_SCOREBUG:SCOREBUG_HOME_NAME}",
+              "targetExpression": "{0:ERAS_SCOREBUG_HANDLER:HOME_NAME}",
+              "control": "mycourt_scorebug_minigamesText_LABEL1"
+            },
+            {
+              "offset": 13333,
+              "before": "ffb08a161299f3b9",
+              "after": "b14edf22558e2947",
+              "sourceExpression": "{0:MYCOURT_SCOREBUG:SCOREBUG_AWAY_SCORE}",
+              "targetExpression": "{0:OVERLAY:ATTRIBUTE:SCORE_AWAY}",
+              "control": "mycourt_scorebug_minigamesText_VALUE0"
+            },
+            {
+              "offset": 13823,
+              "before": "624a24a52962fc46",
+              "after": "6fc15d1b50d88f23",
+              "sourceExpression": "{0:MYCOURT_SCOREBUG:SCOREBUG_HOME_SCORE}",
+              "targetExpression": "{0:OVERLAY:ATTRIBUTE:SCORE_HOME}",
+              "control": "mycourt_scorebug_minigamesText_VALUE1"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "triple-threat",
+      "asset": "gooey/triplethreatonlinescorebug.iff",
+      "requiredController": "ERAS_SCOREBUG",
+      "requiredTextHandler": "ERAS_SCOREBUG_HANDLER",
+      "plans": [
+        {
+          "member": "TripleThreatOnlineScorebug.VCUIELEMENT",
+          "sourceSha256": "2376c6418624a041f50ce9f80b67fc1447d30eff31257364d1984b0f5d2f51b9",
+          "edits": [
+            {
+              "offset": 9765,
+              "before": "c26b9d4805a97200",
+              "after": "99dfebc60d9b6e22",
+              "sourceExpression": "{0:MYTEAM_TTO_SCOREBUG_HANDLER:SHOT_CLOCK_TIME}",
+              "targetExpression": "{0:OVERLAY:ATTRIBUTE:SHOT_CLOCK}",
+              "control": "myteam_triplethreat_online_scorebugText_SHOTCLOCK"
+            },
+            {
+              "offset": 10255,
+              "before": "cf4eb81818fee075",
+              "after": "c97ebd24bd7faffd",
+              "sourceExpression": "{0:MYTEAM_TTO_SCOREBUG_HANDLER:TEAM_NAME:HOME}",
+              "targetExpression": "{0:ERAS_SCOREBUG_HANDLER:HOME_NAME}",
+              "control": "myteam_triplethreat_online_scorebugText_NAME_RIGHT"
+            },
+            {
+              "offset": 11569,
+              "before": "8486083e71252c68",
+              "after": "5cb274076c5bccbf",
+              "sourceExpression": "{0:MYTEAM_TTO_SCOREBUG_HANDLER:TEAM_NAME:AWAY}",
+              "targetExpression": "{0:ERAS_SCOREBUG_HANDLER:AWAY_NAME}",
+              "control": "myteam_triplethreat_online_scorebugText_NAME_LEFT"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "targets": [
+    {
+      "key": "bfcc5b6c0774b25c",
+      "text": "{0:ERAS_SCOREBUG_HANDLER:AWAY_NAME}"
+    },
+    {
+      "key": "fdaf7fbd24bd7ec9",
+      "text": "{0:ERAS_SCOREBUG_HANDLER:HOME_NAME}"
+    },
+    {
+      "key": "47298e5522df4eb1",
+      "text": "{0:OVERLAY:ATTRIBUTE:SCORE_AWAY}"
+    },
+    {
+      "key": "238fd8501b5dc16f",
+      "text": "{0:OVERLAY:ATTRIBUTE:SCORE_HOME}"
+    },
+    {
+      "key": "226e9b0dc6ebdf99",
+      "text": "{0:OVERLAY:ATTRIBUTE:SHOT_CLOCK}"
+    },
+    {
+      "key": "367094d0c2a2770",
+      "text": "{0:OVERLAY:ATTRIBUTE:QUARTER}"
+    }
+  ]
+}

@@ -1,0 +1,207 @@
+{
+  "schema": "nba2k27-scoreboard-layout-adapters-v1",
+  "originalSourceSha256": "23D9F26DF15BDB2EE35C78DB18D0EC277D7125909BCE23377A860094166995C4",
+  "layouts": [
+    {
+      "id": "mycourt-scrimmage",
+      "asset": "gooey/mycourtscrimmagescorebug.iff",
+      "plans": [
+        {
+          "member": "MyCourtScrimmageScorebug.VCUIELEMENT",
+          "sourceSha256": "404655cfbf34afd7d1a0d8550f59109ec22e17b1b0a884bb0c68c5fc5b01dfbc",
+          "edits": [
+            {
+              "offset": 12356,
+              "before": "0000000000000000",
+              "after": "5cb274076c5bccbf"
+            },
+            {
+              "offset": 12846,
+              "before": "0000000000000000",
+              "after": "c97ebd24bd7faffd"
+            },
+            {
+              "offset": 13336,
+              "before": "0000000000000000",
+              "after": "b14edf22558e2947"
+            },
+            {
+              "offset": 13826,
+              "before": "0000000000000000",
+              "after": "6fc15d1b50d88f23"
+            },
+            {
+              "offset": 14316,
+              "before": "0000000000000000",
+              "after": "99dfebc60d9b6e22"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mypark-simple",
+      "asset": "gooey/myparkscorebugsimple.iff",
+      "plans": [
+        {
+          "member": "MyParkScorebugSimple.VCUIELEMENT",
+          "sourceSha256": "69926226bcba11d53d3d7410ad3fd0d41aa2082cc58863320f883dfe5eccb880",
+          "edits": [
+            {
+              "offset": 14001,
+              "before": "6516e246df76b66f",
+              "after": "b14edf22558e2947"
+            },
+            {
+              "offset": 14419,
+              "before": "6516e246df76b66f",
+              "after": "b14edf22558e2947"
+            },
+            {
+              "offset": 14861,
+              "before": "1d38e45275abeaae",
+              "after": "5cb274076c5bccbf"
+            },
+            {
+              "offset": 15303,
+              "before": "e148c2c57640eb24",
+              "after": "c97ebd24bd7faffd"
+            },
+            {
+              "offset": 15745,
+              "before": "8aff20091df4d3d5",
+              "after": "6fc15d1b50d88f23"
+            },
+            {
+              "offset": 16151,
+              "before": "8aff20091df4d3d5",
+              "after": "6fc15d1b50d88f23"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "proam-spectator",
+      "asset": "gooey/proamspectatorscorebug.iff",
+      "plans": [
+        {
+          "member": "ProAmSpectatorScorebug.VCUIELEMENT",
+          "sourceSha256": "c26439816f242f00845cc1422006762b03f3b6e52a317ec0fcdde0f5d36d439e",
+          "edits": [
+            {
+              "offset": 40925,
+              "before": "543eaa7979fd91a2",
+              "after": "70272a0c4d096703"
+            },
+            {
+              "offset": 41123,
+              "before": "5c3e281ec05400bb",
+              "after": "99dfebc60d9b6e22"
+            },
+            {
+              "offset": 41781,
+              "before": "b9fb2406b15a7436",
+              "after": "6fc15d1b50d88f23"
+            },
+            {
+              "offset": 42177,
+              "before": "07ae2ea83a00d453",
+              "after": "b14edf22558e2947"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "shut-it-down",
+      "asset": "gooey/shutitdownscorebug.iff",
+      "plans": [
+        {
+          "member": "ShutItDownScorebug.VCUIELEMENT",
+          "sourceSha256": "4d5500bae037ea2761dc1c411778f23fe80ef7c3b371c4a3a85c5c8ef2e8d30b",
+          "edits": [
+            {
+              "offset": 40318,
+              "before": "6866b581a5e926b2",
+              "after": "c97ebd24bd7faffd"
+            },
+            {
+              "offset": 40760,
+              "before": "dd42c39793c9fc6f",
+              "after": "6fc15d1b50d88f23"
+            },
+            {
+              "offset": 41154,
+              "before": "48164b0f6a663288",
+              "after": "5cb274076c5bccbf"
+            },
+            {
+              "offset": 41596,
+              "before": "3f702bfa6c9ff194",
+              "after": "b14edf22558e2947"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "w-scrimmage",
+      "asset": "gooey/thewscrimmagescorebug.iff",
+      "plans": [
+        {
+          "member": "TheWScrimmageScorebug.VCUIELEMENT",
+          "sourceSha256": "7955c64a27be29656a76a13c61741b632eea4b502f927c58a0a3c7eb789c681b",
+          "edits": [
+            {
+              "offset": 12353,
+              "before": "fe4f1f935180a197",
+              "after": "5cb274076c5bccbf"
+            },
+            {
+              "offset": 12843,
+              "before": "4519031692861353",
+              "after": "c97ebd24bd7faffd"
+            },
+            {
+              "offset": 13333,
+              "before": "ffb08a161299f3b9",
+              "after": "b14edf22558e2947"
+            },
+            {
+              "offset": 13823,
+              "before": "624a24a52962fc46",
+              "after": "6fc15d1b50d88f23"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "targets": [
+    {
+      "key": "bfcc5b6c0774b25c",
+      "text": "{0:ERAS_SCOREBUG_HANDLER:AWAY_NAME}"
+    },
+    {
+      "key": "fdaf7fbd24bd7ec9",
+      "text": "{0:ERAS_SCOREBUG_HANDLER:HOME_NAME}"
+    },
+    {
+      "key": "47298e5522df4eb1",
+      "text": "{0:OVERLAY:ATTRIBUTE:SCORE_AWAY}"
+    },
+    {
+      "key": "238fd8501b5dc16f",
+      "text": "{0:OVERLAY:ATTRIBUTE:SCORE_HOME}"
+    },
+    {
+      "key": "226e9b0dc6ebdf99",
+      "text": "{0:OVERLAY:ATTRIBUTE:SHOT_CLOCK}"
+    },
+    {
+      "key": "367094d0c2a2770",
+      "text": "{0:OVERLAY:ATTRIBUTE:QUARTER}"
+    }
+  ]
+}

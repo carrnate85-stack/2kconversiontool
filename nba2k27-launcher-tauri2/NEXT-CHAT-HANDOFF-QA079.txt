@@ -1,0 +1,149 @@
+QA079 FINAL DEV CHECKPOINT - 2026-10-18T22:33:12.238629+00:00
+Canonical project: C:\Users\carrn\CodexProjects\2kconversiontool\nba2k27-launcher-tauri2
+Read NEXT-CHAT-HANDOFF-QA078.txt for prior full implementation/history.
+QA079 supersedes NEXT-CHAT-HANDOFF-QA079-WIP.txt. No work is still running.
+
+CURRENT USER / TEST TARGET
+User confirmed QA078 WNBA is working all around, then clarified the remaining
+scaler issue: BASKETBALL PLAYERS AND REFEREES visibly resize after appearing.
+This is not a launcher status issue and not a coach/crowd/NPC report. WPF felt
+faster. Continue investigating separately without disturbing working WNBA.
+User is available for a meaningful normal dev test. No pending diagnostic-tool
+requests. Use the normal dev starter, existing toggles and Play; read logs.
+
+BOUNDARIES
+DEV ONLY. Do not install or promote. Agent did not activate QA079, launch/stop
+the game, control the desktop, or perform live writes. Keep user Data/Library,
+backups, builds and journals. Back up and durably flush edits. Preserve identity,
+parent/ownership, pre-effect durability and no-replay/hold guards. Never print,
+capture or ship roster keys/salt. Old two-hour heartbeat is PAUSED; do not resume
+it implicitly. Reuse existing agents; all are currently completed.
+
+DELIVERED / HOW TO TEST
+Start QA079 Dev.vbs (paired PowerShell starter) stages the exact dev candidate
+when the USER runs it. Close the current QA078 dev launcher normally first.
+Starter CheckOnly verified hash/size then safely refused because QA078 PID12864
+was open. It performed no activation. VBS /check passed its echo-only branch;
+PowerShell AST passed. Do not run starter automatically. Use normal saved scale
+and Play, then inspect whether basketball players/referees still resize visibly.
+
+Pending EXE: Dev/Pending/QA079/launcher.exe
+EXE bytes: 53151232
+EXE SHA256: C63571C913EC685F2B40B08A5677192C2629A5A3075B952B279A134B0858C485
+Native DLL bytes: 1215488
+Native DLL SHA256: 83AF5D0613D1E90D51933F382C22D215F766A61A198CAFEB41E80606A1722518
+Native, WNBA code/assets/UI, outfit carry and Random All are unchanged fromQA078.
+Active dev EXE was still QA078 SHA256
+368340096BA825FBC2E53361A20C79DB19DA12B9365B95686567F0C6CBB57F49
+at final freeze. User must explicitly open the new starter normally.
+
+QA079 CHANGE / LIMIT
+Known incidental initial500ms wait removed: scaler-enabled frozen plans consume
+one first feature tick immediately after the SAME owned loader ARMED gate and
+Runner creation, with fresh authorized/live checks before the existing tick.
+Tick precedes loader-readiness early break. Subsequent500ms cadence unchanged.
+Scaler-disabled Play keeps its old cadence. Other enabled lanes share this
+first existing Runner tick, with unchanged guards; no separate admission path.
+QA078 initial scaler-before-camera priority remains. No preARMED publication,
+NPC scheduling change, or additional player/referee/cache writes introduced.
+
+Existing provider-state feature status retains bounded informational scalerTiming
+facts: attempt, first static-allowlisted readiness-refused reason, plan-ready,
+global-applied, first player-cache-observed, existing completed NPC work/reset.
+Origin is owned Runner creation, not process birth. Plan/apply facts contain the
+already captured mode and loaded-player count. Attempt counter is private and
+only snapshots into a new fact: no recurring status churn. Max16/unique8phases;
+unknown errors become unclassified. No IDs, addresses, keys, extra game reads or
+popups. Facts never authorize writes/retries or reopen holds and survive ended/
+closed status. Native rendered-frame timing is NOT measured by these facts.
+
+All scaler profile/code/object/description/opt-in/table/input ownership/readback/
+revalidation/journal/protection guards remain. Readiness.mode() getter uses an
+already captured value. Actual visible resizing resolution is NOT live-proven.
+The next normal run should show whether the early attempt succeeds, the exact
+first readiness refusal if it waits, and whether players were loaded at apply.
+Find scalerTiming inside the existing feature status under
+<portable-root>/Logs/native-sessions/<session>/provider-state.json, retained at
+session close. Do not infer elapsed from journal ordering alone.
+
+SOURCE FREEZE / REVIEW
+549 source/config files match build inputs and stage. Exactly3 differ fromQA078:
+src/feature_runtime.rs
+ E147B66FA86E20D682B6C2390B319A264EC60F349643FD6B3EA9D8CAD9FF4DE9
+src/provider_launch.rs
+ BBC0ACF4EF1CC17343380F9CFA8C1E8985AFF669D4936231E8CCDEF3997CDA56
+src/scaler_v2.rs
+ 0689C12291A9CDCFD86F5A9E390DDCF65FB0E8E9976D799984F9E97B7DA94187
+Backups/qa079-scaler-first-due-diagnostics-20261018 preserves pre-edit files and
+scaler reference. docs/wpf-reference/scaler.md now explains current limitations.
+Owner wnba_integration; independent read-only review outfit_latency_qa066 PASS,
+no concrete blocker. No agent builds or gameplay acceptance claimed.
+artifacts/qa079-scaler-first-due-diagnostics-source-audit-20261018.json
+artifacts/qa079-scaler-independent-review.json
+artifacts/qa079-scaler-readiness-independent-research.json
+
+VALIDATION / EXACT EVIDENCE
+Offline locked test compile: PASS,13 warnings,1m55s. Dev build: PASS,48 warnings,
+1m11s. ONE bounded natural undebugged full suite:1315passed,0failed,54ignored,
+90.11s; EXIT_CODE0 CLAIMED0 DUMP0. No repeat-until-green. Three added tests cover
+one-shot firstdue/disabled cadence, diagnostic privacy, bounded dedup/status
+stability/retention. Existing suite covers unchanged guards. No new native
+rebuild/tests required: DLL exactly matches already-tested QA078 bytes.
+Test EXE SHA256: 6B2C8E8677C1CA91028EAAE1963CA17D9663ED10E2854A3FD9C4C680EC562892
+Test PDB SHA256: 294410CD75340397DD48C2C557CBF2D289DE891818D66A1A70D9C3E7754189F5
+Main dev PDB SHA256: B66D648949641AED686566C03414C337C4141ACFC93507F4FBDAA5E3C0B3C9BF
+Exact archive: Backups/qa079-passing-test-image-20261018/exact-test-and-dev-images.zip
+Archive bytes: 181819718
+Archive SHA256: 0A7CB4D9B8ABBC1EA656DC4B70F979031E64EDCC2B696BF6D67F5A98BBA017C5
+All archive member hashes verified by roundtrip; test/dev EXE/PDB, payload,
+sources, starter, logs, control and manifests are preserved. Sources match all
+549 staged hashes; only expected3changed; active dev unchanged. Evidence:
+artifacts/qa079-final-full-rust-tests.log
+artifacts/qa074-natural-qa079-whole-1.txt
+artifacts/qa079-final-rust-test-build.log
+artifacts/qa079-final-dev-build.log
+artifacts/qa079-final-build-inputs-20261018.json
+artifacts/qa079-final-stage-20261018.json
+artifacts/qa079-test-and-dev-evidence-20261018.json
+artifacts/qa079-final-freeze-verification-20261018.json
+Stage tool: tools/qa079_stage_dev_checkpoint.py (CREATE_NEW, never overwrites).
+
+WNBA LIVE QUALIFICATION / FOLLOW-UP
+User's QA078 success is preserved. Game33536,birth134368355210946577,session
+000000000000000018dfbfa6f6612fec0000000000000002,parent12864. Both toggles ON;
+Freestyle4word intent28/Applied33. Blacktop PUBLISHED19836281 thenHELD19838000
+on deep-snapshot CTX160(kind+active). CTX160 alone does NOT prove stablematch.
+Categories were user-confirmed visible, but do not certify complete monitor/
+persistence behavior from that. Current hold never reopened or repaired live.
+User closed game normally. Saved evidence:
+artifacts/qa078-user-live-results-20261018.json
+Backups/qa078-user-live-confirmation-20261018
+Read-only proposal only, not implemented:
+artifacts/qa078-active-match-departure-cleanup-proposal.json.
+WPF restores whenever !BcSelection; current core normally does likewise on next
+Input!selection, but a ready Input followed by deep context change can hold
+first. Any future fix needs fresh positive stable-match proof and exact owned
+restore, not weakening CTX. Keep this separate from scaler QA079.
+
+OLDER FAILURES MUST REMAIN QUALIFIED
+QA073 NATURAL TEST AV0xC0000005 REMAINS UNRESOLVED. Passing debugger and changed
+QA074-79 tests do not explain it. Exact originals preserved at
+Backups/qa073-natural-test-av-20261018/exact-test-image.zip.
+Original EXE BC3B784A828DC5149C28A7F8D9688ECA302CCD46E7F5294D101C0CF99AE82D21
+Original PDB A97CB0292EA39E292C81400E5F77DF4F3AC658AA0614F0DBB7E2DFBF3804556A
+No actual natural crash dump has been captured. Test-only bounded capture is
+cfg(test,windows,x86_64), exact child only,180s watchdog. No attach/globalWER/
+PageHeap/registry/OpenProcess or gameplay process. Preserve exact EXE/PDB/log/
+dump before rebuilding if any new failure occurs. Do not repeat untilgreen.
+
+QA078 Clang23 O2 coordinator-fixture LLVM compiler crash remains unexplained.
+Original log +generatedpreprocessed.cpp/repro.sh are preserved at
+Backups/qa078-clang-coordinator-crash-20261018. Coordinator fixture passedO1;
+remaining fixtures and actual DLL passedO2/build/forwardingsmoke. Native bytes
+are unchangedQA079. Do not claim that compiler failure resolved.
+
+NEXT ACTION
+Deliver the QA079 starter and normal scaler test; no install/promotion. Read
+retained first refusal/global-apply/loaded count even if user closes game. Keep
+WNBA working baseline and successful almost-immediate QA075 outfit carry intact.
+Do not claim offline tests establish instant sizing or live WNBA persistence.

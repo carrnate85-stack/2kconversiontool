@@ -1,0 +1,97 @@
+QA076 WIP - 2026-10-18 21:17 UTC
+Read newest handoff first, then QA075-WIP for exact retained AV/control and research details.
+Canonical C:\Users\carrn\CodexProjects\2kconversiontool\nba2k27-launcher-tauri2.
+
+USER AVAILABLE / CURRENT LIVE SESSION
+User became available ~21:06UTC; previous no-test-untildeadline constraint revoked.
+User started QA075 normally, WNBA Blacktop ON, Play. Root did NOT activate orlaunch.
+Active DevApp exactSHA 0FAC4273DB3BCC3F7371A93F7552ED83796DB037B537F2DEC3D27484E22B54FC.
+GamePID2320 birth134368312150980236; parent32020/provider41524 metadataobserved.
+Exact session000000000000000018dfbbbeb7397b800000000000000001.
+No root/agent gamecalls/writes/UIcontrol. ExistingboundedVM_READ-only inventory
+read6828B, doubleidentical:403teams/30NBA/15WNBAclubs, priority2entries.
+artifacts/qa075-user-blacktop-selection-2320.json.
+User RandomAll+match confirms clothes appeared almost immediately, then clarifies
+'yeah clothes loaded in the match very quick'. ONE match, nottwoacceptances.
+Native report REBUILT2; consume15661468,lastcomplete15661765=297ms.
+This is nativeportion only, excludes loading/finaldurability. Shadow onlyunknown
+event, no earlier-admission proof. Full localevidence/hashsnapshots preserved:
+Backups/qa075-user-match-evidence-20261018; artifact sameprefix.json.
+QA075 passingtestEXE/PDB+logs+manifest now archived roundtripSHA too:
+Backups/qa075-passing-test-image-20261018/exact-test-image.zip (98,525,515B).
+OriginalQA073 failedEXE/PDB control and QA074diagnosticcontrol unchanged.
+
+USER NEW UI REQUESTS IMPLEMENTED
+'we dont need little status popups when doing randomall' and
+'id like random all to not do accessories only streetwear'.
+frontend/App.tsx backedup/fsync under Backups/qa076-random-all-ui-20261018.
+Manual RandomAll now mode clothes, allbatchtemplate accessories[]; roster shoes
+retained. Routine progress/success no longer open reportdropdown; realfailure/
+preflightrefusal stillvisible. ExistingRandomPlayer explicitaccessoriesunchanged.
+Current App.tsxSHA AA8164D4D699530F2B6C54CB51A8F5AEDC4E16B87E21CB026090B0D0129A6139.
+ExistinglocalTypeScript --noEmit PASS after readdeps sandboxescalation; noinstall.
+artifacts/qa076-random-all-ui-typecheck-unrestricted.log (empty=PASS).
+Initial sandbox logmissingnode/types retained, notproductfailure.
+DevVite HMR may nowserve thisUI with active QA075 binary; frozenQA075manifest
+describes originalbuildsource. NextQA076manifest must include newfrontendhash.
+
+QA076 OUTFIT TRANSACTION - SOURCE FROZEN, FOCUSED TESTS PASS
+Agentwnba_integration changed ONLYoutfit_journal.rs/outfit_match_files.rs/
+outfit_match_files_tests.rs, backup/fsync, independentagentreviewPASS.
+artifacts/qa076-paired-trigger-submission-proof-20261018.json pinsall3hashes.
+Private typedpair uses exactexisting Owned(trigger=true),Submitted frames, one
+mutex-owned write/sync/readback, nonclonecombinedWitness. Genericappend unchanged.
+Final SAMEfreshhandoff/plan+trigger verification AFTERdurablepair BEFOREunlock.
+New LockedTrigger owns exclusiveFile fromcreate_new BEFOREid/write/sync; exact
+unlink onfailure, unknown/failedunlink retainsonefile+directorypins until positive
+closedgameproof. EarlyStoreDrop intentionallyquarantineshandleprocesslifetime;
+pending create_newMARKER+stickyhold prevents repeatedliveStore/adoption/replay.
+Native freshparent/worker/lease/effect checks remain; no claim of atomiccancel
+of already-enterednativecall whenprocess exits. OnlyoldactualgamePIDdeadcanclose.
+Root initialcompilePASS38.64s/12oldwarnings; ALL18transporttestsPASS0.55s incl7new
+testfunctions/8scenarios (every physicalbyteprefix, allfailurepoints, foreignID,
+latepostdurablehandoff, failedcleanup/earlyDrop). No finalwholesuite/devbuildyet.
+artifacts/qa076-initial-test-build.log; qa076-paired-submission-focused-tests.log.
+Absolute saving unknown: exactlyonejournalflush, no shorter500ms/readinessgates.
+
+WNBA CURRENT FAILURE / MINIMAL DIAGNOSTIC IN PROGRESS
+Newsession sourceREGISTEREDtick15511890,categoryPUBLISHED15530937 thenHELD15533390:
+'Blacktop category deep roster capture or repeated departure scope is uncertain'.
+Later403/30/15 inventory does NOT identify faileddeepcapturebranch.
+It canbe captureA false, captureBfalse orbothsuccessfulbutfullContext/rowdifference;
+repeatedscope/departure thenfailedtoestablishpositiveofflineexit. Laterretained
+generation same_roster hasDIFFERENTreason andnotreached here.
+Proposal artifacts/qa075-blacktop-deep-capture-held-diagnostic-proposal.json.
+Rootapproved agentwnba_toggle_ui optionalfacts-onlyfailureenums/rowordinal/counts/
+snapshotcomponent/contextdiffmask, exactexistingreadorder/predicates/shortcircuit,
+NOextraRPM/gamecalls/writes/permissions/recovery. Fixed384Breasonbuffer, exactold
+HELDprefix retained; scopesdiagnostics fromexistingchecks only.
+Files native/wnba_blacktop_category_win.hpp +existing
+test/wnba-priority-v2-binding-test.cpp ONLY; coreunchanged. Authorstrictfixture
+PASS; finalfreeze/peerreviewpending. Root buildsfinalDLL/tests/pins/stageafterfreeze.
+Do NOT touch activeDevApp/gamefiles. Newassets/nativepayload is buildinput only;
+backupold4FB...A3FA exact1,190,912B and additRECOVERYONLY when changing currentpins.
+
+NEXT ROOT WORK
+1. WaitWNBAauthorfreeze+agentoutfit_latency peerreview.
+2. Strictnativefocusedfixtures/fullselffixture/systemDLLforwardsmoke inNEW
+artifacts/qa076-native directory; no gameopened (self-onlysyntheticmemory).
+3. Backup/fsyncoldassetsDLL+2Rustpins; installNEW DLL onlytoBUILDINPUTassets/native,
+update PROXY_SHA+DLL_SHA andexactold4FB/1,190,912 recovery+sizeoffbyoneassertions.
+No ad hocgamefiles oractiveDevApp changes.
+4. FinalRustcompile thenONE wholechangedtestimage underboundednatural supervisor
+prefixartifacts/qa074-natural-qa076-whole-1 (onlyqa073/qa074prefixallowed), log
+qa076-final-full-rust-tests.log. Expected1302PASS54ignored unless moretestsadded.
+Parentexit0notproof: requirechildEXIT_CODE0,CLAIMED0 +testresult. OnAVpreserveexact
+EXE/PDB/dump/log; no rerununtilgreen. OriginalAVremainsunresolvedevenifpass.
+5. Devbuild/exacthashstageQA076NEWstarter+manifest; noactivation. RetainQA075starter.
+6. Letuseruse normalnewstarter/ON/Play whenmeaningful; noexternalapps/scriptssteps.
+
+TIME / AUTOMATION
+Originalauthorizedworkdeadline21:53:37UTC stillvalid; keepworkingofflinewhileuser
+plays. HeartbeatIDtwo-hour-dev-parity-work ACTIVEevery5min; promptupdateduserisnow
+availabletestingQA075. Atdeadlinepauseautomation+conciseselfcontainedreportlatest
+starter/validation/remainingliveWNBAchecks. Do notduplicateautomation.
+Devonly/noinstall/nopromotion. PreserveuserData/Library/journals/builds/backups.
+Neverprint/copy/shipkeys; encryptedWNBAindexresearchpack stillblockedmissingkeypath.
+Read QA075-WIP forfullresearchcandidate/prooflimits; no newpackcurrentassets.

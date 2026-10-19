@@ -1,0 +1,4728 @@
+{
+  "schema": "nba2k27-extra-shoes-v1",
+  "sourceSha256": "f81d5581e6d404431c995737a5227e497188dbf5b0bbe6961f861e74f8e34340",
+  "skipped": [
+    {
+      "entry": "clothing_benchoutfits.CLOF",
+      "reason": "record"
+    },
+    {
+      "entry": "clothing_featureoutfits.CLOF",
+      "reason": "record"
+    }
+  ],
+  "note": "Exact stock outfit references with adult clothing-pool evidence and same-ID frontend preview. Only shoe_1036_default visually tested on Maxey; other fits experimental. Editable/gameday variants excluded.",
+  "shoes": [
+    {
+      "asset": "shoe_1000_black_white",
+      "modelId": "1000",
+      "label": "NBA shoe 1000 · black white",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 94,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "shoe_1000_black_white",
+            "tshirt_ss_solid_org",
+            "overall_denim_blult",
+            "acc_wristband_short_solid_blk_left",
+            "acc_wristband_short_solid_blk_right",
+            "earring_diamond_square_wht_left",
+            "earring_diamond_square_wht_right"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_1000_wheat",
+      "modelId": "1000",
+      "label": "NBA shoe 1000 · wheat",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 944,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "hat_baseball_fit_jordan_jumpman_grn_flat_back",
+            "tshirt_ss_solid_yel",
+            "jeans_ripped_gry",
+            "shoe_1000_wheat",
+            "sunglasses_batwolf_orange_grn"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_1000_white_black_black_tongue",
+      "modelId": "1000",
+      "label": "NBA shoe 1000 · white black black tongue",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 258,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "blazer_opn_solid_bge",
+            "bdshirt_opn_solid_wht",
+            "business_solid_bge",
+            "lanyard_allaccess",
+            "shoe_1000_white_black_black_tongue"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_1000_white_purple",
+      "modelId": "1000",
+      "label": "NBA shoe 1000 · white purple",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 157,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "tshirt_ss_team_speckle_023_hou",
+            "basketball_shorts_classic_retro_2kwnba_outfit07",
+            "shoe_1000_white_purple",
+            "acc_sock_historic_stripe_pur_tall_squash"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_1001_default",
+      "modelId": "1001",
+      "label": "NBA shoe 1001 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 72,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "jersey_basketball_classic_v_026_2004_secondary_01_amar_e_stoudemire",
+            "basketball_shorts_classic_phx_026_2004_secondary",
+            "acc_rubber_wristband_solid_org_left",
+            "acc_rubber_wristband_solid_org_right",
+            "acc_elbowpad_hex_solid_grydk_left",
+            "acc_sock_solid_blk_tall_scrunch",
+            "shoe_1001_default"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_1036_default",
+      "modelId": "1036",
+      "label": "Nike Kobe 1 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_coreoutfits.CLOF",
+          "group": 664,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "tshirt_ls_puma_wings_org",
+            "basketball_shorts_nike_twotone_wht",
+            "goggles_kareem_solid_blk",
+            "shoe_1036_default"
+          ]
+        }
+      ],
+      "experimental": false
+    },
+    {
+      "asset": "shoe_1036_mambaday",
+      "modelId": "1036",
+      "label": "Nike Kobe 1 · mambaday",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 741,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "jeans_bludk",
+            "shoe_1036_mambaday",
+            "jacket_track_prostandard_championship_lakers_blk"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_1039_derozpe",
+      "modelId": "1039",
+      "label": "NBA shoe 1039 · derozpe",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 1583,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "hoodie_pullover_2kday_2kgraphic_pnk",
+            "business_crop_solid_yel_muted",
+            "shoe_1039_derozpe"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_1040_zach_lavine",
+      "modelId": "1040",
+      "label": "NBA shoe 1040 · zach lavine",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 1471,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "tshirt_ss_solid_wht",
+            "jogger_jordan_jumpman_grn",
+            "shoe_1040_zach_lavine",
+            "acc_elbowsleeve_solid_grnlt_left",
+            "watch_tissot_prx_blu_right",
+            "acc_sock_esport_war_crew"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_1052_default",
+      "modelId": "1052",
+      "label": "NBA shoe 1052 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 278,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "shoe_1052_default",
+            "watch_threeknob_leather_tan_left",
+            "acc_rubber_wristband_solid_wht_right",
+            "acc_sock_solid_blk_crew",
+            "hoodie_pullover_jordan_mj_blk",
+            "basketball_shorts_nike_solid_blk"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_1057_randle_away",
+      "modelId": "1057",
+      "label": "NBA shoe 1057 · randle away",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 530,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "tanktop_muscle_solid_org",
+            "basketball_shorts_classic_mia_010_2012_secondary",
+            "shoe_1057_randle_away",
+            "acc_anklebrace_solid_blk_right",
+            "acc_kinesiotape_shoulder_solid_gry_right",
+            "watch_tissot_prx_blu_left",
+            "acc_handtape_solid_yel_right"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_1058_default",
+      "modelId": "1058",
+      "label": "NBA shoe 1058 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 1161,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "sunglasses_wayfarer_blk",
+            "jogger_jordan_horizontal_gryblk",
+            "shoe_1058_default",
+            "bracelet_chain_cuban_gld_left",
+            "tshirt_ss_2kmycareer_wht",
+            "necklace_slv"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_1065_pink",
+      "modelId": "1065",
+      "label": "NBA shoe 1065 · pink",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 1396,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "cargo_solid_iridescent",
+            "shoe_1065_pink",
+            "tanktop_muscle_solid_blk",
+            "necklace_multi_whtslv",
+            "jacket_denim_solid_mrn",
+            "sunglasses_aviator_gold_blk"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_1077_default",
+      "modelId": "1077",
+      "label": "NBA shoe 1077 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_localoutfits.CLOF",
+          "group": 0,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "jacket_warmup_historic_solid_iridescent_blk",
+            "cargo_solid_iridescent",
+            "shoe_1077_default"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_1077_iggy_yellow",
+      "modelId": "1077",
+      "label": "NBA shoe 1077 · iggy yellow",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 1738,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "tshirt_ss_wnba_bosswoman_grydk",
+            "basketball_shorts_nike_team_metal_white_019_den",
+            "shoe_1077_iggy_yellow",
+            "acc_sock_wnba_neworchid_crew"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_1077_mlk",
+      "modelId": "1077",
+      "label": "NBA shoe 1077 · mlk",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_coreoutfits.CLOF",
+          "group": 2,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "shirt_referee_wnba_no13",
+            "business_referee_blk",
+            "referee_receiver_blk",
+            "shoe_1077_mlk"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_1077_murrary_black",
+      "modelId": "1077",
+      "label": "NBA shoe 1077 · murrary black",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 1676,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "shoe_1077_murrary_black",
+            "jogger_solid_blk",
+            "tshirt_ss_solid_blk"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_1077_navy_red",
+      "modelId": "1077",
+      "label": "NBA shoe 1077 · navy red",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 632,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "acc_elbowsleeve_solid_wht_right",
+            "shoe_1077_navy_red",
+            "basketball_shorts_classic_nike_swoosh_drifit_blu",
+            "acc_sock_wnba_rushblue_quarter",
+            "sweatshirt_oversize_ice_stripe_wht",
+            "acc_fingertape_middle_solid_wht_left",
+            "acc_fingertape_index_solid_blu_left",
+            "acc_calfsleeve_half_solid_blunvy_left"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_1077_red_limegreen",
+      "modelId": "1077",
+      "label": "NBA shoe 1077 · red limegreen",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 1054,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "backpack_drawstring_pattern_money_brn",
+            "tshirt_ss_1_dollar",
+            "basketball_shorts_classic_animated_flames_ani",
+            "mask_holiday_hallow_clown_wht",
+            "shoe_1077_red_limegreen",
+            "hat_baseball_fit_solid_red_flat_oversize"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_1079_default",
+      "modelId": "1079",
+      "label": "NBA shoe 1079 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_coreoutfits.CLOF",
+          "group": 157,
+          "outfit": 10,
+          "pool": "male",
+          "items": [
+            "jogger_solid_gry",
+            "acc_sock_solid_wht_crew",
+            "jacket_warmup_team_026_pho",
+            "shoe_1079_default"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_1081_kyrie_maroon",
+      "modelId": "1081",
+      "label": "NBA shoe 1081 · kyrie maroon",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 456,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "jogger_solid_pur",
+            "tshirt_ss_solid_red_muted",
+            "shoe_1081_kyrie_maroon",
+            "watch_oneknob_metal_rsegld_left"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_1081_yellow_blacktoe",
+      "modelId": "1081",
+      "label": "NBA shoe 1081 · yellow blacktoe",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 1521,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "acc_sock_nba2017_home_029_gsw_tall_squash",
+            "shoe_1081_yellow_blacktoe",
+            "basketball_shorts_classic_jordan_diamondleather_blk",
+            "tshirt_sleeveless_jordan_viiicore_wht"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_1082_canaan_red_colorway",
+      "modelId": "1082",
+      "label": "NBA shoe 1082 · canaan red colorway",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 552,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "hoodie_pullover_solid_brn_lt_muted",
+            "jogger_solid_wht",
+            "shoe_1082_canaan_red_colorway",
+            "sunglasses_clout_blk"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_1082_hood_gray",
+      "modelId": "1082",
+      "label": "NBA shoe 1082 · hood gray",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_npc_park_outfits_individual.CLOF",
+          "group": 56,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "shoe_1082_hood_gray",
+            "hoodie_pullover_solid_red",
+            "jeans_blult"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_1082_lakers_home",
+      "modelId": "1082",
+      "label": "NBA shoe 1082 · lakers home",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 957,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "hoodie_pullover_solid_brn_lt_muted",
+            "basketball_shorts_classic_retro_hawaiian_palm_pur",
+            "shoe_1082_lakers_home",
+            "acc_calfband_solid_pur_left",
+            "acc_sock_wnba_wht_quarter"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_1084_blackice",
+      "modelId": "1084",
+      "label": "NBA shoe 1084 · blackice",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 1118,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "hoodie_pullover_2kwnba_outfit08",
+            "basketball_shorts_classic_nike_swoosh_drifit_blu",
+            "acc_sock_historic_stripe_blunvy_quarter",
+            "shoe_1084_blackice"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_1084_default",
+      "modelId": "1084",
+      "label": "NBA shoe 1084 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_coreoutfits.CLOF",
+          "group": 219,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "tanktop_solid_org",
+            "basketball_shorts_classic_retro_lightbeam_org",
+            "shoe_1084_default",
+            "acc_fingertape_index_solid_pur_right",
+            "acc_fingertape_middle_solid_org_right"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_1084_lebron_black_yellow",
+      "modelId": "1084",
+      "label": "NBA shoe 1084 · lebron black yellow",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 631,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "tshirt_ss_holiday_hallow_skeletondance_ani",
+            "basketball_shorts_classic_retro_jordan_rose_wht",
+            "acc_compressionpants_short_solid_yel",
+            "acc_armsleeve_forearm_solid_yel_left",
+            "acc_armsleeve_forearm_solid_yel_right",
+            "shoe_1084_lebron_black_yellow",
+            "acc_sock_solid_yel_quarter"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_1084_lebron_blackred",
+      "modelId": "1084",
+      "label": "NBA shoe 1084 · lebron blackred",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 281,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "earring_diamond_square_wht_left",
+            "earring_diamond_square_wht_right",
+            "tanktop_muscle_solid_blk",
+            "necklace_multi_whtgld",
+            "ring_third_chain_wht_left",
+            "moto_solid_red",
+            "shoe_1084_lebron_blackred"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_1086_allstar",
+      "modelId": "1086",
+      "label": "NBA shoe 1086 · allstar",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 103,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "shoe_1086_allstar",
+            "necklace_multi_blkblk",
+            "jogger_solid_blk",
+            "tshirt_ss_solid_blu_lt_muted",
+            "watch_tissot_chrono_xl_collector_left"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_1098_blackchrome",
+      "modelId": "1098",
+      "label": "NBA shoe 1098 · blackchrome",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 1258,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "shoe_1098_blackchrome",
+            "jacket_warmup_team_000_phi",
+            "warmup_team_000_phi",
+            "acc_sock_nba2017_away_000_phi_crew"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_1098_george_half_yellow_colorway",
+      "modelId": "1098",
+      "label": "NBA shoe 1098 · george half yellow colorway",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 211,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "acc_armsleeve_full_solid_blk_right",
+            "basketball_shorts_classic_retro_camo_org",
+            "tshirt_sleeveless_solid_org_neon",
+            "acc_armsleeve_full_solid_blk_left",
+            "shoe_1098_george_half_yellow_colorway",
+            "acc_sock_solid_blk_crew"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_1106_blue",
+      "modelId": "1106",
+      "label": "NBA shoe 1106 · blue",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 1199,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "shoe_1106_blue",
+            "acc_sock_esport_76s_crew_scrunch",
+            "basketball_shorts_classic_retro_puma_fs_blk",
+            "acc_compressionpants_short_solid_org",
+            "hoodie_pullover_puma_colorful"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_1106_powderblue",
+      "modelId": "1106",
+      "label": "NBA shoe 1106 · powderblue",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 811,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "basketball_shorts_nike_025_2",
+            "tshirt_sleeveless_team_areacode_025_sas",
+            "shoe_1106_powderblue",
+            "acc_sock_solid_wht_quarter",
+            "acc_wristband_long_solid_blult_left",
+            "acc_wristband_long_solid_wht_right",
+            "earring_diamond_square_wht_left",
+            "earring_diamond_square_wht_right"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_1106_red",
+      "modelId": "1106",
+      "label": "NBA shoe 1106 · red",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 701,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "acc_armsleeve_full_solid_blk_right",
+            "acc_rubber_wristband_double_solid_blk_left",
+            "tshirt_sleeveless_solid_red",
+            "basketball_shorts_classic_retro_abstract_red",
+            "acc_sock_solid_red_crew",
+            "shoe_1106_red"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_1110_orange",
+      "modelId": "1110",
+      "label": "NBA shoe 1110 · orange",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 1069,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "business_crop_camo_grn",
+            "shoe_1110_orange",
+            "sweatshirt_crew_solid_org_muted"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_1110_purple",
+      "modelId": "1110",
+      "label": "NBA shoe 1110 · purple",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 968,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "basketball_shorts_classic_jordan_diamondleather_blk",
+            "acc_elbowband_solid_blk_left",
+            "hat_dino_gradients_prl",
+            "acc_armsleeve_full_camo_basketball_blupur_left",
+            "acc_armsleeve_full_camo_basketball_blupur_right",
+            "acc_compressionshirt_ls_solid_blk",
+            "tanktop_nike_swooshoutline_pur",
+            "shoe_1110_purple"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_1118_blackorange",
+      "modelId": "1118",
+      "label": "NBA shoe 1118 · blackorange",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 1558,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "tshirt_ss_puma_roads_blk",
+            "basketball_shorts_classic_retro_jordan_mesh_blkorg",
+            "acc_sock_nba_nike_blk_quarter",
+            "shoe_1118_blackorange",
+            "acc_rubber_wristband_solid_org_right"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_1118_iggype2",
+      "modelId": "1118",
+      "label": "NBA shoe 1118 · iggype2",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 687,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "jersey_basketball_classic_v_012_1986_core_away_12_john_stockton",
+            "basketball_shorts_nike_016_3",
+            "shoe_1118_iggype2",
+            "acc_kinesiotape_shoulder_solid_blult_left",
+            "acc_armsleeve_forearm_solid_blu_right",
+            "acc_wristtape_solid_wht_left"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_1118_whitenblack",
+      "modelId": "1118",
+      "label": "NBA shoe 1118 · whitenblack",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 769,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "acc_sock_solid_blk_crew",
+            "watch_oneknob_tissot_gentleman_gld_left",
+            "tshirt_ss_oversize_abstract_ball_trq",
+            "jeans_chain_shimmerybrick_slv",
+            "shoe_1118_whitenblack"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_1121_blackpe",
+      "modelId": "1121",
+      "label": "NBA shoe 1121 · blackpe",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 287,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "acc_sock_solid_wht_crew_scrunch",
+            "shoe_1121_blackpe",
+            "basketball_shorts_nike_solid_blk",
+            "NO SHIRT"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_1121_default",
+      "modelId": "1121",
+      "label": "NBA shoe 1121 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 637,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "tshirt_ss_solid_blk",
+            "shoe_1121_default",
+            "jogger_solid_blk",
+            "acc_sock_solid_wht_crew"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_1129_default",
+      "modelId": "1129",
+      "label": "NBA shoe 1129 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_coreoutfits.CLOF",
+          "group": 617,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "tshirt_sleeveless_100_bills",
+            "basketball_shorts_nike_twotone_wht",
+            "shoe_1129_default",
+            "acc_armsleeve_full_slouch_solid_blk_right",
+            "acc_calfsleeve_half_solid_gld_left"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_1136_default",
+      "modelId": "1136",
+      "label": "NBA shoe 1136 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 686,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "acc_ankletape_solid_pnkhot_right",
+            "tshirt_sleeveless_lava_pnk",
+            "basketball_shorts_classic_retro_fogessentials_logostacked_grylt",
+            "shoe_1136_default"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_1137_purplemamba",
+      "modelId": "1137",
+      "label": "NBA shoe 1137 · purplemamba",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 1116,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "track_adidas_stripe_grn",
+            "jacket_warmup_jordan_jumpman_blk",
+            "shoe_1137_purplemamba",
+            "acc_sock_historic_stripe_pur_crew"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_1141_default",
+      "modelId": "1141",
+      "label": "NBA shoe 1141 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_coreoutfits.CLOF",
+          "group": 1544,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "tshirt_ls_camodigi_neon_wht",
+            "moto_ice_blk",
+            "shoe_1141_default"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_1141_uconn",
+      "modelId": "1141",
+      "label": "NBA shoe 1141 · uconn",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_coreoutfits.CLOF",
+          "group": 312,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "jacket_warmup_historic_solid_gry",
+            "shoe_1141_uconn",
+            "jogger_solid_grydk",
+            "acc_sock_solid_wht_crew"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_1145_default",
+      "modelId": "1145",
+      "label": "NBA shoe 1145 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 1189,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "acc_kneepad_solid_wht_left",
+            "acc_kneepad_solid_wht_right",
+            "jersey_basketball_classic_tri_008_2002_core_away_16_pau_gasol",
+            "basketball_shorts_classic_mem_008_2002_away",
+            "shoe_1145_default",
+            "acc_sock_solid_wht_tall_squash",
+            "acc_rubber_wristband_solid_blk_left"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_1151_default",
+      "modelId": "1151",
+      "label": "NBA shoe 1151 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 1266,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "acc_sock_nba_jordan_wht_quarter",
+            "tshirt_ss_oversize_champs_clutch_grn",
+            "track_solid_wht",
+            "shoe_1151_default",
+            "acc_fingertape_index_solid_grn_right",
+            "acc_fingertape_middle_solid_wht_right"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_1156_default",
+      "modelId": "1156",
+      "label": "NBA shoe 1156 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 1456,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "jersey_basketball_sleeve_v_washeddads_batting_wht",
+            "business_crop_pinstripe_whtblk",
+            "shoe_1156_default",
+            "acc_wristtape_solid_wht_left",
+            "acc_wristtape_solid_wht_right",
+            "necklace_double_gld",
+            "sunglasses_razorblade_solid_blk",
+            "hat_baseball_snap_paperplanes_greatness_red_curve_back"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_1167_navy",
+      "modelId": "1167",
+      "label": "NBA shoe 1167 · navy",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 1459,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "polo_tuck_solid_brn_lt_muted",
+            "basketball_shorts_classic_retro_nike_stripes_blu_navy",
+            "shoe_1167_navy",
+            "acc_sock_solid_wht_crew",
+            "headband_nike_swoosh_wht",
+            "acc_elbowband_low_solid_wht_left"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_1167_silverlapis",
+      "modelId": "1167",
+      "label": "NBA shoe 1167 · silverlapis",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 1604,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "acc_wristband_high_solid_wht_left",
+            "tanktop_goat_grn",
+            "shoe_1167_silverlapis",
+            "goggles_current_solid_wht",
+            "towel_neck_uneven_gatorade_wht",
+            "acc_compressionpants_long_solid_grnlt",
+            "basketball_shorts_nike_solid_blk",
+            "acc_armsleeve_full_camo_abstract_grnbrn_right"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_1169_default",
+      "modelId": "1169",
+      "label": "NBA shoe 1169 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 266,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "jeans_gry",
+            "tshirt_ss_solid_blk",
+            "shoe_1169_default"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_1174_blacknwhite",
+      "modelId": "1174",
+      "label": "NBA shoe 1174 · blacknwhite",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 243,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "acc_sock_solid_wht_quarter",
+            "tshirt_ss_homage_onfire_raptors_pur",
+            "basketball_shorts_classic_tor_022_1995_home_long",
+            "acc_wristband_short_solid_wht_left",
+            "shoe_1174_blacknwhite"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_1174_default",
+      "modelId": "1174",
+      "label": "NBA shoe 1174 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_coreoutfits.CLOF",
+          "group": 218,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "jacket_track_money_iri",
+            "basketball_shorts_nike_solid_grn",
+            "sunglasses_cazal_silver_blk",
+            "shoe_1174_default",
+            "acc_sock_solid_wht_crew"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_1176_default",
+      "modelId": "1176",
+      "label": "NBA shoe 1176 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 313,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "necklace_gld",
+            "jogger_solid_org_muted",
+            "tshirt_sleeveless_solid_blk",
+            "shoe_1176_default"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_1177_default",
+      "modelId": "1177",
+      "label": "NBA shoe 1177 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_coreoutfits.CLOF",
+          "group": 1137,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "tanktop_nike_ballspinning_wht",
+            "moto_hawaiian_palm_teal",
+            "shoe_1177_default",
+            "acc_kinesiotape_shoulder_solid_pur_right"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_1190_default",
+      "modelId": "1190",
+      "label": "NBA shoe 1190 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 340,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "shoe_1190_default",
+            "basketball_shorts_classic_tor_022_1995_away_long",
+            "tshirt_ss_team_022_tor",
+            "acc_sock_nba2017_home_022_tor_tall_scrunch"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_1207_default",
+      "modelId": "1207",
+      "label": "NBA shoe 1207 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 139,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "jogger_solid_blk",
+            "tshirt_ls_team_025_sas",
+            "shoe_1207_default"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_1209_default",
+      "modelId": "1209",
+      "label": "NBA shoe 1209 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 964,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "tshirt_ss_2ksayings_pinkdiamond_pnk",
+            "basketball_shorts_classic_retro_camodigi_pur",
+            "shoe_1209_default",
+            "acc_armsleeve_full_slouch_drybrush_blk_pnkros_left",
+            "hat_boat_solid_blk"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_1210_default",
+      "modelId": "1210",
+      "label": "NBA shoe 1210 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 1744,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "jersey_basketball_classic_wishbone_017_2010_core_away_00_shawn_marion",
+            "basketball_shorts_classic_dal_017_2010_away",
+            "acc_armsleeve_full_solid_blunvy_right",
+            "acc_calfsleeve_half_solid_blunvy_right",
+            "acc_sock_solid_wht_quarter",
+            "shoe_1210_default"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_1231_default",
+      "modelId": "1231",
+      "label": "NBA shoe 1231 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 1093,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "ring_second_chevron_gld_left",
+            "sweatshirt_oversize_storeoutfits_built_different_yel",
+            "shoe_1231_default",
+            "jeans_nochain_solid_blk"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_1235_default",
+      "modelId": "1235",
+      "label": "NBA shoe 1235 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 825,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "jogger_solid_blk",
+            "shoe_1235_default",
+            "tshirt_ss_team_014_nyk"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_1237_default",
+      "modelId": "1237",
+      "label": "NBA shoe 1237 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 399,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "shoe_1237_default",
+            "acc_sock_nba2017_home_019_den_quarter",
+            "basketball_shorts_classic_retro_team_speckle_019_den",
+            "tshirt_sleeveless_team_metal_black_019_den",
+            "acc_armsleeve_forearm_solid_wht_right"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_1240_default",
+      "modelId": "1240",
+      "label": "NBA shoe 1240 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 587,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "tshirt_ss_team_metal_white_021_det",
+            "acc_sock_solid_wht_quarter",
+            "basketball_shorts_nike_021_1",
+            "acc_armsleeve_pad_oval_solid_wht_left",
+            "shoe_1240_default"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_1243_default",
+      "modelId": "1243",
+      "label": "NBA shoe 1243 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 752,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "shoe_1243_default",
+            "tshirt_ls_team_001_mil",
+            "jogger_city_mil",
+            "acc_sock_nba2017_home_001_mil_tall_squash"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_1244_default",
+      "modelId": "1244",
+      "label": "NBA shoe 1244 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 1224,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "shoe_1244_default",
+            "tshirt_sleeveless_team_areacode_027_min",
+            "basketball_shorts_classic_min_027_2010_home",
+            "acc_sock_nba2017_home_027_min_tall_squash"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_1245_default",
+      "modelId": "1245",
+      "label": "NBA shoe 1245 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 168,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "shoe_1245_default",
+            "acc_sock_nba2017_home_000_phi_tall_squash",
+            "tshirt_ss_team_metal_black_000_phi",
+            "basketball_shorts_classic_phi_000_2010_home",
+            "acc_armsleeve_full_solid_blk_right",
+            "acc_kneepad_solid_wht_left"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_1246_default",
+      "modelId": "1246",
+      "label": "NBA shoe 1246 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 911,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "shoe_1246_default",
+            "tshirt_sleeveless_team_grylt_026_pho",
+            "jogger_city_pho",
+            "acc_sock_nba2017_home_026_pho_tall",
+            "acc_wristband_high_solid_wht_left"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_1255_default",
+      "modelId": "1255",
+      "label": "NBA shoe 1255 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 135,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "shoe_1255_default",
+            "basketball_shorts_classic_2kmycareer_elevate_logo1_canada_wht",
+            "hat_beanie_2kmycareer_elevate_logo1_canada_wht",
+            "acc_sock_solid_blk_quarter",
+            "tshirt_ss_2kmycareer_elevate_logo1_canada_blk"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_1289_whitered",
+      "modelId": "1289",
+      "label": "NBA shoe 1289 · whitered",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 1796,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "tshirt_ss_team_metal_white_005_bos",
+            "jogger_solid_yel",
+            "shoe_1289_whitered",
+            "watch_oneknob_metal_rsegld_left"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_1295_default",
+      "modelId": "1295",
+      "label": "NBA shoe 1295 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_coreoutfits.CLOF",
+          "group": 1288,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "hat_beanie_ball_wnba_team_300_lv",
+            "flannel_checker_blk",
+            "jogger_puma_cozy",
+            "shoe_1295_default"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_1308_blackwhite",
+      "modelId": "1308",
+      "label": "NBA shoe 1308 · blackwhite",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 167,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "jacket_varsity_red",
+            "shoe_1308_blackwhite",
+            "acc_sock_wnba_courtblue_crew_scrunch",
+            "business_crop_solid_grndk",
+            "hat_baseball_snap_solid_blk_curve_back"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_1340_black",
+      "modelId": "1340",
+      "label": "NBA shoe 1340 · black",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 1245,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "acc_sock_solid_wht_quarter",
+            "jersey_basketball_classic_u_009_1996_core_away_55_dikembe_mutombo",
+            "basketball_shorts_classic_atl_009_1996_away",
+            "acc_kneebrace_solid_blk_left",
+            "acc_kneebrace_solid_blk_right",
+            "shoe_1340_black"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_1582_2k_version",
+      "modelId": "1582",
+      "label": "NBA shoe 1582 · 2k version",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 1771,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "shoe_1582_2k_version",
+            "acc_sock_historic_stripe_blk_tall_squash",
+            "tshirt_ls_solid_blu_muted",
+            "basketball_shorts_nike_wnba_311dal_secondary"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_2002_default",
+      "modelId": "2002",
+      "label": "NBA shoe 2002 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_coreoutfits.CLOF",
+          "group": 979,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "hoodie_pullover_solid_blk",
+            "jogger_solid_blk",
+            "shoe_2002_default"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_2012_blue",
+      "modelId": "2012",
+      "label": "NBA shoe 2012 · blue",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 1399,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "hat_racecar_space_binary_ani",
+            "glove_storeoutfits_urban_tur_emissive_left",
+            "tshirt_ss_paperplanes_knuckles_blk",
+            "jogger_puma_twotone_blkred",
+            "glove_storeoutfits_urban_tur_emissive_right",
+            "shoe_2012_blue",
+            "acc_sock_abstract_diamond_blu_ani_tall_scrunch"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_2012_red",
+      "modelId": "2012",
+      "label": "NBA shoe 2012 · red",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 1538,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "basketball_shorts_classic_retro_adidas_crazylite_redblk",
+            "tshirt_ss_adidas_logo_trefoil_red",
+            "shoe_2012_red",
+            "acc_sock_solid_blk_tall_squash",
+            "acc_kneestrap_solid_blk_left",
+            "acc_elbowband_low_solid_blk_right"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_2023_lakers_home",
+      "modelId": "2023",
+      "label": "NBA shoe 2023 · lakers home",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 339,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "acc_sock_solid_pur_crew_scrunch",
+            "basketball_shorts_classic_lal_015_1978_away_long",
+            "jersey_basketball_classic_wishbone_015_1999_core_home_05_robert_horry",
+            "shoe_2023_lakers_home"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_2028_ingram_purple_pe",
+      "modelId": "2028",
+      "label": "NBA shoe 2028 · ingram purple pe",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 1654,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "leather_solid_blk",
+            "necklace_multi_whtslv",
+            "hat_future_abstract_swirl_blu_ani",
+            "shoe_2028_ingram_purple_pe",
+            "jacket_leather_solid_pnk",
+            "jersey_basketball_classic_u_mitchellandness_galaxy_lakers_pur"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_2029_kareem",
+      "modelId": "2029",
+      "label": "NBA shoe 2029 · kareem",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 562,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "jersey_basketball_classic_u_015_1960_core_away_33_kareem_abdul_jabbar",
+            "basketball_shorts_classic_retro_lal_015_1960_away",
+            "shoe_2029_kareem",
+            "acc_sock_historic_stripe_blu_tall_scrunch",
+            "acc_wristband_short_solid_wht_left",
+            "acc_wristband_short_solid_wht_right"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_2029_red",
+      "modelId": "2029",
+      "label": "NBA shoe 2029 · red",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 1528,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "jersey_basketball_classic_u_009_1983_core_away_30_tree_rollins",
+            "shoe_2029_red",
+            "acc_sock_historic_stripe_red_tall",
+            "acc_wristband_short_solid_wht_left",
+            "acc_wristband_short_solid_wht_right",
+            "basketball_shorts_classic_retro_atl_009_1983_home"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_2029_silvermetal",
+      "modelId": "2029",
+      "label": "NBA shoe 2029 · silvermetal",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 609,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "jacket_ss_opn_metallic_gry",
+            "tanktop_jordan_flight_wht",
+            "basketball_shorts_nike_team_metal_white_003_chi",
+            "shoe_2029_silvermetal"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_2055_orangeblack",
+      "modelId": "2055",
+      "label": "NBA shoe 2055 · orangeblack",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 954,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "tshirt_ss_solid_blk",
+            "basketball_shorts_classic_retro_solid_grn_dk_muted",
+            "shoe_2055_orangeblack",
+            "acc_handtape_solid_blk_left",
+            "acc_handtape_solid_blk_right"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_2055_pelicans_home",
+      "modelId": "2055",
+      "label": "NBA shoe 2055 · pelicans home",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 502,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "tshirt_ss_team_metal_white_011_nop",
+            "basketball_shorts_nike_011_3",
+            "shoe_2055_pelicans_home",
+            "bracelet_bangle_leather_thin_org_left",
+            "necklace_multi_blkblk",
+            "acc_sock_solid_wht_crew"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_2056_default",
+      "modelId": "2056",
+      "label": "NBA shoe 2056 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_coreoutfits.CLOF",
+          "group": 503,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "jacket_varsity_mitchellandness_lal",
+            "jogger_2kwnba_outfit04",
+            "shoe_2056_default"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_2066_default",
+      "modelId": "2066",
+      "label": "NBA shoe 2066 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 315,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "tanktop_muscle_miami_stripes_blu",
+            "basketball_shorts_classic_nike_swoosh_drifit_blu",
+            "shoe_2066_default",
+            "acc_armsleeve_full_slouch_camo_abstract_blupur_right",
+            "acc_fingertape_middle_solid_wht_left",
+            "acc_fingertape_ring_solid_wht_left"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_2076_default",
+      "modelId": "2076",
+      "label": "NBA shoe 2076 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_coreoutfits.CLOF",
+          "group": 1335,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "jacket_track_dice_iri",
+            "basketball_shorts_classic_retro_lightbeam_org",
+            "sunglasses_aviator_black_red",
+            "shoe_2076_default",
+            "hat_boat_solid_wht",
+            "earring_hoop_wht_left"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_2082_default",
+      "modelId": "2082",
+      "label": "NBA shoe 2082 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 1544,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "acc_sock_solid_wht_tall_scrunch",
+            "jersey_basketball_classic_u_023_1976_core_away_34_hakeem_olajuwon",
+            "basketball_shorts_classic_retro_hou_023_1976_away",
+            "acc_kneepad_retro_solid_red_left",
+            "acc_kneepad_retro_solid_red_right",
+            "shoe_2082_default"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_2084_default",
+      "modelId": "2084",
+      "label": "NBA shoe 2084 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_coreoutfits.CLOF",
+          "group": 607,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "hoodie_pullover_puma_oneof1_gradient",
+            "basketball_shorts_nike_solid_pur",
+            "shoe_2084_default",
+            "acc_legsleeve_drybrush_wht_pur_left",
+            "hat_baseball_snap_solid_wht_flat_back"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_2090_default",
+      "modelId": "2090",
+      "label": "NBA shoe 2090 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_coreoutfits.CLOF",
+          "group": 1127,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "jogger_solid_blk",
+            "shoe_2090_default",
+            "jersey_basketball_classic_u_2kstorymode_hammondpark_court_grn"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_2095_default",
+      "modelId": "2095",
+      "label": "NBA shoe 2095 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 1165,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "acc_sock_nba2017_away_018_bkn_tall_scrunch",
+            "tshirt_ls_team_metal_white_018_bkn",
+            "basketball_shorts_classic_retro_team_speckle_018_bkn",
+            "shoe_2095_default"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_2114_default",
+      "modelId": "2114",
+      "label": "NBA shoe 2114 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 1062,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "shoe_2114_default",
+            "tshirt_ss_team_metal_white_004_cle",
+            "jogger_team_stripes_004_cle",
+            "acc_sock_nba2017_home_004_cle_tall",
+            "acc_rubber_wristband_double_solid_blk_right"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_2221_default",
+      "modelId": "2221",
+      "label": "NBA shoe 2221 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 223,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "shoe_2221_default",
+            "tshirt_sleeveless_team_metal_black_004_cle",
+            "jogger_team_stripes_004_cle",
+            "acc_sock_nba2017_home_004_cle_quarter",
+            "acc_armsleeve_forearm_solid_blk_left"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_2223_default",
+      "modelId": "2223",
+      "label": "NBA shoe 2223 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 1332,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "shoe_2223_default",
+            "tshirt_ss_team_speckle_028_por",
+            "basketball_shorts_classic_por_028_2006_away",
+            "acc_sock_nba2017_home_028_por_tall_squash"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_2233_default",
+      "modelId": "2233",
+      "label": "NBA shoe 2233 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 391,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "acc_sock_solid_red_quarter",
+            "tshirt_ss_2kmycareer_elevate_logo2_blk",
+            "necklace_medallion_2kmycareer_elevate_logo2_canada_wht",
+            "basketball_shorts_classic_2kmycareer_elevate_logo2_wht",
+            "shoe_2233_default"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_3001_all_white",
+      "modelId": "3001",
+      "label": "NBA shoe 3001 · all white",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 784,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "acc_sock_solid_blk_quarter",
+            "polo_tuck_solid_wht",
+            "watch_oneknob_metal_gld_left",
+            "jeans_denimsolid_blu2",
+            "shoe_3001_all_white"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_3004_default",
+      "modelId": "3004",
+      "label": "NBA shoe 3004 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 1659,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "jersey_basketball_classic_u_019_1994_core_away_31_nick_van_exel",
+            "basketball_shorts_classic_den_019_1994_away",
+            "acc_kneebrace_solid_red_left",
+            "acc_kneebrace_solid_red_right",
+            "acc_sock_solid_wht_tall_scrunch",
+            "shoe_3004_default"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_3005_default",
+      "modelId": "3005",
+      "label": "NBA shoe 3005 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 130,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "tshirt_sleeveless_solid_blk",
+            "cargo_solid_blk",
+            "shoe_3005_default",
+            "acc_handtape_solid_slv_right",
+            "acc_fingertape_index_solid_blunvy_left",
+            "acc_fingertape_middle_solid_blk_left",
+            "sunglasses_aviator_gold_pnk",
+            "hat_baseball_fit_camo_digital_curve_back"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_3008_default",
+      "modelId": "3008",
+      "label": "NBA shoe 3008 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_coreoutfits.CLOF",
+          "group": 1222,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "tanktop_muscle_animal_zebra_blkyel",
+            "basketball_shorts_nike_twotone_blk",
+            "shoe_3008_default",
+            "acc_elbowsleeve_solid_yel_left",
+            "acc_fingertape_middle_solid_yel_left",
+            "earring_diamond_round_wht_left"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_3010_blackwhite_colorway",
+      "modelId": "3010",
+      "label": "NBA shoe 3010 · blackwhite colorway",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 213,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "necklace_gld",
+            "piercing_ear_ball_gld_left",
+            "piercing_ear_ball_gld_right",
+            "bracelet_chain_cuban_gld_right",
+            "shoe_3010_blackwhite_colorway",
+            "basketball_shorts_classic_solid_blk",
+            "tshirt_sleeveless_team_metal_white_000_phi",
+            "acc_sock_solid_wht_quarter"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_3010_default",
+      "modelId": "3010",
+      "label": "NBA shoe 3010 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_defaultoutfits.CLOF",
+          "group": 23,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "tshirt_ss_solid_blk",
+            "default_bottom",
+            "acc_sock_solid_wht_quarter",
+            "shoe_3010_default"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_3012_white_red",
+      "modelId": "3012",
+      "label": "NBA shoe 3012 · white red",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 23,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "jersey_basketball_classic_u_018_2006_secondary_06_kenyon_martin",
+            "basketball_shorts_classic_bkn_018_2006_secondary",
+            "acc_armsleeve_pad_angular_solid_wht_right",
+            "acc_elbowband_solid_wht_left",
+            "acc_sock_solid_wht_crew",
+            "shoe_3012_white_red"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_3023_white_red_black",
+      "modelId": "3023",
+      "label": "NBA shoe 3023 · white red black",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 934,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "jacket_quilted_up_holiday_xmas_badsanta_red",
+            "sweats_cargo_red",
+            "shoe_3023_white_red_black",
+            "jersey_basketball_classic_u_jordan_jumpman_wht",
+            "ring_third_saddle_gld_right",
+            "ring_pyramid_single_gld_right",
+            "ring_second_stack_gld_left",
+            "sunglasses_wayfarer_twotone_blk"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_3500_green",
+      "modelId": "3500",
+      "label": "NBA shoe 3500 · green",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 1408,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "basketball_shorts_classic_retro_coach_stripes_blu",
+            "acc_kneebrace_solid_wht_left",
+            "acc_armsleeve_forearm_animal_gator_left",
+            "acc_armsleeve_forearm_animal_gator_right",
+            "tshirt_sleeveless_citypop_newyork_grn",
+            "shoe_3500_green",
+            "acc_sock_antisocialclub_logo_wht_crew_scrunch"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_3500_nuggets",
+      "modelId": "3500",
+      "label": "NBA shoe 3500 · nuggets",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_npc_park_outfits_outside.CLOF",
+          "group": 16,
+          "outfit": 15,
+          "pool": "male",
+          "items": [
+            "shoe_3500_nuggets",
+            "jacket_track_solid_blunvy",
+            "jogger_solid_teal_muted"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_3501_green",
+      "modelId": "3501",
+      "label": "NBA shoe 3501 · green",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 201,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "hat_dino_gradients_grn",
+            "basketball_shorts_classic_jordan_diamondleather_blk",
+            "shoe_3501_green",
+            "acc_compressionshirt_ss_solid_blk",
+            "acc_armsleeve_full_camo_elements_grn_left",
+            "acc_armsleeve_full_camo_elements_grn_right",
+            "acc_elbowband_solid_blk_right",
+            "tanktop_jordan_flight_blk"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_3502_black",
+      "modelId": "3502",
+      "label": "NBA shoe 3502 · black",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 1298,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "vest_quilted_solid_blk",
+            "acc_elbowpad_hex_solid_blk_left",
+            "acc_elbowpad_hex_solid_blk_right",
+            "shoe_3502_black",
+            "acc_compressionshirt_ss_solid_wht",
+            "acc_handtape_solid_wht_right",
+            "jogger_jordan_flight_wht"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_3502_black_red",
+      "modelId": "3502",
+      "label": "NBA shoe 3502 · black red",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 1379,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "shoe_3502_black_red",
+            "hat_dragon_solid_red",
+            "armor_medieval_2kevents_filigree_mrn",
+            "glove_medieval_2kevents_filigree_mrn_left",
+            "glove_medieval_2kevents_filigree_mrn_right",
+            "cape_metallic_slv",
+            "acc_compressionshirt_ls_solid_slv",
+            "jeans_chain_trapstar_stitching_blk"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_3502_green",
+      "modelId": "3502",
+      "label": "NBA shoe 3502 · green",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 24,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "acc_kneebrace_solid_red_left",
+            "acc_kneebrace_solid_red_right",
+            "acc_sock_solid_wht_tall_scrunch",
+            "tshirt_sleeveless_citypop_seattle_grn",
+            "sweats_cargo_blk",
+            "acc_wristband_short_solid_grndk_left",
+            "acc_wristband_short_solid_grndk_right",
+            "shoe_3502_green"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_3502_white_navyblue",
+      "modelId": "3502",
+      "label": "NBA shoe 3502 · white navyblue",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 1825,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "tshirt_ss_team_speckle_029_gsw",
+            "jogger_nike_linesdesign_yel",
+            "shoe_3502_white_navyblue",
+            "acc_armsleeve_forearm_solid_blk_right",
+            "watch_tissot_supersport_slvblk_left",
+            "hat_beanie_ball_twotone_blk_pnk"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_3502_white_purple",
+      "modelId": "3502",
+      "label": "NBA shoe 3502 · white purple",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 1716,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "basketball_shorts_classic_retro_lal_015_1978_home",
+            "shoe_3502_white_purple",
+            "acc_sock_solid_wht_tall_scrunch",
+            "jersey_basketball_classic_u_015_1978_core_home_32_magic_johnson"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_3502_white_red",
+      "modelId": "3502",
+      "label": "NBA shoe 3502 · white red",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 643,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "jogger_2kstorymode_splatter",
+            "jacket_track_adidas_stripe_red",
+            "shoe_3502_white_red",
+            "acc_sock_allstar_2k22_wht_crew"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_3503_allwhite",
+      "modelId": "3503",
+      "label": "NBA shoe 3503 · allwhite",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 870,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "ring_second_chevron_gld_left",
+            "jacket_denim_denimsolid_blult1",
+            "tshirt_ss_solid_wht",
+            "shoe_3503_allwhite",
+            "necklace_gld",
+            "jeans_blk"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_3503_cavaliers_away",
+      "modelId": "3503",
+      "label": "NBA shoe 3503 · cavaliers away",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 106,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "tanktop_muscle_solid_blk",
+            "basketball_shorts_classic_retro_team_speckle_009_atl",
+            "shoe_3503_cavaliers_away",
+            "acc_wristband_short_solid_wht_right",
+            "goggles_kareem_solid_blk",
+            "acc_sock_historic_stripe_gry_tall_squash"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_3503_white_red",
+      "modelId": "3503",
+      "label": "NBA shoe 3503 · white red",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 1622,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "track_solid_red",
+            "jacket_warmup_historic_solid_wht",
+            "shoe_3503_white_red",
+            "acc_sock_allstar_2k22_wht_crew"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_3504_yellow",
+      "modelId": "3504",
+      "label": "NBA shoe 3504 · yellow",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_npc_park_outfits_outside.CLOF",
+          "group": 3,
+          "outfit": 8,
+          "pool": "male",
+          "items": [
+            "tanktop_hawaiian_palm_leaves_gry",
+            "jeans_straight_denim_gry",
+            "sunglasses_aviator_silver_yel",
+            "shoe_3504_yellow"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_3513_default",
+      "modelId": "3513",
+      "label": "NBA shoe 3513 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 291,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "jogger_solid_grydk",
+            "tshirt_ss_solid_gry",
+            "shoe_3513_default"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_4012_curry_yellow",
+      "modelId": "4012",
+      "label": "NBA shoe 4012 · curry yellow",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 1387,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "shoe_4012_curry_yellow",
+            "tshirt_ss_2kmycareer_top3dynasty_curry_blk",
+            "basketball_shorts_classic_gsw_029_1990_home_long",
+            "acc_sock_nba2017_home_029_gsw_tall_squash"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_4012_dubnation",
+      "modelId": "4012",
+      "label": "NBA shoe 4012 · dubnation",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 622,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "tshirt_ss_team_historic_029_gsw",
+            "basketball_shorts_classic_retro_nike_air_blk",
+            "shoe_4012_dubnation",
+            "acc_sock_2kwnba_outfit07_crew"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_4012_hawks_away",
+      "modelId": "4012",
+      "label": "NBA shoe 4012 · hawks away",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 1147,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "hoodie_pullover_team_plaid_004_cle",
+            "basketball_shorts_nike_jordan_blk",
+            "shoe_4012_hawks_away",
+            "facemask_clear",
+            "acc_sock_solid_blult_crew"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_4012_mavericks_away",
+      "modelId": "4012",
+      "label": "NBA shoe 4012 · mavericks away",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 1283,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "necklace_slv",
+            "jersey_basketball_nike_wishbone_017_current_secondary_32_cooper_flagg",
+            "jeans_blult",
+            "dickie_tshirt_ls_citypop_dallas_wht",
+            "shoe_4012_mavericks_away"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_4025_blackgold2",
+      "modelId": "4025",
+      "label": "NBA shoe 4025 · blackgold2",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 1026,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "shoe_4025_blackgold2",
+            "acc_armsleeve_pad_oval_solid_blk_left",
+            "tshirt_ss_newbalance_kid_crm",
+            "basketball_shorts_classic_retro_newbalance_curve_blu",
+            "acc_sock_historic_stripe_blk_quarter"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_4025_whitegold",
+      "modelId": "4025",
+      "label": "NBA shoe 4025 · whitegold",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 372,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "tshirt_sleeveless_solid_wht",
+            "basketball_shorts_classic_retro_solid_blk",
+            "shoe_4025_whitegold",
+            "acc_armsleeve_full_gradient_yel_right",
+            "bracelet_cuff_pyramid_gld_left",
+            "acc_sock_nba2017_home_026_pho_crew"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_4029_default",
+      "modelId": "4029",
+      "label": "NBA shoe 4029 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_coreoutfits.CLOF",
+          "group": 606,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "tanktop_hawaiian_hibiscus_blu",
+            "shoe_4029_default",
+            "basketball_shorts_nike_solid_blk",
+            "acc_armsleeve_forearm_solid_grydk_right",
+            "headband_tie_solid_pnkros"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_4029_grizzlies_away",
+      "modelId": "4029",
+      "label": "NBA shoe 4029 · grizzlies away",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 1501,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "tshirt_ss_puma_dontflinch_horizontal_wht",
+            "basketball_shorts_classic_retro_2kwnba_outfit07",
+            "shoe_4029_grizzlies_away",
+            "acc_wristtape_solid_blunvy_right",
+            "acc_fingertape_middle_solid_grnlt_left",
+            "acc_fingertape_pinky_solid_grnlt_left",
+            "acc_fingertape_ring_solid_grnlt_left",
+            "acc_sock_nba2017_home_021_det_crew"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_4029_whitegold",
+      "modelId": "4029",
+      "label": "NBA shoe 4029 · whitegold",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 1680,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "necklace_double_gld",
+            "business_grid_grydk",
+            "hat_straw_solid_brn",
+            "tshirt_ss_2kmycareer_wht",
+            "bracelet_chain_cuban_gld_right",
+            "bracelet_chain_cuban_gld_left",
+            "shoe_4029_whitegold"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_4053_default",
+      "modelId": "4053",
+      "label": "NBA shoe 4053 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 294,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "jogger_solid_blk",
+            "hoodie_pullover_solid_blk",
+            "shoe_4053_default"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_4059_default",
+      "modelId": "4059",
+      "label": "NBA shoe 4059 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 803,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "jeans_bludk",
+            "shoe_4059_default",
+            "hoodie_pullover_solid_gry"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_4068_default",
+      "modelId": "4068",
+      "label": "NBA shoe 4068 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 4,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "shoe_4068_default",
+            "acc_sock_nba2017_home_025_sas_tall",
+            "basketball_shorts_classic_retro_team_speckle_025_sas",
+            "tshirt_sleeveless_team_historic_025_sas"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_5001_default",
+      "modelId": "5001",
+      "label": "NBA shoe 5001 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 1820,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "acc_sock_solid_wht_quarter",
+            "jersey_basketball_classic_tri_017_2004_secondary_04_michael_finley",
+            "basketball_shorts_classic_dal_017_2004_secondary",
+            "shoe_5001_default"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_5001_red",
+      "modelId": "5001",
+      "label": "NBA shoe 5001 · red",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 382,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "tshirt_ss_solid_wht",
+            "jacket_leather_solid_brndk",
+            "necklace_multi_whtslv",
+            "earring_diamond_round_wht_left",
+            "earring_diamond_round_wht_right",
+            "glasses_circle_rim_plastic_solid_blk",
+            "jogger_camodigi_brn",
+            "shoe_5001_red"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_5002_blackcement",
+      "modelId": "5002",
+      "label": "NBA shoe 5002 · blackcement",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 1616,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "jeans_blk",
+            "watch_tissot_chrono_xl_classic_right",
+            "jacket_quarterzip_solid_blk",
+            "acc_sock_solid_blk_crew",
+            "shoe_5002_blackcement"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_5002_default",
+      "modelId": "5002",
+      "label": "NBA shoe 5002 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 1487,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "cargo_shorts_camo_grn",
+            "shoe_5002_default",
+            "sunglasses_cazal_gold_wht",
+            "tshirt_ss_jordan_flower_wht",
+            "acc_legsleeve_solid_blk_left",
+            "acc_armsleeve_full_solid_blk_left"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_5002_home",
+      "modelId": "5002",
+      "label": "NBA shoe 5002 · home",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 186,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "acc_sock_solid_blk_quarter",
+            "hoodie_oversize_solid_yel",
+            "basketball_shorts_nike_solid_red",
+            "shoe_5002_home",
+            "hat_baseball_snap_solid_teal_muted_curve_back",
+            "acc_calfsleeve_pad_retro_solid_blu_left",
+            "acc_calfband_solid_pur_right"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_5002_kobeblack",
+      "modelId": "5002",
+      "label": "NBA shoe 5002 · kobeblack",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 267,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "basketball_shorts_nike_solid_blk",
+            "acc_sock_solid_blk_quarter",
+            "shoe_5002_kobeblack",
+            "tshirt_ss_jordan_23shine_blk"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_5002_westbrookwhite",
+      "modelId": "5002",
+      "label": "NBA shoe 5002 · westbrookwhite",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 323,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "hat_sneaker_solid_orgblu",
+            "tshirt_ss_jordan_aj3shoe_blue_white",
+            "sweats_up_coach_signature_blk",
+            "shoe_5002_westbrookwhite",
+            "acc_sock_nba_jordan_wht_quarter",
+            "acc_elbowsleeve_solid_org_right",
+            "acc_elbowband_low_solid_org_left"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_5003_allwhite",
+      "modelId": "5003",
+      "label": "NBA shoe 5003 · allwhite",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_npc_park_outfits_individual.CLOF",
+          "group": 43,
+          "outfit": 1,
+          "pool": "male",
+          "items": [
+            "tshirt_sleeveless_jordan_aj3shoe_red_white",
+            "acc_compressionpants_short_gameday",
+            "basketball_shorts_classic_jordan_3stripe_gry",
+            "watch_tissot_seastar_1000chronograph_metal_slv_right",
+            "shoe_5003_allwhite",
+            "acc_sock_solid_red_crew",
+            "necklace_multi_blkslv"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_5004_allred",
+      "modelId": "5004",
+      "label": "NBA shoe 5004 · allred",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 1723,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "acc_sock_solid_red_crew",
+            "shoe_5004_allred",
+            "basketball_shorts_classic_retro_jordan_jumpman_red",
+            "tshirt_ss_jordan_wings_red",
+            "acc_wristtape_gameday_right",
+            "acc_anklebrace_curry_gameday_left"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_5004_metallic",
+      "modelId": "5004",
+      "label": "NBA shoe 5004 · metallic",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 1338,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "shoe_5004_metallic",
+            "hat_robot_slv",
+            "cyborg_arm_solid_slv_left",
+            "cyborg_arm_solid_slv_right",
+            "cyborg_leg_solid_slv_left",
+            "cyborg_leg_solid_slv_right",
+            "tshirt_ss_oversize_jordan_solid_blk",
+            "basketball_shorts_classic_solid_blk"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_5004_pinnacle",
+      "modelId": "5004",
+      "label": "NBA shoe 5004 · pinnacle",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 590,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "shoe_5004_pinnacle",
+            "watch_oneknob_tissot_gentleman_blk_left",
+            "jeans_blult",
+            "hoodie_pullover_camo_red"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_5004_tok2",
+      "modelId": "5004",
+      "label": "NBA shoe 5004 · tok2",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_npc_park_outfits_individual.CLOF",
+          "group": 197,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "jeans_ripped_bludk",
+            "tshirt_ss_solid_yel",
+            "acc_rubberband_solid_blunvy_right",
+            "watch_tissot_supersport_rsegldblk_left",
+            "glasses_rounded_rim_metal_solid_slv",
+            "shoe_5004_tok2"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_5005_tinker",
+      "modelId": "5005",
+      "label": "NBA shoe 5005 · tinker",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 128,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "blazer_cls_solid_blu",
+            "business_crop_solid_blu",
+            "bdshirt_opn_solid_wht",
+            "shoe_5005_tinker",
+            "goggles_hgrant_team_017_dal"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_5006_default",
+      "modelId": "5006",
+      "label": "NBA shoe 5006 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_coreoutfits.CLOF",
+          "group": 1374,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "jacket_varsity_worn_blunvybge",
+            "jogger_jordan_horizontal_blkwht",
+            "shoe_5006_default"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_5006_raptor",
+      "modelId": "5006",
+      "label": "NBA shoe 5006 · raptor",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 132,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "tshirt_ss_nike_ball_pur",
+            "basketball_shorts_classic_tor_022_1995_home_long",
+            "shoe_5006_raptor",
+            "acc_armsleeve_full_slouch_team_checker_022_tor_left",
+            "acc_sock_solid_wht_crew"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_5007_default",
+      "modelId": "5007",
+      "label": "NBA shoe 5007 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_coreoutfits.CLOF",
+          "group": 1407,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "tanktop_muscle_solid_trq",
+            "jogger_jordan_horizontal_blkgld",
+            "shoe_5007_default",
+            "acc_armsleeve_full_splatter_000_left"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_5010_spacejam",
+      "modelId": "5010",
+      "label": "NBA shoe 5010 · spacejam",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 70,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "basketball_shorts_nike_jordan_blk",
+            "tshirt_ss_solid_blu_baby",
+            "acc_wristtape_solid_wht_left",
+            "acc_kneebrace_gameday_right",
+            "acc_sock_nba_nike_wht_quarter",
+            "shoe_5010_spacejam"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_5010_varsityred",
+      "modelId": "5010",
+      "label": "NBA shoe 5010 · varsityred",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_npc_park_outfits_individual.CLOF",
+          "group": 43,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "tshirt_ss_jordan_jumpman_blk",
+            "acc_compressionpants_short_gameday",
+            "basketball_shorts_classic_chi_003_1997_secondary",
+            "watch_tissot_seastar_1000chronograph_metal_slv_right",
+            "shoe_5010_varsityred",
+            "necklace_multi_blkslv"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_5021_default",
+      "modelId": "5021",
+      "label": "NBA shoe 5021 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 1799,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "tshirt_ls_solid_wht",
+            "jeans_bludk",
+            "necklace_slv",
+            "shoe_5021_default"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_5030_ellis_yellow_navy",
+      "modelId": "5030",
+      "label": "NBA shoe 5030 · ellis yellow navy",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 1788,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "flannel_2kstorymode_jackson_ellis_solid_pur_satin",
+            "jogger_2kstorymode_jackson_ellis_solid_pur_satin",
+            "shoe_5030_ellis_yellow_navy"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_5030_hornets_gray",
+      "modelId": "5030",
+      "label": "NBA shoe 5030 · hornets gray",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 1730,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "acc_sock_solid_wht_quarter",
+            "jersey_basketball_classic_v_011_2002_core_away_04_david_wesley",
+            "basketball_shorts_classic_no_011_2002_away",
+            "acc_elbowband_high_solid_wht_left",
+            "shoe_5030_hornets_gray"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_5030_pink",
+      "modelId": "5030",
+      "label": "NBA shoe 5030 · pink",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 809,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "jogger_2kwnba_outfit14_01",
+            "acc_sock_solid_blu_crew",
+            "tshirt_sleeveless_jordan_air_turq",
+            "shoe_5030_pink"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_5038_default",
+      "modelId": "5038",
+      "label": "NBA shoe 5038 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 1195,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "shoe_5038_default",
+            "jacket_warmup_team_010_mia",
+            "basketball_shorts_classic_mia_010_2012_secondary",
+            "acc_sock_nba2017_home_010_mia_quarter"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_5109_default",
+      "modelId": "5109",
+      "label": "NBA shoe 5109 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_coreoutfits.CLOF",
+          "group": 0,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "tshirt_ls_jordan_aj3shoe_red_black",
+            "basketball_shorts_nike_jordan_stripes_wht",
+            "shoe_5109_default",
+            "acc_calfband_solid_red_right"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_5109_dunkfromabove",
+      "modelId": "5109",
+      "label": "NBA shoe 5109 · dunkfromabove",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 1389,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "tshirt_ss_oversize_culturekings_wordmark_02_blk",
+            "basketball_shorts_classic_jordan_washfade_pur",
+            "shoe_5109_dunkfromabove",
+            "acc_sock_lostshdws_sun_whtlav_crew_scrunch",
+            "watch_tissot_prx_blu_left"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_5109_wolf_grey",
+      "modelId": "5109",
+      "label": "NBA shoe 5109 · wolf grey",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 1117,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "basketball_shorts_nike_twotone_red",
+            "hoodie_pullover_fade_blu_muted",
+            "shoe_5109_wolf_grey",
+            "acc_calfsleeve_half_jordan_left",
+            "acc_sock_historic_stripe_red_crew_scrunch"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_5112_default",
+      "modelId": "5112",
+      "label": "NBA shoe 5112 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_npc_park_outfits_individual.CLOF",
+          "group": 6,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "jacket_warmup_historic_bulls_1990_red",
+            "jeans_team_historic_bulls_1990_red",
+            "shoe_5112_default"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_5114_default",
+      "modelId": "5114",
+      "label": "NBA shoe 5114 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_coreoutfits.CLOF",
+          "group": 236,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "jacket_track_stripes_iri",
+            "basketball_shorts_nike_twotone_wht",
+            "shoe_5114_default",
+            "acc_calfsleeve_half_solid_blult_right",
+            "earring_diamond_square_wht_left",
+            "earring_diamond_square_wht_right"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_5123_default",
+      "modelId": "5123",
+      "label": "NBA shoe 5123 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 689,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "jogger_solid_grydk",
+            "tshirt_ss_solid_gry",
+            "shoe_5123_default"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_5215_default",
+      "modelId": "5215",
+      "label": "NBA shoe 5215 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 77,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "warmup_jordan_wordmark_blk",
+            "jacket_warmup_nike_swoosh_wht",
+            "headband_fury_nba_solid_grydk_right",
+            "shoe_5215_default",
+            "acc_sock_allstar_2k20_blu_tall"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_5220_default",
+      "modelId": "5220",
+      "label": "NBA shoe 5220 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 433,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "jersey_basketball_classic_u_014_1983_core_away_10_walt_frazier",
+            "basketball_shorts_classic_retro_slam_nybasketball_wht",
+            "acc_sock_nba2017_home_014_nyk_quarter",
+            "shoe_5220_default",
+            "acc_compressionshirt_sleeve_ls_team_seams_014_nyk_left"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_5226_default",
+      "modelId": "5226",
+      "label": "NBA shoe 5226 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 999,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "acc_sock_nba_nike_wht_quarter",
+            "basketball_shorts_classic_retro_slam_shattered_gry",
+            "shoe_5226_default",
+            "acc_elbowband_solid_yel_right",
+            "tanktop_nike_ballspinning_pur"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_5252_dunkcontest_worn",
+      "modelId": "5252",
+      "label": "NBA shoe 5252 · dunkcontest worn",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 857,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "jacket_track_adidas_stripe_blu",
+            "track_solid_yel",
+            "shoe_5252_dunkcontest_worn",
+            "acc_sock_solid_wht_crew"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_5254_firered",
+      "modelId": "5254",
+      "label": "NBA shoe 5254 · firered",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 1762,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "shoe_5254_firered",
+            "jacket_quarterzip_solid_red_muted",
+            "business_crop_solid_whtoff",
+            "acc_sock_solid_blk_crew"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_5265_default",
+      "modelId": "5265",
+      "label": "NBA shoe 5265 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 1497,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "shoe_5265_default",
+            "acc_sock_nba2017_home_011_nop_tall",
+            "warmup_team_011_nop",
+            "jacket_warmup_team_011_nop"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_5277_default",
+      "modelId": "5277",
+      "label": "NBA shoe 5277 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 177,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "acc_sock_solid_blk_quarter",
+            "tshirt_sleeveless_solid_blk",
+            "basketball_shorts_classic_retro_revenge_solid_wht",
+            "shoe_5277_default",
+            "acc_armsleeve_full_solid_blk_right",
+            "acc_elbowband_low_solid_blk_left"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_5278_default",
+      "modelId": "5278",
+      "label": "NBA shoe 5278 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 595,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "shoe_5278_default",
+            "jacket_warmup_team_005_bos",
+            "basketball_shorts_classic_bos_005_2005_away",
+            "acc_sock_nba2017_home_005_bos_quarter"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_5279_default",
+      "modelId": "5279",
+      "label": "NBA shoe 5279 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 268,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "acc_sock_nba_jordan_wht_quarter",
+            "acc_fingertape_index_solid_grn_right",
+            "acc_fingertape_middle_solid_wht_right",
+            "tshirt_ss_oversize_jordan_liquid_sport_grn",
+            "basketball_shorts_nike_hawaiian_fronds_wht",
+            "shoe_5279_default",
+            "acc_calfband_solid_wht_left"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_6534_default",
+      "modelId": "6534",
+      "label": "NBA shoe 6534 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 900,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "shoe_6534_default",
+            "acc_sock_nba2017_away_017_dal_tall_scrunch",
+            "tshirt_sleeveless_team_017_dal",
+            "jogger_city_dal"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_7229_default",
+      "modelId": "7229",
+      "label": "NBA shoe 7229 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_coreoutfits.CLOF",
+          "group": 683,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "tshirt_ss_oversize_solid_blu_pastel",
+            "track_solid_blk",
+            "shoe_7229_default",
+            "watch_tissot_prc200_chronograph_blu_left",
+            "acc_armsleeve_full_drybrush_wht_pnkros_right",
+            "hat_baseball_snap_solid_pnk_flat"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_7245_default",
+      "modelId": "7245",
+      "label": "NBA shoe 7245 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 572,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "tshirt_ss_solid_red",
+            "shoe_7245_default",
+            "acc_kneesleeve_solid_wht_left",
+            "acc_kneesleeve_solid_wht_right",
+            "basketball_shorts_classic_solid_blk"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_7247_default",
+      "modelId": "7247",
+      "label": "NBA shoe 7247 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 76,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "shoe_7247_default",
+            "tshirt_ss_team_029_gsw",
+            "acc_sock_nba2017_home_029_gsw_crew",
+            "basketball_shorts_classic_gsw_029_1990_home_long",
+            "acc_kneesleeve_pad_angular_solid_wht_right"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_7504_default",
+      "modelId": "7504",
+      "label": "NBA shoe 7504 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 202,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "jogger_solid_blk",
+            "shoe_7504_default",
+            "tshirt_ss_team_015_lal"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_7600_allblack",
+      "modelId": "7600",
+      "label": "NBA shoe 7600 · allblack",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 532,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "business_crop_solid_brn_muted",
+            "polo_tuck_solid_red_muted",
+            "acc_sock_historic_stripe_brn_tall",
+            "shoe_7600_allblack"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_7600_whitecream",
+      "modelId": "7600",
+      "label": "NBA shoe 7600 · whitecream",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 492,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "tshirt_ss_oversize_solid_wht",
+            "basketball_shorts_classic_retro_solid_red",
+            "acc_sock_historic_stripe_brn_tall_squash",
+            "shoe_7600_whitecream",
+            "hat_baseball_fit_solid_red_flat_back"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_7625_default",
+      "modelId": "7625",
+      "label": "NBA shoe 7625 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_npc_park_outfits_outside.CLOF",
+          "group": 4,
+          "outfit": 2,
+          "pool": "male",
+          "items": [
+            "jacket_track_puma_geometry_blu",
+            "jogger_puma_rope_wht",
+            "shoe_7625_default"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_7638_default",
+      "modelId": "7638",
+      "label": "NBA shoe 7638 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 570,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "shoe_7638_default",
+            "acc_sock_nba2017_away_027_min_crew_scrunch",
+            "basketball_shorts_classic_retro_min_027_1989_away",
+            "tanktop_team_027_min",
+            "acc_armsleeve_full_solid_grn_left",
+            "acc_kneebrace_solid_wht_right"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_7702_all_black",
+      "modelId": "7702",
+      "label": "NBA shoe 7702 · all black",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 174,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "acc_sock_solid_red_crew",
+            "business_referee_blk",
+            "referee_receiver_blk",
+            "shirt_referee_stripes",
+            "whistle_blk",
+            "shoe_7702_all_black"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_7702_white_red",
+      "modelId": "7702",
+      "label": "NBA shoe 7702 · white red",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 165,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "ring_band_gld_left",
+            "jacket_quarterzip_solid_gry",
+            "jeans_blk",
+            "acc_sock_solid_blk_crew",
+            "shoe_7702_white_red"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_7722_default",
+      "modelId": "7722",
+      "label": "NBA shoe 7722 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 1814,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "shoe_7722_default",
+            "acc_sock_nba2017_home_006_lac_crew",
+            "tshirt_ss_team_metal_white_006_lac",
+            "basketball_shorts_classic_lac_006_2000_away"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_7724_default",
+      "modelId": "7724",
+      "label": "NBA shoe 7724 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 1318,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "shoe_7724_default",
+            "jogger_city_no",
+            "tshirt_ss_team_011_nop",
+            "acc_sock_nba2017_home_011_nop_tall"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_7725_default",
+      "modelId": "7725",
+      "label": "NBA shoe 7725 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 1477,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "shoe_7725_default",
+            "basketball_shorts_classic_phi_000_2010_secondary",
+            "tshirt_ss_team_metal_white_000_phi",
+            "acc_compressionpants_short_solid_wht",
+            "acc_sock_nba2017_away_000_phi_quarter"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_7732_cooper",
+      "modelId": "7732",
+      "label": "NBA shoe 7732 · cooper",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 773,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "sweatshirt_crew_homage_banner_017_grylt",
+            "basketball_shorts_classic_retro_team_017_dal",
+            "acc_sock_nba2017_away_017_dal_crew_scrunch",
+            "shoe_7732_cooper"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_7738_default",
+      "modelId": "7738",
+      "label": "NBA shoe 7738 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_mannequin_outfits.CLOF",
+          "group": 16,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "acc_sock_solid_wht_quarter",
+            "shoe_7738_default",
+            "track_newbalance_piping_blkwht",
+            "jacket_track_newbalance_piping_blkwht"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_7800_default",
+      "modelId": "7800",
+      "label": "NBA shoe 7800 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 397,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "acc_sock_solid_wht_quarter",
+            "jersey_basketball_classic_u_016_1995_secondary_33_grant_hill",
+            "shoe_7800_default",
+            "basketball_shorts_classic_orl_016_1995_secondary_long"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_7858_default",
+      "modelId": "7858",
+      "label": "NBA shoe 7858 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 1838,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "shoe_7858_default",
+            "jacket_quarterzip_team_019_den_blk",
+            "warmup_team_019_den",
+            "acc_sock_nba2017_home_019_den_quarter"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_7951_default",
+      "modelId": "7951",
+      "label": "NBA shoe 7951 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 1440,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "shoe_7951_default",
+            "acc_sock_nba2017_away_000_phi_tall_squash",
+            "jogger_team_stripes_000_phi",
+            "jacket_warmup_historic_team_000_phi"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_8006_black",
+      "modelId": "8006",
+      "label": "NBA shoe 8006 · black",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_coreoutfits.CLOF",
+          "group": 1231,
+          "outfit": 37,
+          "pool": "male",
+          "items": [
+            "polo_tuck_solid_brn_lt_muted",
+            "jeans_blk",
+            "shoe_8006_black"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_8006_blue",
+      "modelId": "8006",
+      "label": "NBA shoe 8006 · blue",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 1620,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "tshirt_ss_solid_blk",
+            "moto_solid_blu",
+            "jacket_leather_solid_blk",
+            "shoe_8006_black",
+            "shoe_8006_blue"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_8006_navy",
+      "modelId": "8006",
+      "label": "NBA shoe 8006 · navy",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 1512,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "moto_solid_blk",
+            "earring_diamond_square_wht_left",
+            "necklace_multi_whtgld",
+            "ring_pyramid_single_gld_left",
+            "ring_pyramid_single_gld_right",
+            "ring_pyramid_stack_gld_right",
+            "shoe_8006_navy",
+            "hoodie_pullover_solid_blk"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_8006_red",
+      "modelId": "8006",
+      "label": "NBA shoe 8006 · red",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_clerk_park_outfits.CLOF",
+          "group": 10,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "earring_hoop_wht_right",
+            "earring_hoop_wht_left",
+            "tshirt_ss_solid_wht",
+            "jacket_denim_tattoo_lioncrown",
+            "hat_baseball_snap_solid_gry_curve_back",
+            "cargo_shorts_solid_gry",
+            "shoe_8006_red"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_8007_dkredmet",
+      "modelId": "8007",
+      "label": "NBA shoe 8007 · dkredmet",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 1837,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "sweatshirt_crew_solid_grn_lt_muted",
+            "business_crop_solid_brn",
+            "shoe_8007_dkredmet"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_8007_hotpink",
+      "modelId": "8007",
+      "label": "NBA shoe 8007 · hotpink",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_npc_park_outfits_outside.CLOF",
+          "group": 3,
+          "outfit": 9,
+          "pool": "male",
+          "items": [
+            "tanktop_camo_pnk",
+            "basketball_shorts_classic_retro_solid_gry",
+            "sunglasses_aviator_black_pnk",
+            "shoe_8007_hotpink"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_8007_red",
+      "modelId": "8007",
+      "label": "NBA shoe 8007 · red",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_npc_park_outfits_outside.CLOF",
+          "group": 3,
+          "outfit": 7,
+          "pool": "male",
+          "items": [
+            "jeans_short_distressed_blk",
+            "tshirt_sleeveless_camodigi_brn",
+            "sunglasses_cazal_silver_red",
+            "shoe_8007_red"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_8007_silvermet",
+      "modelId": "8007",
+      "label": "NBA shoe 8007 · silvermet",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 176,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "hat_robot_slv",
+            "tshirt_ss_solid_gry",
+            "sweats_cargo_gry",
+            "glove_medieval_slv_left",
+            "glove_medieval_slv_right",
+            "backpack_flat_space_gry",
+            "shoe_8007_silvermet",
+            "acc_sock_solid_grydk_crew"
+          ]
+        }
+      ],
+      "experimental": true
+    },
+    {
+      "asset": "shoe_8014_default",
+      "modelId": "8014",
+      "label": "NBA shoe 8014 · default",
+      "pools": [
+        "male"
+      ],
+      "sources": [
+        {
+          "entry": "clothing_storymodeoutfits.CLOF",
+          "group": 120,
+          "outfit": 0,
+          "pool": "male",
+          "items": [
+            "jeans_ripped_blult",
+            "tshirt_ss_oversize_truereligion_horseshoe_tan",
+            "shoe_8014_default",
+            "necklace_gld",
+            "watch_tissot_prx_gld_left"
+          ]
+        }
+      ],
+      "experimental": true
+    }
+  ]
+}

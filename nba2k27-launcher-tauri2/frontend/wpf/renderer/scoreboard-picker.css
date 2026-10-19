@@ -1,0 +1,27 @@
+.scoreboard-settings { display:grid; grid-template-columns:minmax(220px,320px) auto auto; align-items:center; justify-content:start; gap:12px; width:100%; max-width:none; padding:12px 18px; margin-bottom:16px; }
+.scoreboard-settings select { width:100%; min-width:0; height:40px; }
+.scoreboard-settings small { display:inline-flex; align-items:center; gap:7px; min-width:0; width:max-content; max-width:100%; padding:5px 10px; color:var(--muted); border:1px solid var(--line); border-radius:999px; white-space:nowrap; }
+.scoreboard-settings small::before { content:''; width:7px; height:7px; flex:0 0 7px; border-radius:50%; background:var(--muted); }
+.scoreboard-settings small[data-phase="pending"]::before,.scoreboard-settings small[data-phase="loading"]::before { background:var(--amber); }
+.scoreboard-settings small[data-phase="applied"]::before,.scoreboard-settings small[data-phase="ready"]::before { background:var(--court); }
+.scoreboard-settings small[data-phase="error"] { color:#ffd1d5; border-color:#88404a; }
+.scoreboard-settings small[data-phase="error"]::before { background:#ff6370; }
+.scoreboard-settings button { height:34px; padding:6px 10px; }
+.scoreboard-settings [hidden] { display:none!important; }
+@media(max-width:620px) {
+ .scoreboard-settings { grid-template-columns:minmax(0,1fr) auto; }
+ .scoreboard-settings small { grid-column:1/2; white-space:normal; }
+}
+.wardrobe-topbar #scoreboardMenuButton { max-width:255px; overflow:hidden; text-overflow:ellipsis; }
+.scoreboard-catalog.ball-picker .scoreboard-picker-grid { grid-template-columns:repeat(2,minmax(0,1fr)); grid-auto-rows:minmax(212px,auto); align-content:start; }
+.scoreboard-catalog.ball-picker button.scoreboard-tile { align-items:stretch; justify-content:flex-start; gap:6px; padding:10px; text-align:left; }
+.scoreboard-tile-art { display:flex; align-items:center; justify-content:center; flex:0 0 132px; width:100%; height:132px; min-width:0; min-height:0; padding:6px; box-sizing:border-box; overflow:hidden; background:#080d13; border:1px solid #354b5d; border-radius:5px; }
+.scoreboard-tile-art img { display:block; width:100%; height:100%; min-width:0; min-height:0; object-fit:contain; }
+.scoreboard-tile-empty { color:#9caf98; font-size:10px; letter-spacing:.08em; }
+.scoreboard-tile-copy { display:flex; flex-direction:column; gap:2px; min-width:0; }
+.scoreboard-tile-copy strong { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:12px; }
+.scoreboard-tile-copy small { color:#9caf98; font-size:10px; }
+.scoreboard-tile-copy .scoreboard-tile-caption { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+body.scoreboard-catalog-open>.wardrobe-catalog-heading,body.scoreboard-catalog-open>.wardrobe-close-editor { display:none!important; }
+body.scoreboard-catalog-open>#blacktopStatus,body.scoreboard-catalog-open>main,body.scoreboard-catalog-open>footer,body.scoreboard-catalog-open>.blacktop-session-status { display:none!important; }
+@media(max-width:880px){.scoreboard-catalog.ball-picker .scoreboard-picker-grid { grid-template-columns:1fr; }}

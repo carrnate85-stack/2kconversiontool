@@ -1,0 +1,224 @@
+{
+  "schema": "nba2k27-startup-video-policy-oracle-v1",
+  "gameAccess": false,
+  "audioSettingsChanged": false,
+  "originalSourceUnmodified": true,
+  "pads": [
+    [
+      {
+        "connected": true,
+        "down": true,
+        "ms": 1000,
+        "skip": false
+      },
+      {
+        "connected": true,
+        "down": false,
+        "ms": 1100,
+        "skip": false
+      },
+      {
+        "connected": true,
+        "down": false,
+        "ms": 1500,
+        "skip": false
+      },
+      {
+        "connected": true,
+        "down": true,
+        "ms": 1600,
+        "skip": false
+      },
+      {
+        "connected": true,
+        "down": false,
+        "ms": 1700,
+        "skip": false
+      },
+      {
+        "connected": true,
+        "down": false,
+        "ms": 1899,
+        "skip": false
+      },
+      {
+        "connected": true,
+        "down": false,
+        "ms": 1900,
+        "skip": true
+      }
+    ],
+    [
+      {
+        "connected": true,
+        "down": false,
+        "ms": 0,
+        "skip": false
+      },
+      {
+        "connected": true,
+        "down": true,
+        "ms": 100,
+        "skip": false
+      },
+      {
+        "connected": true,
+        "down": false,
+        "ms": 1000,
+        "skip": false
+      },
+      {
+        "connected": true,
+        "down": true,
+        "ms": 1400,
+        "skip": false
+      },
+      {
+        "connected": true,
+        "down": false,
+        "ms": 1600,
+        "skip": false
+      }
+    ],
+    [
+      {
+        "connected": true,
+        "down": false,
+        "ms": 0,
+        "skip": false
+      },
+      {
+        "connected": true,
+        "down": true,
+        "ms": 1000,
+        "skip": false
+      },
+      {
+        "connected": false,
+        "down": false,
+        "ms": 1100,
+        "skip": false
+      },
+      {
+        "connected": true,
+        "down": false,
+        "ms": 2000,
+        "skip": false
+      },
+      {
+        "connected": true,
+        "down": false,
+        "ms": 2500,
+        "skip": false
+      }
+    ],
+    [
+      {
+        "connected": true,
+        "down": false,
+        "ms": 0,
+        "skip": false
+      },
+      {
+        "connected": true,
+        "down": true,
+        "ms": 700,
+        "skip": false
+      },
+      {
+        "connected": true,
+        "down": false,
+        "ms": 701,
+        "skip": false
+      },
+      {
+        "connected": true,
+        "down": false,
+        "ms": 900,
+        "skip": false
+      },
+      {
+        "connected": true,
+        "down": false,
+        "ms": 901,
+        "skip": true
+      }
+    ],
+    [
+      {
+        "connected": true,
+        "down": false,
+        "ms": 0,
+        "skip": false
+      },
+      {
+        "connected": true,
+        "down": true,
+        "ms": 800,
+        "skip": false
+      },
+      {
+        "connected": true,
+        "down": false,
+        "ms": 900,
+        "skip": false
+      },
+      {
+        "connected": true,
+        "down": true,
+        "ms": 1000,
+        "skip": false
+      },
+      {
+        "connected": true,
+        "down": false,
+        "ms": 1100,
+        "skip": false
+      },
+      {
+        "connected": true,
+        "down": false,
+        "ms": 1300,
+        "skip": true
+      }
+    ]
+  ],
+  "mute": [
+    {
+      "original": false,
+      "externalUnmute": false,
+      "observedBefore": false,
+      "observedAfter": false,
+      "changes": 2,
+      "finalMuted": false
+    },
+    {
+      "original": false,
+      "externalUnmute": true,
+      "observedBefore": false,
+      "observedAfter": false,
+      "changes": 1,
+      "finalMuted": false
+    },
+    {
+      "original": true,
+      "externalUnmute": false,
+      "observedBefore": true,
+      "observedAfter": true,
+      "changes": 0,
+      "finalMuted": true
+    },
+    {
+      "original": true,
+      "externalUnmute": true,
+      "observedBefore": true,
+      "observedAfter": false,
+      "changes": 0,
+      "finalMuted": false
+    }
+  ],
+  "sourceSha256": [
+    "1DFAF814198EAC51FF780467FAE5A0199FC36AE751D9298D737F0184D8639FC1",
+    "CB7CCB4CF325731E6806C67FC51C56D2A020BC0B94F99E929C63FFF0C3A7F794"
+  ]
+}

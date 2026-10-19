@@ -1,0 +1,128 @@
+
+.mod-tag-editor .eyebrow,
+.mod-install-dialog .eyebrow {
+  margin: 0 0 4px;
+}
+.mod-tag-editor h2,
+.mod-install-dialog h2 {
+  margin: 0 0 4px;
+}
+.mod-tag-editor .modal-body,
+.mod-install-dialog .modal-body {
+  display: grid;
+  gap: 14px;
+}
+.mod-tag-editor .error,
+.mod-install-dialog .error {
+  margin: 0;
+}
+
+/* Install mods dialog (WPF mods:install chooser + replace review) */
+.modal.mod-install-dialog {
+  width: min(720px, 95vw);
+}
+.mod-install-choices {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.mod-install-choices button {
+  display: grid;
+  justify-items: start;
+  gap: 6px;
+  height: auto;
+  padding: 16px;
+  text-align: left;
+}
+.mod-install-choices button .mod-icon {
+  color: var(--accent);
+}
+.mod-install-choices small {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 400;
+}
+.mod-install-bulk {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--muted);
+  font-size: 12px;
+}
+.mod-install-bulk span {
+  margin-right: auto;
+}
+.mod-install-list {
+  display: grid;
+  gap: 6px;
+  max-height: 42vh;
+  margin: 0;
+  padding: 0;
+  overflow: auto;
+  list-style: none;
+}
+.mod-install-list li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 4px 12px;
+  padding: 9px 12px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--surface);
+}
+.mod-install-list li.mod-install-conflict {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+.mod-install-list li > small {
+  color: var(--muted);
+  font-size: 11px;
+}
+.mod-install-conflict > small {
+  grid-column: 1;
+}
+.mod-install-path {
+  font-family: Consolas, "Cascadia Mono", monospace;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+.mod-install-choice {
+  display: flex;
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  gap: 6px;
+}
+.mod-install-choice button {
+  min-width: 92px;
+}
+.mod-install-choice button[aria-pressed="true"] {
+  border-color: var(--accent);
+  color: var(--accent);
+  box-shadow: inset 0 0 0 1px var(--accent);
+}
+.mod-install-new summary {
+  cursor: pointer;
+  color: var(--muted);
+  font-size: 12px;
+  margin-bottom: 8px;
+}
+@media (max-width: 800px) {
+  .mod-install-choices {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .mod-install-list li.mod-install-conflict {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .mod-install-choice {
+    grid-column: 1;
+    grid-row: auto;
+  }
+}
+[data-theme="light"] .mod-install-choices button .mod-icon,
+[data-theme="light"] .mod-install-choice button[aria-pressed="true"] {
+  color: #28623c;
+  border-color: #28623c;
+}
+[data-theme="light"] .mod-install-choice button[aria-pressed="true"] {
+  box-shadow: inset 0 0 0 1px #28623c;
+}

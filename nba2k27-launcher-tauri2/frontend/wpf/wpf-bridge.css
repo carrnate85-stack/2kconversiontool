@@ -1,0 +1,78 @@
+/* Rust-only glue for the ported WPF stylesheets (renderer/*.css stay verbatim).
+   Keep this small: only features WPF never had, and React-vs-DOM differences. */
+
+/* Tokens that Rust-only rules in style.css still read (WPF has no equivalents). */
+:root.wpf-ui {
+  --accent: var(--green);
+  --button: #1b202b;
+  --surface: var(--panel-2);
+}
+
+/* Blacktop: Rust-only overlay options folded under the WPF card. */
+#page-blacktop .blacktop-overlay-more > summary {
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: 11px;
+  cursor: pointer;
+}
+#page-blacktop .blacktop-overlay-more[open] { display: grid; gap: 8px; }
+#page-blacktop .outfit-variant-panel { margin-top: 14px; align-items: end; }
+#page-blacktop .outfit-variant-panel > small { align-self: center; color: var(--muted); font-size: 11px; }
+#page-blacktop .outfit-random { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 0; }
+#page-blacktop .outfit-random .nav-icon { width: 14px; height: 14px; margin-right: 6px; vertical-align: -2px; }
+
+/* Unlocks: every route is unavailable in this build (Rust-only state). */
+#page-unlocks .unavailable .settings-switch-row { opacity: .62; cursor: not-allowed; }
+
+/* Settings: Rust-only cards (health tables, previous-library import, developer
+   tools, advanced readiness) inside WPF's settings layout. */
+#page-settings .card-content { padding: 0; }
+#page-settings .settings-path-controls + .settings-path-controls { margin-top: 10px; }
+#page-settings .settings-support-actions + .settings-support-actions { margin-top: 10px; }
+#page-settings .settings-advanced { margin: 0; padding: 0; }
+#page-settings .settings-advanced > summary { cursor: pointer; padding: 14px 18px; font-weight: 700; }
+#page-settings .settings-advanced > .card { margin: 0 12px 12px; }
+#page-settings .storage-grid { display: grid; gap: 7px; }
+#page-settings .storage-grid > div { display: grid; grid-template-columns: 65px minmax(0, 1fr); gap: 12px; }
+#page-settings .path-line { overflow-wrap: anywhere; }
+
+/* Jukebox: Rust-only next-Play row and per-song order buttons, in WPF tokens. */
+#page-jukebox .juke-workspace { display: contents; }
+#page-jukebox .jukebox-controls .jukebox-playlist-actions { display: flex; flex-wrap: wrap; gap: 6px; }
+#page-jukebox .jukebox-session-row { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
+#page-jukebox .jukebox-next-play { display: flex; align-items: center; gap: 12px; font-size: 12px; }
+#page-jukebox .jukebox-next-play .muted { color: var(--muted); }
+#page-jukebox .jukebox-row-actions .jukebox-order-button { min-width: 28px; padding: 6px 7px; }
+#page-jukebox .jukebox-cover { width: 40px; height: 40px; }
+#page-jukebox .jukebox-cover img { width: 40px; height: 40px; border-radius: 5px; object-fit: cover; }
+#page-jukebox .jukebox-audio { display: grid; gap: 6px; margin: 10px 0; }
+#page-jukebox .jukebox-audio audio { width: 100%; }
+
+/* Rust-only extras for the ported WPF Settings tools (SettingsTools.tsx). */
+#page-settings .settings-tool details { margin: 8px 0; }
+#page-settings .settings-tool details > summary { cursor: pointer; font-weight: 600; }
+#page-settings .launcher-notes { margin: 6px 0 8px 18px; padding: 0; font-size: 12px; line-height: 1.6; }
+#page-settings .launcher-update-review { border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; margin: 10px 0; }
+#page-settings .launcher-update-progress { width: 100%; margin: 8px 0; }
+#page-settings .health-table { width: 100%; border-collapse: collapse; font-size: 12px; margin: 8px 0; }
+#page-settings .health-table th, #page-settings .health-table td { text-align: left; padding: 5px 8px; border-bottom: 1px solid var(--line); vertical-align: top; overflow-wrap: anywhere; }
+#page-settings .health-table tr[data-state="failed"] td:nth-child(2) { color: var(--danger, #e5484d); }
+#page-settings .health-table tr[data-state="active"] td:nth-child(2) { color: var(--success, #30a46c); }
+#page-settings .settings-tool .check { display: flex; gap: 8px; align-items: center; margin: 6px 0; }
+#page-settings .developer-tools h4 { margin: 14px 0 6px; }
+#page-settings .developer-tools pre { max-height: 320px; overflow: auto; font-size: 11px; padding: 8px; border-radius: 6px; background: rgba(0, 0, 0, 0.2); }
+
+/* Blacktop: the Rust-only "More overlay options" fold floats in the overlay
+   card's empty heading corner so the card keeps WPF's height. */
+#page-blacktop .blacktop-overlay-settings { position: relative; }
+#page-blacktop .blacktop-overlay-more { position: absolute; top: 16px; right: 18px; z-index: 5; }
+#page-blacktop .blacktop-overlay-more > summary { margin-top: 0; }
+#page-blacktop .blacktop-overlay-more[open] {
+  width: 300px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px;
+  background: var(--panel); box-shadow: 0 14px 34px #0007;
+}
+
+/* Jukebox: Rust-only bundle tools live in a WPF-style "More" menu. */
+#page-jukebox .jukebox-more-actions > summary { min-height: 39px; font-size: 11px; font-weight: 700; }
+#page-jukebox .jukebox-more-actions .outfit-actions-menu { width: 190px; }
+#page-jukebox .jukebox-more-actions .outfit-actions-menu button { width: 100%; text-align: left; border: 0; background: transparent; }

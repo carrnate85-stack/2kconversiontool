@@ -1,0 +1,93 @@
+{
+  "schema": "nba2k27-v2-team-type-classic-year-v1",
+  "imageSha256": "29A96471C55909FC2BCEA6C699C59238656A501C19B50C74ED64B0D842E576A1",
+  "type": {
+    "offset": 4668,
+    "shift": 26,
+    "bits": 6,
+    "mask": 4227858432,
+    "knownOriginalMaximum": 35,
+    "targetMaximum": 35
+  },
+  "classicYear": {
+    "offset": 5448,
+    "shift": 19,
+    "bits": 8,
+    "mask": 133693440,
+    "knownOriginalMaximum": 127,
+    "canonicalTargetMaximum": 100,
+    "legacyHistoricYearAlwaysNeutral": true
+  },
+  "spans": [
+    {
+      "rva": 28132016,
+      "bytes": 2469,
+      "sha256": "29ccf708668b153a13e639eae1fa9857193c55a0387546504a2b1e1efbcf039f"
+    },
+    {
+      "rva": 143344,
+      "bytes": 67,
+      "sha256": "b5ee5ebc557520017782b5564f8a4389429a1e0ffed2a5e9e25477b178ab11db"
+    },
+    {
+      "rva": 49852528,
+      "bytes": 746,
+      "sha256": "e029147e673baa20d6dc194ccff7e4f2cb26d8f1439c0bcd9f441cf7f758a062"
+    },
+    {
+      "rva": 50796192,
+      "bytes": 329,
+      "sha256": "036c870ad3407b43a63b0850207a6b5e11524defd8a7bee8da58a63724c26ad1"
+    },
+    {
+      "rva": 142944,
+      "bytes": 33,
+      "sha256": "f39cea6987b3598a6ed3df988acf9126ee1f368e8d4be231c666f2c83f7a2520"
+    },
+    {
+      "rva": 61166176,
+      "bytes": 24931,
+      "sha256": "cf3ab90da8d414c1ef2e321544b158aed56c7461d371807873a474658c6e0c12"
+    },
+    {
+      "rva": 144435520,
+      "bytes": 32,
+      "sha256": "374d6e34bb06cafa8d7ac03fd6b1179f7be2cb2e7a1e0c18c23e4f3a271325b4"
+    },
+    {
+      "rva": 144440040,
+      "bytes": 32,
+      "sha256": "9740a637900b6920be7967067f487b26f028c9f3362426439b9582854caf17e3"
+    },
+    {
+      "rva": 144429376,
+      "bytes": 432,
+      "sha256": "784e26f832f64cbe27f9e5ca1b5272aafd74c58c0caacfcfd92268cf8716175f"
+    },
+    {
+      "rva": 49834816,
+      "bytes": 10,
+      "sha256": "db3ae5223afca4f522f91cff30ca71d02504fe91de43a8ba8d7a645d805fcb14"
+    }
+  ],
+  "enumDescriptorRva": 144435552,
+  "enumTargetRva": 169770192,
+  "qualifications": [
+    "Full named registration/SetType/read-consumer pins plus boundeddecoder evidence;3A55260span is not claimed a complete pdata method.",
+    "Canonicalchangedyear0unset,1..59=2001..2059,60..99=1960..1999,100=2000; exactunchangedraw101..127 preserved.",
+    "Unknownoriginalkind36..63/year128..255 readonly. No universal business-validity or gameplay acceptance claim."
+  ],
+  "newWritableBytes": {
+    "type": {
+      "offset": 4671,
+      "mask": 252
+    },
+    "year": {
+      "offset": 5450,
+      "mask": [
+        248,
+        7
+      ]
+    }
+  }
+}

@@ -1,0 +1,136 @@
+.blacktop-overlay .wardrobe-topbar { padding:12px; gap:8px; min-height:58px; flex-shrink:0; }
+.blacktop-overlay .wardrobe-close-editor { display:none; }
+.blacktop-overlay .wardrobe-close-editor[hidden] { display:none!important; }
+.wardrobe-topbar strong { color:#b4e790; margin-right:6px; font-size:14px; }
+.wardrobe-topbar select { flex:1; min-width:90px; max-width:280px; }
+.wardrobe-topbar button,.wardrobe-topbar select { font-size:12px; padding:7px 9px; white-space:nowrap; }
+.wardrobe-topbar [hidden] { display:none!important; }
+.wardrobe-topbar #blacktopPlayerMenuButton { flex:1; min-width:90px; max-width:280px; text-align:left; overflow:hidden; text-overflow:ellipsis; }
+#blacktopPlayerMenu { position:fixed; top:64px; left:12px; right:12px; z-index:30; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:6px; padding:8px; background:#18251b; border:1px solid #52684a; border-radius:6px; max-height:226px; overflow:auto; }
+#blacktopPlayerMenu[hidden] { display:none; }
+#blacktopPlayerMenu button { height:36px; text-align:left; font-size:12px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+#blacktopPlayerMenu button[aria-checked="true"] { border-color:#b4df94; background:#344a2b; }
+.blacktop-overlay.compact-bar.player-menu-open .wardrobe-topbar { flex:0 0 62px; }
+.blacktop-overlay.compact-bar.random-menu-open .wardrobe-topbar { flex:0 0 62px; }
+.wardrobe-topbar #hideBlacktopPanel { color:#c5efa8; border-color:#73975c; margin-left:auto; }
+.wardrobe-topbar kbd { font:700 12px 'Segoe UI',sans-serif; padding:2px 4px; border:1px solid #73975c; border-radius:3px; margin-right:4px; }
+.blacktop-overlay #blacktopStatus { margin:0; padding:3px 14px 6px; font-size:11px; max-height:36px; }
+.blacktop-overlay #blacktopStatus:empty { display:none; }
+.blacktop-overlay:not(.compact-bar) #blacktopStatus:not(:empty) { position:absolute; bottom:36px; left:210px; right:24px; z-index:10; padding:8px 12px; background:#19271d; border:1px solid #506449; border-radius:6px; max-height:64px; }
+.blacktop-overlay.compact-bar main,.blacktop-overlay.compact-bar footer,.blacktop-overlay.compact-bar .blacktop-session-status { display:none; }
+.blacktop-overlay.compact-bar #blacktopStatus { display:none; }
+.blacktop-overlay.compact-bar .wardrobe-topbar { flex:0 0 62px; }
+.blacktop-overlay .blacktop-workspace { grid-template-columns:180px minmax(0,1fr); }
+.blacktop-overlay .blacktop-session-status { margin:0 14px; font-size:11px; }
+.blacktop-overlay .clothing-picker { width:calc(100vw - 32px); max-width:none; }
+.blacktop-overlay .clothing-picker[open] { height:calc(100vh - 32px); max-height:calc(100vh - 32px); }
+.blacktop-overlay .clothing-picker-grid { grid-template-columns:repeat(auto-fit,minmax(190px,1fr));grid-auto-rows:minmax(180px,1fr);align-content:stretch; }
+.blacktop-overlay .clothing-tile { height:100%;min-height:180px; }
+.blacktop-overlay .clothing-picture { height:auto;min-height:120px;flex:1; }
+.wardrobe-editor { min-height:0; display:flex; flex-direction:column; gap:12px; overflow:auto; }
+.blacktop-overlay .wardrobe-editor #blacktopPlayers { overflow:visible; flex-shrink:0; }
+.blacktop-overlay .blacktop-outfit-row { grid-template-columns:repeat(4,minmax(0,1fr)); margin:0; gap:10px; }
+.blacktop-overlay .blacktop-player-heading .blacktop-player-identity { flex:0 1 auto; min-width:120px; }
+.blacktop-overlay .blacktop-player-heading .blacktop-saved-outfit { display:flex; flex:1 1 280px; align-items:center; gap:8px; margin:0; padding:0; border:0; }
+.blacktop-overlay .blacktop-player-heading .blacktop-saved-outfit select { width:auto; min-width:160px; max-width:300px; flex:1; }
+.blacktop-overlay .blacktop-player-heading .blacktop-saved-outfit button { white-space:nowrap; }
+.blacktop-overlay .blacktop-auto-apply-note,.blacktop-overlay .blacktop-piece-hint,.blacktop-overlay .blacktop-session-status { display:none; }
+#blacktopRandomAll[aria-busy="true"]::before { content:'';display:inline-block;width:10px;height:10px;margin-right:6px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;vertical-align:-2px;animation:spin .8s linear infinite; }
+
+/* Expanded Outfit and Game Rules share the Ball catalog heading and return action. */
+.blacktop-overlay:not(.compact-bar) .wardrobe-close-editor {
+ display:flex;position:absolute;top:8px;right:10px;z-index:40;align-items:center;justify-content:center;
+ width:34px;height:34px;padding:0;border:1px solid #66874f;border-radius:7px;background:#a4d582;color:#172414;
+ font-size:23px;font-weight:400;line-height:1;-webkit-app-region:no-drag;
+}
+.blacktop-overlay:not(.compact-bar) .wardrobe-close-editor:hover { background:#d0efb8;border-color:#789c60; }
+.blacktop-overlay .wardrobe-catalog-heading { display:none; }
+.blacktop-overlay:not(.compact-bar) .wardrobe-catalog-heading { display:flex;flex:0 0 auto; }
+.blacktop-overlay .wardrobe-catalog-heading .rules-title { display:none; }
+.blacktop-overlay.rules-open .wardrobe-catalog-heading .wardrobe-title { display:none; }
+.blacktop-overlay.rules-open .wardrobe-catalog-heading .rules-title { display:inline; }
+.blacktop-overlay:not(.compact-bar) .wardrobe-close-editor { display:none; }
+/* The persistent bar keeps blacktop-live-bar.css geometry in every view. */
+.blacktop-overlay:not(.compact-bar) main { padding:12px 14px 14px;background:#0c100f; }
+.blacktop-overlay:not(.compact-bar) .blacktop-workspace { grid-template-columns:168px minmax(0,1fr);gap:14px; }
+.blacktop-overlay:not(.compact-bar) #blacktopPlayerPicker {
+ gap:6px;padding:10px;background:#141b18;border:1px solid #35473b;border-radius:8px;
+}
+.blacktop-overlay:not(.compact-bar) #blacktopPlayerPicker::before {
+ content:'Players';padding:2px 3px 7px;color:#a9b7ad;font-size:10px;font-weight:650;letter-spacing:.08em;text-transform:uppercase;
+}
+.blacktop-overlay:not(.compact-bar) .blacktop-player-button { min-height:46px;background:#101611;border-color:#303f34;border-radius:6px; }
+.blacktop-overlay:not(.compact-bar) .blacktop-player-button:hover:not(:disabled) { background:#1d2921;border-color:#536b55; }
+.blacktop-overlay:not(.compact-bar) .blacktop-player-button[aria-pressed="true"] { background:#223226;border-color:#60785e;box-shadow:inset 3px 0 var(--court); }
+.blacktop-overlay:not(.compact-bar) .wardrobe-editor { gap:14px;min-width:0;overflow-x:hidden;overflow-y:auto;scrollbar-width:thin;scrollbar-gutter:stable;container-type:inline-size; }
+.blacktop-overlay:not(.compact-bar) .blacktop-outfit-row { padding:14px;background:#141b18;border-color:#35473b;border-radius:8px;gap:12px; }
+.blacktop-overlay:not(.compact-bar) .blacktop-player-heading { min-height:46px;padding-bottom:12px;border-bottom:1px solid #35473b;gap:8px 12px; }
+.blacktop-overlay:not(.compact-bar) .blacktop-player-identity strong { font-size:17px; }
+.blacktop-overlay:not(.compact-bar) .blacktop-player-heading .blacktop-saved-outfit {
+ display:grid;grid-template-columns:auto minmax(150px,1fr) auto;align-items:center;gap:7px;flex:1 1 360px;
+}
+.blacktop-overlay:not(.compact-bar) .blacktop-player-heading .blacktop-saved-outfit::before { content:'Saved outfit';color:#a9b7ad;font-size:10px;font-weight:650;letter-spacing:.06em;text-transform:uppercase; }
+.blacktop-overlay:not(.compact-bar) .blacktop-player-heading .blacktop-saved-outfit select { width:100%;max-width:none;height:34px; }
+.blacktop-overlay:not(.compact-bar) .blacktop-player-heading .blacktop-saved-outfit button { height:34px; }
+.blacktop-overlay:not(.compact-bar) .blacktop-piece { position:relative;display:block;min-width:0; }
+.blacktop-overlay:not(.compact-bar) .blacktop-piece-select {
+ position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;
+ overflow:hidden!important;clip-path:inset(50%)!important;white-space:nowrap!important;border:0!important;
+}
+.blacktop-overlay:not(.compact-bar) .blacktop-browse.blacktop-piece-tile {
+ display:flex;flex-direction:column;align-items:stretch;width:100%;height:158px;margin:0;padding:11px 12px;
+ color:#f0eee5;background:#0f1512;border:1px solid #303f34;border-radius:8px;text-align:left;white-space:normal;
+}
+.blacktop-overlay:not(.compact-bar) .blacktop-browse.blacktop-piece-tile:hover:not(:disabled) { background:#19231c;border-color:#6e8a66; }
+.blacktop-overlay:not(.compact-bar) .blacktop-piece-category { color:#a9b7ad;font-size:10px;font-weight:650; }
+.blacktop-overlay:not(.compact-bar) .blacktop-piece-preview { display:flex;align-items:center;justify-content:center;height:60px;margin:5px 0;color:#8fa197; }
+.blacktop-overlay:not(.compact-bar) .blacktop-piece-preview img { width:100%;height:100%;object-fit:contain; }
+.blacktop-overlay:not(.compact-bar) .blacktop-piece-preview .outfit-item-icon { width:34px;height:34px; }
+.blacktop-overlay:not(.compact-bar) .blacktop-piece-name { min-height:29px;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;overflow-wrap:anywhere;font-size:11px;font-weight:600;line-height:14px; }
+.blacktop-overlay:not(.compact-bar) .blacktop-piece-change { display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:7px;border-top:1px solid #303f34;color:#b8ed93;font-size:10px;font-weight:500; }
+.blacktop-overlay:not(.compact-bar) .accessory-cards { padding-top:12px;border-color:#35473b; }
+.blacktop-overlay:not(.compact-bar) .accessory-cards .accessory-slots-heading { margin-bottom:10px; }
+.blacktop-overlay:not(.compact-bar) .accessory-cards .accessory-slots-heading>span { padding:3px 8px;border:1px solid #35473b;border-radius:999px; }
+.blacktop-overlay:not(.compact-bar) .accessory-cards .accessory-slots-grid { grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;align-items:start; }
+.blacktop-overlay:not(.compact-bar) .accessory-group { min-width:0;margin:0;padding:0;border:0; }
+.blacktop-overlay:not(.compact-bar) .accessory-group legend { margin-bottom:6px;padding:0;color:#8fa197;font-size:9px;letter-spacing:.08em;text-transform:uppercase; }
+.blacktop-overlay:not(.compact-bar) .accessory-group-items { display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px; }
+.blacktop-overlay:not(.compact-bar) .accessory-group:first-child .accessory-group-items { grid-template-columns:repeat(4,minmax(0,1fr)); }
+.blacktop-overlay:not(.compact-bar) .accessory-cards .accessory-slot { position:relative; }
+.blacktop-overlay:not(.compact-bar) button.accessory-tile {
+ display:grid;grid-template-rows:30px 14px 24px;align-content:center;justify-items:center;gap:4px;width:100%;height:94px;padding:7px 8px;background:#0f1512;border:1px solid #303f34;border-radius:7px;white-space:normal;text-align:center;
+}
+.blacktop-overlay:not(.compact-bar) button.accessory-tile:hover:not(:disabled) { background:#19231c;border-color:#6e8a66; }
+.blacktop-overlay:not(.compact-bar) .accessory-tile-preview { display:flex;align-items:center;justify-content:center;width:100%;height:30px;margin:0; }
+.blacktop-overlay:not(.compact-bar) .accessory-tile-preview img { width:100%;height:100%;object-fit:contain; }
+.blacktop-overlay:not(.compact-bar) .accessory-tile-preview .outfit-item-icon { width:27px;height:27px;color:#8fa197; }
+.blacktop-overlay:not(.compact-bar) .accessory-tile-category { font-size:10px;font-weight:600;line-height:14px; }
+.blacktop-overlay:not(.compact-bar) .accessory-tile-name { max-width:100%;margin:0;color:#8fa197;font-size:9px;line-height:12px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere; }
+.blacktop-overlay:not(.compact-bar) .is-equipped .accessory-tile { background:#18241b;border-color:#60785e; }
+.blacktop-overlay:not(.compact-bar) .accessory-tile-remove { position:absolute;top:3px;right:3px;width:28px;height:28px;padding:0;border-radius:50%;font-size:14px;line-height:1; }
+@media(max-width:1000px) { .blacktop-overlay .blacktop-outfit-row {grid-template-columns:repeat(2,minmax(0,1fr));} }
+@media(max-width:1000px) { .blacktop-overlay:not(.compact-bar) .accessory-cards .accessory-slots-grid {grid-template-columns:1fr 1fr;} .blacktop-overlay:not(.compact-bar) .accessory-group:first-child {grid-column:1/-1;} .blacktop-overlay:not(.compact-bar) .wardrobe-editor {overflow:auto;} }
+@media(max-width:700px) { .wardrobe-topbar button,.wardrobe-topbar select { padding:6px 4px; font-size:11px; } .wardrobe-topbar strong { display:none; } .blacktop-overlay .blacktop-workspace {grid-template-columns:130px minmax(0,1fr);} .blacktop-overlay:not(.compact-bar) .blacktop-player-heading .blacktop-saved-outfit {grid-template-columns:1fr auto;} .blacktop-overlay:not(.compact-bar) .blacktop-player-heading .blacktop-saved-outfit::before {grid-column:1/-1;} }
+@media(max-width:700px) {
+ .blacktop-overlay:not(.compact-bar) .accessory-cards .accessory-slots-grid {grid-template-columns:1fr;}
+ .blacktop-overlay:not(.compact-bar) .accessory-group:first-child .accessory-group-items {grid-template-columns:repeat(2,minmax(0,1fr));}
+}
+
+/* Expanded accessory categories retain balanced cards at each container size. */
+.accessory-cards .accessory-slots-grid { grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); }
+.accessory-cards .accessory-group:first-child { grid-column:auto; }
+.accessory-cards .accessory-group .accessory-group-items { grid-template-columns:repeat(2,minmax(0,1fr)); }
+.fit-preview-sidebar .accessory-cards .accessory-slots-grid { grid-template-columns:1fr; }
+@container (max-width:580px) { .accessory-cards .accessory-slots-grid {grid-template-columns:1fr;} }
+
+/* All accessory categories share equal-width cards. */
+.accessory-cards .accessory-primary-grid {display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;align-items:start;}
+.accessory-primary-grid .accessory-slot {min-width:0;}
+.accessory-extra-categories {margin-top:12px;border-top:1px solid var(--line,#294454);padding-top:10px;}
+.accessory-extra-categories summary {cursor:pointer;color:var(--muted,#91aaba);font-size:11px;padding:4px 0;}
+.accessory-extra-categories summary:focus-visible {outline:2px solid var(--court,#80ed9e);outline-offset:2px;}
+.accessory-category-label {display:flex;align-items:center;gap:8px;font-size:11px;color:var(--muted,#91aaba);margin:8px 0;}
+.accessory-category-label select {flex:1;min-width:0;margin:0;height:32px;background:#142b39;color:#c9dce8;border:1px solid #2c485a;border-radius:6px;padding:4px 6px;}
+.accessory-secondary-grid {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;}
+.accessory-secondary-grid[hidden] {display:none!important;}
+@container (max-width:350px) {.accessory-cards .accessory-primary-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}

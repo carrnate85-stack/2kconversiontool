@@ -1,0 +1,95 @@
+Read NEXT-CHAT-HANDOFF-QA054.txt first, then artifacts/qa061-dev-checkpoint-20261018.txt.
+
+QA061 DEV checkpoint - 2026-10-18
+
+Scope: DEV only. No Main install, promotion, game stop/launch, new live native call,
+or live memory write performed. The tested game PID23944 was the QA058 session; final inventory found it closed.
+
+Fresh-session WNBA source test is ready; WNBA gameplay/category integration is
+not yet validated or enabled. Current test ended REFUSED at12:28:49: no accepted
+inactive Home/Quick Play boundary in120seconds. Its read-only Freestyle sample
+had334teams/30NBA/0WNBA and an empty priority override. This is not a successful
+WNBA roster load. No native registration call was reached.
+
+Changes:
+- WNBA-specific inactive frontend predicate matches retained WPF Home0/1,
+  QuickPlay1 policy. Previous shared outfit predicate incorrectly required Home1.
+  Current/alternate mode match, inactive/kind checks, repeated context, exact
+  process/profile/pack identity and native mutex/empty-priority checks retained.
+- Separate bounded nonce-bound .progress trace reports watcher/approval/menu/
+  admission stages. Terminal result remains immutable. No retry or unregister
+  against a live native priority override. Native-owned pins remain until exit.
+- QA061 source-test script shows modeless progress while keeping the game at
+  Home/QuickPlay. It waits150sec, explicitly prohibits proceeding while pending,
+  and only directs entry to Freestyle after REGISTERED. I/O sharing races retry.
+- Scoreboard UI now exposes pending selection and held reasons, polls active
+  catalogs250ms, and receives current scoreboard queue status through authenticated
+  modded-status. Native fault reasons survive later generic Waiting reports.
+  Restore rejection now names exact failed ownership condition, same guards.
+  This does not clear current held ownership faults or prove all tiles apply live.
+- Carry status now records first-match/readiness/stability/freeze/publication
+  timing without adding polls/I/O or changing admission/journal gates. Prior
+  approximate wallclock correlation shows4.536sec from first overlay match to
+  native CONSUME and1.204sec for both outfits after CONSUME. The five-second
+  clothing delay is not claimed fixed; new timings isolate the earlier delay.
+- Includes QA059 removal of per-launch full game SHA audit and QA060 recognition/
+  queue wakeup/random batch speed changes, which were not in the running QA058 EXE.
+
+DEV artifacts:
+Dev/Pending/QA061/launcher.exe -52086784bytes
+SHA256 7219D0729FF4BFB290A0A37655C6831D550A2CC909324D818CB891BF008B9D59
+assets/native/version-outfits-v2.dll -1035264bytes
+SHA256 D39E5745655C8FE6EDACBA1C56BC12B232A2F101DC18A292D300EC8A2B27136A
+Updated Rust payload pins, with previous exact4B03.../1029632 recovery-only.
+Dev/Portable EXE remains310C...QA058. Final read-only inventory found game/launcher
+closed and no current lease; QA061 Start -CheckOnly passed without activation.
+QA061 source-test -CheckOnly correctly refused the still-older DEV EXE hash.
+Both VBS /check shortcuts parsed; all three PowerShell scripts parsed.
+
+Next test:
+1.Close game and launcher normally. Start QA061 Dev.vbs activates only DEV,
+  retaining previous EXE backup and refusing any active game/launcher/EAC.
+2.Use Play. Stay at Home or Quick Play.
+3.Run Test QA061 WNBA Source.vbs. Remain there until REGISTERED or REFUSED.
+4.After REGISTERED enter NBA Learn2K/Freestyle picker and leave it open for
+  read-only inventory. Registration only proves metadata, not source use.
+  Expected candidate mixed403teams/30NBA/15WNBA;53appended players lack native
+  player index entries, so gameplay remains unverified. Category gates stay off.
+
+Validation:
+- Strict C++ core and binding builds/tests passed, including Home0/1/Quick1
+  positives and loading/selection/mismatched/active/kind negatives.
+- Complete DLL strict compile and VersionProxySmokeTest passed.
+- Rust focused tests57passed: loader8,recovery1,profile3,queue4,scoreboard runtime8,
+  scoreboard native15,carry8,outfit runtime9,fresh IPC1.
+  2explicit disk-only tests ignored.
+- Frontend catalog20passed before final native payload update; repeated focused
+  subset15passed and TypeScript --noEmit passed. No frontend changes afterward.
+- Python WNBA privatepack/probe10passed.
+- Test compile and dev build passed;13/48pre-existing warnings remain.
+- Fixture replacement tests blocked by sandbox access passed outside sandbox.
+- No broad suite/release qualification claimed (prior intermittent test AV unresolved).
+
+Evidence and backups:
+artifacts/qa061-wnba-watch-diagnosis-20261018.txt
+artifacts/qa061-wnba-source-timeout-23944-20261018.log
+artifacts/qa061-wnba-freestyle-readonly-20261018-1.json
+artifacts/qa061-carry-five-seconds-diagnosis-20261018.txt
+artifacts/qa061-catalog-ui-tests.log
+artifacts/qa061-final-test-build.log;qa061-dev-build.log
+Backups/qa061-scoreboard-runtime-20261018
+Backups/qa061-catalog-ui-20261018
+Backups/qa061-carry-timing-20261018
+Backups/qa061-wnba-watch-status-20261018
+Backups/qa061-native-payload-20261018
+Estimated overall rebuild remains80.2%; no live-certified increase claimed.
+
+LIVE UPDATE AFTER STAGING:
+QA061 source registration and Home-to-Freestyle re-entry PASS in PID42716.
+Read artifacts/qa061-wnba-live-source-success-20261018.txt first for fresh status.
+Category audit: existing freestyle_v2/feature_runtime guarded four-DWORD executor
+is available, but Plan::freeze disables both old WNBA routes. A separate explicit
+owned-priority category mode must reach existing executor without legacy mixed
+key capture/provider publication or withdrawn sibling callback. Runtime current
+gates are in Runner::freestyle_tick and its caller; no new category API needed.
+No category writes made. Preserve current test evidence, do not re-enable oldflags.

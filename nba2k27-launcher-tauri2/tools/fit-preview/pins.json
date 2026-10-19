@@ -1,0 +1,16 @@
+{
+  "core/fast-clothing-preview-worker.js": "ef252969514f75c61dd8edd450a74482825941a5cf51dc579d72ac58c9a5bf76",
+  "region:decode": "c4c5f6180d13443ffe63ed2929bc292065ebd763076443a24c5697974b304170",
+  "region:manifest": "a7a28c6def0b03cc195c7cb5a509158d64cb65ec58ac4535caad1be557b09b2f",
+  "region:loadCached": "7c1ca0cd4c39b7ef0a3cb96e0a2957e205830666533c11ad67dece4e67b8c50e",
+  "vendor/archive-preview/core/iff.js": "e7b06c721e601f6d0017b98eaa5b49265bcafc586c4e7424c9b3dc0bc98bb9b9",
+  "vendor/archive-preview/core/preview.js": "63ba3eb0bcd962687a7ba45fd32e7f7bd8d1ceb9a1e4bef4d73c8922ed3c7985",
+  "core/clothing-item-table.js": "c71892392b9a9352f5b8bf08c55fd1fb8116512bd74b3a3a1d007fcbb2cbc128",
+  "core/clothing-color-bindings.js": "3cc2db6e19ca6d7bcf20a0c4560e2d9cc5c4d6189651bc754552b35429d7f9ee",
+  "shared/accessory-slots.js": "fc867246b444a837271b886fb50518b09691af731360f1b3543cadd627221313",
+  "shared/accessory-preview-support.js": "f0ff2e40407e9bd36413a42c70b1f77b69da5819832434c79328329a1b5822ff",
+  "core/accessory-rig-fit.js": "62cc440a01fb5ff20baba8d749dd35ffb0103bb0c63e4dbe39ea06fbad1f28c2",
+  "core/shoe-colorway-preview.js": "e1afaddf6b25acb6e73831dbc0b0f374695c6e90e88d531be99a4297d50edd61",
+  "core/clothing-components.js": "ede1a3aaa2ae2c23c02bd29b3d3026dcfc65c3550597862a9675562c91d378f0",
+  "data/shoe-model-names.json": "c572cff4a44b5a473becd40a0037a517d5679a2aaefc0eae453d9b7f88d4561a"
+}

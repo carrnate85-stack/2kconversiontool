@@ -1,0 +1,2766 @@
+{
+    "schema":  "nba2k27-camera-policy-oracle-v1",
+    "gameAccess":  false,
+    "originalSourceUnmodified":  true,
+    "metadata":  [
+                     {
+                         "seed":  0,
+                         "badWord":  -1,
+                         "length":  52,
+                         "accepted":  true,
+                         "hash":  "E7A918693EE40C455C31CFA7A7A339FC2BA38A0CB8EC80975FD09C9F6F225301"
+                     },
+                     {
+                         "seed":  1,
+                         "badWord":  -1,
+                         "length":  52,
+                         "accepted":  true,
+                         "hash":  "2516AB0F459317522AB256475383B83EDBFEC0C7387D7C992814D54865B99775"
+                     },
+                     {
+                         "seed":  17,
+                         "badWord":  -1,
+                         "length":  52,
+                         "accepted":  true,
+                         "hash":  "AC69E802E950728E15C731EF8CC89074F3FB2D12B0D91F1855B39B21BF4C118F"
+                     },
+                     {
+                         "seed":  250,
+                         "badWord":  -1,
+                         "length":  52,
+                         "accepted":  true,
+                         "hash":  "EF5113DDA2AF7C77FAB785F027E2D7DFD1D0E13244F296D321469B5C3D32D81B"
+                     },
+                     {
+                         "seed":  17,
+                         "badWord":  0,
+                         "length":  52,
+                         "accepted":  false,
+                         "hash":  null
+                     },
+                     {
+                         "seed":  17,
+                         "badWord":  1,
+                         "length":  52,
+                         "accepted":  false,
+                         "hash":  null
+                     },
+                     {
+                         "seed":  17,
+                         "badWord":  2,
+                         "length":  52,
+                         "accepted":  false,
+                         "hash":  null
+                     },
+                     {
+                         "seed":  17,
+                         "badWord":  3,
+                         "length":  52,
+                         "accepted":  false,
+                         "hash":  null
+                     },
+                     {
+                         "seed":  17,
+                         "badWord":  4,
+                         "length":  52,
+                         "accepted":  false,
+                         "hash":  null
+                     },
+                     {
+                         "seed":  17,
+                         "badWord":  5,
+                         "length":  52,
+                         "accepted":  false,
+                         "hash":  null
+                     },
+                     {
+                         "seed":  17,
+                         "badWord":  -1,
+                         "length":  4,
+                         "accepted":  false,
+                         "hash":  null
+                     }
+                 ],
+    "press":  [
+                  {
+                      "seed":  0,
+                      "origin":  -1,
+                      "offset":  0,
+                      "bad":  "",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  true,
+                      "entry":  "6AE98517FB6A1673E60D90662369C005B12278179E3554350D8CD5F323B43559",
+                      "primary":  "129858C23FF7E2F19803D7DDB4284814414A5448CBD1741B113DC2A14323DDC2",
+                      "secondary":  "4A34B66D2A89A517876E53F63DA0554158FE5B7EC8E99FA518AB5EB100B06E70"
+                  },
+                  {
+                      "seed":  1,
+                      "origin":  -1,
+                      "offset":  0,
+                      "bad":  "",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  true,
+                      "entry":  "6AE98517FB6A1673E60D90662369C005B12278179E3554350D8CD5F323B43559",
+                      "primary":  "4A34B66D2A89A517876E53F63DA0554158FE5B7EC8E99FA518AB5EB100B06E70",
+                      "secondary":  "8788174B0F98C8C569E8B294B14D6ADFEF2FE4943FA0E3F09AE5853C4F1DD2C6"
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  -1,
+                      "offset":  0,
+                      "bad":  "",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  true,
+                      "entry":  "6AE98517FB6A1673E60D90662369C005B12278179E3554350D8CD5F323B43559",
+                      "primary":  "034EAAC89B3670A8E9EB84453D18F7B114A87D539E2CAA9BC54CA9A2B54C512F",
+                      "secondary":  "E442240B239AD1077F24938CC0BADC66F022261E4525307D9E123CA0A05C9F8D"
+                  },
+                  {
+                      "seed":  248,
+                      "origin":  -1,
+                      "offset":  0,
+                      "bad":  "",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  true,
+                      "entry":  "6AE98517FB6A1673E60D90662369C005B12278179E3554350D8CD5F323B43559",
+                      "primary":  "87EDECE9A8E5986994681958A1B809FA35FD4EC0D213159844F5D98687AD52A7",
+                      "secondary":  "962F5B9F37BABE43749BD2B00D6146494A733A9FDA3A5ECA5E06054DC46358A3"
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  -1,
+                      "offset":  0,
+                      "bad":  "",
+                      "kind":  3,
+                      "tolerantW":  true,
+                      "accepted":  true,
+                      "entry":  "6AE98517FB6A1673E60D90662369C005B12278179E3554350D8CD5F323B43559",
+                      "primary":  "1A82FDDB30676950820F5E117203A7F0B554B28D560851EC4F67725CC690DB25",
+                      "secondary":  "2AE10DB889F9A156B01884C45E07C7872CA32C59C26E523A69B29B7485DD1ED3"
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  -1,
+                      "offset":  0,
+                      "bad":  "",
+                      "kind":  8,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  0,
+                      "offset":  16,
+                      "bad":  "value",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  1,
+                      "offset":  16,
+                      "bad":  "value",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  2,
+                      "offset":  16,
+                      "bad":  "value",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  0,
+                      "offset":  16,
+                      "bad":  "nan",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  1,
+                      "offset":  16,
+                      "bad":  "nan",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  2,
+                      "offset":  16,
+                      "bad":  "nan",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  0,
+                      "offset":  16,
+                      "bad":  "infinity",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  1,
+                      "offset":  16,
+                      "bad":  "infinity",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  2,
+                      "offset":  16,
+                      "bad":  "infinity",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  0,
+                      "offset":  20,
+                      "bad":  "value",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  1,
+                      "offset":  20,
+                      "bad":  "value",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  2,
+                      "offset":  20,
+                      "bad":  "value",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  0,
+                      "offset":  20,
+                      "bad":  "nan",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  1,
+                      "offset":  20,
+                      "bad":  "nan",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  2,
+                      "offset":  20,
+                      "bad":  "nan",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  0,
+                      "offset":  20,
+                      "bad":  "infinity",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  1,
+                      "offset":  20,
+                      "bad":  "infinity",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  2,
+                      "offset":  20,
+                      "bad":  "infinity",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  0,
+                      "offset":  24,
+                      "bad":  "value",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  1,
+                      "offset":  24,
+                      "bad":  "value",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  2,
+                      "offset":  24,
+                      "bad":  "value",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  0,
+                      "offset":  24,
+                      "bad":  "nan",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  1,
+                      "offset":  24,
+                      "bad":  "nan",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  2,
+                      "offset":  24,
+                      "bad":  "nan",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  0,
+                      "offset":  24,
+                      "bad":  "infinity",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  1,
+                      "offset":  24,
+                      "bad":  "infinity",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  2,
+                      "offset":  24,
+                      "bad":  "infinity",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  0,
+                      "offset":  28,
+                      "bad":  "value",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  1,
+                      "offset":  28,
+                      "bad":  "value",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  2,
+                      "offset":  28,
+                      "bad":  "value",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  0,
+                      "offset":  28,
+                      "bad":  "nan",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  1,
+                      "offset":  28,
+                      "bad":  "nan",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  2,
+                      "offset":  28,
+                      "bad":  "nan",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  0,
+                      "offset":  28,
+                      "bad":  "infinity",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  1,
+                      "offset":  28,
+                      "bad":  "infinity",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  2,
+                      "offset":  28,
+                      "bad":  "infinity",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  0,
+                      "offset":  32,
+                      "bad":  "value",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  1,
+                      "offset":  32,
+                      "bad":  "value",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  2,
+                      "offset":  32,
+                      "bad":  "value",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  0,
+                      "offset":  32,
+                      "bad":  "nan",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  1,
+                      "offset":  32,
+                      "bad":  "nan",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  2,
+                      "offset":  32,
+                      "bad":  "nan",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  0,
+                      "offset":  32,
+                      "bad":  "infinity",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  1,
+                      "offset":  32,
+                      "bad":  "infinity",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  2,
+                      "offset":  32,
+                      "bad":  "infinity",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  0,
+                      "offset":  48,
+                      "bad":  "value",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  1,
+                      "offset":  48,
+                      "bad":  "value",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  2,
+                      "offset":  48,
+                      "bad":  "value",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  0,
+                      "offset":  48,
+                      "bad":  "nan",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  1,
+                      "offset":  48,
+                      "bad":  "nan",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  2,
+                      "offset":  48,
+                      "bad":  "nan",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  0,
+                      "offset":  48,
+                      "bad":  "infinity",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  1,
+                      "offset":  48,
+                      "bad":  "infinity",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  2,
+                      "offset":  48,
+                      "bad":  "infinity",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  0,
+                      "offset":  52,
+                      "bad":  "value",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  1,
+                      "offset":  52,
+                      "bad":  "value",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  2,
+                      "offset":  52,
+                      "bad":  "value",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  0,
+                      "offset":  52,
+                      "bad":  "nan",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  1,
+                      "offset":  52,
+                      "bad":  "nan",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  2,
+                      "offset":  52,
+                      "bad":  "nan",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  0,
+                      "offset":  52,
+                      "bad":  "infinity",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  1,
+                      "offset":  52,
+                      "bad":  "infinity",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  2,
+                      "offset":  52,
+                      "bad":  "infinity",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  0,
+                      "offset":  56,
+                      "bad":  "value",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  1,
+                      "offset":  56,
+                      "bad":  "value",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  2,
+                      "offset":  56,
+                      "bad":  "value",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  0,
+                      "offset":  56,
+                      "bad":  "nan",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  1,
+                      "offset":  56,
+                      "bad":  "nan",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  2,
+                      "offset":  56,
+                      "bad":  "nan",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  0,
+                      "offset":  56,
+                      "bad":  "infinity",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  1,
+                      "offset":  56,
+                      "bad":  "infinity",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  2,
+                      "offset":  56,
+                      "bad":  "infinity",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  0,
+                      "offset":  60,
+                      "bad":  "value",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  1,
+                      "offset":  60,
+                      "bad":  "value",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  2,
+                      "offset":  60,
+                      "bad":  "value",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  0,
+                      "offset":  60,
+                      "bad":  "nan",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  1,
+                      "offset":  60,
+                      "bad":  "nan",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  2,
+                      "offset":  60,
+                      "bad":  "nan",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  0,
+                      "offset":  60,
+                      "bad":  "infinity",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  1,
+                      "offset":  60,
+                      "bad":  "infinity",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  2,
+                      "offset":  60,
+                      "bad":  "infinity",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  0,
+                      "offset":  64,
+                      "bad":  "value",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  1,
+                      "offset":  64,
+                      "bad":  "value",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  2,
+                      "offset":  64,
+                      "bad":  "value",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  0,
+                      "offset":  64,
+                      "bad":  "nan",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  1,
+                      "offset":  64,
+                      "bad":  "nan",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  2,
+                      "offset":  64,
+                      "bad":  "nan",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  0,
+                      "offset":  64,
+                      "bad":  "infinity",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  1,
+                      "offset":  64,
+                      "bad":  "infinity",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  },
+                  {
+                      "seed":  17,
+                      "origin":  2,
+                      "offset":  64,
+                      "bad":  "infinity",
+                      "kind":  3,
+                      "tolerantW":  false,
+                      "accepted":  false,
+                      "entry":  null,
+                      "primary":  null,
+                      "secondary":  null
+                  }
+              ],
+    "beluba":  [
+                   {
+                       "seed":  0,
+                       "origin":  -1,
+                       "offset":  0,
+                       "bad":  "",
+                       "accepted":  true,
+                       "hash":  "9C4C9E679FDAE97902075DFA882B85967A8729ACA9096AE8DCA3083E03B7B120"
+                   },
+                   {
+                       "seed":  1,
+                       "origin":  -1,
+                       "offset":  0,
+                       "bad":  "",
+                       "accepted":  true,
+                       "hash":  "10F5B6EF4CD5AED3EA985526A51987DE2414DB361DCE7DF509CEE3CE538040BB"
+                   },
+                   {
+                       "seed":  17,
+                       "origin":  -1,
+                       "offset":  0,
+                       "bad":  "",
+                       "accepted":  true,
+                       "hash":  "FA794ACF9573A00DA8793D9EAEF2FFB629586DE8D5EA1F79AF58D9F4C9AAD0EF"
+                   },
+                   {
+                       "seed":  249,
+                       "origin":  -1,
+                       "offset":  0,
+                       "bad":  "",
+                       "accepted":  true,
+                       "hash":  "8F75C5D66C10CC48AB1F4179FA4C54EE25FEAE7EBA3ED7B7E183FAC49D1C2AF4"
+                   },
+                   {
+                       "seed":  17,
+                       "origin":  0,
+                       "offset":  16,
+                       "bad":  "value",
+                       "accepted":  false,
+                       "hash":  null
+                   },
+                   {
+                       "seed":  17,
+                       "origin":  1,
+                       "offset":  16,
+                       "bad":  "value",
+                       "accepted":  false,
+                       "hash":  null
+                   },
+                   {
+                       "seed":  17,
+                       "origin":  0,
+                       "offset":  16,
+                       "bad":  "nan",
+                       "accepted":  false,
+                       "hash":  null
+                   },
+                   {
+                       "seed":  17,
+                       "origin":  1,
+                       "offset":  16,
+                       "bad":  "nan",
+                       "accepted":  false,
+                       "hash":  null
+                   },
+                   {
+                       "seed":  17,
+                       "origin":  0,
+                       "offset":  16,
+                       "bad":  "infinity",
+                       "accepted":  false,
+                       "hash":  null
+                   },
+                   {
+                       "seed":  17,
+                       "origin":  1,
+                       "offset":  16,
+                       "bad":  "infinity",
+                       "accepted":  false,
+                       "hash":  null
+                   },
+                   {
+                       "seed":  17,
+                       "origin":  0,
+                       "offset":  20,
+                       "bad":  "value",
+                       "accepted":  false,
+                       "hash":  null
+                   },
+                   {
+                       "seed":  17,
+                       "origin":  1,
+                       "offset":  20,
+                       "bad":  "value",
+                       "accepted":  false,
+                       "hash":  null
+                   },
+                   {
+                       "seed":  17,
+                       "origin":  0,
+                       "offset":  20,
+                       "bad":  "nan",
+                       "accepted":  false,
+                       "hash":  null
+                   },
+                   {
+                       "seed":  17,
+                       "origin":  1,
+                       "offset":  20,
+                       "bad":  "nan",
+                       "accepted":  false,
+                       "hash":  null
+                   },
+                   {
+                       "seed":  17,
+                       "origin":  0,
+                       "offset":  20,
+                       "bad":  "infinity",
+                       "accepted":  false,
+                       "hash":  null
+                   },
+                   {
+                       "seed":  17,
+                       "origin":  1,
+                       "offset":  20,
+                       "bad":  "infinity",
+                       "accepted":  false,
+                       "hash":  null
+                   },
+                   {
+                       "seed":  17,
+                       "origin":  0,
+                       "offset":  24,
+                       "bad":  "value",
+                       "accepted":  false,
+                       "hash":  null
+                   },
+                   {
+                       "seed":  17,
+                       "origin":  1,
+                       "offset":  24,
+                       "bad":  "value",
+                       "accepted":  false,
+                       "hash":  null
+                   },
+                   {
+                       "seed":  17,
+                       "origin":  0,
+                       "offset":  24,
+                       "bad":  "nan",
+                       "accepted":  false,
+                       "hash":  null
+                   },
+                   {
+                       "seed":  17,
+                       "origin":  1,
+                       "offset":  24,
+                       "bad":  "nan",
+                       "accepted":  false,
+                       "hash":  null
+                   },
+                   {
+                       "seed":  17,
+                       "origin":  0,
+                       "offset":  24,
+                       "bad":  "infinity",
+                       "accepted":  false,
+                       "hash":  null
+                   },
+                   {
+                       "seed":  17,
+                       "origin":  1,
+                       "offset":  24,
+                       "bad":  "infinity",
+                       "accepted":  false,
+                       "hash":  null
+                   },
+                   {
+                       "seed":  17,
+                       "origin":  0,
+                       "offset":  28,
+                       "bad":  "value",
+                       "accepted":  false,
+                       "hash":  null
+                   },
+                   {
+                       "seed":  17,
+                       "origin":  1,
+                       "offset":  28,
+                       "bad":  "value",
+                       "accepted":  false,
+                       "hash":  null
+                   },
+                   {
+                       "seed":  17,
+                       "origin":  0,
+                       "offset":  28,
+                       "bad":  "nan",
+                       "accepted":  false,
+                       "hash":  null
+                   },
+                   {
+                       "seed":  17,
+                       "origin":  1,
+                       "offset":  28,
+                       "bad":  "nan",
+                       "accepted":  false,
+                       "hash":  null
+                   },
+                   {
+                       "seed":  17,
+                       "origin":  0,
+                       "offset":  28,
+                       "bad":  "infinity",
+                       "accepted":  false,
+                       "hash":  null
+                   },
+                   {
+                       "seed":  17,
+                       "origin":  1,
+                       "offset":  28,
+                       "bad":  "infinity",
+                       "accepted":  false,
+                       "hash":  null
+                   },
+                   {
+                       "seed":  17,
+                       "origin":  0,
+                       "offset":  32,
+                       "bad":  "value",
+                       "accepted":  false,
+                       "hash":  null
+                   },
+                   {
+                       "seed":  17,
+                       "origin":  1,
+                       "offset":  32,
+                       "bad":  "value",
+                       "accepted":  false,
+                       "hash":  null
+                   },
+                   {
+                       "seed":  17,
+                       "origin":  0,
+                       "offset":  32,
+                       "bad":  "nan",
+                       "accepted":  false,
+                       "hash":  null
+                   },
+                   {
+                       "seed":  17,
+                       "origin":  1,
+                       "offset":  32,
+                       "bad":  "nan",
+                       "accepted":  false,
+                       "hash":  null
+                   },
+                   {
+                       "seed":  17,
+                       "origin":  0,
+                       "offset":  32,
+                       "bad":  "infinity",
+                       "accepted":  false,
+                       "hash":  null
+                   },
+                   {
+                       "seed":  17,
+                       "origin":  1,
+                       "offset":  32,
+                       "bad":  "infinity",
+                       "accepted":  false,
+                       "hash":  null
+                   },
+                   {
+                       "seed":  17,
+                       "origin":  0,
+                       "offset":  48,
+                       "bad":  "value",
+                       "accepted":  false,
+                       "hash":  null
+                   },
+                   {
+                       "seed":  17,
+                       "origin":  1,
+                       "offset":  48,
+                       "bad":  "value",
+                       "accepted":  false,
+                       "hash":  null
+                   },
+                   {
+                       "seed":  17,
+                       "origin":  0,
+                       "offset":  48,
+                       "bad":  "nan",
+                       "accepted":  false,
+                       "hash":  null
+                   },
+                   {
+                       "seed":  17,
+                       "origin":  1,
+                       "offset":  48,
+                       "bad":  "nan",
+                       "accepted":  false,
+                       "hash":  null
+                   },
+                   {
+                       "seed":  17,
+                       "origin":  0,
+                       "offset":  48,
+                       "bad":  "infinity",
+                       "accepted":  false,
+                       "hash":  null
+                   },
+                   {
+                       "seed":  17,
+                       "origin":  1,
+                       "offset":  48,
+                       "bad":  "infinity",
+                       "accepted":  false,
+                       "hash":  null
+                   },
+                   {
+                       "seed":  17,
+                       "origin":  0,
+                       "offset":  52,
+                       "bad":  "value",
+                       "accepted":  false,
+                       "hash":  null
+                   },
+                   {
+                       "seed":  17,
+                       "origin":  1,
+                       "offset":  52,
+                       "bad":  "value",
+                       "accepted":  false,
+                       "hash":  null
+                   },
+                   {
+                       "seed":  17,
+                       "origin":  0,
+                       "offset":  52,
+                       "bad":  "nan",
+                       "accepted":  false,
+                       "hash":  null
+                   },
+                   {
+                       "seed":  17,
+                       "origin":  1,
+                       "offset":  52,
+                       "bad":  "nan",
+                       "accepted":  false,
+                       "hash":  null
+                   },
+                   {
+                       "seed":  17,
+                       "origin":  0,
+                       "offset":  52,
+                       "bad":  "infinity",
+                       "accepted":  false,
+                       "hash":  null
+                   },
+                   {
+                       "seed":  17,
+                       "origin":  1,
+                       "offset":  52,
+                       "bad":  "infinity",
+                       "accepted":  false,
+                       "hash":  null
+                   },
+                   {
+                       "seed":  17,
+                       "origin":  0,
+                       "offset":  56,
+                       "bad":  "value",
+                       "accepted":  false,
+                       "hash":  null
+                   },
+                   {
+                       "seed":  17,
+                       "origin":  1,
+                       "offset":  56,
+                       "bad":  "value",
+                       "accepted":  false,
+                       "hash":  null
+                   },
+                   {
+                       "seed":  17,
+                       "origin":  0,
+                       "offset":  56,
+                       "bad":  "nan",
+                       "accepted":  false,
+                       "hash":  null
+                   },
+                   {
+                       "seed":  17,
+                       "origin":  1,
+                       "offset":  56,
+                       "bad":  "nan",
+                       "accepted":  false,
+                       "hash":  null
+                   },
+                   {
+                       "seed":  17,
+                       "origin":  0,
+                       "offset":  56,
+                       "bad":  "infinity",
+                       "accepted":  false,
+                       "hash":  null
+                   },
+                   {
+                       "seed":  17,
+                       "origin":  1,
+                       "offset":  56,
+                       "bad":  "infinity",
+                       "accepted":  false,
+                       "hash":  null
+                   },
+                   {
+                       "seed":  17,
+                       "origin":  0,
+                       "offset":  60,
+                       "bad":  "value",
+                       "accepted":  false,
+                       "hash":  null
+                   },
+                   {
+                       "seed":  17,
+                       "origin":  1,
+                       "offset":  60,
+                       "bad":  "value",
+                       "accepted":  false,
+                       "hash":  null
+                   },
+                   {
+                       "seed":  17,
+                       "origin":  0,
+                       "offset":  60,
+                       "bad":  "nan",
+                       "accepted":  false,
+                       "hash":  null
+                   },
+                   {
+                       "seed":  17,
+                       "origin":  1,
+                       "offset":  60,
+                       "bad":  "nan",
+                       "accepted":  false,
+                       "hash":  null
+                   },
+                   {
+                       "seed":  17,
+                       "origin":  0,
+                       "offset":  60,
+                       "bad":  "infinity",
+                       "accepted":  false,
+                       "hash":  null
+                   },
+                   {
+                       "seed":  17,
+                       "origin":  1,
+                       "offset":  60,
+                       "bad":  "infinity",
+                       "accepted":  false,
+                       "hash":  null
+                   },
+                   {
+                       "seed":  17,
+                       "origin":  0,
+                       "offset":  64,
+                       "bad":  "value",
+                       "accepted":  false,
+                       "hash":  null
+                   },
+                   {
+                       "seed":  17,
+                       "origin":  1,
+                       "offset":  64,
+                       "bad":  "value",
+                       "accepted":  false,
+                       "hash":  null
+                   },
+                   {
+                       "seed":  17,
+                       "origin":  0,
+                       "offset":  64,
+                       "bad":  "nan",
+                       "accepted":  false,
+                       "hash":  null
+                   },
+                   {
+                       "seed":  17,
+                       "origin":  1,
+                       "offset":  64,
+                       "bad":  "nan",
+                       "accepted":  false,
+                       "hash":  null
+                   },
+                   {
+                       "seed":  17,
+                       "origin":  0,
+                       "offset":  64,
+                       "bad":  "infinity",
+                       "accepted":  false,
+                       "hash":  null
+                   },
+                   {
+                       "seed":  17,
+                       "origin":  1,
+                       "offset":  64,
+                       "bad":  "infinity",
+                       "accepted":  false,
+                       "hash":  null
+                   }
+               ],
+    "steps":  {
+                  "expression":  "float targetY=baseY+((height-1)*heightStep),fov=baseFov+((zoom-1)*zoomStep);",
+                  "rows":  [
+                               {
+                                   "id":  21,
+                                   "height":  -100,
+                                   "zoom":  -100,
+                                   "seed":  42,
+                                   "hash":  "0A3058C6C1A68528C62774DC7993FA686B195377A233DBBAA03B7064D9123AA2"
+                               },
+                               {
+                                   "id":  21,
+                                   "height":  -100,
+                                   "zoom":  -1,
+                                   "seed":  42,
+                                   "hash":  "2A147B5BA6DC5426BB618CC6DCAF84C5B514E32F81B5F919B9E2E12765FB1DAC"
+                               },
+                               {
+                                   "id":  21,
+                                   "height":  -100,
+                                   "zoom":  0,
+                                   "seed":  42,
+                                   "hash":  "B833D813C5B43F4131F193CF7802C4F66E332EDA5E1BEC49381240A7FD7C9B58"
+                               },
+                               {
+                                   "id":  21,
+                                   "height":  -100,
+                                   "zoom":  1,
+                                   "seed":  42,
+                                   "hash":  "3D03B1395EB761EFA0C6EE131C1597C69EA489EDFE058FB684986BE45873894D"
+                               },
+                               {
+                                   "id":  21,
+                                   "height":  -100,
+                                   "zoom":  10,
+                                   "seed":  42,
+                                   "hash":  "592DEFDEA60F341249D3A2B47F2C49B54465CBCF32CF7ACAA8FD4A016A9CC3A1"
+                               },
+                               {
+                                   "id":  21,
+                                   "height":  -100,
+                                   "zoom":  100,
+                                   "seed":  42,
+                                   "hash":  "543D1E6FF4C9C8240A3C21370CDA9BA423EE44FBCD5F92F76A1625427831AA31"
+                               },
+                               {
+                                   "id":  21,
+                                   "height":  -1,
+                                   "zoom":  -100,
+                                   "seed":  42,
+                                   "hash":  "B2B8364C511175D3EA9423987EE4C18D97D2211D34C9108D57966A16F85E07AF"
+                               },
+                               {
+                                   "id":  21,
+                                   "height":  -1,
+                                   "zoom":  -1,
+                                   "seed":  42,
+                                   "hash":  "76532B2CC82A5845B18D18C8410E9DD9976074A71A709060113F72DF7EEF3EA4"
+                               },
+                               {
+                                   "id":  21,
+                                   "height":  -1,
+                                   "zoom":  0,
+                                   "seed":  42,
+                                   "hash":  "49825F1EB90793140C7601BA9A844A529E62F6D5FA071791CD3763F4479BB1CF"
+                               },
+                               {
+                                   "id":  21,
+                                   "height":  -1,
+                                   "zoom":  1,
+                                   "seed":  42,
+                                   "hash":  "A4F7C014015BC6BEDBD78E8160BA61FA6856115493662113E80F80DEF0F718B8"
+                               },
+                               {
+                                   "id":  21,
+                                   "height":  -1,
+                                   "zoom":  10,
+                                   "seed":  42,
+                                   "hash":  "764BF037EA4FF4C5625C78D0C7A890408C83C625A98823B12A6D9D86D76F23C1"
+                               },
+                               {
+                                   "id":  21,
+                                   "height":  -1,
+                                   "zoom":  100,
+                                   "seed":  42,
+                                   "hash":  "3C5FD17EEC322C1655501FAD835B621CE6500B51A38F016651C3214D0B6F8784"
+                               },
+                               {
+                                   "id":  21,
+                                   "height":  0,
+                                   "zoom":  -100,
+                                   "seed":  42,
+                                   "hash":  "F5DB086CC7AE840A903F243744240DDD3DF4AF65E971C93938EC9DE23C61168B"
+                               },
+                               {
+                                   "id":  21,
+                                   "height":  0,
+                                   "zoom":  -1,
+                                   "seed":  42,
+                                   "hash":  "B496D2B95812615A5B8F07F44DCFD1595C298AB6356DCAB3C5092D59C23E5534"
+                               },
+                               {
+                                   "id":  21,
+                                   "height":  0,
+                                   "zoom":  0,
+                                   "seed":  42,
+                                   "hash":  "35BF8EAF5BEDD84D5D2E28C82CCF7A3D8324144A689000BAF713982B49F8024E"
+                               },
+                               {
+                                   "id":  21,
+                                   "height":  0,
+                                   "zoom":  1,
+                                   "seed":  42,
+                                   "hash":  "B10B1DFF474C929D2428A7DDE2AA2524C692032A6B4CDC51E8FB399753504A60"
+                               },
+                               {
+                                   "id":  21,
+                                   "height":  0,
+                                   "zoom":  10,
+                                   "seed":  42,
+                                   "hash":  "A20987EEB794ACBD62A13FD4E399A370BAB4EAC3FCB96F6E71697E8D518244A7"
+                               },
+                               {
+                                   "id":  21,
+                                   "height":  0,
+                                   "zoom":  100,
+                                   "seed":  42,
+                                   "hash":  "0E464B0464A66725A9E0BC834815427C434EE6F07804F4CB3A37D896348EB7C9"
+                               },
+                               {
+                                   "id":  21,
+                                   "height":  1,
+                                   "zoom":  -100,
+                                   "seed":  42,
+                                   "hash":  "D47074839CC59528808C3C7E9BA144F5AE2DB08B17A54BEF7CB7390D5504518C"
+                               },
+                               {
+                                   "id":  21,
+                                   "height":  1,
+                                   "zoom":  -1,
+                                   "seed":  42,
+                                   "hash":  "2ABE05FAF92B6C1E3204008DF48EB90B53C9E30EC50440B3CC4E1027B0D9A61A"
+                               },
+                               {
+                                   "id":  21,
+                                   "height":  1,
+                                   "zoom":  0,
+                                   "seed":  42,
+                                   "hash":  "F1E48E2300A5E3C15D460DE78BCD4E6B4F5F5438564394C117F6BFAEB0426DBA"
+                               },
+                               {
+                                   "id":  21,
+                                   "height":  1,
+                                   "zoom":  1,
+                                   "seed":  42,
+                                   "hash":  "103BF633A888C15015494DD60ADB77BE54F66DC36715D469E30DF15704045A3C"
+                               },
+                               {
+                                   "id":  21,
+                                   "height":  1,
+                                   "zoom":  10,
+                                   "seed":  42,
+                                   "hash":  "19E828FFA4B046DA7CF31431FB7132E2D9A6F640BC020065F1F2118E565D3245"
+                               },
+                               {
+                                   "id":  21,
+                                   "height":  1,
+                                   "zoom":  100,
+                                   "seed":  42,
+                                   "hash":  "38625AAA1512D156A92DECE5BB73E79A891480D50923453075D66D42783C708A"
+                               },
+                               {
+                                   "id":  21,
+                                   "height":  10,
+                                   "zoom":  -100,
+                                   "seed":  42,
+                                   "hash":  "DAA76F777993C8B7D73666469A50069130747B0C6C93BA806940EB528D9B41A9"
+                               },
+                               {
+                                   "id":  21,
+                                   "height":  10,
+                                   "zoom":  -1,
+                                   "seed":  42,
+                                   "hash":  "AF77EC455D4C1080EF530CDD22663D8B93218E6716C04FEACB04683C2403C620"
+                               },
+                               {
+                                   "id":  21,
+                                   "height":  10,
+                                   "zoom":  0,
+                                   "seed":  42,
+                                   "hash":  "ADBE82FCF73D18911D3FCDCF1963C5081353F6954935180E6403F3ADA8E38C2C"
+                               },
+                               {
+                                   "id":  21,
+                                   "height":  10,
+                                   "zoom":  1,
+                                   "seed":  42,
+                                   "hash":  "B4F739B94C54F6CF02B8076BD4ACE859D4B362D0179F30E0A1F91C7912ABC4D6"
+                               },
+                               {
+                                   "id":  21,
+                                   "height":  10,
+                                   "zoom":  10,
+                                   "seed":  42,
+                                   "hash":  "56C5D1B8EE9C40E8E086CCA6F79C75406E1CA2DC095E12919207BBB8977FD263"
+                               },
+                               {
+                                   "id":  21,
+                                   "height":  10,
+                                   "zoom":  100,
+                                   "seed":  42,
+                                   "hash":  "B94C998F3332C3D5CCE797E065832F25A5B8B1F19ACA3BDB5056981488C0190C"
+                               },
+                               {
+                                   "id":  21,
+                                   "height":  100,
+                                   "zoom":  -100,
+                                   "seed":  42,
+                                   "hash":  "30A5B77D94949EE5494398332A65A0690D2F5B8D9AECE05B711A57E3F7E2507B"
+                               },
+                               {
+                                   "id":  21,
+                                   "height":  100,
+                                   "zoom":  -1,
+                                   "seed":  42,
+                                   "hash":  "579BE7584FB92E1D96C246BAECCEB7467AF606CF8B9D1A96A0C66E668E8F8127"
+                               },
+                               {
+                                   "id":  21,
+                                   "height":  100,
+                                   "zoom":  0,
+                                   "seed":  42,
+                                   "hash":  "ED5C0862DC4D2B45C99B794D5D8376A3070CF5B6E23853365F8C47FB8C1A1CE1"
+                               },
+                               {
+                                   "id":  21,
+                                   "height":  100,
+                                   "zoom":  1,
+                                   "seed":  42,
+                                   "hash":  "CED04B9639218DFC2434523F556018C6F3766F30B760E27B8CD061309E75B3A9"
+                               },
+                               {
+                                   "id":  21,
+                                   "height":  100,
+                                   "zoom":  10,
+                                   "seed":  42,
+                                   "hash":  "6BFAB2039A8210398EEC856288B8D267908A2F25FD1273C037C57CF5D6887062"
+                               },
+                               {
+                                   "id":  21,
+                                   "height":  100,
+                                   "zoom":  100,
+                                   "seed":  42,
+                                   "hash":  "6A5F234429D9B870C82A9328BF8897A8D7286280634DB7C07D4347E87636B249"
+                               },
+                               {
+                                   "id":  53,
+                                   "height":  -100,
+                                   "zoom":  -100,
+                                   "seed":  42,
+                                   "hash":  "53F6A1B9F6252B2DC841F5AC8C990F7B3A4E54B8F2FDD8AE034BC6A65BE584D2"
+                               },
+                               {
+                                   "id":  53,
+                                   "height":  -100,
+                                   "zoom":  -1,
+                                   "seed":  42,
+                                   "hash":  "A85ABA0736198D7CA92A326BE3E3E5579B9AC769F8EC0530E19B7BAD4AD11E97"
+                               },
+                               {
+                                   "id":  53,
+                                   "height":  -100,
+                                   "zoom":  0,
+                                   "seed":  42,
+                                   "hash":  "9843C37FEEA58A853F1614CAAE674C40007027E610865D556BF15F30A833FE64"
+                               },
+                               {
+                                   "id":  53,
+                                   "height":  -100,
+                                   "zoom":  1,
+                                   "seed":  42,
+                                   "hash":  "C08FCEBE212937DF340B52B0B3A036A8193103084DF069192D009C160E5C2F2B"
+                               },
+                               {
+                                   "id":  53,
+                                   "height":  -100,
+                                   "zoom":  10,
+                                   "seed":  42,
+                                   "hash":  "E778174E13FD2B784CE0D07D3F4D6000CC99D38CBDB85E862E186679292F63B6"
+                               },
+                               {
+                                   "id":  53,
+                                   "height":  -100,
+                                   "zoom":  100,
+                                   "seed":  42,
+                                   "hash":  "1259FF651ADC29C8B589733B7EFB0D710F2D4DABF0FA34491681A8A963876D9A"
+                               },
+                               {
+                                   "id":  53,
+                                   "height":  -1,
+                                   "zoom":  -100,
+                                   "seed":  42,
+                                   "hash":  "0A189B20EC82CE7B64F6A6C80325FA11FA41470ED91FA5E4EE8967A14A7DF02A"
+                               },
+                               {
+                                   "id":  53,
+                                   "height":  -1,
+                                   "zoom":  -1,
+                                   "seed":  42,
+                                   "hash":  "27D98902FA0DE65D29EB209F503A845466161D478BB26243711C1BC680ACE1C2"
+                               },
+                               {
+                                   "id":  53,
+                                   "height":  -1,
+                                   "zoom":  0,
+                                   "seed":  42,
+                                   "hash":  "D4E07E7F87A16125A50E41820B164984484DEEE9685D2A6A4E3FB2D538B513E9"
+                               },
+                               {
+                                   "id":  53,
+                                   "height":  -1,
+                                   "zoom":  1,
+                                   "seed":  42,
+                                   "hash":  "016E95D7D95C530F767A96D8B7AE4C893D8B00EBB191EAE40C7D28E499FEDCE9"
+                               },
+                               {
+                                   "id":  53,
+                                   "height":  -1,
+                                   "zoom":  10,
+                                   "seed":  42,
+                                   "hash":  "ECFAF6B33F0EEEC491640A23993345195CD578F15144A3AED8250B5C12349365"
+                               },
+                               {
+                                   "id":  53,
+                                   "height":  -1,
+                                   "zoom":  100,
+                                   "seed":  42,
+                                   "hash":  "10B41A0ED4B42B4F573FAE5D67C62265E9A7D800D302D76A98B019533E1CD1BF"
+                               },
+                               {
+                                   "id":  53,
+                                   "height":  0,
+                                   "zoom":  -100,
+                                   "seed":  42,
+                                   "hash":  "C997A24897CE4E84745F722184310D7F5078284FE7F2D49E8DADAE384684CDB7"
+                               },
+                               {
+                                   "id":  53,
+                                   "height":  0,
+                                   "zoom":  -1,
+                                   "seed":  42,
+                                   "hash":  "9314AD20065A0F6D2BE0C50DE351E218F70BEBB5C5603CF7826ACCF3116DA127"
+                               },
+                               {
+                                   "id":  53,
+                                   "height":  0,
+                                   "zoom":  0,
+                                   "seed":  42,
+                                   "hash":  "3B79D03B527F325E3282C95588D64C6D3FC04A60B68402662D2C50604EB65522"
+                               },
+                               {
+                                   "id":  53,
+                                   "height":  0,
+                                   "zoom":  1,
+                                   "seed":  42,
+                                   "hash":  "886EA9D23CA35A3521030D46E470B8B5CDAE3688000636C2ED88FBBCF5D35BDC"
+                               },
+                               {
+                                   "id":  53,
+                                   "height":  0,
+                                   "zoom":  10,
+                                   "seed":  42,
+                                   "hash":  "A23BF4006E62543C23F72053E183F562F49F34C0066EBEC75E59412B4CE0468C"
+                               },
+                               {
+                                   "id":  53,
+                                   "height":  0,
+                                   "zoom":  100,
+                                   "seed":  42,
+                                   "hash":  "F22A6FACD32190CD4F2CB385D5ABB1EECC9931689D2E9559DEE930D8971CBD84"
+                               },
+                               {
+                                   "id":  53,
+                                   "height":  1,
+                                   "zoom":  -100,
+                                   "seed":  42,
+                                   "hash":  "F44ECB1C577B8ADBB74EA94133A8D46FC3717F77872253094D57753E53473E07"
+                               },
+                               {
+                                   "id":  53,
+                                   "height":  1,
+                                   "zoom":  -1,
+                                   "seed":  42,
+                                   "hash":  "C9EA6184B612BF85743D81BCE02C6C8D7614E6EEE25F6CF6F5F6FF8F6861436A"
+                               },
+                               {
+                                   "id":  53,
+                                   "height":  1,
+                                   "zoom":  0,
+                                   "seed":  42,
+                                   "hash":  "211E20F5AB1716E92C711357A25422B13980D431936250F2ACF78BDC869BD4AF"
+                               },
+                               {
+                                   "id":  53,
+                                   "height":  1,
+                                   "zoom":  1,
+                                   "seed":  42,
+                                   "hash":  "A28830C596BCDD29F6C99F252CE7FAC90FA6394D6BB632BAAEAC17E8C461AAEE"
+                               },
+                               {
+                                   "id":  53,
+                                   "height":  1,
+                                   "zoom":  10,
+                                   "seed":  42,
+                                   "hash":  "B29F1242E3D7F819C52FE43D9FB1012176CFEDC7CC5C83E36DDFC45B1B93BA5E"
+                               },
+                               {
+                                   "id":  53,
+                                   "height":  1,
+                                   "zoom":  100,
+                                   "seed":  42,
+                                   "hash":  "B7D80061877B4DF8B16424A511477DAF6C95F13318417DB279BFBE2C7BD20180"
+                               },
+                               {
+                                   "id":  53,
+                                   "height":  10,
+                                   "zoom":  -100,
+                                   "seed":  42,
+                                   "hash":  "366FCE907440F042D686D3C7D7F1DE1B7A793F534DFC110AD44178279EE2B017"
+                               },
+                               {
+                                   "id":  53,
+                                   "height":  10,
+                                   "zoom":  -1,
+                                   "seed":  42,
+                                   "hash":  "FB14281C6A0D3FFE9A77B0758CF89459130644E1562AA954ABC3B1A24F2A14B6"
+                               },
+                               {
+                                   "id":  53,
+                                   "height":  10,
+                                   "zoom":  0,
+                                   "seed":  42,
+                                   "hash":  "39547544F4A15DE0FC2405EE71AE763400AC30CB2D753CF7B6C27204DDD2632D"
+                               },
+                               {
+                                   "id":  53,
+                                   "height":  10,
+                                   "zoom":  1,
+                                   "seed":  42,
+                                   "hash":  "6F53AE333B651D542669E269E2A1FB69CE0F31ABBC10D65165C3B04279C9E82E"
+                               },
+                               {
+                                   "id":  53,
+                                   "height":  10,
+                                   "zoom":  10,
+                                   "seed":  42,
+                                   "hash":  "294D93D5EF6A5063DB948BCEB0BF467518AD178760EEFBD0052BD533D807995D"
+                               },
+                               {
+                                   "id":  53,
+                                   "height":  10,
+                                   "zoom":  100,
+                                   "seed":  42,
+                                   "hash":  "358530706C836EB4D9ED808643DFAEE4686315D981AD36A7CAE7C1C0355ECD6E"
+                               },
+                               {
+                                   "id":  53,
+                                   "height":  100,
+                                   "zoom":  -100,
+                                   "seed":  42,
+                                   "hash":  "F932CDBFEB0BDD27CB6EEFC655117F984BD74F3CD2B0038646CECE81441B6EB6"
+                               },
+                               {
+                                   "id":  53,
+                                   "height":  100,
+                                   "zoom":  -1,
+                                   "seed":  42,
+                                   "hash":  "D7F09F8EBBC3CE8CA3FB221DCA29AF4A9628EFD9F2769BDB6CC0160477FF2AE2"
+                               },
+                               {
+                                   "id":  53,
+                                   "height":  100,
+                                   "zoom":  0,
+                                   "seed":  42,
+                                   "hash":  "81DF6F1D4EC7DC0F100635200BE5795E2CBC7B9E17A1663D3FAD784B96C7EB91"
+                               },
+                               {
+                                   "id":  53,
+                                   "height":  100,
+                                   "zoom":  1,
+                                   "seed":  42,
+                                   "hash":  "403D47F80CD14770DFAADA3DA97909BA1ECE3F890BABC151F665F06E8B56E386"
+                               },
+                               {
+                                   "id":  53,
+                                   "height":  100,
+                                   "zoom":  10,
+                                   "seed":  42,
+                                   "hash":  "5A0F5BC3529A3A2C8FDFF8CE28A00BBE4FDDF6B9E754E2B92685C8E2FC65CF2C"
+                               },
+                               {
+                                   "id":  53,
+                                   "height":  100,
+                                   "zoom":  100,
+                                   "seed":  42,
+                                   "hash":  "747DEFAB5617D54A705CCE770506176C74D6AD0466DD2F75CD55D51EF1DB5C3B"
+                               },
+                               {
+                                   "id":  51,
+                                   "height":  -100,
+                                   "zoom":  -100,
+                                   "seed":  42,
+                                   "hash":  "792E8CA6C72CC1472A36B4293CBB1B5140AEB294567CDFECE20930656B654B53"
+                               },
+                               {
+                                   "id":  51,
+                                   "height":  -100,
+                                   "zoom":  -1,
+                                   "seed":  42,
+                                   "hash":  "7EC5165FB85DF66C6A421638BC299E3A72DCD9F72C87D7FDB406E37D59C48548"
+                               },
+                               {
+                                   "id":  51,
+                                   "height":  -100,
+                                   "zoom":  0,
+                                   "seed":  42,
+                                   "hash":  "83177D97293993F749C5A61BF400F81B779C61AAA819E889BF3D90D4390F3D48"
+                               },
+                               {
+                                   "id":  51,
+                                   "height":  -100,
+                                   "zoom":  1,
+                                   "seed":  42,
+                                   "hash":  "59AF87D2EC36C1D3FB94AEAD4E390FF30D836B9D5A331FBB83E6854DB5EADC6C"
+                               },
+                               {
+                                   "id":  51,
+                                   "height":  -100,
+                                   "zoom":  10,
+                                   "seed":  42,
+                                   "hash":  "8AB650BC2BD483B2A2689D2211543D6FD1F137D347AD60B416E790EA71DC3958"
+                               },
+                               {
+                                   "id":  51,
+                                   "height":  -100,
+                                   "zoom":  100,
+                                   "seed":  42,
+                                   "hash":  "22F7D9306915559C60751A2528A94747CF8C055208D4BB6BAD8EC3F095940D6B"
+                               },
+                               {
+                                   "id":  51,
+                                   "height":  -1,
+                                   "zoom":  -100,
+                                   "seed":  42,
+                                   "hash":  "F9685D8912A375F593C364C1A1DDE7BBC6AA4E12CDE1CFD404DB0E5972F27D75"
+                               },
+                               {
+                                   "id":  51,
+                                   "height":  -1,
+                                   "zoom":  -1,
+                                   "seed":  42,
+                                   "hash":  "D0152D80BCF018FF4000B15F9DC7FDCD9D92DA3DA53B0FFAD42777CC06F2BD4C"
+                               },
+                               {
+                                   "id":  51,
+                                   "height":  -1,
+                                   "zoom":  0,
+                                   "seed":  42,
+                                   "hash":  "8C5A9052E53F599960D9B5051B7BC9AB6CB661FCD00B1F8B1E5736DB3BAE7B1F"
+                               },
+                               {
+                                   "id":  51,
+                                   "height":  -1,
+                                   "zoom":  1,
+                                   "seed":  42,
+                                   "hash":  "BEE579530DD43686036E6B500561F37FD69263CED26E88BE0B861F50730B235E"
+                               },
+                               {
+                                   "id":  51,
+                                   "height":  -1,
+                                   "zoom":  10,
+                                   "seed":  42,
+                                   "hash":  "0D8BEBBC6D9076CCC0714C28D5AC70F0D82CFD6B42D803DAB114A3A2CAB4EEBC"
+                               },
+                               {
+                                   "id":  51,
+                                   "height":  -1,
+                                   "zoom":  100,
+                                   "seed":  42,
+                                   "hash":  "C22AA69E7E3BCD3578B7BF528D9EC3F81086350AFE01F4BE6A0F7A6F9AC06945"
+                               },
+                               {
+                                   "id":  51,
+                                   "height":  0,
+                                   "zoom":  -100,
+                                   "seed":  42,
+                                   "hash":  "49A72101B0511A1B7956782B8511F23C49E337A118106BA65EE170111BF280A0"
+                               },
+                               {
+                                   "id":  51,
+                                   "height":  0,
+                                   "zoom":  -1,
+                                   "seed":  42,
+                                   "hash":  "068C7B92299E197B833705F93C5ED0C7FC91D0469AA927595D612559B95E624B"
+                               },
+                               {
+                                   "id":  51,
+                                   "height":  0,
+                                   "zoom":  0,
+                                   "seed":  42,
+                                   "hash":  "4A420BFA1F3043F7C64AE1084919FEC05CDACBC56F90D1823FD5CAD083DB356F"
+                               },
+                               {
+                                   "id":  51,
+                                   "height":  0,
+                                   "zoom":  1,
+                                   "seed":  42,
+                                   "hash":  "1573FFE9A5A94C5EBB8DAB8ED6B35D94B732659F7832C205D8D61E572958A348"
+                               },
+                               {
+                                   "id":  51,
+                                   "height":  0,
+                                   "zoom":  10,
+                                   "seed":  42,
+                                   "hash":  "8204F6F302E06405BF1F6C42F65E8DEBBDAE63362B3749B772631A5E540C4420"
+                               },
+                               {
+                                   "id":  51,
+                                   "height":  0,
+                                   "zoom":  100,
+                                   "seed":  42,
+                                   "hash":  "764C0DF3DE7C5D6B59D84DB2D808E2D607A81E56F2A1BC4DF8CC167126233929"
+                               },
+                               {
+                                   "id":  51,
+                                   "height":  1,
+                                   "zoom":  -100,
+                                   "seed":  42,
+                                   "hash":  "0378C56007529A23AFE073C051DB4D939644A947F71F898040FE6B3304B5676C"
+                               },
+                               {
+                                   "id":  51,
+                                   "height":  1,
+                                   "zoom":  -1,
+                                   "seed":  42,
+                                   "hash":  "711367D09565CA5BB461ED368A2C799434F132FC21AF4041C8FBFD738D5A9DD8"
+                               },
+                               {
+                                   "id":  51,
+                                   "height":  1,
+                                   "zoom":  0,
+                                   "seed":  42,
+                                   "hash":  "1C1ABD4C348520EBC939316CD7853B2B826C9625FD35CD8AB61EF132D8890800"
+                               },
+                               {
+                                   "id":  51,
+                                   "height":  1,
+                                   "zoom":  1,
+                                   "seed":  42,
+                                   "hash":  "7DB834F6BCD222E98655CA8A71F1E99A05375A6BBFF004F3A129F1895AA29DCD"
+                               },
+                               {
+                                   "id":  51,
+                                   "height":  1,
+                                   "zoom":  10,
+                                   "seed":  42,
+                                   "hash":  "F4613B0A2DE90E9B6675E945B4E89F46BCF6CD9085F4EFE3856CEFBF4AC6ECCC"
+                               },
+                               {
+                                   "id":  51,
+                                   "height":  1,
+                                   "zoom":  100,
+                                   "seed":  42,
+                                   "hash":  "CEFE60C6F8D9D5FF34291BF84A394F494355EAFAC2A694A7708175C88CAB7F25"
+                               },
+                               {
+                                   "id":  51,
+                                   "height":  10,
+                                   "zoom":  -100,
+                                   "seed":  42,
+                                   "hash":  "5327432DA8CA0D59C2269BDBE5725656A1781D167BB10F264CF457E1EB38A28A"
+                               },
+                               {
+                                   "id":  51,
+                                   "height":  10,
+                                   "zoom":  -1,
+                                   "seed":  42,
+                                   "hash":  "F272213188BE880DF00E5E4A00E179EA5F04015897FBB0A2A0DD69C24E3D20F8"
+                               },
+                               {
+                                   "id":  51,
+                                   "height":  10,
+                                   "zoom":  0,
+                                   "seed":  42,
+                                   "hash":  "F951776EFBF1F4BBF3086D218E3C43C414A29EFDC6F7DE811418A013B03BD65C"
+                               },
+                               {
+                                   "id":  51,
+                                   "height":  10,
+                                   "zoom":  1,
+                                   "seed":  42,
+                                   "hash":  "872D4A9870C4E133F06F96C9D0C7F068D83BD1DE9942ECB97B37C2E6F1F9655F"
+                               },
+                               {
+                                   "id":  51,
+                                   "height":  10,
+                                   "zoom":  10,
+                                   "seed":  42,
+                                   "hash":  "97831D58826EFE056E63912CB1099BAE614359D71EBB77AF6D0D435DE0DFA11F"
+                               },
+                               {
+                                   "id":  51,
+                                   "height":  10,
+                                   "zoom":  100,
+                                   "seed":  42,
+                                   "hash":  "754631DE456CF7CAFCFC7109AE99A1819A6B03982C1D0F7318ECEA03415D4000"
+                               },
+                               {
+                                   "id":  51,
+                                   "height":  100,
+                                   "zoom":  -100,
+                                   "seed":  42,
+                                   "hash":  "CEA712B92CA5E86E67A52E5CFBF0B15E7400D3026D8A2C6353E152399695FFED"
+                               },
+                               {
+                                   "id":  51,
+                                   "height":  100,
+                                   "zoom":  -1,
+                                   "seed":  42,
+                                   "hash":  "5262BB2E97513D260C08610FDF94040872BFB8666C91278D0863D14448E27828"
+                               },
+                               {
+                                   "id":  51,
+                                   "height":  100,
+                                   "zoom":  0,
+                                   "seed":  42,
+                                   "hash":  "3217A10C63A98A313340DFB1E849EA20A8B09D6E102663C842B48302A02F2FA4"
+                               },
+                               {
+                                   "id":  51,
+                                   "height":  100,
+                                   "zoom":  1,
+                                   "seed":  42,
+                                   "hash":  "48BC087759B1520E82BFA5CEEF525119620FF0B0929E899D15A22AEDEB8A5503"
+                               },
+                               {
+                                   "id":  51,
+                                   "height":  100,
+                                   "zoom":  10,
+                                   "seed":  42,
+                                   "hash":  "7559619ED20DA73BDF84E0A8C06098B2F93A0BC31E5FC2F128533FFF0F280588"
+                               },
+                               {
+                                   "id":  51,
+                                   "height":  100,
+                                   "zoom":  100,
+                                   "seed":  42,
+                                   "hash":  "BA95BF8495EB1FA7B4E9A27BDC25DD308D9A0626687E24A313A7ABC64574B55E"
+                               },
+                               {
+                                   "id":  52,
+                                   "height":  -100,
+                                   "zoom":  -100,
+                                   "seed":  42,
+                                   "hash":  "6E5EA7DE7FA1F7292EA04FA45DEB538ED732569CA1D1F274972BBDAE8FDC2020"
+                               },
+                               {
+                                   "id":  52,
+                                   "height":  -100,
+                                   "zoom":  -1,
+                                   "seed":  42,
+                                   "hash":  "5E6598D85948BA9159F23B23FA03A1D0409312EDA20580F36B9EBAC8758573AD"
+                               },
+                               {
+                                   "id":  52,
+                                   "height":  -100,
+                                   "zoom":  0,
+                                   "seed":  42,
+                                   "hash":  "59E354FD5AE82859B803F198F3D8DC1E72D9BF02CB14C5FA178AC12ADAF75777"
+                               },
+                               {
+                                   "id":  52,
+                                   "height":  -100,
+                                   "zoom":  1,
+                                   "seed":  42,
+                                   "hash":  "693FA73AA8874384A5440E5E3BE78F94BF16902AAA25B9C4DBDA265723BF5262"
+                               },
+                               {
+                                   "id":  52,
+                                   "height":  -100,
+                                   "zoom":  10,
+                                   "seed":  42,
+                                   "hash":  "65EB1848F342E9FB85FBE03F9AED3B2E507A999F0DB1D679E2F1F48BF877056C"
+                               },
+                               {
+                                   "id":  52,
+                                   "height":  -100,
+                                   "zoom":  100,
+                                   "seed":  42,
+                                   "hash":  "84C938AA02F07240F3E704FF51D9EC15ABE0DC722FE57E6050AFE1746CA1050D"
+                               },
+                               {
+                                   "id":  52,
+                                   "height":  -1,
+                                   "zoom":  -100,
+                                   "seed":  42,
+                                   "hash":  "26752EC5FA24D9312B2772801355B6A0FFAF4ED77FAA4BD9F7522AD4F1082C4E"
+                               },
+                               {
+                                   "id":  52,
+                                   "height":  -1,
+                                   "zoom":  -1,
+                                   "seed":  42,
+                                   "hash":  "19E56E585D472AEF7BD84E0948FC552C68F3791ABAE6BA1B0F2EA3A95C931664"
+                               },
+                               {
+                                   "id":  52,
+                                   "height":  -1,
+                                   "zoom":  0,
+                                   "seed":  42,
+                                   "hash":  "AC4818963DC1FEF8A5D2B5C579277D2DD2AE0B16E592D979035998F03FD1FB1C"
+                               },
+                               {
+                                   "id":  52,
+                                   "height":  -1,
+                                   "zoom":  1,
+                                   "seed":  42,
+                                   "hash":  "0AE33F3B6DB182DD6D215939461FF5D828894D08694D2D6B57CA9D2B1941B08F"
+                               },
+                               {
+                                   "id":  52,
+                                   "height":  -1,
+                                   "zoom":  10,
+                                   "seed":  42,
+                                   "hash":  "80117339740FAEE58FBB997721AE13D1FE23E5E9033166F3F29E7C5790460F23"
+                               },
+                               {
+                                   "id":  52,
+                                   "height":  -1,
+                                   "zoom":  100,
+                                   "seed":  42,
+                                   "hash":  "ECBAD88F522F99F01D37ABED08BF74516F583BE8500621F98BE1D7BEA52CCC7D"
+                               },
+                               {
+                                   "id":  52,
+                                   "height":  0,
+                                   "zoom":  -100,
+                                   "seed":  42,
+                                   "hash":  "76A32708853B1E8E6E0167AB921839894CDAECF1760E41FFEE5F168CDFA54C04"
+                               },
+                               {
+                                   "id":  52,
+                                   "height":  0,
+                                   "zoom":  -1,
+                                   "seed":  42,
+                                   "hash":  "0947D3D7DF5B5C3BEF321A91A0B3791C9A85B0F0027CD339D0592B54EFB90925"
+                               },
+                               {
+                                   "id":  52,
+                                   "height":  0,
+                                   "zoom":  0,
+                                   "seed":  42,
+                                   "hash":  "33D6ED240A040ACDB619A5AA504DFC5B6DA946184C0B64FE97F9757004A383D6"
+                               },
+                               {
+                                   "id":  52,
+                                   "height":  0,
+                                   "zoom":  1,
+                                   "seed":  42,
+                                   "hash":  "3520916CD15BED9391FD02E0D88EB6FDB8BBA467C92CE70964189435FC2C892B"
+                               },
+                               {
+                                   "id":  52,
+                                   "height":  0,
+                                   "zoom":  10,
+                                   "seed":  42,
+                                   "hash":  "1B8E30A3540024579D87A872B331A90090AF96B36405265B71C5570704B639DD"
+                               },
+                               {
+                                   "id":  52,
+                                   "height":  0,
+                                   "zoom":  100,
+                                   "seed":  42,
+                                   "hash":  "A24342FF5E02F1F302D563E2BA09B8199723A3D32371C9EAF70AD541A9C98CD0"
+                               },
+                               {
+                                   "id":  52,
+                                   "height":  1,
+                                   "zoom":  -100,
+                                   "seed":  42,
+                                   "hash":  "A74F3D7F9D8D3B68112D85DC8C8390C735D78432C8AA725BA5D85E3A85B60A56"
+                               },
+                               {
+                                   "id":  52,
+                                   "height":  1,
+                                   "zoom":  -1,
+                                   "seed":  42,
+                                   "hash":  "77FC3F67C9A36E5A78F10014981AD88E975F841832C40491A3192AC9C148AAD3"
+                               },
+                               {
+                                   "id":  52,
+                                   "height":  1,
+                                   "zoom":  0,
+                                   "seed":  42,
+                                   "hash":  "F7D7E1D79C849431FAA0FA0161147D217537E4753CB411E6F5CB10AF13883A5F"
+                               },
+                               {
+                                   "id":  52,
+                                   "height":  1,
+                                   "zoom":  1,
+                                   "seed":  42,
+                                   "hash":  "BA1F5FC258907C9D711406F4EE7D429AA814C580893E42E466E369724838B26D"
+                               },
+                               {
+                                   "id":  52,
+                                   "height":  1,
+                                   "zoom":  10,
+                                   "seed":  42,
+                                   "hash":  "FEC1B71C828FA05B76D7459B194A01746D3C7E7633A6F1753C55C2B248899A59"
+                               },
+                               {
+                                   "id":  52,
+                                   "height":  1,
+                                   "zoom":  100,
+                                   "seed":  42,
+                                   "hash":  "AE19C500E5FB0A8F3EF016C3D46BD04DABB8A45243C1A38ABA20FB5B6F11DF88"
+                               },
+                               {
+                                   "id":  52,
+                                   "height":  10,
+                                   "zoom":  -100,
+                                   "seed":  42,
+                                   "hash":  "7049860EC5AA4A67CF56700BE5BF53C613ED38F2D5436E18A56ABF0B878306F7"
+                               },
+                               {
+                                   "id":  52,
+                                   "height":  10,
+                                   "zoom":  -1,
+                                   "seed":  42,
+                                   "hash":  "C9143760A888B40E1B699FA5196DA72835A5621EE51D9A638328B9D1C9B57B5D"
+                               },
+                               {
+                                   "id":  52,
+                                   "height":  10,
+                                   "zoom":  0,
+                                   "seed":  42,
+                                   "hash":  "92DFCBAED413AE85062888899D40306893C3C846EBEA5E1A4FA1B9281383CDAA"
+                               },
+                               {
+                                   "id":  52,
+                                   "height":  10,
+                                   "zoom":  1,
+                                   "seed":  42,
+                                   "hash":  "DA4F196BCD88D63E7841CA7A01D8956EED9445CDE21CF358932168DB4739956D"
+                               },
+                               {
+                                   "id":  52,
+                                   "height":  10,
+                                   "zoom":  10,
+                                   "seed":  42,
+                                   "hash":  "947E1C2E6EBEF784E578CA7496DC9E60663393BBDF57BDAB0EB5E640293DD9F1"
+                               },
+                               {
+                                   "id":  52,
+                                   "height":  10,
+                                   "zoom":  100,
+                                   "seed":  42,
+                                   "hash":  "73AD2C353F716DEC8702B41A5B5266F8344B46E9C25E441187A20E5C858F69E1"
+                               },
+                               {
+                                   "id":  52,
+                                   "height":  100,
+                                   "zoom":  -100,
+                                   "seed":  42,
+                                   "hash":  "487C2F59BE1CD35C9FA20AF1357CCA911B1779FCE004ECC64383A19253C62375"
+                               },
+                               {
+                                   "id":  52,
+                                   "height":  100,
+                                   "zoom":  -1,
+                                   "seed":  42,
+                                   "hash":  "10319F2E55AF488F51A03A7975597C2EB2F7D463DEDDF406E3DF5F81E13235A0"
+                               },
+                               {
+                                   "id":  52,
+                                   "height":  100,
+                                   "zoom":  0,
+                                   "seed":  42,
+                                   "hash":  "755FAB85A0D3A32F2FCD4FA473AAAAA8F156B632E38EE00DDEBFFDA692486CB6"
+                               },
+                               {
+                                   "id":  52,
+                                   "height":  100,
+                                   "zoom":  1,
+                                   "seed":  42,
+                                   "hash":  "18B9B27A23D80F12F2FB14FEEB250E61FDAF6D2CA2028F0C5192D4F0E88271B7"
+                               },
+                               {
+                                   "id":  52,
+                                   "height":  100,
+                                   "zoom":  10,
+                                   "seed":  42,
+                                   "hash":  "692150199F12964799E84DA9A6E11B23CA54B140A6598A10402E04515CCD9815"
+                               },
+                               {
+                                   "id":  52,
+                                   "height":  100,
+                                   "zoom":  100,
+                                   "seed":  42,
+                                   "hash":  "F51FB9F00D884D4839F98EC5A06D4EF5FE7B6734ABC98657750DBDEC98ACF1D0"
+                               }
+                           ]
+              },
+    "sourceSha256":  "93AE437FEFABA6D1E68A67A1A1507F0292DFFCBF408D1DED638CB75AC8D8180E"
+}

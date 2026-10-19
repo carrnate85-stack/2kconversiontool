@@ -1,0 +1,816 @@
+{
+  "source": "Original WPF browser renderer with project-local editor parity overrides; WPF source files unmodified",
+  "files": [
+    {
+      "path": "/renderer/accessory-controls.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "08b05dc374d8bb04a34196b9645683bdce346a1d3f199393210f3a0a39931081",
+      "bytes": 8766
+    },
+    {
+      "path": "/renderer/accessory-preview-catalog.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "31a817d5f8c9285a6090b1a8e7086bae2b1a73430e59f00ec16cf2f21deb732a",
+      "bytes": 968813
+    },
+    {
+      "path": "/renderer/animation-preview-fields.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "11b6261a3fb4608d65c31e29ff61d639beb9b08a649e0aea73356947a72d242e",
+      "bytes": 1015
+    },
+    {
+      "path": "/renderer/app.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "2aa034ba41d0beba8665309af80ccd05defbfb92f4c31cb5dbe855733bf6be0f",
+      "bytes": 175436
+    },
+    {
+      "path": "/renderer/approved-polish.css",
+      "mime": "text/css; charset=utf-8",
+      "sha256": "5dd6769d065b73b46cb6d263067175e217d99b4681524d85a9372020067d7689",
+      "bytes": 13240
+    },
+    {
+      "path": "/renderer/arena-launcher-picker.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "783362ded63ccfdfe2bcd3e24681542580878818a490977e84a7b5201839b20e",
+      "bytes": 3078
+    },
+    {
+      "path": "/renderer/arena-picker.css",
+      "mime": "text/css; charset=utf-8",
+      "sha256": "3ac0a58f45534fc59d3ccf3cb784789e76e513f5eeee7b4e25203b84502569ac",
+      "bytes": 2529
+    },
+    {
+      "path": "/renderer/arena-picker.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "c937c40ff53ec5e237c09f80f716a9bd22ed75c72a6c09615e76b7bd1153b272",
+      "bytes": 5276
+    },
+    {
+      "path": "/renderer/artwork-batch.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "3bf3253ff358157ae05a631c31fa88a68169cefc81e9517eb6e68622f128b056",
+      "bytes": 1764
+    },
+    {
+      "path": "/renderer/ball-picker.css",
+      "mime": "text/css; charset=utf-8",
+      "sha256": "4cc2b237c38ab748258155e96e067b484b84c93db58c9f9c33eaf196900a70a8",
+      "bytes": 5114
+    },
+    {
+      "path": "/renderer/ball-picker.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "9c57ea450431b3b1e7d76485b91f13aab3d9c2ee0b9169ad51ec117331741277",
+      "bytes": 8826
+    },
+    {
+      "path": "/renderer/blacktop-batch.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "41c8e612b08a6422a3a716b9a1e17c54c5bea01648ac3f3c571667c0dee8bb68",
+      "bytes": 1224
+    },
+    {
+      "path": "/renderer/blacktop-crowd.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "08f4f6cb8584a390a9feea954d250ec22d38ab4f5a9a1a1ec7bcc5370b224a2e",
+      "bytes": 1406
+    },
+    {
+      "path": "/renderer/blacktop-live-bar.css",
+      "mime": "text/css; charset=utf-8",
+      "sha256": "ca60b24b00450bffabe6245f6cfe95ab611f43bf45065c3c76b91648facb2edf",
+      "bytes": 8652
+    },
+    {
+      "path": "/renderer/blacktop-live-bar.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "0d8d84e507a4f157a447c0d9be287f7086454afba85087c8d6404949c3b86f6d",
+      "bytes": 684
+    },
+    {
+      "path": "/renderer/blacktop-overlay-preview-frame.css",
+      "mime": "text/css; charset=utf-8",
+      "sha256": "6f94790758518eab7f954ed37f3759d6088d048101f1a203b63ad4893111bb17",
+      "bytes": 657
+    },
+    {
+      "path": "/renderer/blacktop-overlay-preview-frame.html",
+      "mime": "text/html; charset=utf-8",
+      "sha256": "18b67c5fb76727a5bfc581352e024a025024c2cf4c1e8a4a8e1ce692b87276e0",
+      "bytes": 517
+    },
+    {
+      "path": "/renderer/blacktop-overlay-preview-frame.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "d4e794c5bea400f3d4dae49522098c947d0dafe8ab14b313ebb6d5d58be46613",
+      "bytes": 11354
+    },
+    {
+      "path": "/renderer/blacktop-overlay-preview.css",
+      "mime": "text/css; charset=utf-8",
+      "sha256": "ebe10de164a9da0ec53cb2485dfbee4e2a9cc8c9bba9bff03faa116f5171e65b",
+      "bytes": 1402
+    },
+    {
+      "path": "/renderer/blacktop-overlay-preview.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "4f52943267d31d28e217b383e6773daee35adda5db835dded739f7347b71bd04",
+      "bytes": 3143
+    },
+    {
+      "path": "/renderer/blacktop-page-polish.css",
+      "mime": "text/css; charset=utf-8",
+      "sha256": "c3964de298ecbfa6ef90178fa98ba90b3e0958bb058a0e883d0c10051d6c1353",
+      "bytes": 6770
+    },
+    {
+      "path": "/renderer/blacktop-panel.css",
+      "mime": "text/css; charset=utf-8",
+      "sha256": "c3b7182862f4126505afdc46de4464d717eb0b9e383276d1bcfc7b31528fcce7",
+      "bytes": 4337
+    },
+    {
+      "path": "/renderer/blacktop-panel.html",
+      "mime": "text/html; charset=utf-8",
+      "sha256": "d2afd9a4962863d109b7a05aa2984d62f8f07d7e19c6c7e0b2967bbce45f7c0b",
+      "bytes": 5666
+    },
+    {
+      "path": "/renderer/blacktop-player-menu.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "a55cbe442918268ce85aa6968a1c422d195da1b166fe26edb1b483b61cef1d40",
+      "bytes": 2725
+    },
+    {
+      "path": "/renderer/blacktop-presentation.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "912f09441d9ecd730800755f7383ee3801a260ab8de502a7ea0359b53a79fa51",
+      "bytes": 1479
+    },
+    {
+      "path": "/renderer/blacktop-setup-picker.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "60b795beba8d4d01dd8fd0a506edfedf57e629804fb61e068dc76a2d52317f43",
+      "bytes": 11530
+    },
+    {
+      "path": "/renderer/blacktop-topbar.css",
+      "mime": "text/css; charset=utf-8",
+      "sha256": "551814214f543dfbe5f38c4f8133f13ed92dd7733244863a23ab2fbe417681de",
+      "bytes": 14631
+    },
+    {
+      "path": "/renderer/blacktop.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "8ea81ea6f706d043f392c0ca37798f20c2d8c9851e73318644e6be05168abf59",
+      "bytes": 33185
+    },
+    {
+      "path": "/renderer/bottom-preview-catalog.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "01fc701b50d4016f450ad00497d4bd4935ce44b672794771cd1645cbe653ce9b",
+      "bytes": 187722
+    },
+    {
+      "path": "/renderer/cameras-polish.css",
+      "mime": "text/css; charset=utf-8",
+      "sha256": "a47629414a5e2cb8bd8b63121f305d97629a9f76ddb8d1cc4670237d39232f59",
+      "bytes": 4815
+    },
+    {
+      "path": "/renderer/catalog-performance.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "9927eb04657e13f80521b59d1fe97824fc4dd111bd6add823cd40a195900e68e",
+      "bytes": 1340
+    },
+    {
+      "path": "/renderer/clothing-cache.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "a221797fb9a9bc116138982bb5395f6e2227a2ed2a45eb0decc01e4cf1f67785",
+      "bytes": 3070
+    },
+    {
+      "path": "/renderer/clothing-catalog-ui.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "a76553adacab59c1855c8f7407ac9a7cb77415eb0f44271483435d30123a1f3b",
+      "bytes": 4070
+    },
+    {
+      "path": "/renderer/clothing-picker.css",
+      "mime": "text/css; charset=utf-8",
+      "sha256": "410648ad89bea4c4ea035a5c74e42327ad553bc74d91a450fa2aaea628a121a5",
+      "bytes": 13762
+    },
+    {
+      "path": "/renderer/clothing-picker.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "55211f879eaf2287eee3a2427813c22f44c9b7810ccffadfa4088eee961269f1",
+      "bytes": 11885
+    },
+    {
+      "path": "/renderer/debug-menus.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "4e7b7db8f7a2910bc3001cf4e4a4ee72006d2c795485fa1fcce55836e72a26e1",
+      "bytes": 839
+    },
+    {
+      "path": "/renderer/direct-game-rules.css",
+      "mime": "text/css; charset=utf-8",
+      "sha256": "54c1605b78d2ac97ccad17dc6526f380b037875da8e3626079214787e90092fe",
+      "bytes": 2000
+    },
+    {
+      "path": "/renderer/direct-game-rules.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "08e1b48799d1c978755b691c6879d44f9a3a0dd3f0ade86ccaba578240cbef0a",
+      "bytes": 3123
+    },
+    {
+      "path": "/renderer/editor-expansion.css",
+      "mime": "text/css; charset=utf-8",
+      "sha256": "71555d50977f4916fff5889b51480d7257887e1e258ee5e4586b905313a6d9c3",
+      "bytes": 1054
+    },
+    {
+      "path": "/renderer/editor-presets.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "a52e438838cb881c487744a3d1e9a80a036f0345c618ebf812a4fa2eadab9e3f",
+      "bytes": 2795
+    },
+    {
+      "path": "/renderer/editor-review.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "58b9ba85d931ada869c47420d4de826542535ff278c778544cd76b06c3f44f7e",
+      "bytes": 1643
+    },
+    {
+      "path": "/renderer/fit-preview-ui.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "87e6520c0864de995df799d327f6180f574c5ca4cf6e6b963a014c18c453324a",
+      "bytes": 16559
+    },
+    {
+      "path": "/renderer/fit-preview.css",
+      "mime": "text/css; charset=utf-8",
+      "sha256": "42e60be56c52f9890eb45671253ab1d6b8adf9257be2961df0c3b2455b0d76de",
+      "bytes": 2780
+    },
+    {
+      "path": "/renderer/game-rules.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "22fa36b3dcecb618a205060d131eb4b89f0c3a1f63c4c9b62c17b8547060abc3",
+      "bytes": 705
+    },
+    {
+      "path": "/renderer/import-review.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "a6e1aba7ec09e8124301a7591e5fcb9f5ae7deb1f7e44f1c42f6a516b22ef86b",
+      "bytes": 3829
+    },
+    {
+      "path": "/renderer/index.html",
+      "mime": "text/html; charset=utf-8",
+      "sha256": "e4398cf313d08fd33276ea4bb8d57ce628d56a90a42178355fb2476323203951",
+      "bytes": 80487
+    },
+    {
+      "path": "/renderer/jukebox-polish.css",
+      "mime": "text/css; charset=utf-8",
+      "sha256": "32f9ae99eadc7f259e5b8716b8d245e27c0194c5a16dcfafec8de6088e1dac1f",
+      "bytes": 7489
+    },
+    {
+      "path": "/renderer/launcher-closing.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "b0670fdcb03d835086d355f733b314a063c6e9f82d3eb6845d28c22a250e6b2a",
+      "bytes": 876
+    },
+    {
+      "path": "/renderer/launcher-polish.css",
+      "mime": "text/css; charset=utf-8",
+      "sha256": "24db6fb258d25f2a9fff793db3cc9a2ec4523ee8a3a53acacf93e95e564d8298",
+      "bytes": 18435
+    },
+    {
+      "path": "/renderer/launcher-quality.css",
+      "mime": "text/css; charset=utf-8",
+      "sha256": "6664b3e73222f712f0d90285c23bd59e755d2e55852ba48edb988640b993e697",
+      "bytes": 1096
+    },
+    {
+      "path": "/renderer/launcher-quality.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "f705f4f3fb3399aa3f519fc2b24f0cb22e9a4a0deb95c974f088579662d3c446",
+      "bytes": 5009
+    },
+    {
+      "path": "/renderer/launcher-updates.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "abea2c96689e0299708ebd2d602461e1463425ccda92913ea35813831ccdfbc1",
+      "bytes": 3081
+    },
+    {
+      "path": "/renderer/layer-controls.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "cfd908920436164df0ec671ce74f6530a6d217e8cabe6d459f60548fec2b4a5c",
+      "bytes": 1334
+    },
+    {
+      "path": "/renderer/list-view-state.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "71349ad0b4adbe1f11bba51323618c290da918a935edf33d18573afe202cd213",
+      "bytes": 1489
+    },
+    {
+      "path": "/renderer/mod-library-polish.css",
+      "mime": "text/css; charset=utf-8",
+      "sha256": "aaa93eede2f7414cce63c01f912c51b928eb1b713bbcf4bca0ae2305bb5eb1f9",
+      "bytes": 7571
+    },
+    {
+      "path": "/renderer/native-roster-export.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "3bcb9357e050125006bf68fd4eb05a22a4e88a8000b373936d2362832b3b94d7",
+      "bytes": 1752
+    },
+    {
+      "path": "/renderer/outfit-creator.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "9c2e19e5bf429aa0cb054d6c3c7467f1e6fb5200fe163b73525f58dbb9bdd4fc",
+      "bytes": 14578
+    },
+    {
+      "path": "/renderer/player-animation-preview.css",
+      "mime": "text/css; charset=utf-8",
+      "sha256": "956f318be9e1ed37b45080b7d34ec65a768b8a9c12647c39baf8e270319e4a50",
+      "bytes": 1856
+    },
+    {
+      "path": "/renderer/player-animation-preview.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "039d792777accf1d69015c8b1a919838fed914bca553a2825f59496258fcb25f",
+      "bytes": 7040
+    },
+    {
+      "path": "/renderer/player-audio-preview.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "9e9e5628e0d8c133cef808565dfa257712612a51d4cf8e06b88768684dec1b8a",
+      "bytes": 2892
+    },
+    {
+      "path": "/renderer/player-bio.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "b3aa1a62ab496156871f0e8bee9fbe6c50af9eb64afa8d5d054c56ab4e270a8c",
+      "bytes": 2555
+    },
+    {
+      "path": "/renderer/player-dna.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "cfa21e52026e9b1d9e86de2299b2599b37c9fa6311bdf749527a274f7f0ffe41",
+      "bytes": 18254
+    },
+    {
+      "path": "/renderer/player-edit-session.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "99ad45599220d48c88ce8b501b1b693c4fab6777b6bc7ea933e00ea46a31eb7f",
+      "bytes": 8878
+    },
+    {
+      "path": "/renderer/player-editor-layout.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "986bc5b3ab4155e27d8ba3396a98a394639e53ef59d9e6e78e6ed18600c57b7a",
+      "bytes": 5242
+    },
+    {
+      "path": "/renderer/player-measurements.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "ffe2e59d6d0a2f1c11e0e86b1ea2c66ef1a7f7c920a9acfd43c42820d24999e1",
+      "bytes": 2170
+    },
+    {
+      "path": "/renderer/player-rating-schema.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "f8bd7d7b46610c15a552455e6c03532f72d8f532970db75ece6cc0874677887e",
+      "bytes": 293188
+    },
+    {
+      "path": "/renderer/player-ratings.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "a7d8ff1176f65ae6d575f7bb3efbe07871f1e22c21595c6d2a5a1553dd9f09e7",
+      "bytes": 22383
+    },
+    {
+      "path": "/renderer/player-season-awards.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "94676a7f2685ed049dfa5b8c6d6c9a0b7ef2ca01475f2965559d85d4d2c8614c",
+      "bytes": 1821
+    },
+    {
+      "path": "/renderer/player-season-import-ui.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "3c20ffac3313c9a55e009e6ca5a07f42f11a17fbf40ac334ed4720bbb5a3c1e4",
+      "bytes": 11101
+    },
+    {
+      "path": "/renderer/player-season-math.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "ff7fb1fc63fec39307d1e0b14135558b56e4c7ce0a6c7d91be24193fb507337c",
+      "bytes": 5356
+    },
+    {
+      "path": "/renderer/player-season-transfer.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "24b74fa8f5b7bde2f736adb093dd59dc5f148cbe55c92cb99a48ddc0f5244543",
+      "bytes": 3923
+    },
+    {
+      "path": "/renderer/player-seasons.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "e95c4cfae3eee288d787a4fc0f4c8db153b2749e059207f8d34e86b491cde323",
+      "bytes": 19212
+    },
+    {
+      "path": "/renderer/player-stats-import-ui.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "fcfeeaa60d03752f0ba2aac863980e7873f14e736540c30c501bbdbf3315ab75",
+      "bytes": 11262
+    },
+    {
+      "path": "/renderer/player-studio.css",
+      "mime": "text/css; charset=utf-8",
+      "sha256": "9b58f3f5b154a58e064e2560da40ca8807378f9003a308ae1d1cf9e2f7bbae34",
+      "bytes": 44548
+    },
+    {
+      "path": "/renderer/player-studio.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "91371abf62ddcfd5a506cf3dd056d4f400a259c56ce4af6cc2473ee6d824fab3",
+      "bytes": 9784
+    },
+    {
+      "path": "/renderer/player23-catalog-ui.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "998335cbec355c28e1cf233d7a05f7fd471a1dc7ee5bf4064ff157ef37760b94",
+      "bytes": 26957
+    },
+    {
+      "path": "/renderer/playlist-order.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "fda673878bc90ae9a736324038d65340bd204746ddbab2ef0e41664c232f5544",
+      "bytes": 3725
+    },
+    {
+      "path": "/renderer/presentation-combined.css",
+      "mime": "text/css; charset=utf-8",
+      "sha256": "28e689c74ba626c14bda91d276a1df00e4aa255f6e2522f69d56e7d508fef747",
+      "bytes": 6149
+    },
+    {
+      "path": "/renderer/presentation-polish.css",
+      "mime": "text/css; charset=utf-8",
+      "sha256": "d888fc20a72c93a05dea5a16ff5210e84ec2961a89f186e4c80128ffce8b40ff",
+      "bytes": 6557
+    },
+    {
+      "path": "/renderer/preview-image-url.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "93548ccf89db4488e43f92c79e9cd77a1d24d6c5b8efba59907411a9a33219fa",
+      "bytes": 672
+    },
+    {
+      "path": "/renderer/profiles-polish.css",
+      "mime": "text/css; charset=utf-8",
+      "sha256": "c0c7029ee4a3d2bd1b1da15f61a5dd6328f692b266289b34f109a199e9039566",
+      "bytes": 9159
+    },
+    {
+      "path": "/renderer/release-theme.css",
+      "mime": "text/css; charset=utf-8",
+      "sha256": "45452ab73630ea706c87886d7364b2b582eed9e97e0665d2976cd3547cf6a9c7",
+      "bytes": 19604
+    },
+    {
+      "path": "/renderer/roster-browser-bridge.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "94e4c8b71dc9799d5792df0489d8864794cf68afada610ce5d142da1112b2a36",
+      "bytes": 3363
+    },
+    {
+      "path": "/renderer/roster-workspace.css",
+      "mime": "text/css; charset=utf-8",
+      "sha256": "737346384ccbf59a5194aba843688784c1f284717b21895daa74ba7b4aa3604c",
+      "bytes": 8625
+    },
+    {
+      "path": "/renderer/roster-workspace.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "73f21196e6b9b9df12c1eb48185550e07e90b7e4d2a69120958bd497a26c4b1a",
+      "bytes": 3240
+    },
+    {
+      "path": "/renderer/scaler.css",
+      "mime": "text/css; charset=utf-8",
+      "sha256": "d9f1a7590111223edb3bbdfae5bbcb40b262341c6ee45a16a5cec7d43b7db05f",
+      "bytes": 3391
+    },
+    {
+      "path": "/renderer/scaler.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "350b6bad0a615a1a9096e0dd788564f6b2ab7d8c5b0c596d1e5129eca70abc68",
+      "bytes": 2105
+    },
+    {
+      "path": "/renderer/scoreboard-picker.css",
+      "mime": "text/css; charset=utf-8",
+      "sha256": "5e31214cb0923f6c72dfe7a0584866f15d6c023ce1cd388ca607d1840b783c64",
+      "bytes": 3081
+    },
+    {
+      "path": "/renderer/scoreboard-picker.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "2f1afa31201ba69846b5f4582024ebac81dfd5c9692e00788e844512f141fb67",
+      "bytes": 8146
+    },
+    {
+      "path": "/renderer/scoreboard-preview-catalog.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "7680a7c6d79ca9b6403fe324fcad1d698a0274c9b7765443d982190105efd460",
+      "bytes": 2438
+    },
+    {
+      "path": "/renderer/session-panels.css",
+      "mime": "text/css; charset=utf-8",
+      "sha256": "ccdeee139e8942fd1faa47ba724fbec95eb4e389003f5c462fb839870ad18f81",
+      "bytes": 25328
+    },
+    {
+      "path": "/renderer/shoe-preview-catalog.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "0bb8caf33baad036a919e6e832872aec762946365568a33ee192473e6a6de8c8",
+      "bytes": 11886
+    },
+    {
+      "path": "/renderer/sidebar-icons.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "17a4e576bf6658c472c8d5df7016475ce237a1c3c1ad952bbc7ea4d63735c636",
+      "bytes": 3438
+    },
+    {
+      "path": "/renderer/sock-preview-catalog.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "270dec037ccf66130568b3068923be04d52eca82e5a9be47c8ac114dee4d2d53",
+      "bytes": 4548
+    },
+    {
+      "path": "/renderer/startup-splash.css",
+      "mime": "text/css; charset=utf-8",
+      "sha256": "04eebc70cfeb80ce2c8739a55f8dd5de6f6fdfe3883ce57c3b3ca13a6ca5728e",
+      "bytes": 757
+    },
+    {
+      "path": "/renderer/startup-splash.html",
+      "mime": "text/html; charset=utf-8",
+      "sha256": "16e4f05bb09c8a0285984b9800c335049179d2496b400dbf13d6f3a5eeac9ebc",
+      "bytes": 668
+    },
+    {
+      "path": "/renderer/styles.css",
+      "mime": "text/css; charset=utf-8",
+      "sha256": "b1f08303d72c5bb9dc85cb8caa680ebb41abbdd23855a0c7da6d3b50311e2552",
+      "bytes": 36393
+    },
+    {
+      "path": "/renderer/team-editor.css",
+      "mime": "text/css; charset=utf-8",
+      "sha256": "efb885da94afde8d99c64cd37b52324ae8ae79107e9501247e9621866bc47675",
+      "bytes": 9270
+    },
+    {
+      "path": "/renderer/team-rotations.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "4fe77d671ddef1aed3f2f8dda0258868841723cfcaec7f728ab320fe08805c89",
+      "bytes": 8993
+    },
+    {
+      "path": "/renderer/team-staff.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "18e3a53cc2f936a0bd355d83690152e4356efd92a4e4709441eb921207aec09b",
+      "bytes": 10078
+    },
+    {
+      "path": "/renderer/team-uniform-transfer.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "d4f7d889c295322990907e6ca50df59f3e8d95eb9288ff260fe081465b2bdc67",
+      "bytes": 1474
+    },
+    {
+      "path": "/renderer/team-uniforms.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "7ed31626743578be6df6af81d33d299e589a6dee6afa99aee69bf9ee22fb8faa",
+      "bytes": 30121
+    },
+    {
+      "path": "/renderer/theme.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "e7ebda1c176372cd2a45adb022ca14c4113e3992142c0308db4b9069b5556576",
+      "bytes": 1782
+    },
+    {
+      "path": "/renderer/top-preview-catalog.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "1ba2b93161f54e8956c1faf3bfbc25815e7453d69eacd8171d9ca14dbe35be08",
+      "bytes": 497207
+    },
+    {
+      "path": "/renderer/twokdb-apply.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "42dd444647eb6f5db65c681c3f94623849053fa5d0376dd13169b345923b58e9",
+      "bytes": 3827
+    },
+    {
+      "path": "/renderer/typography-balance.css",
+      "mime": "text/css; charset=utf-8",
+      "sha256": "6a5d04834e625af14e371d524768bd781bbf5d872a0b935be86175c04eb736b0",
+      "bytes": 5948
+    },
+    {
+      "path": "/renderer/unlocks-polish.css",
+      "mime": "text/css; charset=utf-8",
+      "sha256": "d3ea2c06395ceefd2a847c66b469ce6d0909dfc98f75d6a6bb2b6a6fd734d79f",
+      "bytes": 5898
+    },
+    {
+      "path": "/shared/accessory-preview-support.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "f0ff2e40407e9bd36413a42c70b1f77b69da5819832434c79328329a1b5822ff",
+      "bytes": 16599
+    },
+    {
+      "path": "/shared/accessory-slots.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "fc867246b444a837271b886fb50518b09691af731360f1b3543cadd627221313",
+      "bytes": 3542
+    },
+    {
+      "path": "/shared/arena-browser.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "708a100a02571439e1165f5442073e4e1d202f8a4af58fcd6c0d31da50d55e9f",
+      "bytes": 1447
+    },
+    {
+      "path": "/shared/game-rule-values.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "6442dd8bee8d0d345a45483714435926eaf61311f14a98f64db5d0da1860c8e2",
+      "bytes": 1122
+    },
+    {
+      "path": "/shared/mannequin-random.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "705c1eb8fce5b0cf5d02cc43ce1cfa7fcafb62143dccb6c6ab2eaca43bbab936",
+      "bytes": 3108
+    },
+    {
+      "path": "/renderer/animation-preview/animation_popup.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "aae720425d5fcfd849daf2e2c8b194522746245a6d6e3da017cd406ac03876c2",
+      "bytes": 13299
+    },
+    {
+      "path": "/renderer/animation-preview/ball_release.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "87234fb74ea10d85776d1464ec8968e539ed6b65bdba73bacd1f562b38b31fdf",
+      "bytes": 4919
+    },
+    {
+      "path": "/renderer/animation-preview/free_throw_sequence.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "42180526cceed542b56fd6cf5c37742b9ad70d41407fdb1bb904d9f85022b0c4",
+      "bytes": 2985
+    },
+    {
+      "path": "/renderer/animation-preview/jumpshot_blend.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "eb846047d750fd973b7072021063a022a9a3a781462b8a830a923cd824037cf0",
+      "bytes": 4424
+    },
+    {
+      "path": "/renderer/animation-preview/jumpshot_loader.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "2b0834ed66b42e3fbfeab8360f875bb546d37792d168486778ff30317a3a5348",
+      "bytes": 1594
+    },
+    {
+      "path": "/renderer/animation-preview/jumpshot_timing.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "46dbc8d12234eda3ef9c268f0ae6b6271fa409dde18505ee97fc8350fb8a75ff",
+      "bytes": 825
+    },
+    {
+      "path": "/renderer/animation-preview/motion.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "370b1de721b6b36ec2f7c5b64c046f3e7bf6fa0b3b1a16b34232649b6ff3cec6",
+      "bytes": 8371
+    },
+    {
+      "path": "/renderer/animation-preview/renderer.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "dc21d2ffe2f5d8616446c961b224a33b98d47aafb5e81d07a9df291d0ebd8b2a",
+      "bytes": 17537
+    },
+    {
+      "path": "/renderer/animation-preview/vendor/three.core.min.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "05b2609338c76cd65daf74f3ac515bc9a5045e1b3b33edc07d8c9bd55250fa90",
+      "bytes": 385386
+    },
+    {
+      "path": "/renderer/animation-preview/vendor/three.module.min.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "86bcee248b64f44bcfc23c331ae74619061957d59cab040171dcb6fb5900beb6",
+      "bytes": 365552
+    },
+    {
+      "path": "/renderer/season-import-staging.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "a6a0e496a99a8389343dc2200dc8dc73abd8e69bc4e375f123a8291fe584efc2",
+      "bytes": 3517
+    },
+    {
+      "path": "/renderer/season-import-adapter.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "17461c8bdb1a262f5c3d885ea1aa23953ce035875fb835df7c675dc07fdab84e",
+      "bytes": 1777
+    },
+    {
+      "path": "/renderer/editor-destination-capabilities.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "af7363f786b2cb05c893d974a091668ac15124364b5755572237ac23d8b705a7",
+      "bytes": 1016
+    },
+    {
+      "path": "/renderer/team-dna-v2.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "56f13dd8d74eec39cb6d6879338b5d3a2fdd73931bd55669893023a92f184e6b",
+      "bytes": 10185
+    },
+    {
+      "path": "/renderer/dna-season-selection.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "4fc3653b157ee9f2a1af5a4c265e5b6cfd98b032868c1a521d338617f5673075",
+      "bytes": 2821
+    },
+    {
+      "path": "/renderer/remote-ratings-v2.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "1f199e89b369e09b0f4e89537c24e41d936bb77bffd52f2f61f88f90cd89ea3e",
+      "bytes": 12693
+    },
+    {
+      "path": "/renderer/saved-ratings-ui.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "eb9b86df2349091d1aa6c38121fdc5572d910867cca87f97fbb441c1dd58f698",
+      "bytes": 2520
+    },
+    {
+      "path": "/renderer/team-metadata-v2.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "2edc7ac21d7a56555ddc9490e91420eb267f4c4cd5959d81170610856aa8fb0f",
+      "bytes": 6074
+    },
+    {
+      "path": "/renderer/player-origin-v2.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "7a3051054d1cbd76d92ff4f056a38917cc34183c3918cc1ae24afe7db46046c2",
+      "bytes": 2850
+    },
+    {
+      "path": "/renderer/live-ratings-ui.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "e550e65818b879e18d2dbbfd68540183d8154f0885a385dc3bfac0400158bc8e",
+      "bytes": 5344
+    },
+    {
+      "path": "/renderer/manual-artwork-v2.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "6925e5ddaf4d915954b368056fa24353466797053650acbea203c23eafafc633",
+      "bytes": 2623
+    },
+    {
+      "path": "/renderer/custom-arena-v2.js",
+      "mime": "text/javascript; charset=utf-8",
+      "sha256": "0f21065ad1900b59d1c0fd8b6c7e717daf0c16b3ab7b54f2738ecbeb8e12d276",
+      "bytes": 8393
+    },
+    {
+      "path": "/assets/app-icon.png",
+      "mime": "image/png",
+      "sha256": "5d0737c2221bb3ec53084d200376ebeac5ff32b8132867802e4303250963fef3",
+      "bytes": 6005
+    }
+  ],
+  "bytes": 1052531
+}

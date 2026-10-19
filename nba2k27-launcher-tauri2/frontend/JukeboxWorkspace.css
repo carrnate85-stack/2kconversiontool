@@ -1,0 +1,166 @@
+
+.juke-actions {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex-wrap: wrap;
+}
+.juke-remove {
+  color: #ed8992;
+  border-color: color-mix(in srgb, #c55a62 42%, var(--line));
+}
+.juke-workspace .import-progress {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+.juke-workspace .import-progress > div {
+  flex: 1;
+}
+.juke-workspace progress {
+  width: 100%;
+}
+.juke-batch {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+  font-size: 11px;
+}
+.juke-batch details {
+  width: 100%;
+}
+.juke-backdrop {
+  z-index: 60;
+}
+.modal.juke-modal {
+  width: min(610px, 94vw);
+}
+.juke-modal > header {
+  padding: 15px 18px;
+}
+.juke-modal h2 {
+  margin: 0;
+  font-size: 17px;
+}
+.juke-modal .modal-body {
+  padding: 18px;
+}
+.juke-song-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.juke-song-form label,
+.juke-field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  font-size: 12px;
+}
+.juke-song-form input,
+.juke-field input {
+  width: 100%;
+}
+.juke-art-editor {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  padding: 14px 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.juke-art-editor > div:last-child {
+  flex: 1;
+  min-width: 0;
+}
+.juke-art-editor p {
+  font-size: 11px;
+  line-height: 1.5;
+}
+.juke-art-editor small {
+  display: block;
+  margin-top: 8px;
+  line-height: 1.5;
+}
+.juke-art-large {
+  display: grid;
+  place-items: center;
+  width: 120px;
+  height: 120px;
+  flex: 0 0 120px;
+  border-radius: 7px;
+  overflow: hidden;
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 36px;
+}
+.juke-art-large img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.juke-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 18px;
+}
+.juke-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 15px;
+  font-size: 12px;
+}
+.juke-check input {
+  width: 14px;
+  height: 14px;
+  min-height: 0;
+  margin: 0;
+}
+.juke-reorder > div {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--line);
+}
+.juke-reorder strong {
+  flex: 1;
+}
+.juke-library-search {
+  width: 100%;
+  margin-bottom: 12px;
+}
+.juke-library-list {
+  max-height: 50vh;
+  overflow: auto;
+}
+.juke-library-list > div {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--line);
+}
+.juke-library-list > div > div:nth-child(2) {
+  flex: 1;
+  min-width: 0;
+}
+.juke-library-list strong,
+.juke-library-list small {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.juke-library-list small {
+  margin-top: 3px;
+  font-size: 11px;
+}
+@media (max-width: 700px) {
+  .juke-art-editor {
+    flex-wrap: wrap;
+  }
+}

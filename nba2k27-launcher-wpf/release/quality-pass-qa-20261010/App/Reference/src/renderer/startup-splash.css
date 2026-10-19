@@ -1,0 +1,10 @@
+:root{color-scheme:dark;font-family:Inter,"Segoe UI",sans-serif}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;display:grid;place-items:center;background:radial-gradient(circle at 30% 20%,#173341,#0c1922 70%);color:#f0f7f7}
+main{width:100%;display:flex;align-items:center;gap:17px;padding:30px 35px}
+img{flex:none;border-radius:10px}
+h1{font-size:19px;line-height:1.2;margin:0 0 6px;font-weight:650}
+p{font-size:12px;line-height:1.4;margin:0;color:#a9bec8}
+.spinner{width:20px;height:20px;margin-left:auto;flex:none;border:2px solid #6feaa380;border-right-color:transparent;border-radius:50%;animation:spin .9s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.spinner{animation-duration:2.5s}}

@@ -1,0 +1,189 @@
+QA066 DEV CHECKPOINT - READY FOR NORMAL TOGGLE TEST
+2026-10-18; user-requested work hour continues through18:59:19UTC.
+User is now available; QA066 normal Blacktop-toggle test requested at18:40UTC.
+Canonical: C:\Users\carrn\CodexProjects\2kconversiontool\nba2k27-launcher-tauri2
+
+DEV ONLY. No install, promotion, game launch/stop, desktop automation or live
+game write. User wants normal WNBA toggles + Play, logs/read-only memory checks
+performed by the agent. No separate user trial scripts. Game was closed during
+offline work. Old QA065 launcher GUI was left alone. Back up and fsync sources.
+Never print/copy roster crypto keys. Do not relax exact native ownership.
+
+WNBA normal toggle integration
+- Existing unlock_wnba_freestyle/unlock_wnba settings freeze into DEV Plan flags.
+- OFF: no source/categories. Freestyle: exact one-entry qa058 pack + PC1/PA1.
+- Blacktop: exact two-entry qa064 pack + NEW BC2/BT1. Both: PC1, BC2, BT1.
+- Prepare/pin source pack before launch; per-session category tokens before source
+  token. Exact72-byte PID/birth/48hex nonce, CREATE_NEW/readback/retained handles.
+- Blacktop C27WNBC2 authorizes paired native loader/category controller; BC1 is
+  explicitly rejected. Old QA065 category-only trial cannot authorize the loader.
+- Native normal source registration uses retained exact Authority and manager
+  mutex. No roster crypto material or foreign source adoption.
+- Both-mode Freestyle admits two-entry source only through exact owned BT1;
+  complete headers/raw entries/descriptors/prefix/pack identities stay checked.
+- Bootstrap capabilities.wnbaBlacktop=true only debug. UI missing/false stays
+  disabled, including old QA065 binary with newer hot-reloaded frontend assets.
+- Status PUBLISHED is active; armed/waiting/restored are informational; HELD is
+  explicit. Rust status observer adds no memory writer.
+
+Why QA065 Blacktop failed and what QA066 changes
+- Read-only probes proved403teams,30NBA,15uniqueWNBA, exact two-entry source.
+- Native static runtime-function triple at C6BA008 is MEM_IMAGE protection0x80,
+  not plain RO; exact lookup/triple/unwind proof now matches the observed image.
+- Label initializer ACFC4D0 is sorted at runtime; it is not the Euro row there.
+  Resolve unsigned-sorted647-record table ACFA610, stride16, ready ACFD610,
+  exact Euro ID BA3C982D/key6FC058B0442652CD after two equal whole-table reads.
+  Proven sorted Euro index476 -> ACFC3D0/keyACFC3D8. Retain full10352-byte table.
+- Correct Blacktop InstallDelegate entry callback is +D30/74CDE88, stock236E510
+  RET -> existing General Learn2K236FB30. Old+D10 was wrong; do not reuse it.
+- Native game InstallDelegate invokes this data callback itself on entry.
+  No direct game function call, instruction patch or withdrawn sibling loader.
+- Pin all9methods, asset string, static manager AB160D8, installed delegate
+  AB160E8, delegate9B31BB0/vtable74CD158 and full427-pointer normalized table.
+- Paired pure coordinator arms only owned inactive Home/QuickPlay, retains
+  through transition, restores loader BEFORE category publication at stage3.
+  Stable403/30/15 source proof required. Game can still report370 -> WAITING_ROSTER.
+- Category retains existing guarded Euro/Women key + aligned dispatch CAS,
+  correct private bridge10bytes and CHAININFO referencing original stock frame.
+  Data page protections restored via noexcept RAII, including exceptions.
+- Foreign/failed CAS is sticky hold; never adopt identical foreign bytes.
+  Source/code/unwind/journal/Host resources retained until process exit.
+- First-entry Blacktop/Y-cycle, Both gameplay, exit/re-entry, match and toggle-OFF
+  still need live verification. Freestyle category and on-court success were
+  confirmed by user earlier. Do not claim Blacktop is live-proven.
+
+Embedded native payload FINAL (unchanged by later Rust/UI work)
+assets/native/version-outfits-v2.dll:1122304bytes
+B0574314A93911A90918F8D55429D03BC32B71A6C7589B6D670C874BB42E90B9
+Both Rust pins match; QA065376492.../1095680 is recovery-only, with prior pins.
+Strict C++ core/label/profile/roster/coordinator tests and full DLL smoke PASS.
+Original real Windows unwind fixtures and actual sorted initializer proof PASS.
+
+Outfit / Random All / recognition
+- Removed redundant Service list/capture immediately before mutating methods;
+  each method retains its own fresh selection/ownership/readback checks.
+- Random composition concurrent allSettled; ordered verified batch only after
+  all compositions complete. Preserve first random streetwear policy.
+- Match profile reads32slots through10bounded spans;30wrappers one2400B read.
+  Fresh endpoint/vtable/state/source/binding checks remain.
+- Immutable embedded rules JSON parsed once; no live authorization cached.
+- Cold CLOF prefilter groups1771 offsets/1791records into93-94 pages, bounded
+ 128pages/512KB per call. Counts only nominate; full fresh layout proof for
+  winners, original exhaustive fallback if no nominee proves. Warm hints unchanged.
+- Synthetic cold lookup1800->103reads (94.28% fewer);4player capture441->348
+  cold/warm. This is not a measured gameplay/visual latency improvement.
+- Retained QA065 timing: match->firstready214ms; stable1164ms; freeze681ms;
+  publication1182ms; native final1172ms. User reported clothes3-4s late, regular
+  clothes during walk-in. QA066 needs a new live timing sample; no claim fixed.
+
+Overlay and scoreboard
+- Preserve responsive20ms F8 input worker. Same-session match transition display
+  grace1500ms for exact alternate match hash, stage1; raw Snapshot unchanged.
+- Strict raw action gate and fresh internal observation commit even when no UI
+  render/event is necessary. Real menu/selection/session changes reset grace.
+- Foreground child exception only exact owned WebView2 process, rechecked full
+  birth/path/PID; clear caches on HWND/enable epoch change. Retained rendering
+  exception needs same HWND+PID. External apps cause native hide; no focus steal.
+-29overlay tests PASS. User's Alt-Tab/Ready stability still needs fresh live check.
+- Scoreboard catalog active poll250ms; surface exact unavailable/held reason.
+  Retained QA065 session is held because descriptor ownership data changed.
+  Do not clear the hold. New first-span metadata/offset diagnostics expose why
+  while never dumping raw content. Await actual next-session offset evidence.
+
+Ball thumbnails
+- Imported/bundled images first, lazy near-viewport fallback in launcher+F8.
+  Strict425-ID allowlist, WPF candidate order, bounded store IFF/ZIP/DDS decoder,
+  only256PNG,4conversions/64pending, RAII cleanup, stable archive/manifest IDs.
+- live-overlay IPC permits only readonly previews:ball-thumbnail; other preview
+  channels remain denied. Caller cannot override gameRoot/path.
+- Real installed archive audit:114matched/114decoded/0failed;311no matching store
+  candidate keep placeholders.24catalogrows already have bundled/imported images.
+- Three cold/warm samples visually inspected; warm2ms. First cold2678ms includes
+  manifest load; next34-35ms. All cache writes are isolated project artifacts.
+
+Readonly editor parity
+- V2 Player DNA now lists/copies from this tab's immutable captured view only.
+  Current ready binding/tab required; reject scanning/saving/expired/rebound/cancel.
+  No memory refresh, engine/editor/save, lease renewal or destination/file write.
+ 455rawvalues ->441transferable fields;14unsupported schema fields excluded.
+  Unsupported null appearance/audio values omitted; old validation shared.
+- Existing-season import: source imported values + fresh native IDs/link proof,
+  unique existing year/team only; reject new/shared/private/ambiguous histories.
+  Missing totals/awards preserved. One local staged row, manual Save only.
+  No structure creation/removal/bulk apply. Native capability gates controls.
+- Readonly teams/review-existing-import actions stay outside write gate; all
+  unknown/save actions retain ordinary journal/write checks. Caller destination
+  rows/addresses are never trusted.
+- Imported token domain differs from ordinary reads and includes all-player
+ 33slot/private-history projection digest. Ordinary read invalidates imported
+  token instead of silently dropping its stronger proof. Shared Arc retained.
+- Import-minted season Save lease adds readonly all-player link revalidation
+  before every ownership check, no additional writable bytes. Changed links hold.
+- Project browser overrides only; original WPF123sourceassets byte-identical.
+  Generated bundle125assets,9Node staging/legacy/packaging tests PASS.
+
+Research remaining disabled
+- Appearance exact player+78, low15bits height+0/wingspan+2, unit0.1mm;
+  cm=raw/100, round(cm*100), preserve highbit. Unwired pure capability/transaction
+  module only, no adapter/IPC/UI activation. Private generation,4byte aligned
+  privateRW, plausible source/ranges, all aliases/generation/profile checks,
+  plan bound to exact Snapshot, durable journal before CAS, final cancellation
+  check; conditional exact-owned restore after cancel.7synthetic tests PASS.
+  Needs genuine masked atomic native executor + composite Save journal and live
+  read proof; do not reuse legacy full-u16 writer or widen record WriteLease.
+- Debug menu exact disk anchors/profile and bounded read-only probe prepared;
+ 9pure probe fixtures PASS. Game closed, no live probe yet. Toggle remains disabled.
+
+Startup / manual build checks
+- Latest retained native-worker verifying-game phases25/42/23/43ms. The observed
+ 30-33second activation included4.6-7.5s player activation and fixed20s settle.
+- Normal owned pinned-V2 ARMED launch now uses a readonly readiness fast path:
+  exact4complete method hashes, singleton global,4vtable slots, committed private
+  RW1F8manager, same nonnull manager/stockC7E442DC default observed twice per
+  sample and stable1s. Exact retained identity pre/post, parent/cancel/anti-cheat
+  checks before open, each loop and immediately before loader trigger.
+- Every unknown/unreadable/profile/region/torn/stock-change sample keeps or resets
+  stability;20s fallback retained. No full-image audit, game calls or writes.
+  Native activation still independently validates. Actual launch timing pending.
+- Dedicated Reader::open_readiness gets QUERY_INFORMATION|VM_READ only; existing
+  observer keeps QUERY_LIMITED|VM_READ. Neither has write/thread/control rights.
+- Settings GameBuildCompatibility no longer scans on mounting inside closed
+  details. Explicit Check/Rescan button only, force:true, truthful not-checked
+  state, loading/result/error retained. Mounted-hook tests catch old auto-scan.
+
+Validation and staged delivery
+Final whole Rust suite1230PASS/0FAIL/52ignored, finalfrontend43files222PASS,
+TypeScript/VitePASS, Node seasonstaging9PASS, strictnativeDLLsmokePASS.
+Final dev buildPASS (47existingwarnings); testcompile12existingwarnings.
+Source scan415files: noempty/NULsources. PowerShellstarterASTPASS,
+VBS /check echo-onlyPASS. No app/game was launched/stopped by the agent.
+
+Stage: Dev/Pending/QA066/launcher.exe
+SHA256 02B2073600A252543CFBD251C390E3772E09DCC355025E7691CFA2B13F0A7422
+Bytes 52563968
+Start QA066 Dev.vbs/.ps1 updates ONLY Dev/Portable/App after exact hash/size
+and idle guards; backs up old devEXE and durably flushes copied binary.
+Existing QA065 launcher17320 was left running; user closes/reopens normally.
+No installation/promotion. Data/Library preserved.
+
+Full stage/source/embedded-asset hashes: artifacts/qa066-final-stage-20261018.json
+Main evidence: qa066-final-full-rust-tests.log, qa066-final-dev-build.log,
+qa066-final-full-frontend-tests.log, qa066-final-vite-build.log;
+qa066-selection-prefilter-tests.log, qa066-overlay-final-tests.log,
+qa066-v2-dna-season-access-tests.log, qa066-season-planner-tests.log,
+qa066-appearance-tests.log, qa066-season-import-staging-node-tests.log,
+qa066-startup-readiness-fastpath-20261018.json and independent review JSON,
+qa066-manual-build-check-review.txt, qa066-ball-real-full-cache-20261018-1/report.json.
+
+Next LIVE check through normal product only
+Close currentlauncher normally. Start QA066 Dev.vbs. WNBA Blacktop ON,
+WNBA Freestyle OFF; Play, direct Blacktop selection. Agent reads exact-session
+source/category/roster logs, then exact-lease read-only403/30/15 inventory.
+No old source/category test scripts, no manualFreestylewarmup.
+Need user-visible Y-cycle WNBA category +15clubs/players, Home/reentry,
+then match; Freestyle/Both and bothOFF separately. Do not claim gameplay from
+403counts or PUBLISHED alone. Outfit/RandomAll, Ready/Waiting/AltTab and launch
+timing also await fresh QA066 feedback. Freeze delivered sources duringtest.
+
+Overall weighted parity81.8%; only earlier user-confirmedFreestyle raisedstatus.
+Do not label other offline work LIVE before acceptance.

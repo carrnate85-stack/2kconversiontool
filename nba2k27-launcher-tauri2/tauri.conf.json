@@ -1,0 +1,21 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "2k Launcher Rust Prototype",
+  "version": "0.53.1",
+  "identifier": "com.2klauncher.rust.prototype",
+  "build": { "frontendDist": "dist", "devUrl": "http://localhost:5173" },
+  "app": {
+    "windows": [],
+    "security": {
+      "capabilities": ["main", "startup-intro"],
+      "assetProtocol": { "enable": true, "scope": [] },
+      "devCsp": "default-src 'none'; script-src 'self' http://localhost:5173; style-src 'self' 'unsafe-inline' http://localhost:5173; img-src 'self' data: asset: https://asset.localhost http://127.0.0.1:* http://localhost:5173; media-src asset: https://asset.localhost http://127.0.0.1:*; connect-src ipc: http://ipc.localhost https://ipc.localhost http://localhost:5173 ws://localhost:5173; object-src 'none'; frame-src 'self' http://localhost:5173; base-uri 'none'; form-action 'none'",
+      "csp": "default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: asset: https://asset.localhost http://127.0.0.1:*; media-src asset: https://asset.localhost http://127.0.0.1:*; connect-src ipc: http://ipc.localhost https://ipc.localhost; object-src 'none'; frame-src 'self'; base-uri 'none'; form-action 'none'"
+    }
+  },
+  "bundle": {
+    "active": false,
+    "icon": ["app-icon.ico"],
+    "windows": { "webviewInstallMode": { "type": "skip" } }
+  }
+}

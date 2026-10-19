@@ -1,0 +1,17 @@
+[package]
+name = "saved-jukebox-acceptance"
+version = "0.1.0"
+edition = "2024"
+publish = false
+[dependencies]
+anyhow = "1"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+sha2 = "0.10"
+zip = { version = "4", default-features = false, features = ["deflate"] }
+crc32fast = "1"
+libloading = "0.8"
+windows = {version = "0.62", features = ["Win32_Foundation", "Win32_Storage_FileSystem", "Win32_Media_MediaFoundation", "Win32_System_Com", "Win32_UI_Shell", "Win32_System_JobObjects", "Win32_Security", "Win32_Security_Cryptography", "Win32_System_Threading"]}
+[profile.dev]
+opt-level = 2
+[workspace]

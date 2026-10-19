@@ -1,0 +1,106 @@
+QA077 DEV CHECKPOINT - 2026-10-18 21:33 UTC
+Read newest handoff first. QA076 final/WIP and QA075-WIP retain full history.
+Project C:\Users\carrn\CodexProjects\2kconversiontool\nba2k27-launcher-tauri2.
+
+LATEST STAGED STARTER (ROOT NEVER ACTIVATED)
+Start QA077 Dev.vbs / Start QA077 Dev.ps1
+Dev/Pending/QA077/launcher.exe 53,074,432B
+SHA256 2117196A20F50A94850455E0CDE05AB0AB62905F2D5ADFD3182E3DD3D1ED0A85
+Payload1E3A0E67030D0D2421C75797659AC7E6F390115921228F14A18CC84D0B5E0EB1
+1,194,496B. PriorD9A...2B07/1,193,472B addedRECOVERYONLY+±1tests; allolderretained.
+Oldasset+2pinssafebackup Backups/qa077-native-payload-and-pins-20261018.
+Manifest artifacts/qa077-final-stage-20261018.json.
+PSASTPASS; CheckOnlyexpectedbusyrefusalPASS; VBS/checkecho-onlyPASS.
+LatestactivehashstillQA076EAFD...B20, onlylauncher48172runningafteruserclosedgame12452.
+Userinvited21:32:18UTC toclosecurrentlauncher normally,useQA077,BOTHWNBAON+Play,
+Blacktopselection. Asyncquestionpending 'At Blacktop selection'. Reverifycurrent
+apphash/lease/newPID beforeattributing newlogs; do notreadold12452asnewrun.
+
+QA076 LIVE RESULT / WHY QA077 NEEDED
+Userreport 'wnba is not here, first time both freestyle and blacktop clicked'.
+BothsettingsunlockWnba/unlockWnbaFreestyletrue verified, BOTH72Bcategorytokens
+present, sourceREGISTERED16449578, rosterarmed16449687, callbackrestored16480328,
+HELD16480343 'Private bridge preparation failed; allocation retained, no publication'.
+Only5categoryintents, lastBRIDGE_ALLOCATION_INTENT; noINITIALIZEINTENT.
+This DOESNOTproveallocationfailed: allocate checkpoint/VirtualAlloc/shape OR
+initialize's prejournalcheckpoint/shape/plan may fail. Coregenericerror discarded
+underlyingHostreason, including QA076deepcapturediagnostic. Do notclaimbothONcause.
+Exactprivateevidence Backups/qa076-user-both-toggle-evidence-20261018, artifact
+qa076-user-both-toggle-failure-20261018.json. No live repair/ad hocwrites.
+StaticbothONaudit found NOconflict: PC1+BC2 tokensbeforeBT1; one2aliasSourceHost,
+atomicstartedgate; RustFScaptureacceptsBT1/2entries andonlywritesactualFSinitialized
+picker fourDWORDsat7A9FB10/7A9FB30, disjointBT7425F4C/ACFA610labelroute.
+Source/pack/modulekeptuntilgameexit; categoryholdneverunregisters.
+
+QA077 DELIVERED
+Nativecore splits EXACTsameallocate->retain->plan->initialize->seal->RX->ready
+shortcircuit chain intostage-specificHELDcopyofHostreason. Ownfixed512Bbuffer,
+nullptrsentinel avoids selfpointer/borrowedHoststorage; max511B/nullterminated.
+WinHosttruthfulreasonfromEXISTINGargument/checkpoint/shape/plan/journal/readback/
+protection/unwind/RXfailures; checkpointdetail preservedverbatim. No extra game
+reads/APIcalls, no neweffects/permissions/retry/hold/restore/cleanup behavior.
+Root/author/peerreviewsPASS; frozen3files:
+native/wnba_blacktop_category_core.hpp E031BEE6C0056FDF61AE9AA2C15677479E9A6A649C673082D6B476B4AA05B290
+native/wnba_blacktop_category_win.hpp FED2C29549976A876FB4FDADF479C25C2881B54E5B2B92AA9CFFF643F1F12B8B
+test/wnba-blacktop-category-core-test.cpp A53E23CF05A435F610DEE1F94AFEDC0CEA58B0FCB264E319F9D602B32C14AA06
+Report artifacts/qa077-wnba-bridge-diagnostic-preservation-final.json.
+Strict3affectednativefixturesPASS, sixstagefaultcallcounts/retention/nodatawrites/
+stickyheld/no-retry/copylifetime/truncationmeaningful. RootDLLstrictbuild+isolated
+systemversionforwardsmokePASS artifacts/qa077-native. QA076full8+selfbaseline
+retained onunchangedmodules. FinalRusttestbuild22.52s/12existingwarnings;
+ONEchangedimageboundednaturalUNDEBUGGEDwholePASS1302/54ignored/61.49s,
+childEXIT_CODE0 CLAIMED0 DUMP0. Devbuild16.82s/47existingwarnings.
+artifacts/qa077-final-full-rust-tests.log +qa074-natural-qa077-whole-1.txt.
+TestEXEAB6A03A0F17225ABBFF1B7F45CC4230DB9112AA71716EB36F3533338D2CC471B
+TestPDB9CC22580358D89C2050ED4D8BC173E262CC8DF887EF27EA8AAC234596EB7C784
+NoQA077liveacceptanceYET. Diagnosticbuildonly; notconfirmedWNBAfix.
+
+IMPORTANT NEW NORMALIZATION PROPOSAL - WAIT CURRENT DIAGNOSTIC
+artifacts/qa077-blacktop-context-normalization-proposal-20261018.json.
+Existingtrace artifacts/qa047-presentation-selection-context-probe.txt SHA
+14EA4FEC4DF6CB671BD659A61B9C5BA1F66ADAF3A0B52520DCB61E8805848584.
+3851loggedchanges;1925filteredexactBTinactive stage3states;150gameMode4/1775mode6,
+ALLindexpair2,2, ONErulesowner. 300adjacentchangesONLYgameMode4<->6; examples
+312->313->314. LoggedchangesareNOTuniformtimesamples/prevalenceestimates.
+WPF BcSelection andnativecategoryboundary alreadyignoregame_mode forselection.
+CurrentFULLContext equality rejects these changes in sixWNBA-onlysites:
+withinrosterending, repeatedrostercapture, finalforwardCAS, sample_inputcontext,
+sample_inputrosterpair, checkpointpublishingcontext.
+PureproposalTU artifacts/qa077-context-normalization-proposal-test.cpp strictPASS.
+NOproductionnormalizationauthorizedorimplemented. WAITQA077CTX=64failureproof.
+Ifconfirmed: onlyallowobserved4<->6 difference whenBOTHfreshendpoints independently
+proveexactinactiveBTselection,sameindex/alternate/hashes/stage/active/kind/owner/
+roottag, andallrosterroot/owner/table/allocation/count/rows+source/authority/route
+proofsremainexact. Identicalcontextsretainoldbehavior; otherchangingvaluesreject.
+NEVERglobalContextoperator/outfit/FS/HomeorQuickPlayroster/departure comparator.
+Positiveoffline_departure/fullrestore proofs stayunchanged. Agentwnba_integration
+has mappedallsites/pureprototype; reuseforconditionalfix, peeroutfit_latency_qa066.
+
+ALREADY DELIVERED / LIVE BASELINE
+QA076quietRandomAllstreetwear-only/accessories[]; originalrostershoesretained;
+realerrorsvisible. UserrequestedUIchangescomplete+tsctypecheckPASS.
+QA076typedtrigger2framesoneflush finalfreshproofbeforeunlock, uncertaintrigger
+quarantine+pins/noReplay;18focusedtestsPASSandindependentreauditnoissue.
+QA075userconfirmedONE2playermatchclothesalmostimmediate/veryquick; nativeportion
+297msconsume->lastcompletion, notwholeloading/finaldurability. QA076clothesnotyet
+confirmedlive. PreserveData/Library/journals/builds/backups;no cleanup/install/
+promotion/activation/gameUIcontrol/gamecalls/adhoceffects. Usernormaltoggle+Playonly.
+
+UNRESOLVED TEST AV - MUSTREMAINQUALIFIED
+QA073natural0xC0000005exactoriginalEXE/PDB/log/controlZIPpreservedunder
+Backups/qa073-natural-test-av-20261018/exact-test-image.zip.
+OriginalEXEBC3B784A828DC5149C28A7F8D9688ECA302CCD46E7F5294D101C0CF99AE82D21
+OriginalPDBA97CB0292EA39E292C81400E5F77DF4F3AC658AA0614F0DBB7E2DFBF3804556A.
+DebuggerpassandchangedQA074/75/76/77passesDONOTexplainorresolveit. Captureonly
+cfg(test,windows,x86_64), boundedminimaldump validatedsynthetically; noactual
+naturalcrashdump. Stoprepeatunchangedimage. Onnewfailurepreserveexactpair+dump.
+QA074/75/76passingexactimageZIPsalreadypreserved; QA077archivependingnextroot.
+Stage candidateOnlytrue/releaseEligiblefalse. No liveacceptancefromofflinechecks.
+
+TIME / AUTOMATION
+Workdeadline21:53:37UTC(5:53pmNY) original2hwindow, usernowavailabletesting.
+HeartbeatIDtwo-hour-dev-parity-workACTIVE5min; promptlatestQA076needsQA077ifupdated.
+At/afterdeadlinepauseheartbeat+conciseselfcontainedfinalreportlateststarter,
+deliveredUI/outfits/validationqualifications/remainingWNBAchecks/historicalAV.
+No keyprinting/copying/shipping; encryptedWNBAindexcandidateblockedmissingexisting
+localkeypath, do notruntimecapture/guess/broadsearch. QA075-WIPcoversresearch.

@@ -1,0 +1,11 @@
+#page-blacktop .blacktop-preview-trigger{width:100%;min-height:35px;margin-top:8px;font-size:12px}
+.blacktop-overlay-preview{width:calc(100vw - 24px);max-width:calc(100vw - 24px);padding:0;border:1px solid #39584a;border-radius:14px;background:#0c1312;color:#eef4ee;box-shadow:0 24px 80px #000b;overflow:hidden;font-family:'Segoe UI',sans-serif;container-type:inline-size}
+.blacktop-overlay-preview{box-sizing:border-box;inset:12px 12px auto;margin:0;max-height:calc(100dvh - 24px)}
+.blacktop-overlay-preview::backdrop{background:#030706d9}
+.blacktop-preview-head{display:flex;align-items:center;justify-content:space-between;padding:11px 16px;border-bottom:1px solid #31423a;background:#121d1a}
+.blacktop-preview-head>div{display:flex;align-items:baseline;gap:12px}.blacktop-preview-head strong{font-size:15px}.blacktop-preview-head small{font-size:11px;color:#aac5b6}
+.blacktop-preview-head button{width:32px;height:32px;padding:0;border:1px solid #496152;border-radius:6px;background:#1b2a22;color:#d7efdc;font-size:22px;line-height:1;cursor:pointer}
+.blacktop-preview-frame{display:block;box-sizing:border-box;width:100%;height:78px;border:0;background:#0c1312}
+.blacktop-overlay-preview.rules-open .blacktop-preview-frame{height:min(78vh,760px)}
+@container(max-width:1379px){.blacktop-preview-frame{height:120px}}
+@media(max-width:720px){.blacktop-preview-head>div{flex-direction:column;gap:2px}}

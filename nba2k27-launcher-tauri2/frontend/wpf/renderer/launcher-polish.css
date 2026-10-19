@@ -1,0 +1,177 @@
+/* Courtside / September 2026. Launcher presentation only: the standalone roster
+   editor and in-game overlay retain their own layout and controls. */
+:root:not(.roster-workspace)[data-theme='dark'] {
+  --bg:#07121b; --panel:#0d1b27; --panel-2:#122330; --line:#263f50;
+  --text:#f0f6f9; --muted:#9ab4c8; --court:#82ec9c; --green:#82ec9c; --ink:#071c13;
+}
+:root:not(.roster-workspace)[data-theme='light'] {
+  --bg:#edf3f5; --panel:#fbfdfe; --panel-2:#e7eff2; --line:#b8ccd5;
+  --text:#162d3a; --muted:#526d7d; --court:#24734b; --green:#287b51; --ink:#fff;
+}
+:root:not(.roster-workspace) body { background:var(--bg); font-family:'Segoe UI Variable Text','Segoe UI',sans-serif; }
+:root:not(.roster-workspace) .app-shell {
+  height:calc(100dvh - 20px); min-height:0; margin:10px; grid-template-columns:218px minmax(0,1fr);
+  border:1px solid var(--line); border-radius:8px; background:var(--bg);
+}
+:root:not(.roster-workspace) .app-shell > .sidebar {
+  padding:23px 12px 20px; background:linear-gradient(155deg,var(--panel),var(--bg) 75%); border-right:1px solid var(--line);
+}
+:root:not(.roster-workspace) .brand { padding:0 8px 27px; gap:11px; }
+:root:not(.roster-workspace) .brand-mark { width:42px; height:42px; filter:hue-rotate(20deg) saturate(1.15); }
+:root:not(.roster-workspace) .brand strong { font-family:inherit; font-size:16px; letter-spacing:0; font-weight:750; }
+:root:not(.roster-workspace) .brand small { color:var(--muted); font-size:9px; letter-spacing:.25em; margin-top:5px; }
+:root:not(.roster-workspace) .sidebar nav { gap:5px; scrollbar-width:thin; scrollbar-color:var(--line) transparent; }
+:root:not(.roster-workspace) .sidebar .nav-item { position:relative; min-height:43px; padding:11px 14px; gap:14px; font-size:13px; font-weight:600; letter-spacing:0; border-radius:6px; color:var(--muted); }
+:root:not(.roster-workspace) .nav-icon { width:20px; height:20px; flex:0 0 20px; stroke-width:1.65; }
+:root:not(.roster-workspace) .sidebar .nav-item:hover { background:color-mix(in srgb,var(--muted) 8%,transparent); color:var(--text); }
+:root:not(.roster-workspace) .sidebar .nav-item.active {
+  color:var(--court); background:linear-gradient(105deg,color-mix(in srgb,var(--court) 16%,var(--bg)),color-mix(in srgb,var(--court) 7%,var(--bg)));
+  border-color:color-mix(in srgb,var(--court) 38%,var(--line)); box-shadow:inset 3px 0 var(--court),0 0 16px #67df8610;
+}
+.nav-divider { width:calc(100% - 24px); margin:12px auto; border:0; border-top:1px solid var(--line); }
+:root:not(.roster-workspace) .sidebar-foot { padding:20px 8px 8px; margin-top:auto; border-top:1px solid var(--line); align-items:flex-end; gap:8px; }
+:root:not(.roster-workspace) .sidebar-foot small { font-size:8px; letter-spacing:.2em; margin-bottom:8px; }
+:root:not(.roster-workspace) .sidebar-foot strong { font-size:11px; font-weight:600; line-height:1.4; }
+:root:not(.roster-workspace) .sidebar-foot .status-dot { flex:0 0 7px; width:7px; height:7px; margin-bottom:5px; }
+:root:not(.roster-workspace) .theme-switch { border-radius:6px; margin-top:18px; }
+:root:not(.roster-workspace) .theme-choice { padding:9px 6px; background:var(--bg); font-size:11px; }
+:root:not(.roster-workspace) .theme-choice[aria-pressed='true'] { color:var(--court); background:color-mix(in srgb,var(--court) 11%,var(--bg)); box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--court) 38%,transparent); }
+:root:not(.roster-workspace) .app-shell > main { padding:20px 22px 20px; }
+:root:not(.roster-workspace) .app-shell > main > .page.active { scrollbar-width:thin; scrollbar-color:#547183 transparent; padding-right:2px; }
+:root:not(.roster-workspace) .app-shell > main > header { position:relative; margin-bottom:16px; padding-bottom:15px; min-height:48px; }
+:root:not(.roster-workspace) .app-shell > main > header h1 { font-family:inherit; font-size:25px; font-weight:720; letter-spacing:-.035em; }
+:root:not(.roster-workspace) .version { color:var(--muted); border-radius:20px; padding:5px 10px; font-size:10px; letter-spacing:.12em; background:color-mix(in srgb,var(--panel) 70%,transparent); }
+.home-intro { display:none; }
+:root:not(.roster-workspace) .app-shell > main:has(#page-play.active) > header {
+  flex:0 0 auto; min-height:52px; padding:0 2px 11px; margin:0 0 14px; border-bottom:1px solid var(--line); align-items:center; background:none;
+}
+:root:not(.roster-workspace) main:has(#page-play.active) > header > div:first-child { position:relative; z-index:1; }
+:root:not(.roster-workspace) main:has(#page-play.active) > header .eyebrow { display:none; }
+:root:not(.roster-workspace) main:has(#page-play.active) > header h1 { display:flex; align-items:center; gap:10px; font-size:22px; font-weight:700; line-height:1.2; letter-spacing:-.025em; }
+:root:not(.roster-workspace) main:has(#page-play.active) > header h1 .nav-icon { width:21px; height:21px; flex:0 0 21px; color:var(--court); stroke-width:1.65; }
+:root:not(.roster-workspace) main:has(#page-play.active) > header > .version { position:static; }
+:root:not(.roster-workspace) .card { background:linear-gradient(145deg,var(--panel),var(--bg) 160%); border-color:var(--line); border-radius:8px; }
+:root:not(.roster-workspace) .card-title { font-family:inherit; letter-spacing:0; font-size:16px; }
+:root:not(.roster-workspace) :is(.card-title > span[data-ui-icon],.home-field-label) { display:flex; align-items:center; gap:13px; }
+:root:not(.roster-workspace) .card-title .nav-icon { color:var(--muted); width:22px; height:22px; flex-basis:22px; }
+:root:not(.roster-workspace) :is(.secondary,.path-row button) { color:var(--text); background:var(--panel-2); border-color:var(--line); border-radius:6px; }
+:root:not(.roster-workspace) :is(.secondary,.path-row button):hover:not(:disabled) { background:color-mix(in srgb,var(--muted) 14%,var(--panel)); border-color:color-mix(in srgb,var(--muted) 60%,var(--line)); }
+:root:not(.roster-workspace) .primary { background:var(--court); border-color:var(--court); color:var(--ink); box-shadow:none; }
+:root:not(.roster-workspace) .primary:hover:not(:disabled) { background:color-mix(in srgb,var(--court) 82%,var(--text)); border-color:var(--court); color:var(--ink); }
+:root:not(.roster-workspace) .app-shell :is(input:not([type='checkbox']),select,textarea) { color:var(--text); background:var(--bg); border-color:var(--line); border-radius:6px; }
+:root:not(.roster-workspace) .app-shell :is(input,select,button):focus-visible { outline:2px solid var(--court); outline-offset:3px; }
+:root:not(.roster-workspace) #page-play .hero-card {
+  display:grid; grid-template-columns:minmax(0,1fr) minmax(220px,27%); gap:24px; align-items:center;
+  min-height:116px; padding:14px 22px; border:1px solid color-mix(in srgb,var(--court) 24%,var(--line)); border-radius:8px;
+  background:radial-gradient(ellipse at 0 0,color-mix(in srgb,var(--court) 12%,transparent),transparent 60%),linear-gradient(115deg,var(--panel),var(--bg) 160%);
+}
+:root:not(.roster-workspace) #page-play .hero-card::after { display:none; }
+:root:not(.roster-workspace) #page-play .game-identity { min-width:0; }
+:root:not(.roster-workspace) #page-play .hero-card h2 { font:750 26px/1.25 'Segoe UI Variable Text','Segoe UI',sans-serif; letter-spacing:-.025em; margin:0 0 8px; gap:15px; }
+:root:not(.roster-workspace) #page-play #sessionMessage { font-size:14px; max-width:100%; overflow-wrap:anywhere; }
+:root:not(.roster-workspace) #launchStatus { font:650 12px/1.25 'Segoe UI',sans-serif; letter-spacing:0; padding:7px 12px; border:1px solid var(--line); border-radius:30px; background:var(--bg); }
+:root:not(.roster-workspace) #launchStatus::before { width:8px; height:8px; margin-right:2px; }
+:root:not(.roster-workspace) #launchStatus:is([data-state='ready'],[data-state='running']) { color:var(--court); background:color-mix(in srgb,var(--court) 10%,var(--bg)); border-color:color-mix(in srgb,var(--court) 40%,var(--line)); }
+:root:not(.roster-workspace) #launchStatus[data-state='busy'] { color:var(--amber); }
+:root:not(.roster-workspace) #launchStatus[data-state='error'] { color:#ff8f9b; border-color:#a83c50; }
+:root:not(.roster-workspace) #page-play .hero-actions { width:auto; min-width:0; gap:10px; }
+:root:not(.roster-workspace) #startSession { display:flex; align-items:center; justify-content:center; gap:20px; min-height:62px; padding:14px 20px; border:2px solid var(--court); border-radius:7px; color:var(--text); font-size:20px; font-weight:750; background:linear-gradient(115deg,color-mix(in srgb,var(--court) 19%,var(--bg)),color-mix(in srgb,var(--court) 7%,var(--bg))); box-shadow:0 0 22px #68e18712,inset 0 0 18px #65dd8310; }
+:root:not(.roster-workspace) #startSession .nav-icon { width:25px; height:25px; flex-basis:25px; fill:var(--court); stroke:var(--court); }
+:root:not(.roster-workspace) #startSession:hover:not(:disabled) { background:color-mix(in srgb,var(--court) 22%,var(--bg)); box-shadow:0 0 25px #68e18725; }
+:root:not(.roster-workspace) #startSession:disabled { opacity:.5; cursor:wait; }
+:root:not(.roster-workspace) #startSession.hidden { display:none; }
+.session-live-summary { display:grid; grid-template-columns:14px minmax(0,1fr); align-items:center; gap:7px 10px; padding:15px; border:1px solid var(--line); border-radius:7px; background:color-mix(in srgb,var(--court) 6%,var(--bg)); }
+.session-live-summary strong { font-size:14px; }
+.session-live-summary small { grid-column:2; color:var(--muted); font-size:10px; line-height:1.5; }
+.session-live-summary.hidden { display:none; }
+.live-orbit { width:9px; height:9px; border-radius:50%; background:var(--court); box-shadow:0 0 0 4px color-mix(in srgb,var(--court) 14%,transparent); }
+:root:not(.roster-workspace) #page-play .home-session-picks { padding:20px 22px 16px; gap:13px 26px; margin:14px 0 0; background-image:none; }
+:root:not(.roster-workspace) .home-session-picks > label { gap:10px; }
+:root:not(.roster-workspace) .home-field-label { font-size:13px; font-weight:550; line-height:22px; min-height:22px; color:var(--text); }
+:root:not(.roster-workspace) .home-field-label .nav-icon { color:var(--muted); }
+:root:not(.roster-workspace) .home-startup-video { gap:10px; }
+:root:not(.roster-workspace) .home-session-picks .home-startup-toggle { justify-content:space-between; height:22px; }
+:root:not(.roster-workspace) .home-session-picks select { height:43px; font-size:13px; padding:9px 12px; }
+:root:not(.roster-workspace) .home-session-picks select:disabled { opacity:.75; }
+:root:not(.roster-workspace) #homePicksStatus { display:flex; align-items:center; gap:9px; font-size:11px; color:var(--muted); line-height:1.5; }
+:root:not(.roster-workspace) #homePicksStatus::before { content:'i'; display:grid; place-items:center; width:15px; height:15px; flex:0 0 15px; border-radius:50%; background:var(--muted); color:var(--bg); font-size:10px; font-weight:800; font-style:normal; }
+:root:not(.roster-workspace) #page-play .home-detail-grid { grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr); gap:14px; margin-top:14px; }
+:root:not(.roster-workspace) #page-play .home-detail-grid > .card { padding:22px 24px 25px; }
+:root:not(.roster-workspace) #page-play .card-title { gap:16px; min-height:28px; margin-bottom:22px; font-size:17px; }
+:root:not(.roster-workspace) #page-play .card-title > span:first-child { min-width:0; }
+:root:not(.roster-workspace) #sessionPhase { font-size:8px; letter-spacing:.16em; text-align:right; max-width:45%; line-height:1.6; }
+:root:not(.roster-workspace) #page-play .pill { border-radius:5px; padding:8px 10px; font-size:9px; letter-spacing:.12em; color:var(--court); background:color-mix(in srgb,var(--court) 6%,transparent); border-color:color-mix(in srgb,var(--court) 40%,var(--line)); }
+:root:not(.roster-workspace) #page-play .pipeline { counter-reset:stage; gap:0; padding-left:6px; }
+:root:not(.roster-workspace) #page-play .pipeline li { position:relative; counter-increment:stage; gap:22px; align-items:flex-start; padding:8px 0 25px; }
+:root:not(.roster-workspace) #page-play .pipeline li:last-child { padding-bottom:8px; }
+:root:not(.roster-workspace) #page-play .pipeline li:not(:last-child)::after { content:''; position:absolute; top:44px; left:17px; bottom:-7px; width:1px; background:var(--line); }
+:root:not(.roster-workspace) #page-play .pipeline i { display:grid; place-items:center; width:36px; height:36px; flex:0 0 36px; border:1px solid var(--line); border-radius:50%; color:var(--muted); background:var(--bg); box-shadow:none; font-size:12px; font-style:normal; }
+:root:not(.roster-workspace) #page-play .pipeline i::before { content:counter(stage,decimal-leading-zero); }
+:root:not(.roster-workspace) #page-play .pipeline .done i { color:var(--court); border-color:color-mix(in srgb,var(--court) 60%,var(--line)); background:color-mix(in srgb,var(--court) 10%,var(--bg)); box-shadow:0 0 13px #5cdf7d15; }
+:root:not(.roster-workspace) #page-play .pipeline .done i::before { content:'✓'; font-size:23px; font-weight:750; }
+:root:not(.roster-workspace) #page-play .pipeline .done::after { background:color-mix(in srgb,var(--court) 60%,var(--line)); }
+:root:not(.roster-workspace) #page-play .pipeline .active i { color:var(--amber); border-color:var(--amber); }
+:root:not(.roster-workspace) #page-play .pipeline strong { font-size:15px; font-weight:650; line-height:1.4; }
+:root:not(.roster-workspace) #page-play .pipeline small { font-size:12px; line-height:1.5; margin-top:4px; }
+:root:not(.roster-workspace) #page-play .boundary { gap:18px; padding:0 5px; }
+:root:not(.roster-workspace) #page-play .boundary > div { gap:20px; align-items:flex-start; }
+:root:not(.roster-workspace) #page-play .check { width:33px; height:33px; flex:0 0 33px; border-radius:50%; border:1px solid color-mix(in srgb,var(--court) 55%,var(--line)); background:color-mix(in srgb,var(--court) 10%,var(--bg)); font-size:20px; font-weight:700; color:var(--court); }
+:root:not(.roster-workspace) #page-play .boundary strong { color:var(--text); font-size:13px; font-weight:650; line-height:1.45; }
+:root:not(.roster-workspace) #page-play .boundary small { font-size:11px; line-height:1.6; margin-top:2px; }
+@media(min-height:850px) and (min-width:1150px) {
+  :root:not(.roster-workspace) #page-play.active { display:flex; flex-direction:column; }
+  :root:not(.roster-workspace) #page-play > .hero-card,:root:not(.roster-workspace) #page-play > .home-session-picks { flex-shrink:0; }
+  :root:not(.roster-workspace) #page-play .home-detail-grid { flex:1; min-height:310px; }
+}
+@media(max-width:1200px) {
+  :root:not(.roster-workspace) .app-shell { grid-template-columns:190px minmax(0,1fr); }
+  :root:not(.roster-workspace) .sidebar .nav-item { padding-left:10px; gap:11px; }
+  :root:not(.roster-workspace) .brand { gap:8px; padding-left:3px; }
+  :root:not(.roster-workspace) .brand strong { font-size:14px; }
+  :root:not(.roster-workspace) #page-play .hero-card { grid-template-columns:minmax(0,1fr) 205px; gap:18px; min-height:110px; }
+  :root:not(.roster-workspace) #page-play .hero-card h2 { font-size:24px; gap:10px; }
+  :root:not(.roster-workspace) #startSession { font-size:17px; gap:14px; min-height:56px; }
+  :root:not(.roster-workspace) #page-play .home-detail-grid > .card { padding:18px; }
+  :root:not(.roster-workspace) #page-play .card-title { font-size:15px; gap:8px; }
+  :root:not(.roster-workspace) #page-play .boundary > div { gap:13px; }
+}
+@media(max-height:800px) {
+  :root:not(.roster-workspace) .app-shell > .sidebar { padding-top:16px; padding-bottom:14px; }
+  :root:not(.roster-workspace) .brand { padding-bottom:17px; }
+  :root:not(.roster-workspace) .sidebar nav { gap:3px; }
+  :root:not(.roster-workspace) .sidebar .nav-item { min-height:35px; padding-top:7px; padding-bottom:7px; }
+  .nav-divider { margin:8px auto; }
+  :root:not(.roster-workspace) .sidebar-foot { padding-top:13px; }
+  :root:not(.roster-workspace) .app-shell > main:has(#page-play.active) > header { min-height:52px; padding-top:0; padding-bottom:11px; }
+  :root:not(.roster-workspace) #page-play .hero-card { min-height:110px; padding-top:14px; padding-bottom:14px; grid-template-columns:minmax(0,1fr) minmax(205px,27%); }
+  :root:not(.roster-workspace) #page-play .home-session-picks { padding-top:15px; padding-bottom:12px; }
+  :root:not(.roster-workspace) #page-play .card-title { margin-bottom:14px; }
+  :root:not(.roster-workspace) #page-play .boundary { gap:13px; }
+  :root:not(.roster-workspace) #page-play .pipeline li { padding-bottom:21px; }
+}
+@media(max-width:960px) {
+  :root:not(.roster-workspace) .app-shell > main { padding:16px; }
+  :root:not(.roster-workspace) .app-shell > main:has(#page-play.active) > header { margin-top:0; padding-left:2px; min-height:52px; }
+  :root:not(.roster-workspace) #page-play .hero-card { grid-template-columns:minmax(0,1fr) minmax(180px,34%); padding:14px 16px; gap:16px; }
+  :root:not(.roster-workspace) #startSession { flex:1; min-height:48px; }
+  .session-live-summary { flex:1; }
+  :root:not(.roster-workspace) #page-play .home-session-picks { padding:16px; gap:12px; }
+  :root:not(.roster-workspace) .home-field-label { gap:7px; font-size:11px; }
+  :root:not(.roster-workspace) .home-field-label .nav-icon { width:16px; height:16px; flex-basis:16px; }
+  :root:not(.roster-workspace) #page-play .home-detail-grid { grid-template-columns:minmax(0,1fr); }
+}
+@media(max-width:600px) {
+  :root:not(.roster-workspace) #page-play .hero-card { grid-template-columns:minmax(0,1fr); }
+}
+@media(max-width:760px) {
+  :root:not(.roster-workspace) .app-shell { margin:0; height:100dvh; border-radius:0; border:0; grid-template-columns:66px minmax(0,1fr); }
+  :root:not(.roster-workspace) .app-shell > .sidebar { padding:15px 8px; }
+  :root:not(.roster-workspace) .brand { padding:0 0 22px; justify-content:center; }
+  :root:not(.roster-workspace) .brand > div,:root:not(.roster-workspace) .sidebar-foot > div,:root:not(.roster-workspace) .theme-choice > span { display:none; }
+  :root:not(.roster-workspace) .sidebar .nav-item { font-size:0; justify-content:center; gap:0; padding:10px; }
+  :root:not(.roster-workspace) .sidebar-foot { justify-content:center; }
+  :root:not(.roster-workspace) .theme-switch { flex-direction:column; }
+  :root:not(.roster-workspace) .theme-choice + .theme-choice { border:0; border-top:1px solid var(--line); }
+  :root:not(.roster-workspace) #page-play .home-session-picks { grid-template-columns:minmax(0,1fr); }
+  :root:not(.roster-workspace) .home-field-label { font-size:13px; }
+}

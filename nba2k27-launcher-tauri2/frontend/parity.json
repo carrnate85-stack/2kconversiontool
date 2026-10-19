@@ -1,0 +1,934 @@
+{
+  "deliveryPriority": [
+    "actual modded launch: native asset provider, owned loader and session restoration",
+    "Blacktop outfit/arena/ball/scoreboard application and selection-to-match carry-over",
+    "Main Menu and Quick Play restoration/rearming, then remaining WPF feature parity"
+  ],
+  "target": "Dependable WPF feature coverage, familiar visual style and release quality; cleaner implementations and workflows are allowed",
+  "complete": false,
+  "baselineVersion": "0.1.0-wpf.24",
+  "baselineMainSha256": "dd0dc0dc910540256cb20d06a5cea50305dc0715d74ce44d4eb7e99fb6436863",
+  "baselineRoutes": 143,
+  "note": "Partial means a local prototype workflow exists, not equivalent game functionality. Each route requires offline regression tests and, where applicable, live-game acceptance.",
+  "groups": [
+    {
+      "feature": "Portable startup, storage and shutdown",
+      "status": "Partial",
+      "remaining": "0.36 preserves original WPF data with namespaced settings and reviewed media publication. 0.38 adds active-session close prompts, truthful preparation progress and completed-provider journal reconciliation. Owned helper exits, portable storage and recovery guards are covered offline. Total game launch time, interrupted live cleanup and automatic authenticated reconnection remain open; source/executable rollback checkpoints are retained."
+    },
+    {
+      "feature": "Profiles and mod library",
+      "status": "Partial",
+      "remaining": "Explicit native mod-profile/provider QA launch, no-copy profile junctions and player-package hard links, authenticated pipe, existing three-archive selector validation/frozen publication and owned restoration are connected. 0.28 adds native stock decoding, portable content-verified caching and WPF-oracle-tested generation when all three selector mods are absent; existing user bundles are retained, unsupported style sets reported, and exact-owned generated files restored. Loader activation/probe and normal cleanup passed live in 0.24; real selected-profile appearance, fresh generated bundles and cleanup still need live acceptance. Import/install conflict review and full profile UI operations remain unfinished."
+    },
+    {
+      "feature": "Jukebox",
+      "status": "Partial",
+      "remaining": "0.36 imports six saved WPF playlists through the current V2 catalog without re-encoding native Opus; originals remain intact. Native catalog, ordering, audio/.2kplaylist exchange and previews are connected. Conversion is gated against active/uncertain launches with a shared decoder/Play admission gate. Next-Play choices freeze into the provider with pinned chunks/masks/restoration. Actual playback/order/cleanup needs live acceptance; game artwork and the old Freestyle audio-event route remain unported."
+    },
+    {
+      "feature": "Presentation / startup videos / cameras",
+      "status": "Partial",
+      "remaining": "Saved/new MP4 catalogs, exact launched-window timing, fullscreen playback, Xbox skip and an owned mixer guardian are connected; live timing/input/audio acceptance remains. 0.42 ties import progress/cancel to an exact operation identity and cancels active import work during shutdown. Camera publication validates retained private state before initial publication and reset rearm; H/Z sync and optional lock remain guarded. Camera visibility/tracking and total preparation timing still need gameplay acceptance."
+    },
+    {
+      "feature": "Blacktop overlay and catalogs",
+      "status": "Partial",
+      "remaining": "0.34 user reports confirm basic mod appearance, F8 manual opening/Alt-Tab hiding and AAU Gym. Its Moneyball affected spectator props, not the court ball. 0.35 replaces new Version 2 requests with the gameplay-setting backend, adds explicit scoreboard transactions/five frozen layouts and presentation execution. Main/Quick Play ownership/restoration is tested offline; new feature gameplay acceptance remains. Version 2 outfit carry-over and automatic fitting/random gameplay are not enabled."
+    },
+    {
+      "feature": "Outfits and previews",
+      "status": "Partial",
+      "remaining": "Legacy outfit-library compatibility, 3D mannequin, texture/mesh decoder and full render-on-demand cache remain unfinished. Native exact-variant composition and .2koutfit sharing have regression coverage. Manual F8 player binding, Apply/Restore and match carry-over are connected in 0.29 but still require live acceptance; automatic fitting/random game modes remain missing."
+    },
+    {
+      "feature": "Unlocks, crowd and scaler",
+      "status": "Partial",
+      "remaining": "Player scaling has Version 2 owner/descriptor checks, loaded-cache diagnostics and guarded stock-reset rearming; visual scale remains unverified. The experimental 0.41 WNBA Freestyle sibling-loader route was withdrawn after a live court-entry crash. 0.42 preserves the saved preference but fails closed in the UI, runtime and writer without attempting a WNBA write. Blacktop WNBA and NPC scaling remain unavailable. Drone/DJ/MC and five-size Blacktop crowd routes retain separate gameplay acceptance requirements."
+    },
+    {
+      "feature": "Roster editor / Player DNA",
+      "status": "Partial",
+      "remaining": "Native reads, player/basic team Save & verify, loaded-player DNA copying, native DNA file import/export, 2K23 category selection and editor preset storage are connected to original browser pages. Original review/staging still precedes explicit Save. Live read/write and native file-dialog/manual UI acceptance remain pending. Live seasons/awards, custom source catalogs, From/audio, artwork/animation, 2KDB/Auction and retained/source catalogs remain unported. Sample previews have separate ports/tokens and no native read/write/file/preset capability. React local-DNA tools stay separate. Real Basketball-Reference fetching still needs acceptance."
+    },
+    {
+      "feature": "Team editor / Team DNA",
+      "status": "Partial",
+      "remaining": "Native team/arena/uniform browser loading, basic team saves and 52-control uniform Save & verify are connected, with original C#/JS comparisons and failure/rollback tests. Separate arena/floor uses an unused reserved-slot clone, not shared-donor mutation; team/uniform IDs and unmapped uniform bits remain unchanged. Shared uniform slots reload together. Live acceptance remains pending. Staff/rotation/strategy/playbook write services, browser Team DNA staging, artwork and review remain unported. Original browser styling is unchanged; isolated sample previews cannot read or save the game. Separate local Team DNA tools retain import/staging/export, 175 staff controls, 48-minute rotations and 52 uniform controls."
+    },
+    {
+      "feature": "Health, diagnostics and release management",
+      "status": "Partial",
+      "remaining": "0.43 adds a bounded redacted support ZIP containing only small launcher text/JSON diagnostics; Data, Library, Cache, dumps, binaries, secrets and absolute user paths are excluded. Compatibility by feature remains visible. Game hang/crash capture, deeper native helper diagnostics, performance history and update/rollback transactions remain."
+    }
+  ],
+  "statuses": [
+    "Working",
+    "Partial",
+    "Missing",
+    "Awaiting live verification"
+  ],
+  "capabilities": [
+    {
+      "feature": "Portable QA storage and single-instance ownership",
+      "status": "Working",
+      "evidence": "src/backend.rs; src/instance.rs; packaged single-instance/export fixtures",
+      "remaining": "Namespaced Rust settings import safe WPF preferences once without overwriting the old settings. Reviewed Main publication covers saved playlists/MP4s only, preserves originals and has a rollback receipt. Full older outfit/preview/advanced settings migration remains incomplete."
+    },
+    {
+      "feature": "Mod-library tree, search and local tags",
+      "status": "Working",
+      "evidence": "frontend/App.tsx; packaged tree-scroll and profile tests",
+      "remaining": "Browsing and local metadata only; installation/conflict resolution is separate."
+    },
+    {
+      "feature": "Optional 256 px preview ZIP import and persistent cache",
+      "status": "Working",
+      "evidence": "src/previews.rs; packaged import/progress/fallback tests",
+      "remaining": "Catalog pictures; no 3D mannequin or render-on-demand coverage claim."
+    },
+    {
+      "feature": "Local outfit composition and sharing",
+      "status": "Working",
+      "evidence": "src/outfits.rs; WPF compatibility oracles and packaged sharing checks",
+      "remaining": "Offline drafts, exact variants and three-accessory limit; no game application."
+    },
+    {
+      "feature": "Steam without-EAC dispatch and boundary detection",
+      "status": "Awaiting live verification",
+      "evidence": "Earlier user live acceptance; src/native_session.rs; src/blacktop_observer_profile.rs; Version 2 disk and fixture checks",
+      "remaining": "Version 2 has separate read-only boundary mappings. Repeat selection, match, Quick Play, Main Menu and exit detection on the new game build; observation grants no memory-edit authority."
+    },
+    {
+      "feature": "Native mod-profile launch and loader activation",
+      "status": "Awaiting live verification",
+      "evidence": "src/provider_launch.rs; src/loader_files.rs; private provider-worker and original-DLL fixtures",
+      "remaining": "QA0.34 user reports say mods appear to load on Version 2. The 47-method provider ABI is independently disk-verified. Full library/Players routing, alternate profiles and normal cleanup still require acceptance; this is not a claim that every third-party mod works."
+    },
+    {
+      "feature": "Native provider shutdown and profile/file restoration",
+      "status": "Awaiting live verification",
+      "evidence": "src/provider_worker.rs; src/mod_profile.rs; src/loader_files.rs; offline failure/ownership tests",
+      "remaining": "0.24 normal game exit restored its exact owned loader files and temporary profile, closed the journal and exited the worker. UI-close-during-game, non-default profiles and failure recovery acceptance remain pending."
+    },
+    {
+      "feature": "F8 foreground ownership, catalogs and navigation",
+      "status": "Awaiting live verification",
+      "evidence": "src/native_overlay.rs; frontend/NativeOverlay.tsx; packaged geometry/focus/toggle fixtures",
+      "remaining": "QA0.34 user confirms manual enable/open and Alt-Tab hiding. Stable-width catalogs and same-button closing have fixture coverage. Repeat transitions, initial auto-show settings and game-exit acceptance remain."
+    },
+    {
+      "feature": "Blacktop Game Rules read and explicit Apply",
+      "status": "Awaiting live verification",
+      "evidence": "src/game_rules.rs; src/rules_v2.rs; src/rules_v2_access.rs; frontend/NativeRules.tsx; independent getters and durable one-rule transactions",
+      "remaining": "0.34 connects all 39 Version 2 controls with one-use snapshots, retained identities, durable intent and full neighboring-value checks. Stock-menu comparison, explicit changes and restoration still require live acceptance."
+    },
+    {
+      "feature": "Blacktop arena selection and transaction ownership",
+      "status": "Awaiting live verification",
+      "evidence": "src/arena_runtime.rs; src/arena_v2.rs; src/arena_ball_v2_adapter.rs; src/arena_ball_v2_access.rs; real Engine/Runner receipt fixtures",
+      "remaining": "QA0.34 user confirms AAU Gym loaded in the match. Other courts/templates, menu restoration, Default and closure remain live checks. Exact selection ownership and Main/Quick Play revalidation pass offline."
+    },
+    {
+      "feature": "Blacktop live player binding and automatic outfits",
+      "status": "Partial",
+      "evidence": "src/outfit_runtime.rs; src/outfit_selection_session.rs; src/outfit_match_runtime.rs; frontend/NativeOutfits.tsx; preserved C#/PowerShell oracles",
+      "remaining": "0.29 connects manual F8 player binding and explicit Apply/Restore to the guarded native writer and proven DLL match worker. Durable page/plan ownership, confirmation, cleanup and Main/Quick Play rearming have fixture coverage, not live acceptance. Match carry-over requires 3–7 pieces and at most three accessories. Automatic selection fitting and random player/all game modes remain missing; local draft randomization is not automatic game application."
+    },
+    {
+      "feature": "Blacktop ball application and reset",
+      "status": "Awaiting live verification",
+      "evidence": "src/ball_gameplay_v2.rs; src/ball_gameplay_runtime.rs; src/ball_gameplay_native.rs; src/ball_runtime.rs; guarded lifecycle and fault fixtures",
+      "remaining": "QA0.34 failed court-ball acceptance: Moneyball appeared only on spectator props. 0.35 changes only the gameplay-setting DWORD after four stable unloaded samples, exact typed empty ball-manager and stock-source checks; no Normal filename edit. Prepared, actual court-model confirmation and visually verified appearance are distinct. New appearance, two-match rearming and menu unload timing need live acceptance."
+    },
+    {
+      "feature": "Blacktop scoreboard application",
+      "status": "Awaiting live verification",
+      "evidence": "src/scoreboard_runtime.rs; src/scoreboard_queue.rs; src/scoreboard_assets.rs; src/provider_assets.rs; actual provider transaction fixtures",
+      "remaining": "0.35 connects explicit Version 2 scoreboard choices and five SHA-bound layouts through the provider. Collisions preserve user files; held owned transactions retain restoration polling. Registry/read-back and layout preparation are not proof of gameplay appearance."
+    },
+    {
+      "feature": "Drone, DJ, MC and Blacktop-only crowd removal",
+      "status": "Awaiting live verification",
+      "evidence": "src/presentation_v2.rs; src/presentation_v2_runtime.rs; src/provider_launch.rs; scoped boundary/five-size lifecycle fixtures",
+      "remaining": "0.35 freezes next-Play options. Drone/DJ/MC keep their session scope; crowd changes prepare at stable Blacktop selection and restore/rearm at verified Main/Quick Play boundaries for five match sizes. Actual standing/stands crowd, other modes and repeated matches need live acceptance."
+    },
+    {
+      "feature": "WNBA, unlocks and scaler",
+      "status": "Partial",
+      "evidence": "src/scaler_v2.rs; src/freestyle_v2.rs; src/feature_runtime.rs; original WPF policy and pinned Version 2 disk audits",
+      "remaining": "Player shared-input scaling has Version 2 owner/descriptor checks, loaded-cache diagnostics and guarded reset rearming; visual acceptance remains. The experimental Version 2 sibling WNBA loader crashed on first live court entry and is withdrawn. The saved preference is preserved, but 0.42 exposes no WNBA write path and reports the feature unavailable. A future mixed-roster/category route requires independent ABI and lifetime proof. No guessed hook, team injection, NPC scaling or Blacktop WNBA is enabled."
+    },
+    {
+      "feature": "Camera ordering and saved configuration",
+      "status": "Awaiting live verification",
+      "evidence": "src/camera_v2.rs; src/camera_localization.rs; src/feature_runtime.rs; WPF byte comparisons and pinned Version 2 disk audit",
+      "remaining": "0.42 retains exact-loaded-base validation and native-ID-preserving camera names, validates the private mode/metadata/parameter allocation before initial publication and every reset rearm, and bounds initial access retries. Camera order, tracking, owned early labels, H/Z synchronization and optional lock are connected. Menu visibility, appearance, label timing and game lifecycle still need live acceptance."
+    },
+    {
+      "feature": "Startup MP4 playback and game audio coordination",
+      "status": "Awaiting live verification",
+      "evidence": "src/video_library.rs; src/startup_video_launch.rs; src/startup_video_tauri.rs; src/startup_video_audio.rs; native/startup-audio-guardian; frontend/StartupIntro.tsx",
+      "remaining": "ID-resolved saved/imported MP4s, exact launched-window timing, fullscreen, keyboard/Xbox skip, Alt-Tab cancellation and conditional owned-mixer restoration are integrated. Real game timing, controller and audio acceptance remain pending; no game MOV replacements or memory patches are used."
+    },
+    {
+      "feature": "Jukebox game playlists and session restoration",
+      "status": "Awaiting live verification",
+      "evidence": "src/jukebox_api.rs; src/jukebox_launch.rs; src/jukebox_runtime.rs; src/provider_assets.rs; frontend/JukeboxNative.tsx; production chunk/cleanup tests",
+      "remaining": "0.35 connects durable playlist selection, native stock/remapped PCM slots, loader masks and exact-owned music/audio publication/restoration. Batch import, .2kplaylist exchange and token audio previews are connected. Game playback/order/cleanup remains unverified; game artwork and the old Freestyle audio-event route are not enabled."
+    },
+    {
+      "feature": "Player browser editor: snapshots and basic Save & verify",
+      "status": "Awaiting live verification",
+      "evidence": "src/roster_native.rs; src/player_transaction.rs; original C#/JS oracles; browser HTTP tests",
+      "remaining": "Native browser route connected; guarded saves and live roster-menu workflow still need acceptance."
+    },
+    {
+      "feature": "Team browser editor: basic fields, arena/floor and uniforms",
+      "status": "Awaiting live verification",
+      "evidence": "src/team_transaction.rs; src/uniform_transaction.rs; original C#/JS oracles",
+      "remaining": "IDs preserved; reserved-slot arena/floor clone and 52-control uniform writes require live acceptance."
+    },
+    {
+      "feature": "Player/Team DNA and source import workflows",
+      "status": "Partial",
+      "evidence": "Original browser assets; local DNA, NBA 2K23 and season regression fixtures",
+      "remaining": "Local review/import/export works; live seasons/awards, Team DNA staging and advanced staff/strategy/playbook services are incomplete."
+    },
+    {
+      "feature": "3D mannequin and full animation previews",
+      "status": "Missing",
+      "evidence": "WPF reference renderer/animation services",
+      "remaining": "Catalog PNGs are not equivalent to mesh/texture/animation preview."
+    },
+    {
+      "feature": "Release diagnostics, migration and updates",
+      "status": "Partial",
+      "evidence": "src/support_bundle.rs; versioned QA packaging, backups, logs and ownership tests",
+      "remaining": "Bounded support redaction is connected. Hang/crash capture, settings/library migration, secondary Steam libraries and update/rollback transactions remain."
+    }
+  ],
+  "capabilityCounts": {
+    "Working": 4,
+    "Partial": 4,
+    "Missing": 1,
+    "Awaiting live verification": 14
+  },
+  "routes": [
+    {
+      "channel": "animation:catalog",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "animation:close",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "animation:open",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "animation:progress-status",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "animation:request",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "animation:warm",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "app:bootstrap",
+      "status": "Partial",
+      "native": "bootstrap"
+    },
+    {
+      "channel": "arena:clone",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "arena:favorite",
+      "status": "Partial",
+      "native": "arena-favorite / choices group Favorites"
+    },
+    {
+      "channel": "arena:favorites",
+      "status": "Partial",
+      "native": "arena-favorites (Data/arena-favorites.json, exact catalog ids)"
+    },
+    {
+      "channel": "arena:select",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "arena:status",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "ball:select",
+      "status": "Partial",
+      "native": "native-ball-select (explicit independently mapped gameplay-ball QA; no shared prop filename edits on Version 2)"
+    },
+    {
+      "channel": "ball:status",
+      "status": "Partial",
+      "native": "native-session-status / ball (prepared and court-model-confirmed are distinct; appearance unverified)"
+    },
+    {
+      "channel": "ball:thumbnail",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "blacktop:apply",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "blacktop:cache-cancel",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "blacktop:cache-start",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "blacktop:cache-status",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "blacktop:carry-status",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "blacktop:crowd-set",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "blacktop:crowd-status",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "blacktop:fit-preview",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "blacktop:fit-preview-cancel",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "blacktop:fit-preview-prefetch",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "blacktop:fit-preview-warm",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "blacktop:outfits-delete",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "blacktop:outfits-export",
+      "status": "Partial",
+      "native": "export-outfit"
+    },
+    {
+      "channel": "blacktop:outfits-import",
+      "status": "Partial",
+      "native": "import-outfit"
+    },
+    {
+      "channel": "blacktop:outfits-list",
+      "status": "Partial",
+      "native": "library"
+    },
+    {
+      "channel": "blacktop:outfits-save",
+      "status": "Partial",
+      "native": "save-library"
+    },
+    {
+      "channel": "blacktop:panel-expanded",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "blacktop:panel-hide",
+      "status": "Partial",
+      "native": "overlay-close / native-overlay-hide / native-overlay-disable"
+    },
+    {
+      "channel": "blacktop:panel-open",
+      "status": "Partial",
+      "native": "overlay-open / native-overlay-enable (owned native F8 QA; live acceptance pending)"
+    },
+    {
+      "channel": "blacktop:panel-player-menu",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "blacktop:panel-status",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "blacktop:presentation-set",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "blacktop:presentation-status",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "blacktop:preview-pack-import",
+      "status": "Partial",
+      "native": "import-previews"
+    },
+    {
+      "channel": "blacktop:preview-pack-status",
+      "status": "Partial",
+      "native": "preview-status"
+    },
+    {
+      "channel": "blacktop:rules-read",
+      "status": "Partial",
+      "native": "native-rules-read (guarded Blacktop QA on Play and owned F8; live acceptance pending)"
+    },
+    {
+      "channel": "blacktop:rules-set",
+      "status": "Partial",
+      "native": "native-rules-apply (explicit single-rule QA, verified read-back and failure rollback; live acceptance pending)"
+    },
+    {
+      "channel": "blacktop:scan",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "blacktop:thumbnail",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "blacktop:thumbnail-cached",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "bridge:audit",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "camera:install-names",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "camera:save",
+      "status": "Partial",
+      "native": "save-library"
+    },
+    {
+      "channel": "camera:start",
+      "status": "Partial",
+      "native": "native-camera-command retry (re-arms only a stop or a fully restored hold)"
+    },
+    {
+      "channel": "camera:status",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "camera:stop",
+      "status": "Partial",
+      "native": "native-camera-command stop (guarded camera restore)"
+    },
+    {
+      "channel": "diagnostics:capture",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "diagnostics:folder",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "diagnostics:status",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "editor:presets",
+      "status": "Partial",
+      "native": "original browser preset controls / native signature, equipment and coaching store (no game writes)"
+    },
+    {
+      "channel": "game:launch-without-eac",
+      "status": "Partial",
+      "native": "launch-preflight / native-launch-steam-only / native-launch-modded (owned native provider and independent Version 2 arena/gameplay-ball/scoreboard/rules/presentation/Jukebox executors; feature-specific live acceptance pending)"
+    },
+    {
+      "channel": "jukebox:activate-playlist",
+      "status": "Partial",
+      "native": "jukebox-select-playlist (freeze for next Play; actual playback pending live acceptance)"
+    },
+    {
+      "channel": "jukebox:choose-artwork",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "jukebox:choose-audio",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "jukebox:choose-audio-batch",
+      "status": "Partial",
+      "native": "jukebox-import-audio (owned native dialog and bounded same-EXE decode worker)"
+    },
+    {
+      "channel": "jukebox:delete-playlist",
+      "status": "Partial",
+      "native": "jukebox-delete-playlist"
+    },
+    {
+      "channel": "jukebox:import-audio-data",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "jukebox:import-playlist",
+      "status": "Partial",
+      "native": "jukebox-import-playlist / jukebox-export-playlist (.2kplaylist validation and native dialogs)"
+    },
+    {
+      "channel": "jukebox:import-wav",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "jukebox:lookup-artwork",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "jukebox:open-playlist-folder",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "jukebox:preview-artwork",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "jukebox:preview-track",
+      "status": "Partial",
+      "native": "jukebox-preview (immutable tokenized loopback audio lease)"
+    },
+    {
+      "channel": "jukebox:read-audio-selection",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "jukebox:refresh-playlist-bundle",
+      "status": "Partial",
+      "native": "jukebox:refresh-bundle"
+    },
+    {
+      "channel": "jukebox:repair-missing-tracks",
+      "status": "Partial",
+      "native": "jukebox:find-missing / jukebox:repair-missing"
+    },
+    {
+      "channel": "jukebox:restore-default",
+      "status": "Partial",
+      "native": "jukebox-select-playlist (default for next Play; no running-game change)"
+    },
+    {
+      "channel": "jukebox:save-playlist",
+      "status": "Partial",
+      "native": "jukebox-save-playlist (durable CAS revision and ordering)"
+    },
+    {
+      "channel": "jukebox:save-track",
+      "status": "Partial",
+      "native": "jukebox-save-track (durable metadata review)"
+    },
+    {
+      "channel": "jukebox:status",
+      "status": "Partial",
+      "native": "jukebox-status (lazy stock catalog, jobs, authoritative current/next-Play state)"
+    },
+    {
+      "channel": "launcher:build-info",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "launcher:copy-health",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "launcher:health",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "launcher:performance",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "launcher:update-cancel",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "launcher:update-choose",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "launcher:update-restart",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "launcher:update-rollback",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "mods:install",
+      "status": "Partial",
+      "native": "mod-install-plan / mod-install-commit (files, folder, ZIP; RAR via Windows tar.exe as in WPF; per-file Replace/Keep review)"
+    },
+    {
+      "channel": "mods:open-item",
+      "status": "Partial",
+      "native": "open-mod-item"
+    },
+    {
+      "channel": "mods:save-tags",
+      "status": "Partial",
+      "native": "save-library"
+    },
+    {
+      "channel": "mods:scan",
+      "status": "Partial",
+      "native": "mods"
+    },
+    {
+      "channel": "player-dna:transfer",
+      "status": "Partial",
+      "native": "original browser loaded-player copy and native import/export file dialogs; same review/stage/Save path; separate local React drafts (live/manual UI acceptance pending)"
+    },
+    {
+      "channel": "player-research:artwork",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "player-research:badge-icons",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "player-research:export",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "player-research:header-labels",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "player-research:preview-audio",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "player-research:scan",
+      "status": "Partial",
+      "native": "native read-only player/team/arena/uniform snapshot (live acceptance pending)"
+    },
+    {
+      "channel": "player-research:status",
+      "status": "Partial",
+      "native": "native cached read-only roster status"
+    },
+    {
+      "channel": "player23:catalog",
+      "status": "Partial",
+      "native": "original browser search/review/category selection plus local React drafts (native source data, no game writes; live staging acceptance pending)"
+    },
+    {
+      "channel": "player:reference-stats",
+      "status": "Partial",
+      "native": "reference-stats-load / reference-stats-stage (native bounded URL parser, local Player DNA staging; network acceptance pending)"
+    },
+    {
+      "channel": "player:save",
+      "status": "Partial",
+      "native": "native explicit player Save & verify (basic details, 441 editable fields, birthday/years pro; per-tab snapshots, durable intent, guarded rollback; live acceptance pending)"
+    },
+    {
+      "channel": "player:seasons",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "presentation:cancel",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "presentation:choose-movie",
+      "status": "Partial",
+      "native": "import-media"
+    },
+    {
+      "channel": "presentation:library-edit",
+      "status": "Partial",
+      "native": "video-library-edit rename/remove (select via save-settings)"
+    },
+    {
+      "channel": "presentation:open-folder",
+      "status": "Partial",
+      "native": "open-library"
+    },
+    {
+      "channel": "presentation:preview",
+      "status": "Partial",
+      "native": "React media player"
+    },
+    {
+      "channel": "presentation:view",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "probe:activate-live-route",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "probe:start",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "probe:status",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "probe:stop",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "provider:diagnose",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "resolver:copy",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "resolver:rescan",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "resolver:status",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "roster:auto-attach",
+      "status": "Partial",
+      "native": "native read-only active roster snapshot (live acceptance pending)"
+    },
+    {
+      "channel": "roster:bootstrap",
+      "status": "Partial",
+      "native": "open-browser-editor (exact WPF browser pages; Rust-owned read-only roster snapshot backend; live acceptance pending)"
+    },
+    {
+      "channel": "roster:launcher",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "roster:native-export",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "roster:open",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "roster:transfer",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "scaler:apply",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "scaler:save",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "scaler:status",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "scoreboard:select",
+      "status": "Partial",
+      "native": "native-scoreboard-select (explicit Version 2 registry transaction and five frozen layouts)"
+    },
+    {
+      "channel": "scoreboard:status",
+      "status": "Partial",
+      "native": "native-session-status / scoreboard"
+    },
+    {
+      "channel": "session:start",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "session:stop",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "settings:choose",
+      "status": "Partial",
+      "native": "pick-folder"
+    },
+    {
+      "channel": "settings:save",
+      "status": "Partial",
+      "native": "save-settings"
+    },
+    {
+      "channel": "shell:open-mods",
+      "status": "Partial",
+      "native": "open-mods-folder"
+    },
+    {
+      "channel": "shell:open-probe",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "shell:open-storage",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "shell:storage-info",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "support:export",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "team-dna:transfer",
+      "status": "Partial",
+      "native": "import-team-dna / team-dna-stage / export-team-dna (offline only)"
+    },
+    {
+      "channel": "team-uniform:link",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "team-uniform:save",
+      "status": "Partial",
+      "native": "native explicit 52-control uniform Save & verify; immutable team-slot baseline, shared-slot refresh, preserved IDs/unmapped bits, durable intent and conditional rollback (live acceptance pending)"
+    },
+    {
+      "channel": "team:rotations",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "team:save",
+      "status": "Partial",
+      "native": "native explicit basic team Save & verify / separate arena-floor reserved-slot copy-on-write; destination Team ID unchanged; durable intent and rollback (live acceptance pending)"
+    },
+    {
+      "channel": "team:staff",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "team:staff-save",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "unlocks:debug-set",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "unlocks:debug-status",
+      "status": "Missing",
+      "native": null
+    },
+    {
+      "channel": "unlocks:freestyle-status",
+      "status": "Missing",
+      "native": null
+    }
+  ]
+}

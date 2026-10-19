@@ -1,0 +1,16 @@
+{
+  "schema": 1,
+  "staticTestOnly": true,
+  "asset": "gooey_scenes/scorebug_highschool.iff",
+  "member": "scorebug_highschool.SCNE",
+  "sourceSha256": "0b5417ccd979bd45a380534ba320ba540eed4ad9e5ad3783832cf3d12071e11e",
+  "material": "home_score_ones_mat",
+  "parameter": "BaseTextureScaleAndOffset",
+  "value": [
+    1,
+    1,
+    0.75,
+    0.3333333333333333
+  ],
+  "displayDigit": 7
+}

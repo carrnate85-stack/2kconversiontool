@@ -1,0 +1,96 @@
+UPDATE 2026-10-17 (Claude): QA 0.52 BUILT (snapshot), not yet live-tested. EXE Builds/0.52.0/Portable/App/2k Launcher Rust Prototype.exe SHA256 C63C0310E54A1020059953FEFDCE5F9C041D6969D879D0E1E2AD55B17A023289. 1120 native, 198 frontend, 119 UI checks. Worker DLL 645984B7...FF7C (bridge diagnostics + WNBA roster trace + case-insensitive override).
+UPDATE 2026-10-17 (Claude): QA 0.51 BUILT (snapshot build), not yet live-tested. EXE Builds/0.51.0/Portable/App/2k Launcher Rust Prototype.exe SHA256 60A4EC4559608F53CA2D1F7A447BDB50ADF34FC1ADF1FA4CFA4A440025EBECA8. 1117 native, 193 frontend, 119 UI checks. Outfit selection gate removed (WPF parity), overlay hide-on-match/leave/sticky Hide, ball record fix, hotkey fallback, experimental WNBA Freestyle toggle (local merged roster, 4th override slot).
+
+UPDATE 2026-10-17 (Claude): QA 0.50 BUILT from a frozen snapshot (C:\Users\carrn\CodexProjects\_snapws, script in this session scratchpad snapshot-build.ps1), not yet live-tested. EXE Builds/0.50.0/Portable/App/2k Launcher Rust Prototype.exe SHA256 75BDCCC5849B3A4A83B3F779840165CA8B312CF7495470454D7137899DE59A0F. 1084 native tests, 184 frontend, 119 UI checks. Worker DLL ABD5EA9A...7B16 (Freestyle playlist). WPF behavior reference: docs/wpf-reference/. Parity: tools/parity_score.py (74.6% weighted at build). WNBA merged Freestyle roster built offline (403 rows) - not wired yet.
+
+UPDATE 2026-10-17 (Claude): QA 0.49 BUILT, not yet live-tested. EXE Builds/0.49.0/Portable/App/2k Launcher Rust Prototype.exe SHA256 AA2923016ECE7CD614300B62FF941FB70479190CF390EF80F48185EBBFAE99CE. 1028 native tests, 170 frontend, 119 UI checks. Outfit carry fixed (worker DLL 272E0355...DEE2), overlay WPF markup, no Enable checkboxes, arena/ball/scoreboard flicker, crowd re-apply, scaler group retry, celebrity scaling. Parity: tools/parity_score.py over artifacts/parity-status.json.
+
+UPDATE 2026-10-17 (Claude): QA 0.48 BUILT, not yet live-tested. EXE Builds/0.48.0/Portable/App/2k Launcher Rust Prototype.exe SHA256 4223D516F519D44B3658474596763ACAD2BC9DBC225FE8A0F6B53C67530977B8. 1019 native tests, 119 UI checks. Adds overlay WPF parity (no Enable boxes), Blacktop presentation flicker fix, V2 outfits + Random, mod install, camera controls, video/jukebox tools, saved arena/scoreboard defaults + favorites, V2 roster saves (proven fields), celebrity scaling, scaler status in full games. Research: artifacts/editor-services-v2-research-20261017.md, artifacts/jukebox-v2-freestyle-cover-research-20261017.md. Live probe: tools/Read-EditorServicesProbe.ps1.
+
+UPDATE 2026-10-17 (Claude): QA 0.47 BUILT, not yet live-tested. EXE Builds/0.47.0/Portable/App/2k Launcher Rust Prototype.exe SHA256 F52503FC01293505B65D0ED41FC624300CB7A2BB9754F05E93086B6E532540A4. Adds NPC scaler groups (coaches/cheerleaders/arena), Mods styling, UI polish, V2 roster read, launch speed + one-click Play, Blacktop removals/overlay auto-attach, diagnostics. See QA-REPORT.md 0.47 and artifacts/wnba-v2-research-20261017.md.
+
+UPDATE 2026-10-17 (Claude): QA 0.46 BUILT (0.45 live test held on copy-on-write image pages; fixed in 0.46). LIVE PASSED: Active during startup; user confirmed names/order/tracking/height/zoom in Freestyle and after Quick Play re-entry.
+EXE: Builds/0.46.0/Portable/App/2k Launcher Rust Prototype.exe  SHA256 B244C0CE3B478E2E802FC4EAA09230CAB562D607E39756D9AA0C497DEE152646
+Matches WPF helper: no menu/gameMode gate, starts at loader-armed, 500 ms ticks, one-proof fast transaction, RestoreAll + retry on failure, game-owned settings/runtime bytes tolerated. See QA-REPORT.md 0.45. Feature-gap inventory: artifacts/feature-gap-inventory-20261017.md.
+Build note: pnpm is not installed here; 0.45 used a no-op pnpm shim (node_modules already matched the frozen lockfile). Pre-edit backup: Backups\qa045-before-camera-activation-20261017.
+
+CLAUDE HANDOFF — 2K LAUNCHER REBUILD — 2026-10-17
+
+User is handing this project to Claude. Stop treating camera QA 0.44 as fixed: its in-game test FAILED. Resume from this document, which supersedes HANDOFF-camera-044.txt.
+
+PROJECT AND EXPECTATIONS
+Workspace: C:\Users\carrn\CodexProjects\2kconversiontool
+Current app: C:\Users\carrn\CodexProjects\2kconversiontool\nba2k27-launcher-tauri2
+Target: Rust backend + Tauri 2 + React/TypeScript, using installed WebView2. Restore the WPF app's features, appearance, quality and responsiveness; exact coding parity is unnecessary. The WPF roster/team editors opening in the actual browser are intentional. Keep meaningful settings, content, caches and diagnostics in the portable launcher folder. Preserve Data and Library. Deliver a clickable EXE for each changed build. Ask before installing over Main or making a new live-game write. Do not delete old builds or backups as part of this handoff.
+
+USE THE ACTUAL WPF BUILD AS THE PRIMARY REFERENCE
+WPF source/host:
+C:\Users\carrn\CodexProjects\2kconversiontool\nba2k27-launcher-wpf
+Retained WPF Main, verified release.json identity 0.1.0-wpf.24 / Main:
+C:\Users\carrn\CodexProjects\2kconversiontool\nba2k27-launcher-wpf\release\quality-pass-qa-20261010\App\2k Launcher WPF.exe
+Keep its entire portable folder. EXE SHA256: 5D35A27176E91547FDCC6BCC09017A2AD0E0030C12C5A9FEA7F207BBDF0D227E.
+Frozen backend/UI reference shipped with that build:
+C:\Users\carrn\CodexProjects\2kconversiontool\nba2k27-launcher-wpf\release\quality-pass-qa-20261010\App\Reference\src
+Start with that Reference\src\main.js and Reference\src\renderer, plus App\Backend\host.cjs. WPF is a C# window host with a JavaScript backend and native helpers; its camera implementation is not in WPF XAML.
+WPF rollback:
+C:\Users\carrn\CodexProjects\2kconversiontool\nba2k27-launcher-wpf\release\mod-library-scroll-qa-20261008\App\2k Launcher WPF.exe
+Additional retained WPF roster build:
+C:\Users\carrn\CodexProjects\2kconversiontool\nba2k27-launcher-wpf\release\roster-expansion-qa-20261007\App\2k Launcher WPF.exe
+Shared legacy source:
+C:\Users\carrn\CodexProjects\2kconversiontool\nba2k27-mod-launcher
+Its src\main.js, src\renderer, native helpers and test folders underpin WPF. Prefer the frozen packaged Reference when comparing the exact WPF release.
+Camera helper source:
+C:\Users\carrn\CodexProjects\2kconversiontool\nba2k27-camera-tool\src\Program.cs
+Camera helper historical binaries/INIs:
+C:\Users\carrn\CodexProjects\2kconversiontool\nba2k27-camera-tool\dist
+WPF host source: App.xaml.cs, NativeBridge.cs, NativeWindow.cs and worker\host.cjs under nba2k27-launcher-wpf. Runtime provenance is recorded in the legacy runtime-resources manifests; inspect these to identify the helper actually packaged, rather than guessing from the highest filename suffix.
+
+ALL BUILD LOCATIONS
+Read companion CLAUDE-BUILD-LOCATIONS.json in this Rust project. It inventories 44 Rust build directories, 37 WPF release directories, WPF QA/backups, 125 legacy dist directories and 127 legacy share directories. Each WPF release directory records whether the launcher executable still exists; many old directories contain only retained artifacts. It lists the actual retained launcher executables, not just stale README launch paths.
+Rust builds: C:\Users\carrn\CodexProjects\2kconversiontool\nba2k27-launcher-tauri2\Builds
+Rust backups: C:\Users\carrn\CodexProjects\2kconversiontool\nba2k27-launcher-tauri2\Backups
+WPF backups: C:\Users\carrn\CodexProjects\2kconversiontool\_backups\launcher-wpf
+Legacy builds/shares: nba2k27-mod-launcher\dist and nba2k27-mod-launcher\share under the workspace.
+Original user-supplied old launcher still exists: C:\Users\carrn\Downloads\2k-Launcher-0.36.45.exe
+
+CURRENT RUST BUILDS
+Installed Main is still 0.36.0:
+C:\Program Files (x86)\Steam\steamapps\common\NBA 2K27\2k Launcher\App\2k Launcher Rust.exe
+SHA256 B86C1AAFA291DA5850DA93A90796F15A84EA57B225393F83591761D56316F958.
+Latest separate QA, 0.44.0:
+C:\Users\carrn\CodexProjects\2kconversiontool\nba2k27-launcher-tauri2\Builds\0.44.0\Portable\App\2k Launcher Rust Prototype.exe
+SHA256 FD780885BEEEEB1DE38A4FC44A0E9DF38FF7A04360FAF78AB9329B6335F15DC7.
+No 0.45 fix has been implemented or built. No Main install or Data/Library migration was performed in this pass.
+
+FIRST PRIORITY: CAMERA FAILURE AND ACTIVATION SPEED
+User's latest requirement: cameras should activate quickly; they should not have to wait at Main for a status message.
+0.43 initialized camera data then stopped before publication when its safe-menu proof disappeared. 0.44 retained the initialized allocation and allowed pre-publication deferral/retry. It did NOT solve the problem: the new live session began publishing entries, then permanently held before updating any of the 13 camera mode-list descriptors.
+Exact status: "Cameras · held · No further writes this session: Camera menu changed after publication started; no further writes".
+All seven requested cameras were present in the frozen launch plan. This was not a disabled setting or missing choice.
+Relevant Rust files: src\feature_runtime.rs, src\feature_writer.rs, src\camera_v2.rs, src\camera_v2_tests.rs, src\camera_policy.rs, src\blacktop_observer_profile.rs and src\scaler_v2.rs.
+apply_guarded performs menu readiness checks throughout 54 public edits. Access::writer also does a fresh full process scan/profile validation for each bounded write, including private initialization. Protection intents flush the journal for individual read-only writes. This is confirmed repeated work; its live time cost has NOT been benchmarked. Compare the WPF helper's actual transaction/timing behavior before redesigning or relaxing guards.
+
+IMPORTANT NEW READ-ONLY EVIDENCE
+User returned to Main. Three bounded snapshots showed current=alternate=0x6509837B (Main), stage=0, active=0, kind=0, no loaded wrapper slots, but gameMode=4 remained from Freestyle. Current inactive_camera_menu requires game_mode==0, and camera_ready_boundary additionally rejects scaler Readiness::loaded(), which treats a nonzero mode alone as loaded. Therefore this observed empty Main state cannot rearm under current checks. This does not prove what changed at the instant the earlier transaction stopped. Investigate stale last-mode semantics against WPF; do not simply assume mode 4 means an active court.
+Some partially written registry entries no longer match before/after byte-for-byte; labels/static flags show a prefix applied, runtime flags are back to their earlier values, and all mode-list pointer/count edits remain original. Do not adopt/replay this live partial session without exact ownership proof. No corrective live writes were attempted.
+Snapshot artifact: artifacts\qa044-camera-live-failure.json
+Read-only script added in this last pass: scripts\Read-CameraSession.ps1 (identity pinned by journal; QUERY_INFORMATION | VM_READ only).
+Active QA session directory at capture:
+Builds\0.44.0\Portable\Logs\native-sessions\000000000000000018df51562785bb340000000000000004
+Journal: Builds\0.44.0\Portable\Data\native-v2-features-session.jsonl
+User left the game/launcher open at Main. Recheck current process identity before reading; recorded PIDs may be stale. No running processes were stopped.
+
+VALIDATION / ROLLBACK
+0.44 passed 922 native tests (22 explicit/manual tests excluded), 139 frontend tests, 39 separate camera/scaler fixture checks, both installed Version 2 disk audits, and 119 packaged UI checks plus three fresh-process repeats, HTTP isolation and helper cleanup. These passes did not establish gameplay success; the subsequent live camera test FAILED.
+Evidence: QA-REPORT.md, Builds\0.44.0\QA-VERIFICATION.json and artifacts\qa044-*.log.
+Pre-0.44 edited-file backup: Backups\qa044-before-camera-retry-20261017
+Complete previous source/EXE checkpoint: Backups\v0.43.0-workflow-layouts-20261017
+Existing offline build entry point: Build.ps1 -Verify. Scripts\Verify-QARelease.ps1 and Package-QA.ps1 validate/package the exact candidate. Build uses a local Rust toolchain under workspace\.toolchains\rust-exporter; direct installed toolchain executables avoid slow proxy invocation. Earlier compilation used affinity 4278190080; GUI verification restored 4294967295. Do not spend repeated broad test cycles without a concrete code change or unresolved concern.
+The workspace has extensive unrelated dirty/untracked changes. No reset/cleanup. No active Codex goal existed at handoff.
+
+OTHER UNFINISHED WORK, AFTER CAMERAS
+Version 2 game executable is pinned to SHA256 29A96471C55909FC2BCEA6C699C59238656A501C19B50C74ED64B0D842E576A1, PE timestamp 6AC53765, image size 35BDE000. Old WPF addresses must be revalidated for this update.
+Mod loading and a Freestyle gym change were user-verified in earlier Rust sessions. Camera/scaler/Jukebox acceptance remains incomplete; Version 2 automatic outfit carry is disabled. QA 0.43 restored much of the WPF tab styling/workflows. The prior roughly 75% completion estimate is subjective, not an acceptance result.
+WNBA Freestyle is disabled after QA 0.41's sibling WNBA-only roster-loader experiment crashed on court entry. Do not reenable it. WPF Blacktop used general roster/learn2k_roster.iff, not learn2k_wnba_roster.iff. Category switches cannot create missing teams.
+General Learn2K raw roster is verified at game archive 0B offset 0x3BFD2276 but remains encrypted/undecoded; mixed-league contents are unverified. Check C:\Users\carrn\Documents\Codex\2026-10-17\task\roster-scratch\asset-provenance.json and key-path-checkpoint.json. New file-only research is in tools\roster_key_offline_audit.py, roster_wrapper_offline.py, test_roster_wrapper_offline.py and verify_roster_wrapper_controls.py, with artifacts\roster-key-offline. Eleven decoder tests and plain/synthetic controls passed; actual roster decoding is blocked on key initialization.
+User's D:\Projects\2k Exporter was inspected read-only. Active Rust/Tauri exporter 0.1.26 handles ordinary Oodle/VCZ but lacks this encrypted roster-wrapper/key path. It was not launched or modified.

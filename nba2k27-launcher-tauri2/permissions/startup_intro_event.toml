@@ -1,0 +1,4 @@
+[[permission]]
+identifier = "allow-startup-intro-event"
+description = "Acknowledge or skip only the exact currently owned startup intro."
+commands.allow = ["startup_intro_event"]

@@ -1,0 +1,7 @@
+/* Only the canvas and inert-state overrides live here; controls and rules use
+   blacktop-panel.html and its own stylesheets, shared with the in-game F8 UI. */
+html,body.blacktop-preview-source{height:100%;min-height:0}
+body.blacktop-preview-source{border:0;border-radius:0;background:linear-gradient(#050908a8,#050908e8),url('../assets/blacktop-night-court-v1.png') center/cover no-repeat}
+body.blacktop-preview-source:not(.compact-bar){background:#0c100f}
+.blacktop-preview-source.compact-bar .wardrobe-topbar{margin:4px}
+.blacktop-preview-source .blacktop-rule-controls button:disabled{border-color:#44584a;background:#202c23;color:#bbccbe;opacity:.75}

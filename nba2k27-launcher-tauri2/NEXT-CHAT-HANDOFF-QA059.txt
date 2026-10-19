@@ -1,0 +1,33 @@
+QA059 — 2026-10-18. Read QA054 safety and QA058 implementation handoffs first.
+Read artifacts/qa059-launch-build-audit-20261018.txt for full changes/evidence.
+
+New explicit user policy: do not run the complete game-build audit on startup/
+every launch; reserve it for updating support for game-version changes.
+Parent+worker each hashed870MB, ~14s worker alone -> reported30+sec label.
+Normal admission now checks mapped headers/length/sections/native methods and
+virtual slots only. Full hash exists only in the explicit test-only maintenance
+audit. Existing live-write/ownership guards remain. No persistent trust cache.
+Installed disk-only launch test: two admissions0.04s, repeat15.7943ms.
+Preparing launch replaces Checking game build in routine progress text.
+
+STAGED ONLY: Start QA059 Dev.vbs / .ps1
+Dev/Pending/QA059/launcher.exe52055040bytes
+SHAC8EC75FF58FE9059D6D3E2C69A525FDD17508338E861C3FC00D8E12A3CDF76E6
+Same native DLL as QA058:
+4B03D0EAD15EB5CE562C434CD304017ADAD09DEFA96C1B4AAF30AA656830886F
+Starter backs up DEV before activation and refuses active game/launcher. Final
+CheckOnly correctly refused with game12948 and dev25300/44636 still running.
+Do not kill or overwrite them. User must close normally before activation.
+No install/promotion, game launch, live writes or current DEV replacement done.
+
+WNBA diagnostic remains the QA058 implementation. Use Test QA059 WNBA Source.vbs
+for this staged EXE; it invokes Approve QA059 WNBA Source Test.ps1 with matching
+new EXE hash and unchanged DLL hash. Native fixed pack path intentionally stays
+Data/wnba-priority-v2/qa058-wpf-era. No approval created. All QA058 limitations
+and per-session confirmation remain, including403teams/30NBA/15WNBA read-only
+verification still needed after REGISTERED; categories remain disabled.
+
+Validation:5profile guards,3UI tests,tsc,test/dev builds and actual installed
+disk-only admission passed. No full-suite rerun; known natural AV remains.
+Full maintenance audit command/environment are in QA059 report. Estimate80.2%.
+Backups/qa059-launch-build-audit-20261018. No memory registry edits.

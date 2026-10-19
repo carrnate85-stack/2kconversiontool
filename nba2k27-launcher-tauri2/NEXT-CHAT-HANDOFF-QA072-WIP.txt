@@ -1,0 +1,86 @@
+QA072 WORK IN PROGRESS - 2026-10-18
+THIS IS NOT A DELIVERED BUILD. Latest ready starter remains QA071.
+Read NEXT-CHAT-HANDOFF-QA071.txt first. DEV ONLY, no install/promote/activation,
+no game control/UI and no ad hoc live writes. Preserve builds/Data/Library/journals.
+Back up and fsync edits. User cannot test for2hours.
+
+ACTIVE TWO-HOUR WINDOW
+Started2026-10-18 19:53:37UTC; end21:53:37UTC (5:53pmAmerica/New_York).
+Heartbeat automation two-hour-dev-parity-work ACTIVE, targetcurrentthread.
+10minreplays through22:03:37UTC soonefinalreplayafterdeadlinecanstop+report.
+At/after21:53:37 STOPnewwork, pauseheartbeat viaautomation_update fullfields,
+reportlatestdevstarter/validation/remainingchecks. No testrequests duringwindow.
+Do notcreateduplicateautomation. Itkeepscurrentthreadworkcontinuingifturnends.
+
+AGENTS / OWNERSHIP
+wnba_toggle_ui: nativeoutfit2durableexpansionbundles core/native/transport +newtest.
+Functionallystable, fixingROOTREVIEWpartialARRAYOVERLAPbeforeSets (+8/-8 sourcearray,
+mutualnewarrays, actor/source/clone/ownerspans). Notyetfinalfreeze/DLL.
+wnba_integration:10WNBAfilesFROZEN, stricttestsPASS, peerreviewPASS. DoingSELFONLY
+nativeguardcostbenchmark now; do noteditWNBAunlessconcretefinding.
+outfit_latency_qa066: Rustinitialsample+rowbatch+descriptionbatch FROZEN;testsPASS.
+Ownsoutfit_carry_v2/runtime/v2profile+tests,selectionlineup_rowsvisibilityonly.
+Root: diagnostics scoreboards/blacktopguard/nativeoverlay; kernelpathTLSscratch.
+Native/outfit_match_v2_win.hpp CNGcandidatewasREVERTED; fileoriginalQA071.
+No DLL/pin updates forQA072 yet. Currentembeddedpayload stillQA07192B28...718E.
+
+QA072 CHANGES CURRENT
+WNBA categorycleanupBEFOREnewHome/QuickPlayloaderarm;4/12/8journalrecordpreflight
+reservescleanupunderunchanged256cap beforeanyforwardeffect. Activeobservations/
+cleanupnotbudgetgated.100boundedcyclesexhaustcleanstockafter21entries;512unlimited
+fixturecyclespass. Both-toggleaudit no sourceprofile/write-rangeconflict.
+FinalforwardCAS repeatsauthority/consent/source+freshduplicatedselection; dispatch
+VPwindowRAIIrestoresoldprotectiononallerrors/throws. Activefaileddeepcapturecan
+classifyexactfreshstableofflineexitonlyafterfullscope/profile/routeproofagain.
+Failedpublicationstillholds/noretry. Independentfinalreviewnoissue.
+Rust initialready sampleoneboundedpre/postownertransaction:4→2owners,3→2lineups,
+unchanged3samples500ms equality and5durablepublicationchecks. Legacydefaultorder.
+row pointers reuseexistingboundedlineup_rows before/after,sparsepartialfallback.
+Descriptionfull0x2970initial/end retained,5metadatafieldsparsedfromfullfirstbytes,
+owner40B+arrays<=56B boundedreadfallback; endingowner/arraysrechecked.21→14reads.
+Root scoreboardfailureReason preservesFIRSTtransactionfaultthroughrestored-held;
+noautoresumechange. Guard reportsmax4blockername/PID/parent/identity availability,
+no paths/commandlines, exactadmissionunchanged. OverlayexactModechangedreadrace
+retainslastpresentationonlywithinexisting1.5sgrace; rawobservationALWAYSNone,
+actionsrevoked. Otherfaultsvisibleimmediately; observationErrorloggedseparately.
+Kernelprocesspath64KiB transportbufferreusedperthread, ALWAYSfreshGetProcessTimes
+andQueryFullProcessImageName peridentityproof. Reentranttake/return+errors+UTF16+
+returned-length+8threadfixturesPASS; nevercachedpathoridentity.
+
+ROOT VALIDATION SO FAR
+qa072-third-test-build.logPASS34.48s/12existingwarnings.
+Descriptionfilter4PASS (3new+scaler); carry_lineup_rows2PASS; initialsample4PASS;
+outfit_match_v2::tests14PASS; outfit_journal::runtime::tests9PASS.
+Rootblocked_observer+overlaytransient+TLSpath testsPASS. Scoreboardruntime8PASS
+withescalation (sandboxparentpinaccessdeniedexpected). Totalcompiledtestcount1328
+=>likely1276PASS+52ignored, FINALWHOLESUITENOTRUNYET.
+Nativebundleagentexistingfullnative25injectedfaults/66destructoraliases/selfonly
+transporttestsPASS, dedicatedbundlefault/crash/maximumnamecasesPASS.
+Two-flushbundleofflinebench14→4equal3092bytes median4.7352→1.2305ms (~3.5ms ONLY),
+notactualgamegain; live16–63msdurableeventgapsincludeotherproof/nativecost.
+CNGproviderreuse benchmark2000x8192B7.3773→6.4747ms (<1mssaving)and8threadSHAknown
+PASS, butproductionREVERTEDtoavoidcomplexityfornegligiblegain. Researchcandidate
+Backups/qa072-cng-provider-candidate-20261018 +artifactcostreview. Testsourceis
+researchbenchusescurrentHash(nowold) soitslabelretainedProviderishistorical;
+renameoutputcurrentImplementationormovebenchmarkoutoftestbeforefinalpolish.
+Officialdocusedhttps://learn.microsoft.com/en-us/windows/win32/api/bcrypt/nf-bcrypt-bcryptopenalgorithmprovider
+
+NEXT
+1.Waitnativearrayoverlapfixfreeze; independentreviewallbundlepermit+partialstate,
+strictnativefixtures/DLLsmoke. DoNOTbuildDLLuntilsourcesfrozen.
+2.Update2currentpayloadpins andadmitEXACTQA07192B28...718E/1144832recovery-only
+withsize±1fixture, backup/fsyncoriginal first. DoNOTadmitintermediateDLLs.
+3.Finalno-run+wholeRustsuite(escalatedsyntheticparentpins),devbuild,frontendsource
+unchangedunlessnewUIedits;stageQA072create-onlyfromqa071tool(noactivation).
+4.Updatehandoffwithhash/test/sourcefreeze. User2hwindowcontinuesafterstage.
+5.Furtherconcreteaudit: Authority.safe() callsSession.owned viaownedcallback AND
+Session.protected_present callsownedAGAIN; duplicatedsame-calllease+4dirchains+
+worker/parentproof. ProposedNEXTQA073 optionalprivatecombinedowned/unprotected
+callback, defaultnullfallbackoldtwo; noTTL/cache, eachpreeffectguardfresh.
+Keepoldcallbacksmandatory/standaloneprotectedself-safe; APIprovenance/faulttests
+neededbeforeimplement. Noeditthisproposal yet. Alsocapacitiescurrentlywaitclean
+butnativebridgeonlyreportsarmed/restored/published, soexplicitonce-onlycapacity
+statuswouldimprovevisibility; neverstoploopwhileanycallback/categoryowned.
+6.EarliertriggerstillUNSAFE(currentnativeconsumesbeforedeeploadedactorproof).
+Needpeek+preconsumeproof+choicerevisioncancelprotocolbeforeanyearlierpublication;
+WPFalsowaitedloaded3samples. Donotrelaxstagefrominference.

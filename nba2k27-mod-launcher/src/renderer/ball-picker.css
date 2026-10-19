@@ -1,0 +1,30 @@
+.wardrobe-topbar #ballMenuButton{max-width:190px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wardrobe-topbar #ballMenuButton[data-phase=error],.wardrobe-topbar #ballMenuButton[data-phase=unavailable]{border-color:#b96548}
+.wardrobe-topbar #ballMenuButton[data-phase=incompatible]{border-color:#be9a54}
+.ball-picker{display:none;width:100%;height:100%;min-height:0;margin:0;padding:0;color:#eef2f8;background:#101821;border:0;border-radius:9px;box-sizing:border-box;overflow:hidden}
+.ball-picker.is-open{display:grid;grid-template-rows:auto auto minmax(0,1fr) auto;flex:1}
+.ball-picker-heading{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid #35485a;background:#182635}
+.ball-picker-heading small{display:block;margin-bottom:3px;color:#9fbd94;font-size:9px;font-weight:700;letter-spacing:.12em}
+.ball-picker-heading h2{margin:0;font-size:18px}
+.ball-picker button,.ball-picker input,.wardrobe-catalog-heading button{font:inherit;color:inherit;background:#1b2a39;border:1px solid #40576b;border-radius:7px}
+.ball-picker button,.wardrobe-catalog-heading button{padding:7px 10px;cursor:pointer}.ball-picker button:disabled{opacity:.45;cursor:default}.ball-picker button:focus-visible,.ball-picker input:focus-visible,.wardrobe-catalog-heading button:focus-visible{outline:2px solid #b4df94;outline-offset:2px}
+.ball-picker-back{min-width:130px;color:#182716!important;background:#b4df94!important;border-color:#d0edbd!important;font-weight:750!important}
+.ball-picker-controls{display:flex;flex-wrap:wrap;gap:8px;padding:12px 16px 9px;border-bottom:1px solid #34495b;background:#14212e}
+.ball-picker-controls>input{flex:1;min-width:260px;height:36px;padding:7px 10px;background:#0c151f}
+.ball-picker-filters{display:flex;flex-basis:100%;gap:5px;overflow-x:auto;padding-bottom:2px}
+.ball-picker-filters button{flex:none;padding:5px 10px;color:#bfd1b9;font-size:11px}
+.ball-picker-filters button[aria-pressed=true]{color:#172414;background:#b4df94;border-color:#d0edbd}
+.ball-picker-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));grid-auto-rows:minmax(148px,1fr);align-content:stretch;gap:9px;min-height:0;padding:12px 16px;overflow:auto}
+.ball-picker button.ball-tile{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;min-width:0;padding:10px;text-align:center;background:#14212c;border-color:#354b5d}
+.ball-picker button.ball-tile:hover{background:#1d3040;border-color:#79a38f}.ball-picker button.ball-tile[aria-pressed=true]{background:#1c3b31;border-color:#b4df94;box-shadow:inset 3px 0 #b4df94}
+.ball-tile-art{position:relative;display:flex;align-items:center;justify-content:center;flex:0 0 84px;width:84px;height:84px;border-radius:50%;color:#241409;background:radial-gradient(circle at 34% 28%,#f7bb58,#c86e22 62%,#753315);box-shadow:inset -5px -6px 11px #5a2508aa;font-size:34px}
+.ball-tile-art::after{content:'';position:absolute;width:62px;height:1px;background:#321708;transform:rotate(-24deg);opacity:.7}.ball-tile-art[data-group=Installed]{border-radius:8px;color:#d9e7d4;background:#263429;box-shadow:none;font-size:8px;font-weight:800;letter-spacing:.05em}.ball-tile-art[data-group=Installed]::after{display:none}
+.ball-tile-art.has-preview{overflow:hidden;background:#080b09;box-shadow:none;font-size:0}.ball-tile-art.has-preview::after{display:none}.ball-tile-art.has-preview img{width:100%;height:100%;object-fit:contain}
+.ball-tile-copy{display:flex;flex-direction:column;align-items:center;min-width:0;gap:3px}.ball-tile-copy strong{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;font-size:11px;line-height:14px}.ball-tile-copy small{color:#9caf98;font-size:9px}
+.ball-tile-selected{position:absolute;right:7px;top:6px;color:#b4df94;font-size:9px;font-weight:700}
+.ball-picker-empty{grid-column:1/-1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:#aab9a6}.ball-picker-empty button{margin-top:5px}
+.ball-picker-footer{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 16px;border-top:1px solid #35485a;background:#182635;font-size:11px}.ball-picker-footer>span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ball-picker-footer>span[data-phase=error],.ball-picker-footer>span[data-phase=unavailable]{color:#ffc0b1}.ball-picker-footer>span[data-phase=pending],.ball-picker-footer>span[data-phase=incompatible]{color:#f4d677}.ball-picker-footer>div{display:flex;align-items:center;gap:9px;white-space:nowrap}
+body.ball-catalog-open>.wardrobe-catalog-heading,body.ball-catalog-open>.wardrobe-close-editor{display:none!important}
+body.ball-catalog-open>#blacktopStatus,body.ball-catalog-open>main,body.ball-catalog-open>footer,body.ball-catalog-open>.blacktop-session-status{display:none!important}
+@media(max-width:1250px){.ball-picker-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:800px){.ball-picker-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.ball-picker-controls>input{min-width:180px}}

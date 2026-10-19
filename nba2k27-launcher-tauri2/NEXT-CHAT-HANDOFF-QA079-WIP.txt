@@ -1,0 +1,90 @@
+QA079 SCALER WORK IN PROGRESS - 2026-10-18
+Canonical nba2k27-launcher-tauri2 under C:\Users\carrn\CodexProjects\2kconversiontool.
+QA078 final retains full history, exact candidates and crash qualifications.
+
+USER FEEDBACK / NEW ACTIVE SCOPE
+User: "ok wna working all around seems good now". Actual active App hash verified
+QA078368340096BA825FBC2E53361A20C79DB19DA12B9365B95686567F0C6CBB57F49.
+User then reported scaler visibly changes BASKETBALL PLAYERS/REFEREES size after
+they appear, not merely status and not NPCs. QA078 orderfix did not resolve it.
+Continue separate scaler dev work. No install/promote/autoactivation/gamecontrol
+or ad hoc live writes. Do not change working WNBA logic or weaken scaler gates.
+Old heartbeat remains PAUSED. No goal/automation created for this task.
+
+LIVE EVIDENCE SAVED
+artifacts/qa078-user-live-results-20261018.json
+Backups/qa078-user-live-confirmation-20261018 contains shared-read exact journal,
+provider closed-state, overlay/performance and Blacktopprogress snapshots/hashes.
+Game33536,birth134368355210946577,session
+000000000000000018dfbfa6f6612fec0000000000000002; parent12864. User closed game.
+Both toggles true. Freestyle forward4words thenApplied in currentjournal28/33.
+BlacktopPUBLISHED19836281 thenHELD19838000 onCTX160(kind+active) during deepcapture.
+Visiblecategories userconfirmed; do NOT claim complete monitor/persistence live
+certification. No currentheld reopening. Followup research only:
+artifacts/qa078-active-match-departure-cleanup-proposal.json. WPF restores whenever
+BcSelectionfalse; currentInput!selectionalreadycleans, but narrower Input-ready
+then checkpoint-context-change race holds before next normalcleanup tick. CTX160
+alone does NOT prove stablematch. No WNBA source changes for this followup.
+
+SCALER DIAGNOSIS / QA079 INTENT
+Savedjournal globalsharedfloat97%write20/Applied21 aftercamera2-19; NPCcachebatches
+later. Initial scaler readiness failures are not journaled, so this does not
+disprove QA078initialpriority. Journal has no perintent timestamps; no measured
+globalwrite-to-visibleappearance delay. Provider ARMED waiting1239ms; journal
+created~gamebirth+2s. No evidence20ssettlegate blockedscale. First-ready subtype
+was lost because providerstatus overwritten toended onclose.
+WPF Loaded lacks V2 description/interface/opt-in checks. Those ARE currentV2
+publication gates; do NOT remove blindly without first-refusal evidence.
+artifacts/qa079-scaler-readiness-independent-research.json.
+
+IMPLEMENTED SOURCE FROZEN / FINAL BUILD IN PROGRESS
+Owner wnba_integration, independent review outfit_latency_qa066.
+src/feature_runtime.rs E147B66FA86E20D682B6C2390B319A264EC60F349643FD6B3EA9D8CAD9FF4DE9
+src/provider_launch.rs BBC0ACF4EF1CC17343380F9CFA8C1E8985AFF669D4936231E8CCDEF3997CDA56
+src/scaler_v2.rs 0689C12291A9CDCFD86F5A9E390DDCF65FB0E8E9976D799984F9E97B7DA94187
+Only these3files differ from QA078549source/config entries; native83AF...DLL
+bit-for-bit unchanged. Backups/qa079-scaler-first-due-diagnostics-20261018.
+
+Scaler-enabled Play first existing feature tick is due immediately AFTER same
+ownedARMED/Runnercreation, with fresh authorized/live/parent/Access checks.
+No preARMED writes or new admission path. Firstdue consumed once; later500ms
+cadence unchanged, scaler-disabled firstduefalse. Combined enabled lanes may
+run first500ms earlier using SAMEexistingfullRunner.tick; no extra perframewrites.
+Tick precedes readinessearlybreak so firstopportunity isn'tskipped. NPCgroup
+scheduling/behavior unchanged because user specifically meant players/referees.
+
+Bounded informational scalerTiming facts in existing providerstatus retain
+firstattempt, static-allowlistedfirstrefusal, planready/globalapplied mode/loaded
+count, firstloaded-player cacheobservation, existingcompletedNPCwrite/cache and
+reset facts. Max16records/unique8phases; privateattemptcounter notserialized,
+snapshotattemptcount onlyonnewfact so no recurring statuswritechurn. Retained
+throughended/closed. No IDs/addresses/keys/extra memoryreads/UIpopups. Facts never
+used for authority/retries/holds. scaler_v2 solechange read-only capturedmode getter.
+All globalinput/description/opt-in/profile/table/owner/revalidation/write guards
+unchanged. No new player-cache writes. This removes known500ms startupwait; it
+does not yet prove actual player's visible shrink is fixed. Next normalrunfacts
+must identify earlyinputvslateoptin/cache if stillpresent.
+artifacts/qa079-scaler-first-due-diagnostics-source-audit-20261018.json
+artifacts/qa079-scaler-independent-review.json (exact3hashes, no blocker found).
+
+ROOT PIPELINE REMAINING
+artifacts/qa079-final-build-inputs-20261018.json freezes549files, unchanged83AFDLL.
+Current exec session2288 cargo test no-run running; log
+artifacts/qa079-final-rust-test-build.log. No fullQA079suite or stage yet.
+Then ONE bounded NATURAL whole run prefixqa074-natural-qa079-whole-1 and log
+artifacts/qa079-final-full-rust-tests.log, --test-threads=4. Exact supervisor
+artifacts/qa073-natural-crash-supervisor.exe; exact testEXE path fromQA078.
+No repeats-until-green. Historical QA073testAV remainsunresolved; preserve any
+newfailure exactEXE/PDB/dump/log BEFORErebuild. QA078test/dev archived roundtrip
+Backups/qa078-passing-test-image-20261018/exact-test-and-dev-images.zip.
+Dev cargo build --offline --locked --no-default-features --target-dir target-qa054
+-j4, no activation. tools/qa079_stage_dev_checkpoint.py prepared/syntaxchecked;
+call --payload-sha83AF5D0613D1E90D51933F382C22D215F766A61A198CAFEB41E80606A1722518
+--payload-bytes1215488 --build-inputsartifacts/qa079-final-build-inputs-20261018.json.
+Script creates NEWQA079starter/stage only after exact tests/source hash checks.
+Validate AST/CheckOnly noactivation; VBS /check echo-only needs normal Windows
+settings access (restricted cscript errorAccessDenied, not starterbug).
+Archive exactpassingtestEXE/PDB+devEXE/mainPDB/controlmanifest/sources; newstage
+hash/sourcefreeze; finalhandoff and clickable devstarter. No native rebuild needed.
+Next normaluserPlay test reports actualplayer/refereevisualsize; read retained
+scalerTiming facts even after gameclose. Keep WNBA userworkingbaseline unchanged.

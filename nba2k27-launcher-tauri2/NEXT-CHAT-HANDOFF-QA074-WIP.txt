@@ -1,0 +1,150 @@
+QA074 WORK IN PROGRESS - 2026-10-18 20:30UTC
+NOT DELIVERED. Read NEXT-CHAT-HANDOFF-QA073.txt for stagedqualifiedcandidate/rules.
+LateststagedStartQA073Dev B322735EC913237B1F0A8EEDEB52A0D33C6E5150B90ADCCA43C49DD87BA55048.
+QA073sourcefreezeverified419files; nativepayload4FB74...A3FA1190912bytes. DoNOToverwrite.
+ActiveDevAppstillQA070. NEVERinstall/promote/activate/gamecontrol/adhoctruntimewrites.
+PreserveData/Library/builds/journals/backups. Back up/fsync edits. Userunavailable.
+
+TWOHOURWINDOW19:53:37->21:53:37UTC (5:53pmAmerica/New_York).
+Heartbeat two-hour-dev-parity-work ACTIVE10min, finalreplayallowance22:03:37.
+At/afterdeadline stopnewwork+PAUSEheartbeat+report latestcandidate/qualifications/
+remaininglivechecks. Do notaskuserQAinsidewindow; no duplicateautomation.
+
+QUALIFIEDQA073 / AV
+NaturalwholeRust4threadAV0xC0000005after7.083sec isPRESERVED. OriginalfailedexactEXE/
+PDB ZIP Backups/qa073-natural-test-av-20261018/exact-test-image.zip hashverified.
+Identityartifactqa073-natural-test-av-identity.json. DoNOToverwritefailurelog
+qa073-final-full-rust-tests.log. OneboundeddebuggerfullcapturePASS1282/53ignored/
+43.52sec,noAV. PASSISNOTFIX. ManifestexplicitlyqualifiesnaturalAV+underdebuggerpass;
+releaseEligiblefalse/candidateOnlytrue. No hardware/compiler/newBasicattribution.
+Testbuild15.43s/dev17.90sPASS. Strictnativefaults/peerreview/DLLsmokePASS.
+
+AGENTS/APPROVALS
+outfit_latency_qa066: approvedTESTONLYtoolsnaturalcrashsupervisor+CRTchannel+native
+syntheticfixture. NO Rust/main/Cargoeditsapprovedyet. Currenttools:
+qa073-natural-crash-{channel.hpp,fixture.cpp,supervisor.cpp} under tools/.
+Synthetichandled/normal/disabled/subprocess/hardware/software/noacktested; root
+reviewrequestedargvector support beyondonequotedarg, retainedcreatedchildcleanup
+onwatchdog/exception(noorphan), checkdumpFlushFileBuffers. Agentapplying/rerunning.
+SupervisorONLYexactcanonicalworkspacefixture orretainedtestexe, noOpenProcess/attach,
+noDEBUGflags, no globalWER/PageHeap/BIOS/registry. Inherited4handleallowlist, mapping
+PID+birth+readyhandshake excludeslibtestsubprocesses. TopUnhandledExceptionFilter
+one-shot signalsremoteEXCEPTION_POINTERS, bounded20secack; externalSystem32DbgHelp
+minimalMINIDUMP(NoFullMemory/Heap), CREATE_NEWprivateworkspace. Neverprint/copykeys.
+BeforeRusthookapproval: finalnativefixturesPASS+report+Rootreview. Proposedcfg(test)
+CRTmodule+IGNORED syntheticfataltest mustREFUSEcrashunlessvalidatedchannelinstalled;
+provesRuststd/CRTdidnotoverwritefilter. Newinstrumentedtestimage/PDBdifferentfrom
+originalfailedcontrol. Boundnaturalcaptureruns, neverrerununtilgreen. Preserveall.
+
+wnba_toggle_ui: researchWNBA53appendedplayerrecords absentnativehashindex. Concrete:
+all15kind29clubs link209uniqueBASEindexedrows, noappended/out-of-range. Missing53
+AREreferenced: East35711, West35811, USA36111, 2KSports35020. Hash222e3502byte-original
+NBA rows18734/base5510rows3aliases each; appended5510..5562noneindexed. StandardFS
+pageexcludeskind33AllStars/kind20Sports butincludeskind22USA:11USAcopiesreachable.
+DoNOTclaimunplayablewithoutactualconsumerproof; directteamrowmaywork. Agentcompares
+WPFmerger/nativeconsumer/hashalgorithm, proposalonly. NO pack/currentassetedit;
+no crypto keyprinting/copying/shipping, no installedarchivewrites/gameaccess.
+
+wnba_integration: QA074Freestyleavailabilitystatusproposal read-only ONLY. Actual
+providerloop500ms serialwithoutfitpermits/presentation/arena etc. RootREJECTED
+4.4MBdeepfullcaptureEVERYtick duecongestionrisk. Agentbenchisolatedcopy/fixture read
+counts+pureCPU; no src/Cargoedits. Revisedobservational1-2speriodic+entry/header/source
+changes couldreport15teamsONLASTCHECK withelapsed, clearonuncertainty, neveraswrite
+proof/TTLadmission. Needproposalreview BEFOREproductionedit. Existinglifetime4DWORDs/
+OFFnextPlay/BothmatrixmatchesWPF. DoNOTrelaxSTOCK_MASKcombinedguardorreapplywrites.
+Aftercostreport prioritizeREADONLY shadowtimingdesign WPFloadedready vsstrictRust
+mode/stage1beforefirstplan. Userwalkinclothes likelyboundarydelay UNPROVEN. No blind
+relaxstage/earlypublication: nativeconsumesplanBEFOREdeeploadedactorproof. Needsafe
+boundedretainedidentity/profile/roster telemetry nextnormaluserPlay, noextrasteps,
+noeffects/keys/unboundedscans. Proposalonly.
+
+ARTIFACTS
+qa073-final-stage-20261018.json; qa073-natural-test-av-identity.json;
+qa073-bounded-debug-capture[-stdout].log; qa073-basic-rust-tests.log;
+qa073-basic-rust-benchmark.log (.678msBasic vs6.281class5/7.320Toolhelp medians);
+qa073-fresh-basic-process-guard-production-proof-20261018.json;
+qa073-basic252-independent-final-review.json;
+qa074-freestyle-lifecycle-toggle-reentry-review.json.
+No liveperformance/reentryclaims fromofflinechecks. UseracceptedQA070workingbutnot
+instant. FinaluserreportmustmentionunresolvedtestAV ifstillunexplained.
+
+UPDATE20:33UTC
+Heartbeat SAMEIDtwo-hour-dev-parity-work NOW5mininterval (not10) through22:03:37UTC,
+ACTIVE. PromptupdatedpreservingAVqualification/nextwork. No duplicateautomation.
+NaturalcapturetoolsFROZEN with7fixturesPASS, noack20,034ms, minimaldump/noheap/full,
+forcedCREATE_NEWfailureownchildcleanupPASS,3minwatchdog. Finalreport
+artifacts/qa073-natural-crash-capture-fixtures-20261018.json.
+ROOTNOWAPPROVED EXACT2Rustfiles forQA074DIAGNOSTIC: src/test_crash_capture.rs +one
+cfg(all(test,windows,target_arch="x86_64"))modline main.rs. Agentoutfit_latencywrites,
+NOnewproductionroutes/deps/features. Handlerrawvolatile40Bmapping, nonallocating/
+nopanic/unwrap, PIDbirthproof,20sack. IgnoredsyntheticselfAVmustNOOPwithoutvalidated
+channel. Freeze->rootCargo->firstexplicitignoredRustsyntheticundernewsupervisor
+mustproduceC0000005/exactTID/context->ONEboundedwholeUNDEBUGGEDcapture. Stopafter
+thatpass/fail, neverrerununtilgreen. ExactoldfailedEXE/PDBZIPcontrolunchanged.
+NoCargo/buildrunningatthisupdate. rootCargoexitedall; QA073stagefixedqualified.
+
+Freestyledeepcapturecostmeasured:4,406,812bytes/1182reads/1192checkpoints/32regions=
+2406identityqueries,doublecapture;~46msidentityworkestimate at19.1usselfsample,
+pureFakeCPU868us (notgameperformance). Originalfingerprint4502B42readsdoesNOTdetect
+inplacerowmutation. RootkeepsavailabilitystatusPROPOSALONLY; donotadd46msserial
+workeach500mstick. AgentWNBAintegrationnowproposesdevoptinREADONLYshadowtiming.
+Needs exactfiles/privacy/cost/testplanbeforeproductionapproval. Noimmediatecode.
+
+Nativeindexresearchnewstaticfinding:222e3502actually3regions: first(N-2P)hashbuckets
++twoPsortedarrays. Getters2FD0CC0/CF0/D20 useplayer+128u16,+124u32,+120u32. WithnewP5563
+andoldN18734boundariesshift53/106slots; butctor2ED9E00supportsDIRTYflag rebuilding/
+sorting via2133F00/212F950, andonecaller2F4A02CpassesTRUE. This MAYmakeoldondiskindex
+expected. Agenttoggle_uiauditsNORMALloader2F08E80flag/callchain BEFOREanypatchclaim.
+Keepfilevsruntimeproofdistinct. Donotclaim53unplayable;15clubsusebaseindexedrows.
+No pack/codechangesapprovedforindex.
+
+UPDATE20:45UTC - NATURAL DIAGNOSTIC DONE; STOPREPETITIONS
+QA074test-onlyRustmodulecompiledPASS26.03s/12warnings. PlainignoredsyntheticwithNO
+channelREFUSEDSAFELY+PASS. Supervisorprefixfixnowallowsqa073-natural- ORqa074-natural-
+underSAMEartifactsroot; strictcompile+qa074hardwarefixturePASS, noRustchange.
+SupervisedRustsyntheticVALIDDUMP C0000005/TID53220/context1232, EXE44051A3AAB209875E88773B84B896D8C579D69161F0DC7BD0804FF431769D03A,
+PDB1EACB90EB5EF41C52557CD982ED6989BB6CE2B87742F714F2C05984D58158DD4.
+ONEboundedUNDEBUGGEDwholecapturerunthenPASS1282/0failed/54ignored/42.97sec,
+EXIT_CODE0/CLAIMED0/DUMP0. STOPfurthercaptureruns asplanned. AVUNRESOLVED; thisnew
+instrumentedimageNOToriginalfailedcontrol. ExactnewEXE/PDB+main/testmodule/logs/
+QA073source-manifestZIPdurable/roundtripSHAverified:
+Backups/qa074-diagnostic-test-image-20261018/exact-diagnostic-image.zip.
+Artifactqa074-undebugged-capture-result-20261018.json. OriginalQA073failedcontrolZIP
+unchanged. No newdefaultprodfeature/CRT (cfgtestonly), noQA074devstageyet.
+
+NEW QA075 SHADOW IMPLEMENTATION APPROVED / AGENTWNBAINTEGRATIONWORKING
+Newnested src/outfit_match_v2_shadow.rs +tests; childmodlineoutfit_match_v2.rs;
+minimalhookoutfit_runtime_v2.rs(NOTlegacy); readonlyunconsumedroster/choiceIDsaccessor
+outfit_carry_v2.rs. No main/AVmodule/blacktopwriter/selectionchanges. debug_assertions
++envC27_OUTFIT_READY_SHADOW1 required; rootnextstartermayenableONLYdevprocess.
+SeparateQUERY_INFORMATION|VM_READ|SYNCHRONIZEownhandle(below-normalpriority), facts
+only/no MatchPlayer/Plan/permit returned orlogged, no effects/ledgerconsumption.
+Actualstrictcapturebodymustremainbyte-equivalent, no earlystagepublication.
+RootEARLYDRAFTreviewfoundquotafixes pending beforefreeze: CpuBucket mustcarryoverrun
+DEBT (saturating_sub erasesdebt+1msentrycanexceed2.67%CPU continuously); requirefull
+burstcredit/backoffbeforeexpensivepreproof andchargeallthreadworkinclguards/logger.
+BudgetmustPOISONonquota/partial/transporterror so `.ok()`subprobes can'tlogreadyafter
+partialquota. WindowremainingcapmustboundreadBudgetmin512KiB/bytesleft, notovershoot
+8MiB byaprobelength. BoundfreshidentityreturnedUTF16lenbeforetextslicing. Agenthas
+finding/testsrequired (debt/250msrepeats/lastwindowbytes/swallowederrors). No Cargo
+untilfrozen. ExistingMemoryreadalreadychunks4KiB. Needprivateoldactorgenbaseline:
+reused/unknownactorsNEVERproveearlyreadiness. No nativeeffects/stagegatechange.
+
+WNBAINDEX RAW RESEARCH APPROVED / AGENTTOGGLE_UIWORKING
+Offlineexactnativealgorithmrecovered: RobinHoodUniqueIdhash firstregion, second
+sorted(AudioSignatureId,rowIndex),third sorted(SignatureId,rowIndex). Rebuildbyte-
+MATCHESstockbase5510andWNBAsource3690all3regions. Currentmixednormal-preserveN18734,
+P5563 modeledlookups5PASS/5558FAIL (notclaimofactualruntimefailure). Ctor2ED9E00normal
+flagroot+5Cfalse unlessschemaconversion, allmixedchunkfingerprintsstockbase; native
+compiledexpectedfingerprint/fullnormalbranch auditstillneededbefore runtimeclaim.
+ROOTAPPROVED freshresearchrawindex.bin+manifest ONLY, N18734/B7608/5563rows, alllookups
+andsortedaliases/fullnonindexbytesunchanged; no CURRENTpack/asset/fullIFFmutation.
+AlsoapprovedpureSYNTHETICequal-lengthCRCdelta unknownsuffix0..256incl22 tests NO
+actualsalt/keyread. FuturefullIFFcandidate remainsUNAPPROVEDpendingindependentreview.
+Agentoutfit_latency_qa066 nowREADONLYindependentindex/CRCdelta review, nofurtherAV
+runs/Cargo/sourceedits. No keyprinting/copying/shipping, no installedarchivewrites.
+
+LateststageSTILLQA073qualifiedB322735...55048, activeDevAppstillQA070.
+Heartbeat5minACTIVEuntil21:53:37UTCworkdeadline/22:03:37lastreplayallowance.
+Do notrequestuserQA beforedeadline. NeedfinalreportAVqualification+latertiming/
+WNBAreentrylivechecks. RootfreezepackagingONLYafternewsource/testsfullyreviewed.

@@ -1,0 +1,170 @@
+QA080 FINAL DEV CHECKPOINT - 2026-10-18T22:42:59.311562+00:00
+Canonical project: C:\Users\carrn\CodexProjects\2kconversiontool\nba2k27-launcher-tauri2
+Read NEXT-CHAT-HANDOFF-QA079.txt for retained prior implementation, all exact
+QA073 crash evidence and WNBA acceptance limits. QA080 supersedes its WIP.
+All builds/tests/staging/evidence work complete; agents completed. No activation.
+
+USER / CURRENT TEST
+User: every basketball player/referee visibly rescales when loading; WPF seemed
+to set size before loading. QA079 first-due improvement did NOT fix this by the
+user's observation. Pending optional clarification: player selection versus
+walk-in/court loading versus both. Do not ask to run separate tools/scripts.
+QA080 is a normal dev candidate; use existing toggles and Play. Close current
+QA079 launcher normally, open Start QA080 Dev.vbs, observe one normal court load.
+Read automatic scalerTiming/npcEffects afterward. No claim of visible fix yet.
+
+BOUNDARIES
+DEV ONLY. No install/promote. Agent did not activate this stage, launch/stop the
+game, control desktop, or perform live memory writes. Only saved logs, disk
+images/source and offline fixtures were read this turn. Keep user Data/Library,
+backups, builds and journals. Back up+fsync edits. Keep exact identity, parent,
+ownership, pre-effect durability, revalidation and no-replay/hold guards. Never
+capture/print/ship roster keys/salt. Old heartbeat remains PAUSED.
+
+LIVE QA079 EVIDENCE / WHAT IT PROVES
+Active dev EXE hash was verified C63571C913EC685F2B40B08A5677192C2629A5A3075B952B279A134B0858C485.
+Session000000000000000018dfc07d89c4deb00000000000000001, gamePID53924.
+Scaler facts: firstattempt25ms, firstrefusal27ms Invalid scaler object span;
+planready13621ms/globalapplied13630ms, mode0, loadedPlayers0; firstNPCwrite/cache
+fact15802ms; first strict player-cache observation46510ms,26players.
+Current early input was therefore not postponed to that first verified wrapper
+observation. ZERO WRAPPERS DOES NOT PROVE ZERO ACTORS ELSEWHERE. Observation
+is not actor birth/first rendered frame. Do not infer33seconds of visual lead.
+Status at earlier read:97% active,26caches,0coaches/0cheerleaders/4arena/0celebs.
+Those current owned counts do NOT exclude an earlier receipt later dropped.
+
+Game closed normally during research, before journal snapshot. Completed journal
+is unlinked by resolve_ended; no full write-effect history captured. The file
+Backups/qa080-scaler-user-resize-20261018/native-v2-features-session.jsonl is a
+ZERO-BYTE FAILED COPY, NOT EVIDENCE. Do not parse/cite it as a journal. Valid
+provider closed-state and exact timing facts were preserved instead. Launcher
+closure is not inferred from provider closed status; later starter CheckOnly
+found QA079 launcherPID35872 still open. No process was stopped by agent.
+artifacts/qa080-scaler-user-report-live-evidence-20261018.json
+Backups/qa080-scaler-user-resize-20261018/provider-state.json
+A pre-correction JSON is retained in that backup, explicitly superseded by the
+current artifact's process-closure qualification.
+
+CONCRETE WPF DIFFERENCE / QA080 FIX
+WPF PlayerScaler.cs NPC walker considers only Coach/GENERIC/Cheerleader. It has
+NO per-NBA-player/referee cache-writing path to port. Rust's additional PLAYER
+class was called Celebrity solely when its manager was absent from the current
+30-wrapper table. That negative inference can include a loading basketball
+player. The immediate prewrite identity also did not recapture wrapper exclusion,
+so roster binding between scan and write could pass the old identity check.
+
+QA080 identity refuses PLAYER class before description/flag/cache admission;
+Groups.includes and pure planner refuse it too, including forged Characters and
+seeded/unseeded retained celebrity receipts. Unsupported receipts are dropped
+WITHOUT writes. Positive celebrity identity needs separate proof before this
+additional path can return. Prior celebrity status was UNV; this feature is now
+withheld. Do not claim all celebrity scaling is preserved or fully certified.
+Shared player/referee input remains normal; all its profile/readiness/ownership/
+original-value/write guards unchanged. Coach/GENERIC/Cheerleader behavior and
+native-opted-in referees remain unchanged. This fixes an unsafe classification
+path; it does NOT prove the user's visual issue or referee issue resolved.
+
+Disk-only native proof: standard V2 wrapper initialization24F5460..24F5529 sets
+descriptor7D bit2 BEFORE actor factory; private ctor729950..72A1FF copies68..87;
+shared evaluator6E4630 consults bit then input; cache6C4820 reads model transform,
+not input directly. Standard path is protected by native opt-in; alternate paths
+and first-frame behavior remain unproven. Do not add ad hoc player cache writes.
+artifacts/qa080-scaler-wpf-player-initialization-research.json
+artifacts/qa080-scaler-player-native-lifecycle-disk-20261018.json/.txt
+
+BOUNDED COUNTERS / NEXT DIAGNOSIS
+Existing provider-state v2Features.scalerTiming now also retains npcEffects.
+Fixed total +Coach/Cheerleader/Arena/Celebrity/Unclassified counter objects:
+entered, verifiedFlagReturns, verifiedCacheReturns, uncertainReturns, first/last
+entry milliseconds from owned Runner creation. Entry is immediately before
+existing guarded write_object; return tracked on Ok/Err. These are not WPM call
+counts and not durable transaction Applied records. Unknown classes still count
+toward total/unclassified. Local audit copy is restored after end_batch even on
+chunk error. No extra game reads/writes, dynamic addresses/IDs/keys, UI popups,
+per-frame work, retries or permission decisions. No recurring quiescent status
+churn. Counts survive normal ended/closed status as already-existing pipeline.
+Only a FRESH QUIESCENT/NORMALLY CLOSED totalzero excludes this NPC writer lane;
+stale/hung/crash-era zero is NOT durable proof. Nonzeroentry alone proves no
+effect. Verified return does not imply later Applied commit. If resizing remains,
+use fresh counters/timing to assess GENERIC/referee handling separately. Referees
+versus other GENERIC NPC identity remains unproven; no blanket double scaling.
+
+FROZEN SOURCE / VALIDATION
+549 source/config entries matched exactly at build/stage/archive/final check.
+Only3 changed from QA079:
+src/feature_runtime.rs
+ 6023D2F212D3C2665EB2D640053B948CE3A2D6D515B5C3E998BBC57F27ABFAEB
+src/scaler_npc_v2.rs
+ 345255ACEF05973EFE92A8DBE3D207A44B5E35E8005DFBDB1C2212495434BA5B
+src/scaler_npc_v2_tests.rs
+ B1A3B84A254CD49EA37CB050FC613D3D7369478BAF5B7DA392EDA970DB6E85AE
+Backups/qa080-player-npc-boundary-20261018 contains durable before files.
+docs/wpf-reference/scaler.md updated separately, not part of549buildinput set.
+Author NPC files outfit_latency_qa066; root counters; independent wnba_integration
+review PASS, no concrete blocker, exact unchanged shared scaler/globalexecutor/
+Freestyle transaction checks. Reports:
+artifacts/qa080-scaler-player-npc-boundary-review.json
+artifacts/qa080-scaler-independent-review.json
+
+Test no-run PASS37.17s/13warnings. ONE bounded natural undebugged full run:
+1318passed/0failed/54ignored,42.06s,EXIT_CODE0 CLAIMED0 DUMP0. No repeats-until-green.
+Dev build PASS38.20s/48warnings. Regression tests cover PLAYER before/after wrapper
+binding, public/private description and flags0/41/43, forged/retained receipts,
+unchanged opted GENERIC referee, uncertain/unclassified diagnostic semantics,
+quiescent status and ended retention. All native payload bytes unchanged, so no
+new native build/test required. Tests are offline, not gameplay acceptance.
+
+CANDIDATE / EXACT EVIDENCE
+Starter: Start QA080 Dev.vbs / Start QA080 Dev.ps1
+Pending EXE: Dev/Pending/QA080/launcher.exe
+EXE bytes 53165568
+EXE SHA256 783B64372BFB73621AE3D6083EB2460D0AA42A140DEBFF27365315EDC330E7EC
+Native DLL bytes 1215488
+Native DLL SHA256 83AF5D0613D1E90D51933F382C22D215F766A61A198CAFEB41E80606A1722518
+WNBA source/assets/UI, nativeDLL, outfitcarry, streetwear-only RandomAll and its
+quiet routine progress are unchanged. All QA079 shared-scaler firstdue/initial
+priority and diagnostics remain. No delayed writes moved before ARMED.
+Starter AST PASS, VBS echo-only/check PASS; CheckOnly verified stage hash/size,
+then safely refused because QA079PID35872 open. No activation. Active EXE still
+QA079C63571... at final freeze. User must close launcher and open new starter.
+Test EXE SHA256 F783297F830187100F0A92E64CB05FA0660ADF261B87425D66643B2254F96273
+Test PDB SHA256 408720F46411F7A300CBEA548DF9D19E3A9B82ACDC632ABC5236C5239199BE86
+Main dev PDB SHA256 9136F3C973F9A8CE6F785C042C676A96EB4C698A19225425AD55775751237595
+Archive Backups/qa080-passing-test-image-20261018/exact-test-and-dev-images.zip
+Archive bytes 181254045
+Archive SHA256 30A0E9EBED35D699E867BD7557133F511B913854D1BC0EDA1F7BBB408F45A312
+Every archive member verified by roundtrip, including exact test/dev EXE/PDB,
+payload, sources, reviews/research/live evidence, starter, logs and manifests.
+artifacts/qa080-final-build-inputs-20261018.json
+artifacts/qa080-final-stage-20261018.json
+artifacts/qa080-final-rust-test-build.log
+artifacts/qa080-final-full-rust-tests.log
+artifacts/qa074-natural-qa080-whole-1.txt
+artifacts/qa080-final-dev-build.log
+artifacts/qa080-test-and-dev-evidence-20261018.json
+artifacts/qa080-final-freeze-verification-20261018.json
+Reproducible CREATE_NEW staging/archive tools:tools/qa080_stage_dev_checkpoint.py
+andtools/qa080_archive_evidence.py. Never overwrite stages or prior archives.
+
+RETAINED QUALIFICATIONS / NEXT ACTION
+User confirmed QA078 WNBA allaround. QA078 Blacktop route subsequently HELD on
+CTX160(kind+active); this does NOT prove stable match. Freestyle fourwordapply
+was journaled. No monitor/persistence completeness certified, no hold reopened.
+See QA079 final and qa078-active-match-departure-cleanup-proposal.json before any
+WNBA followup. QA080 makes no WNBA changes. QA075 fast outfitcarry user-confirmed.
+Earlier intermittent natural Rust AV remains UNRESOLVED. QA054 natural failures
+and QA073 exact EXE/PDB are preserved in their original backups. In particular
+Backups/qa073-natural-test-av-20261018/exact-test-image.zip retainsEXE
+BC3B784A828DC5149C28A7F8D9688ECA302CCD46E7F5294D101C0CF99AE82D21 andPDB
+A97CB0292EA39E292C81400E5F77DF4F3AC658AA0614F0DBB7E2DFBF3804556A.
+Passing changed QA080 and debugger runs do NOT explain it. No actual natural
+crash dump yet; bounded test-only exact child180s capture remains. No globalWER,
+PageHeap, registry, desktop/game actions or attach. Preserve exact image/PDB/
+logs/dump BEFORE any rebuild on a new failure. Do not repeat untilgreen.
+QA078 Clang23 O2 coordinator fixture compiler crash remains unexplained;
+Backups/qa078-clang-coordinator-crash-20261018 preserveslog/.cpp/repro.sh. Fixture
+passedO1; remaining fixtures+actualnativeDLL passedO2. Do not call crash fixed.
+
+Deliver QA080 starter and normal court-load test; read retained counters without
+extra user diagnostic apps. Player/referee visible resizing remains the live
+acceptance item. Keep all WNBA and outfit working baselines. No install/promote.

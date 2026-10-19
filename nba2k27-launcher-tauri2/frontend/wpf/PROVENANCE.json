@@ -1,0 +1,192 @@
+{
+  "source": "nba2k27-launcher-wpf/release/quality-pass-qa-20261010/App/Reference/src",
+  "copied": "2026-10-17",
+  "note": "Verbatim copies; do not edit. Rust-only overrides live in ../wpf-bridge.css.",
+  "files": {
+    "renderer/approved-polish.css": {
+      "sha256": "5dd6769d065b73b46cb6d263067175e217d99b4681524d85a9372020067d7689",
+      "sourceSha256": "5dd6769d065b73b46cb6d263067175e217d99b4681524d85a9372020067d7689",
+      "bytes": 13240
+    },
+    "renderer/arena-picker.css": {
+      "sha256": "3ac0a58f45534fc59d3ccf3cb784789e76e513f5eeee7b4e25203b84502569ac",
+      "sourceSha256": "3ac0a58f45534fc59d3ccf3cb784789e76e513f5eeee7b4e25203b84502569ac",
+      "bytes": 2529
+    },
+    "renderer/ball-picker.css": {
+      "sha256": "4cc2b237c38ab748258155e96e067b484b84c93db58c9f9c33eaf196900a70a8",
+      "sourceSha256": "4cc2b237c38ab748258155e96e067b484b84c93db58c9f9c33eaf196900a70a8",
+      "bytes": 5114
+    },
+    "renderer/blacktop-live-bar.css": {
+      "sha256": "ca60b24b00450bffabe6245f6cfe95ab611f43bf45065c3c76b91648facb2edf",
+      "sourceSha256": "ca60b24b00450bffabe6245f6cfe95ab611f43bf45065c3c76b91648facb2edf",
+      "bytes": 8652
+    },
+    "renderer/blacktop-overlay-preview-frame.css": {
+      "sha256": "6f94790758518eab7f954ed37f3759d6088d048101f1a203b63ad4893111bb17",
+      "sourceSha256": "6f94790758518eab7f954ed37f3759d6088d048101f1a203b63ad4893111bb17",
+      "bytes": 657
+    },
+    "renderer/blacktop-overlay-preview.css": {
+      "sha256": "ebe10de164a9da0ec53cb2485dfbee4e2a9cc8c9bba9bff03faa116f5171e65b",
+      "sourceSha256": "ebe10de164a9da0ec53cb2485dfbee4e2a9cc8c9bba9bff03faa116f5171e65b",
+      "bytes": 1402
+    },
+    "renderer/blacktop-page-polish.css": {
+      "sha256": "c3964de298ecbfa6ef90178fa98ba90b3e0958bb058a0e883d0c10051d6c1353",
+      "sourceSha256": "c3964de298ecbfa6ef90178fa98ba90b3e0958bb058a0e883d0c10051d6c1353",
+      "bytes": 6770
+    },
+    "renderer/blacktop-panel.css": {
+      "sha256": "c3b7182862f4126505afdc46de4464d717eb0b9e383276d1bcfc7b31528fcce7",
+      "sourceSha256": "c3b7182862f4126505afdc46de4464d717eb0b9e383276d1bcfc7b31528fcce7",
+      "bytes": 4337
+    },
+    "renderer/blacktop-topbar.css": {
+      "sha256": "551814214f543dfbe5f38c4f8133f13ed92dd7733244863a23ab2fbe417681de",
+      "sourceSha256": "551814214f543dfbe5f38c4f8133f13ed92dd7733244863a23ab2fbe417681de",
+      "bytes": 14631
+    },
+    "renderer/cameras-polish.css": {
+      "sha256": "a47629414a5e2cb8bd8b63121f305d97629a9f76ddb8d1cc4670237d39232f59",
+      "sourceSha256": "a47629414a5e2cb8bd8b63121f305d97629a9f76ddb8d1cc4670237d39232f59",
+      "bytes": 4815
+    },
+    "renderer/clothing-picker.css": {
+      "sha256": "410648ad89bea4c4ea035a5c74e42327ad553bc74d91a450fa2aaea628a121a5",
+      "sourceSha256": "410648ad89bea4c4ea035a5c74e42327ad553bc74d91a450fa2aaea628a121a5",
+      "bytes": 13762
+    },
+    "renderer/direct-game-rules.css": {
+      "sha256": "54c1605b78d2ac97ccad17dc6526f380b037875da8e3626079214787e90092fe",
+      "sourceSha256": "54c1605b78d2ac97ccad17dc6526f380b037875da8e3626079214787e90092fe",
+      "bytes": 2000
+    },
+    "renderer/editor-expansion.css": {
+      "sha256": "71555d50977f4916fff5889b51480d7257887e1e258ee5e4586b905313a6d9c3",
+      "sourceSha256": "71555d50977f4916fff5889b51480d7257887e1e258ee5e4586b905313a6d9c3",
+      "bytes": 1054
+    },
+    "renderer/fit-preview.css": {
+      "sha256": "42e60be56c52f9890eb45671253ab1d6b8adf9257be2961df0c3b2455b0d76de",
+      "sourceSha256": "42e60be56c52f9890eb45671253ab1d6b8adf9257be2961df0c3b2455b0d76de",
+      "bytes": 2780
+    },
+    "renderer/jukebox-polish.css": {
+      "sha256": "32f9ae99eadc7f259e5b8716b8d245e27c0194c5a16dcfafec8de6088e1dac1f",
+      "sourceSha256": "32f9ae99eadc7f259e5b8716b8d245e27c0194c5a16dcfafec8de6088e1dac1f",
+      "bytes": 7489
+    },
+    "renderer/launcher-polish.css": {
+      "sha256": "24db6fb258d25f2a9fff793db3cc9a2ec4523ee8a3a53acacf93e95e564d8298",
+      "sourceSha256": "24db6fb258d25f2a9fff793db3cc9a2ec4523ee8a3a53acacf93e95e564d8298",
+      "bytes": 18435
+    },
+    "renderer/launcher-quality.css": {
+      "sha256": "6664b3e73222f712f0d90285c23bd59e755d2e55852ba48edb988640b993e697",
+      "sourceSha256": "6664b3e73222f712f0d90285c23bd59e755d2e55852ba48edb988640b993e697",
+      "bytes": 1096
+    },
+    "renderer/mod-library-polish.css": {
+      "sha256": "aaa93eede2f7414cce63c01f912c51b928eb1b713bbcf4bca0ae2305bb5eb1f9",
+      "sourceSha256": "aaa93eede2f7414cce63c01f912c51b928eb1b713bbcf4bca0ae2305bb5eb1f9",
+      "bytes": 7571
+    },
+    "renderer/player-animation-preview.css": {
+      "sha256": "956f318be9e1ed37b45080b7d34ec65a768b8a9c12647c39baf8e270319e4a50",
+      "sourceSha256": "956f318be9e1ed37b45080b7d34ec65a768b8a9c12647c39baf8e270319e4a50",
+      "bytes": 1856
+    },
+    "renderer/player-studio.css": {
+      "sha256": "9b58f3f5b154a58e064e2560da40ca8807378f9003a308ae1d1cf9e2f7bbae34",
+      "sourceSha256": "9b58f3f5b154a58e064e2560da40ca8807378f9003a308ae1d1cf9e2f7bbae34",
+      "bytes": 44548
+    },
+    "renderer/presentation-combined.css": {
+      "sha256": "28e689c74ba626c14bda91d276a1df00e4aa255f6e2522f69d56e7d508fef747",
+      "sourceSha256": "28e689c74ba626c14bda91d276a1df00e4aa255f6e2522f69d56e7d508fef747",
+      "bytes": 6149
+    },
+    "renderer/presentation-polish.css": {
+      "sha256": "d888fc20a72c93a05dea5a16ff5210e84ec2961a89f186e4c80128ffce8b40ff",
+      "sourceSha256": "d888fc20a72c93a05dea5a16ff5210e84ec2961a89f186e4c80128ffce8b40ff",
+      "bytes": 6557
+    },
+    "renderer/profiles-polish.css": {
+      "sha256": "c0c7029ee4a3d2bd1b1da15f61a5dd6328f692b266289b34f109a199e9039566",
+      "sourceSha256": "c0c7029ee4a3d2bd1b1da15f61a5dd6328f692b266289b34f109a199e9039566",
+      "bytes": 9159
+    },
+    "renderer/release-theme.css": {
+      "sha256": "45452ab73630ea706c87886d7364b2b582eed9e97e0665d2976cd3547cf6a9c7",
+      "sourceSha256": "45452ab73630ea706c87886d7364b2b582eed9e97e0665d2976cd3547cf6a9c7",
+      "bytes": 19604
+    },
+    "renderer/roster-workspace.css": {
+      "sha256": "737346384ccbf59a5194aba843688784c1f284717b21895daa74ba7b4aa3604c",
+      "sourceSha256": "737346384ccbf59a5194aba843688784c1f284717b21895daa74ba7b4aa3604c",
+      "bytes": 8625
+    },
+    "renderer/scaler.css": {
+      "sha256": "d9f1a7590111223edb3bbdfae5bbcb40b262341c6ee45a16a5cec7d43b7db05f",
+      "sourceSha256": "d9f1a7590111223edb3bbdfae5bbcb40b262341c6ee45a16a5cec7d43b7db05f",
+      "bytes": 3391
+    },
+    "renderer/scoreboard-picker.css": {
+      "sha256": "5e31214cb0923f6c72dfe7a0584866f15d6c023ce1cd388ca607d1840b783c64",
+      "sourceSha256": "5e31214cb0923f6c72dfe7a0584866f15d6c023ce1cd388ca607d1840b783c64",
+      "bytes": 3081
+    },
+    "renderer/session-panels.css": {
+      "sha256": "ccdeee139e8942fd1faa47ba724fbec95eb4e389003f5c462fb839870ad18f81",
+      "sourceSha256": "ccdeee139e8942fd1faa47ba724fbec95eb4e389003f5c462fb839870ad18f81",
+      "bytes": 25328
+    },
+    "renderer/sidebar-icons.reference.js": {
+      "sha256": "17a4e576bf6658c472c8d5df7016475ce237a1c3c1ad952bbc7ea4d63735c636",
+      "sourceSha256": "17a4e576bf6658c472c8d5df7016475ce237a1c3c1ad952bbc7ea4d63735c636",
+      "bytes": 3438
+    },
+    "renderer/startup-splash.css": {
+      "sha256": "04eebc70cfeb80ce2c8739a55f8dd5de6f6fdfe3883ce57c3b3ca13a6ca5728e",
+      "sourceSha256": "04eebc70cfeb80ce2c8739a55f8dd5de6f6fdfe3883ce57c3b3ca13a6ca5728e",
+      "bytes": 757
+    },
+    "renderer/styles.css": {
+      "sha256": "b1f08303d72c5bb9dc85cb8caa680ebb41abbdd23855a0c7da6d3b50311e2552",
+      "sourceSha256": "b1f08303d72c5bb9dc85cb8caa680ebb41abbdd23855a0c7da6d3b50311e2552",
+      "bytes": 36393
+    },
+    "renderer/team-editor.css": {
+      "sha256": "efb885da94afde8d99c64cd37b52324ae8ae79107e9501247e9621866bc47675",
+      "sourceSha256": "efb885da94afde8d99c64cd37b52324ae8ae79107e9501247e9621866bc47675",
+      "bytes": 9270
+    },
+    "renderer/typography-balance.css": {
+      "sha256": "6a5d04834e625af14e371d524768bd781bbf5d872a0b935be86175c04eb736b0",
+      "sourceSha256": "6a5d04834e625af14e371d524768bd781bbf5d872a0b935be86175c04eb736b0",
+      "bytes": 5948
+    },
+    "renderer/unlocks-polish.css": {
+      "sha256": "d3ea2c06395ceefd2a847c66b469ce6d0909dfc98f75d6a6bb2b6a6fd734d79f",
+      "sourceSha256": "d3ea2c06395ceefd2a847c66b469ce6d0909dfc98f75d6a6bb2b6a6fd734d79f",
+      "bytes": 5898
+    },
+    "assets/app-icon.png": {
+      "sha256": "5d0737c2221bb3ec53084d200376ebeac5ff32b8132867802e4303250963fef3",
+      "sourceSha256": "5d0737c2221bb3ec53084d200376ebeac5ff32b8132867802e4303250963fef3",
+      "bytes": 6005
+    },
+    "assets/blacktop-night-court-v1.png": {
+      "sha256": "1fc2e6758e0df8d5f125a21a414deb54567c5168f41802a5c465dc659aed50cd",
+      "sourceSha256": "1fc2e6758e0df8d5f125a21a414deb54567c5168f41802a5c465dc659aed50cd",
+      "bytes": 1996979
+    },
+    "assets/courtside-backdrop-v1.png": {
+      "sha256": "5a8333bfaf84ee1c17843d6f7181925fe9328c6b2c9b7fb0e964c2040453dd56",
+      "sourceSha256": "5a8333bfaf84ee1c17843d6f7181925fe9328c6b2c9b7fb0e964c2040453dd56",
+      "bytes": 1384455
+    }
+  }
+}

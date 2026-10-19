@@ -1,0 +1,44 @@
+{
+  "utc": "2026-10-19T17:04:37.228654+00:00",
+  "completeExactPartition": true,
+  "testExeSha256": "DDBA3DBB62B098B7F39B8218CEDA5AC6284F4DB4A95605EABE2D2C80D7A88DAA",
+  "testPdbSha256": "18A2148F666E6C1756DE2E803689D63E52C97D6FF4FCABBC43B748E7D34E1C54",
+  "testListSha256": "EA480AF6F661907E4999E850D0C8EE63988E53EAAAF5269B2056FFAD9AAD5B86",
+  "enumerated": 1551,
+  "passed": 1497,
+  "ignored": 54,
+  "parts": [
+    {
+      "part": "roster",
+      "log": "artifacts\\qa084-final-roster-rust-tests.log",
+      "logSha256": "5A7BEBB438361B8F82FC2004FC7E447E21511BFB27CB5727386388D186A91DD0",
+      "capture": "artifacts\\qa074-natural-qa084-roster-final-3.txt",
+      "captureSha256": "2F16A57D06E55FAF1EBC698A86F1C1202F8037B0D7ABADE52CB3F85EC43D5522",
+      "passed": 164,
+      "ignored": 4,
+      "filtered": 1383
+    },
+    {
+      "part": "catalog",
+      "log": "artifacts\\qa084-final-catalog-rust-tests.log",
+      "logSha256": "FDC10DDE22309A7F09F7FA419CE6AB95B69E118E2ABFA5B02F7ED8C4303AED80",
+      "capture": "artifacts\\qa074-natural-qa084-catalog-final-3.txt",
+      "captureSha256": "45D40C0DFA16C3885AA27EFE82040CAEAE4E58054CD53903FAF27BEF33003EC7",
+      "passed": 13,
+      "ignored": 0,
+      "filtered": 1538
+    },
+    {
+      "part": "rest",
+      "log": "artifacts\\qa084-final-rest-rust-tests.log",
+      "logSha256": "4B6D5A17843696AAE12DA750A2803A2C33E2676C9523909F003121CE9B01A566",
+      "capture": "artifacts\\qa074-natural-qa084-rest-final-3.txt",
+      "captureSha256": "3C07C9099A47A094136AA939B4EA1FD91F14EB4FED0E28E01E4E601D8F1441C2",
+      "passed": 1320,
+      "ignored": 50,
+      "filtered": 181
+    }
+  ],
+  "underDebugger": false,
+  "qa073NaturalAvResolved": false
+}

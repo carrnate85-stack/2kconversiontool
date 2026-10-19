@@ -1,0 +1,81 @@
+QA073 QUALIFIED DEV CANDIDATE - 2026-10-18 20:26UTC
+Read QA072 for prior implementation and rules. DEV ONLY: no install/promote,
+staged activation, game launch/stop, UI control, or ad hoc live memory writes.
+Preserve all Data/Library/builds/journals/backups. Back up and fsync edits.
+
+USER TWO-HOUR WINDOW STILL ACTIVE
+19:53:37→21:53:37UTC, ends5:53pmAmerica/New_York. User cannot test beforethen.
+Heartbeat two-hour-dev-parity-work ACTIVE10min currentthread, replayallowanceuntil
+22:03:37UTC. At/afterdeadline stopnewwork+pauseheartbeat andreport lateststarter,
+validationqualifications+remaininglivechecks. Do not createanotherautomation.
+
+STAGE (NOT ACTIVATED)
+Start QA073 Dev.vbs/.ps1; Dev/Pending/QA073/launcher.exe
+B322735EC913237B1F0A8EEDEB52A0D33C6E5150B90ADCCA43C49DD87BA55048/52860928bytes.
+Payload4FB74B375BE6DE36411574FAB624722F85121AEF1F0DE286E9C9EEC6B879A3FA/1190912bytes.
+Bothcurrentpinsupdated. ExactQA072DE067...EB0C/1179136 admittedrecovery-only with
+size±1fixture; oldpayloadsretained, no intermediatepayloadadmissions.
+PS AST/CheckOnlyPASS, VBS echo-onlyPASS. ActiveDevAppstillQA0708655FF...399FC.
+Manifest artifacts/qa073-final-stage-20261018.json pins exactsources/embeddedassets.
+Candidateonly/releaseEligible=false/AVqualification explicitlyrecorded.
+QA072starter remains preserved normal-whole-suite-passing control.
+
+CHANGES
+Fresh BasicProcessInformation252 transports replace expensive full process scans,
+without omitting any existing guard or caching process rows/identity. Native uses
+strict fresh48B/fullrecord/UTF16/sequence/uniqueDWORDPID/parent/self parser thenold
+Toolhelp onANYunsupported/query/parse/exception uncertainty. Sharedprotected_entry
+preservesexactoldEAC/foreigngame/launcherPIDexemptions; no newotherPIDhandles.
+Rust Basic252first→byte-unchanged class5→byte-unchangedToolhelp. inspect_snapshot,
+queried_identity, unknownowner/retry/liveness policy unchanged. 4attempts/16MiB;
+status0only, noTTL/cache. OfficialSDKlayout/numeric252 independentlyreviewed.
+C++actualguardmedian.2194msvs8.073ms; independent1.0579msvs7.6382ms underdifferent
+hostload. Rust100samplemedian.678msvsclass5 6.281ms/Toolhelp7.320ms. These are self-only
+process-enumeration benchmarks, NOT game/cutscene performanceacceptance.
+TypedWNBAcapacityLIMIT_REACHED onlytwo preeffectbudgetrefusals; once-only diagnostic
+whenbothroutesunowned, cleanupworkercontinues, HELDpriority. Rustexistingreloadphase
+keepsmessage throughordinarywaiting/restored. Nofrontendchanges.
+
+VALIDATION / CRITICAL QUALIFICATION
+Native strict parser corruption/fallback/freshness/predicate/fullnativefixtures+
+WNBAproductionbindingPASS. IndependentC++andRustreview no blocker. DLL build and
+versionforwardingsmokePASS. Rust6newBasicfocusedtests+1explicitbenchmarkPASS.
+Finaltestbuild15.43s/12existingwarnings; devbuild17.90s/47existingwarnings.
+NATURAL wholeRustsuite4threads exited0xC0000005 after7.083sec. Lastprintedcamera_v2
+publicationtest DOESNOT identifycrashingthread. DoNOThidefailure orrerununtilgreen.
+ExactfailedEXE/PDB/logZIP verifieddurablypreserved at
+Backups/qa073-natural-test-av-20261018/exact-test-image.zip (97971093bytes).
+Identity: artifacts/qa073-natural-test-av-identity.json.
+EXEBC3B784A828DC5149C28A7F8D9688ECA302CCD46E7F5294D101C0CF99AE82D21/101145600
+PDBA97CB0292EA39E292C81400E5F77DF4F3AC658AA0614F0DBB7E2DFBF3804556A/337530880.
+ONEboundedallowlisteddebuggerchildcapture thenPASS1282tests/53ignored/43.52sec,
+noexceptionreproduction. Logsqa073-bounded-debug-capture[-stdout].log; original
+qa073-final-full-rust-tests.log remainsfailure. PassDOESNOTfixoridentifyAV.
+HistoricalQA054sameintermittentAVremainsunexplained; no hardware/compiler/newBasic
+attribution. No global WER/PageHeap/BIOS/registry changes. This isqualifieddevcandidate,
+notreleaseeligible orclaimedstabilityfix. FrontendunchangedfromQA068223tests.
+
+NEXT QA074 / ACTIVE AGENTS
+outfit_latency_qa066 implementsTESTONLY naturalcrashcapture supervisor+nativeCRT
+filter+syntheticfixture first; ROOTAPPROVED tools/tests ONLY, NO Rust/main/Cargochanges
+yet. NondebugCreateProcessflags0, retainedcreatedchildhandle, noOpenProcess/attach,
+PID+birthboundmapping/readyevent, libtestsubprocessrefuseschannel, one-shotfatal
+SetUnhandledExceptionFilter signalsrequest+20sackwait. Separatesupervisor usesSystem32
+DbgHelp minimaldump(CREATE_NEW/privateworkspace/nofullmemory), neverprintkeys. Test
+handledAVnodump/unhandledC0000005exacttid/normal/disabled/noackbeforeRustproposal.
+OriginalfailedEXEremainscontrol; instrumentationrequiresNEWdiagnosticcandidate.
+wnba_integration preparesQA074read-onlyFreestylesourceavailabilitystatusonentry.
+Conceptapproved, productioneditWAITSuntilrootunfreezesQA073(nowstagefixed), exact
+file/testplanrequired. Existing4DWORDlifetime/OFFnextPlay/BothmatrixmatchesWPF.
+Existingstrictcaptureworkswithenabledtables; don'trelaxSTOCK_MASKcombinedguard.
+Afterapplycurrentstatusonlyobservestables; no renewed15clubproofonreentry.
+Safeproposalstrictfreshcapture+prioritysourcebefore/after, no writes/reapply/journal,
+modeexitstatusnavigationenabled/availabilitydependsonmode, no false15teamsready.
+wnba_toggle_ui finishedaudit/peerreview; available. QA074Freestyleaudit artifact
+qa074-freestyle-lifecycle-toggle-reentry-review.json. AllQA073sourcescurrentlyfrozen.
+
+LIVE REMAINS
+UseracceptedQA070categoryappearingafterseconds,scoreboard/clothes/balls/arena work,
+clothesfasterbutNOTinstant. Needlaternormal neweststarter+togglePlay, repeatedWNBA
+selection→match/Home→selection, RandomAll visualdelay+timinglogs. No testrequests
+beforedeadline. QA071/72/73performance/persistencechanges offlineonly untiluserQA.

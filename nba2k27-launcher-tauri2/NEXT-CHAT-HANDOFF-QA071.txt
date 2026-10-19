@@ -1,0 +1,98 @@
+QA071 DEV CHECKPOINT - 2026-10-18
+Canonical root is this project. Read QA070/QA069 for the longer history.
+DEV ONLY: no installation/promotion without approval. No agent game launch/stop,
+desktop control, or ad hoc live writes. Normal user toggles+Play only. Exact
+retained-identity bounded read-only probes authorized. Preserve Data/Library,
+all builds/backups/journals. Back up and fsync source and binary edits.
+
+USER ACCEPTANCE
+QA070 user confirmed WNBA category appeared after a fewseconds. User later
+confirmed scoreboard/clothes/balls/arena work, clothes faster but NOTinstant.
+Latest active request: WNBA persistence + clothes instantlikeWPF, DEVONLY.
+Do not claim QA071 meets instant timing without live measurements.
+
+QA070 LIVE BASELINE
+Game43128/session000000000000000018dfb68c3c69cd380000000000000001.
+ExactactiveQA070SHA8655FF66923CC5BB80D662AE5A724BCD2B5BE25F0B550968B4D12748C5E399FC.
+WNBAARM9788265,RESTORE9795765 atBTstage3uid31,PUBLISHED9795781.
+Read-onlydouble403teams/30NBA/15WNBA/exact15clubsPASS; userconfirmedcategory.
+LaterHELD9807187 genericactivecheckpointfailure. Exactlaterprobe42checksPASS,
+route/label/privateRXbridge stillours inMATCH7C602DF8/stage1. Historicalfailing
+predicate unproven because previousreason generic. Neverclearheld/adopt/retry.
+OutfitsREBUILT2/userworking. firstMatch73560 ready73809 stable74739;
+freeze74747..75458(711ms),publish75458..76561(1103ms):3001msfirstmatch-to-plan.
+readySamples3,longest208,failures0. Nativeconsume-record→lastcomplete-record
+1359ms (NOTfinalreportdurability; eventtimestamp precedesflush). Totalstillfar
+fromWPF. Sourcecount improvements are notlive speedclaims.
+
+QA071 CHANGES
+1.WNBA categorygeneration compares actualroot/owner/table/allocation/count/full
+rows excludingONLYtemporaryContext. Everydeepcapture stillfresh duplicatedfull
+Context. OlddefaultRoster equalitymistookcontextindex changesforrosterownership.
+2.Activecheckpointfailed ONLYwithprovenfreshstableoffline outside-selection
+context after exactidentity/profile/route/authority/consent/source checks can
+conditionallyrestore exactownedroute thenprepared→validatedreentry. Currentand
+alternatemode MUSTmatch (reviewcaught/fixedthis). Unknown/profile/source/foreign
+failure stillholds inthisnewpath. Preexisting sample_input !selection cleanup
+alsoexists; don'tclaimallpossiblecontextuncertaintyalwaysheld. No publicationretry.
+Specificcheckpoint/bridge/routefailuremessagesreplacegenericactivefailure.
+3.Rustcompositehandoff atSAME5durablechecks: owner4→2,lineup3→2,fullnativecapture+
+endingcontext/lineup+postownerfresh. NoTTL,cachedliveproof,journal/stabilitychange.
+Driverdefaultretainslegacysequence;V2overrideonly. Syntheticreads931→669.
+4.Fresh23selectionprofile field/virtual/countanchors→10samepage groupedreads.
+Fullbytecomparison, relocatedvirtual8bytes, exactsignedRIPcountstoresremain.
+Partial/errorgroup retriesALLoriginalscalarproof. Completedmismatchrejects
+immediately andcannotbeoverwrittenbylatertransportfallback. NoTTL.
+5.Nativecomplete-receiptpoll100→20ms boundedtoexisting60sdeadline. Sequential
+players, queue-drained/newactor/items/idle/bindings/fullreceiptproofs unchanged.
+No removedintentflush/readback, no parallelnativecalls.
+
+STAGE READY, NOT ACTIVATED BY AGENT
+Start QA071 Dev.vbs/.ps1
+Dev/Pending/QA071/launcher.exe
+SHA128A9E74692BEA9C362C1AB8A9473C5F02D953E49F39689CD37DB2092BA03ABD
+52711424bytes. ActiveDevAppstillQA070 atfinalstageverification.
+Payload92B28E137E5D3336F1859EB16CE6D6C492366822E07DD19082D6F29ED22E718E
+1144832bytes. Bothcurrentpinsupdated. ExactQA070E1BB...B204/1142784admitted
+recovery-onlyandfixturetested; priorrecoveriesretained. No intermediateDLLadmission.
+FullRust1263PASS/0FAIL/52ignored63.30s. Devbuild25.53sPASS47existingwarnings;
+finaltestbuild19.27sPASS12existingwarnings. Strict4nativecore/coordinator/binding/
+receiptpolltests+DLLforwardingsmokePASS. PSAST/VBS/checkecho-onlyPASS.
+FrontendunchangedfromQA070/QA068223passingfrontendtests. Manifestpins416sources.
+Sourcefreezeandstagehashverified. Noagentactivation/install/promotion.
+
+NEXT NORMAL USER TEST
+Closegame+launcher normally;openStartQA071Dev;WNBA BlacktopON+Play.
+Checkcategory,leavepickerformatch/Home,reenterpicker. ReadWNBAprogress/live403
+inventory/categoryroute+specificfailureifheld. No separate testscripts foruser.
+UseRandomAllonceandentermatch;readcarryTiming/nativeevents;askvisualdelay.
+Do not claiminstantfromsyntheticreadsorWNBApersistencefrompublicationonly.
+
+DEEPER SPEED RESEARCH (NOT IMPLEMENTED)
+WPF also waitedloadedReady3samples beforetrigger. Bothold/currentnative already
+prearmed; no startupworkerwaitcauseddelay. Rust addsstricterfullmode/stage1
+admission thanWPFmode6+loadedactors; needshadowreadinessbeforechanging.
+SimplypublishplanearlierisUNSAFE: nativecurrentlywaits3contextsamples then
+consumes/deletestriggerBEFOREexecuteall_bindings; stablematchcontextcanprecede
+loadedactors. Wouldneedexactpinnedplanpeek/deeploadedstableproofBEFOREconsume,
+plusselectionchoice-revisionlock/cancel protocol, unchangedfreshchecks/effectguards.
+Nativeexpansion2players×3pieces has14expand_intent flushes; examinedwindows453ms
+includeCPU/native/I/O, cannotcallpureflushcost. ONEbundletargetsunknownnewarrays.
+PossibleTWOdurablebundles(afterclonebeforeRelease+Init;afterInitfresharraysbefore
+allSet+Bind) reduce14→4whilepreservingexacttargets+percallfreshsourceguard+
+singleusecursor/no-replay/uncertainhold. No productionimplementation yet.
+Partialexpandedclonemustneverbecomeautomaticallydestructor-safe.
+
+REPORTS
+artifacts/qa071-final-stage-20261018.json
+qa071-dev-change-review-20261018.json
+qa071-composite-outfit-handoff-20261018.json
+qa071-blacktop-category-persistence-review-20261018.json
+qa071-blacktop-category-active-readonly-20261018-1.json
+qa071-wpf-carry-admission-and-native-delay-review.json
+qa071-native-expansion-intent-bundling-review.json
+Backups/qa071-blacktop-category-persistence-20261018
+Backups/qa071-selection-proof-batching-20261018
+Backups/qa071-native-receipt-poll-20261018
+Backups/qa071-root-payload-20261018
+Agentcompositebackupnamedinitsartifact.

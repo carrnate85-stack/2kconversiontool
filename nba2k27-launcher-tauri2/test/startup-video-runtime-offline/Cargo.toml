@@ -1,0 +1,18 @@
+[package]
+name = "startup-video-runtime-offline"
+version = "0.1.0"
+edition = "2024"
+publish = false
+[features]
+tauri-adapter = ["dep:tauri", "dep:webview2-com"]
+startup-audio-worker = []
+[dependencies]
+anyhow = "1"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+sha2 = "0.10"
+tauri = { version = "2", default-features = false, features = ["wry", "compression", "common-controls-v6", "protocol-asset"], optional = true }
+webview2-com = { version = "0.39", optional = true }
+windows = { version = "0.62", features = ["Win32_Foundation", "Win32_Graphics_Gdi", "Win32_Media_Audio", "Win32_System_Com", "Win32_System_Com_StructuredStorage", "Win32_System_Variant", "Win32_System_LibraryLoader", "Win32_System_Threading", "Win32_System_JobObjects", "Win32_System_Diagnostics_ToolHelp", "Win32_Security_Cryptography", "Win32_Storage_FileSystem", "Win32_UI_WindowsAndMessaging"] }
+[lib]
+path = "lib.rs"

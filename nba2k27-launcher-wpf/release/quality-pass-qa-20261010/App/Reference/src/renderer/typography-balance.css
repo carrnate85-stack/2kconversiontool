@@ -1,0 +1,63 @@
+/* All launcher tabs share Jukebox's geometry and Play's artwork; Blacktop keeps its court image. */
+:root:not(.roster-workspace) .app-shell > main:has(> :is(#page-play.active,#page-profiles.active,#page-mods.active,#page-jukebox.active,#page-presentation.active,#page-blacktop.active,#page-cameras.active,#page-unlocks.active,#page-scaler.active,#page-settings.active)) > header {
+  min-height:112px; padding:10px 16px 22px; margin:-4px -2px 0; border:0; align-items:center;
+}
+:root:not(.roster-workspace) .app-shell > main:has(> :is(#page-play.active,#page-profiles.active,#page-mods.active,#page-jukebox.active,#page-presentation.active,#page-cameras.active,#page-unlocks.active,#page-scaler.active,#page-settings.active)) > header {
+  background:linear-gradient(90deg,var(--bg) 29%,color-mix(in srgb,var(--bg) 68%,transparent)),url('../assets/courtside-backdrop-v1.png') right 34% / cover no-repeat;
+}
+:root:not(.roster-workspace) .app-shell > main:has(> :is(#page-play.active,#page-profiles.active,#page-mods.active,#page-jukebox.active,#page-presentation.active,#page-blacktop.active,#page-cameras.active,#page-unlocks.active,#page-scaler.active,#page-settings.active)) > header h1 {
+  font-size:clamp(26.5px,2.185vw,30.5px); font-weight:620; letter-spacing:-.015em; line-height:1.2;
+}
+:root:not(.roster-workspace) .app-shell > main:has(> :is(#page-play.active,#page-profiles.active,#page-mods.active,#page-jukebox.active,#page-presentation.active,#page-blacktop.active,#page-cameras.active,#page-unlocks.active,#page-scaler.active,#page-settings.active)) > header > .version {
+  align-self:center; margin-left:auto; position:static;
+}
+:root:not(.roster-workspace) main:has(#page-play.active) .home-intro {
+  display:block; margin:8px 0 0; font-size:13px; line-height:1.5;
+}
+:root:not(.roster-workspace) main:has(#page-play.active) > header h1 { gap:13px; }
+:root:not(.roster-workspace) main:has(#page-play.active) > header h1 .nav-icon {
+  width:30px; height:30px; flex-basis:30px;
+}
+:root:not(.roster-workspace) main:has(#page-blacktop.active) > header h1::before,
+:root:not(.roster-workspace) main:has(#page-cameras.active) > header h1::before,
+:root:not(.roster-workspace) main:has(#page-unlocks.active) > header h1::before,
+:root:not(.roster-workspace) main:has(#page-presentation.active) > header h1::before,
+:root:not(.roster-workspace) main:has(#page-scaler.active) > header h1::before,
+:root:not(.roster-workspace) main:has(#page-settings.active) > header h1::before {
+  content:''; display:inline-block; width:30px; height:30px; margin-right:13px; vertical-align:-4px;
+  background:var(--court); mask-repeat:no-repeat; mask-position:center; mask-size:contain;
+}
+:root:not(.roster-workspace) main:has(#page-blacktop.active) > header h1::before {
+  mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.7' stroke-linejoin='round'%3E%3Cpath d='M3 4h18v16H3zM12 4v16M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0M3 9h3v6H3M21 9h-3v6h3'/%3E%3C/svg%3E");
+}
+:root:not(.roster-workspace) main:has(#page-cameras.active) > header h1::before {
+  mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.7' stroke-linejoin='round'%3E%3Cpath d='M3 7h12v12H3zM15 11l6-4v12l-6-4zM6 4h6'/%3E%3C/svg%3E");
+}
+:root:not(.roster-workspace) main:has(#page-unlocks.active) > header h1::before {
+  mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.7' stroke-linejoin='round'%3E%3Cpath d='M7 11V7a5 5 0 0 1 9-3M4 11h16v10H4zM12 15v3'/%3E%3C/svg%3E");
+}
+:root:not(.roster-workspace) main:has(#page-presentation.active) > header h1::before {
+  mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.7' stroke-linejoin='round'%3E%3Cpath d='M3 4h18v14H3zM10 8l5 3-5 3zM12 18v3M8 21h8'/%3E%3C/svg%3E");
+}
+:root:not(.roster-workspace) main:has(#page-scaler.active) > header h1::before {
+  mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.7' stroke-linejoin='round'%3E%3Cpath d='M4 8V4h4M16 4h4v4M20 16v4h-4M8 20H4v-4M8 16l8-8M11 8h5v5'/%3E%3C/svg%3E");
+}
+:root:not(.roster-workspace) main:has(#page-settings.active) > header h1::before {
+  mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.7' stroke-linejoin='round'%3E%3Cpath d='M4 6h16M4 12h16M4 18h16M8 3v6M16 9v6M10 15v6'/%3E%3C/svg%3E");
+}
+:root:not(.roster-workspace) #page-play .hero-card h2 { font-size:20px; font-weight:620; }
+:root:not(.roster-workspace) #page-play .pipeline strong { font-weight:600; }
+#page-profiles .profile-card-heading h2 { font-size:16px; font-weight:610; letter-spacing:-.005em; }
+#page-presentation .presentation-hero-copy h2 { font-size:17px; font-weight:610; }
+#page-presentation .presentation-library-title { font-size:15px; font-weight:610; }
+#page-presentation .video-library-name { font-weight:620; }
+#page-blacktop .settings-card-heading strong { font-size:13px; font-weight:610; }
+#page-blacktop #blacktopOutfitSection > summary { font-size:15px; font-weight:620; }
+#page-cameras .camera-status strong { font-size:13px; font-weight:630; }
+#page-cameras .camera-library .card-title > span:first-child,
+#page-cameras .camera-options .card-title > span:first-child { font-size:15px; font-weight:610; }
+#page-cameras .camera-names-box strong { font-weight:610; }
+#page-unlocks .settings-section-heading h2 { font-size:15px; font-weight:610; }
+#page-unlocks .unlock-guide-card h2 { font-size:13px; font-weight:610; }
+#page-unlocks .settings-switch-row strong { font-size:13px; font-weight:620; }
+#page-unlocks .unlock-category-strip > span { font-weight:600; }

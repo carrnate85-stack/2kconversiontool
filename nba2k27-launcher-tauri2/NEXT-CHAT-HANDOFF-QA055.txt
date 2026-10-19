@@ -1,0 +1,91 @@
+QA055 DEV CHECKPOINT — 2026-10-18
+Read NEXT-CHAT-HANDOFF-QA054.txt for baseline constraints, then this update.
+
+USER RESULTS (QA054 CURRENT GAME)
+- User: "outfit carryover not working". Authorized read-only current-game memory inspection.
+- User: "f8 overlay sometimes responds to f8, sometimes doesn't".
+- No authorization to install/promote, restart the game, use desktop input, or add live writes.
+
+LIVE EVIDENCE
+Game PID 8220, provider worker 30344, parent launcher 26256. Read-only inspection
+verified all three creation times and paths against the exact 1632-byte lease.
+Read 64 game image-header bytes with QUERY_LIMITED_INFORMATION|SYNCHRONIZE|VM_READ.
+No game writes, event signaling, thread injection, UI or game restart.
+Worker report: FAILED, native lease/process/permission guard before ARMED,
+PLAYERS_REBUILT=0. Provider outfits status was held on that same failure.
+Cancel was signaled and Permit reset at later inspection; this is consistent
+with failure cleanup and does NOT prove cancellation initiated the failure.
+Evidence: artifacts/qa055-live-evidence-20261018 and qa055-carry-readonly-20261018.json.
+
+CONFIRMED CARRY GUARD BUG / FIX
+Authority::safe called process_identity(GetCurrentProcess(),...). GetCurrentProcess
+returns the -1 pseudo-handle, equal to INVALID_HANDLE_VALUE. live() rejects -1
+before checking identity: this condition always failed.
+Authority now retains a real query/synchronize self-process handle and checks
+the exact game birth/path through it. live() still rejects invalid handles.
+No profile, ownership, cancellation, transaction or write gate was relaxed.
+Regression uses only the test process; confirms valid self identity and rejects
+pseudo/invalid handle, changed creation time and changed path.
+This removes a definite admission blocker; gameplay carry is NOT yet verified.
+
+F8 FIX, STILL NEEDS LIVE RETEST
+Current diagnostic history alternates match/transition. Input polling used to
+discard foreground presses during transition. Polling now captures foreground
+edges independent of boundary, as WPF did. An open intent survives a transient
+invalid boundary for at most 2 seconds; display remains Blacktop-boundary gated.
+Immediate hide and stale-result protection remain. This addresses one concrete
+lost-key path, not proof that every intermittent F8 symptom is resolved.
+
+BUILD / TESTS
+- Native regression executable: PASS; identity test, 25 transaction fault cases,
+  66 alias combinations, parser, fake-image capture, transport/report, event DACL.
+- Forwarding smoke: PASS.
+- Overlay Rust: 25 passed; loader/recovery Rust: 9 passed.
+  Initial restricted run had 24 pass / 1 AccessDenied diagnostics-fixture failure;
+  controlled unrestricted runs passed. Native log-capture rerun initially omitted
+  fixture root creation and failed; final correctly-created fixture passed.
+- Dev debug build passed, 46.35 seconds. No broad full-suite rerun. QA054 natural
+  intermittent test-process AV remains unresolved; no release qualification.
+- No GUI or gameplay retest of QA055 performed.
+Logs: artifacts/qa055-{overlay-tests,loader-tests,native-tests-final,dev-build}.log.
+
+STAGED DEV DELIVERY — RUNNING APP WAS NOT REPLACED
+New starter: Start QA055 Dev.vbs (calls Start QA055 Dev.ps1).
+It requires game and launcher processes closed normally, verifies staged hash,
+backs up existing dev EXE, copies only Dev/Portable/App EXE, starts/reuses Vite,
+and launches the same dev portable root. Never kills processes or touches Main.
+Current QA054 executable in Dev/Portable/App remains unchanged:
+40F1BA28F5731CCC41522E1B28F6CA773C4C9F6A3A368452F95AFE4A57EBB4F4.
+QA055 staged: Dev/Pending/QA055/launcher.exe, 52004352 bytes,
+SHA256 AEF97153130FF2C010805BBC2BF1DEDC5B6ADBA79820A44FD42A52CC5E7A6F9E.
+Starter CheckOnly outside sandbox correctly refused while all three current
+processes were running. Sandbox process inventory was incomplete; do not use
+its initial false 'closed' result as evidence. Actual idle activation not run.
+Source badge remains 0.53.1. No final Build.ps1, installation or promotion.
+
+DLL
+assets/native/version-outfits-v2.dll: 1004544 bytes,
+SHA256 99B7249F0F8004C433E17DA04FCCA15FEF2B56962EFD529DFE56F87407691101.
+Both source pins updated. QA054 hash and older 0.53.1 hash remain recovery-only
+for exact owned interrupted sessions; new publication accepts only new payload.
+Backups/qa055-carry-f8-20261018 preserves all edited app sources and old DLL.
+
+BOUNDED WNBA OFFLINE FOLLOW-UP
+New tools/wnba_request_source_audit.py and artifacts/qa055-request-source-*-20261018.json.
+Pinned executable hash verified; disk only. Corrects previous lead: RVA 0x5167070
+is REQUEST::SetCreateStage (assertion strings and code), not source preparation.
+0x516D920 calls 0x4CB35A0 with source-output object+0x488; success consumes fields
++0x498/+0x4A0. Alternate manager+0x100 path calls 0x51F7DF0 using request+0x510.
+Completion at 0x516DB40 reads status via 0x51F8C30 and detaches a +0x40 field via
+0x51F8D30 before common opener. The broader reader reaches indirect calls whose
+exact target/lifetime are not established. No safe adapter was implemented.
+Do not claim this proves a file-device hook route, decoder compatibility or
+ownership transfer. WNBA remains disabled; no archive/key/runtime changes.
+
+NEXT
+1. Let user finish current test; collect remaining results. No UI actions.
+2. Once they close game/launcher normally, they can click Start QA055 Dev.vbs.
+3. Fresh game test must establish ARMED and carry across first/second match,
+   F8 taps during load and stable selection/match, Alt-Tab and catalogs.
+4. Preserve failure report and receipts if still failing; never retry uncertain writes.
+5. Estimate remains 80.2%; no new live-confirmed success or promotion.

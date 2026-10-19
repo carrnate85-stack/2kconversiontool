@@ -1,0 +1,111 @@
+QA082 - DEV PARITY INCREMENT READY TO TEST, STAGED ONLY
+Finalized 2026-10-19T11:12:47.726554+00:00
+User authorized "Go ahead and fix these" and "Start bringing us closer to full feature parity".
+QA081 research heartbeat remains PAUSED. Do not install/promote or activate without
+user action/authorization. Do not launch/stop game, control desktop or perform ad hoc
+memory writes. Future gameplay entry remains ordinary toggles and Play. Preserve
+Data/Library, backups, all older builds/journals and QA073 exact failure evidence.
+
+DEV STARTER
+Start QA082 Dev.vbs (with Start QA082 Dev.ps1); candidate Dev/Pending/QA082/launcher.exe.
+SHA256 71404BF01756E4A63ED267BCF4860CD023BA8E0FCA1FBF84813E4646F63D882D
+Bytes 53273600
+Candidate built offline/locked/no-default-features/target-qa054/-j1, conservative CPU
+affinity. Not activated/installed/promoted. QA080 stage still exact original hash.
+PS syntax PASS. VBS /check PASS (prints command only). PS -CheckOnly verified the
+staged hash then safely refused at idle guard: current 2k Launcher Rust Prototype
+PID 35872 running. Nothing replaced or closed. User closes current launcher normally
+before clicking new starter. No launcher/game was opened for validation.
+
+DELIVERED
+1. New TeamDNA .2kteam native chooser import/export, authenticated browser route,
+   reviewed local staging for supported Team text, assigned staff, manual rotations
+   and matching existing uniforms. Explicit existing section Save buttons remain.
+   No composite game write. Native IDs/assignments/callerpaths excluded; arena and
+   unsupported Team info fields skipped with feedback. Exact visit/draft checks and
+   all private staff/rotation preflights run before synchronous local commit.
+   Stable same-handle source reads deny concurrent writers/deleters; 512KiB cap.
+2. PlayerDNA/presets filter unsupported destination fields before review/staging;
+   private visit/baseline checks refuse stale replies including reopened cached
+   objects. Own2KDB callback kept valid, while foreign commit invalidates review.
+   Shared staff and automatic rotations readonly. Catalog normal-Team type filter
+   corrected. Season import requires clean draft, supports one existing row only,
+   gives truthful no-op feedback and avoids legacy fallback on identical row.
+3. Native editor witness checks retain selected Team identity through uniform/staff
+   writes. Uniform no-alias proofs are phase-aware without widening write spans.
+   Rotations check fresh player membership before final applied journal completion.
+   Season eligibility checks fresh linked-player projection, full selected player
+   row, all33 logical occurrences and exactly-one-reference limited import. Stable
+   double reads and independent bounded read/import credentials prevent dropdown
+   refresh or abandoned review from invalidating a visible draft. Original 12s
+   deadline/write ranges stay intact; maximum-roster timing remains unmeasured.
+4. Animation preview ownership heartbeat expiry, independent token reap, bounded
+   cleanup/coalesced warm workers, atomic engine/session/token ownership, shutdown
+   race handling and bounded separate closed-session bookkeeping. No game lease
+   renewal. A cached scene learns of expiry at next backend action/Retry.
+5. UNWIRED appearance CAS policy now uses exact own-effect receipts and single-use
+   reverse authority. No-effect, uncertain and foreign identical desired bytes do
+   not acquire rollback authority; uncertain undo/post-undo journal failure cannot
+   authorize another CAS after foreign ABA. No production executor/IPC activated.
+
+VALIDATION
+Final full natural Rust suite: 1342 PASS / 0 FAIL / 54 ignored, 157.23 seconds,
+EXIT_CODE=0 CLAIMED=0 DUMP=0. No debugger. Bounded test-only supervisor, no game.
+Test EXE SHA B9DAE87B8C89EDEBAD6764D3AE122B372AB3DFB61B57614EA76BD612118BC0F4
+Test PDB SHA 303A02192096E209076E245ACDD4112B8266772076F138BE3FDAF2E2B64C7C8A
+Log artifacts/qa082-final-full-rust-tests.log; capture
+artifacts/qa074-natural-qa082-whole-4.txt; summary qa082-final-rust-validation.json.
+Frontend component regression suite11 PASS; season12 PASS; TeamDNA native-plan,
+cancel/preflight/same-object/draft-change harness PASS. TypeScript --noEmit PASS
+outside sandbox (pnpm junction type declarations unavailable to sandboxed Node).
+127 embedded browser assets. Native payload unchanged:
+83AF5D0613D1E90D51933F382C22D215F766A61A198CAFEB41E80606A1722518 / 1215488bytes.
+Dev build PASS, 48 existing/dead-code warnings, log qa082-final-dev-build.log.
+No browser-native-dialog gameplay acceptance is implied. Ignored tests stayed ignored.
+
+FAILED CHECKS PRESERVED / QUALIFICATIONS
+Initial sandbox full test failed318 storage ancestor-handle permission checks, not
+an AV. Exact image/evidence Backups/qa082-sandbox-denied-test-20261019/
+exact-images-and-denied-run.zip. Same failing fixture passed outside sandbox;
+filesystem guards were not weakened. Full restored-source run3:1341pass/1fail due
+obsolete125 asset-count assertion after adding2 local scripts; exact image/PDB/log
+preserved in Backups/qa082-asset-count-correction-20261019/
+failed-assertion-exact-evidence.zip. Count and explicit script presence checks fixed;
+final run4 above passed. Starter sandbox CScript access denial preserved; outside
+sandbox /check passed; CheckOnly safely refused current launcher as documented.
+Root rustfmt main.rs accidentally formatted child modules:30 restored by exact
+QA080 hash. Four retain cosmetic rustfmt edits only, no functional changes intended:
+fit_assets.rs, native_session.rs, outfit_match_v2.rs, preview_service.rs.
+Report artifacts/qa082-unrelated-formatting-recovery.json; use skip_children=true.
+
+UNRESOLVED
+QA073 natural Rust test access violation remains UNRESOLVED. Exact preserved:
+Backups/qa073-natural-test-av-20261018/exact-test-image.zip
+EXE BC3B784A828DC5149C28A7F8D9688ECA302CCD46E7F5294D101C0CF99AE82D21
+PDB A97CB0292EA39E292C81400E5F77DF4F3AC658AA0614F0DBB7E2DFBF3804556A
+A passing changed natural image or debugger run does NOT resolve it.
+QA078 Clang O2 fixture crash also unexplained. No native rebuild here.
+QA080 visible scaler result still pending. WNBA both-mode user success is retained,
+but repeated-entry/toggle-OFF and later heldCTX160 are not certified. QA075 fast
+outfit user acceptance retained; QA082 makes no functional outfit/WNBA/scaler change.
+
+NEXT PARITY WORK / LIVE CHECKS
+Use dev UI to validate TeamDNA chooser/review/cancel, local dirty-state staging,
+supported explicit per-section saves and reopen without stale writes; verify DNA/
+preset unsupported-field feedback and season single-row/no-op behavior; preview
+expiry/reopen/Retry. Continue ordinary-game scaler/WNBA re-entry checks separately.
+Full parity remains incomplete: structural season changes need model/journal/
+quiescence/COW/reserved-bit design; appearance needs production executor and
+composite journal; other narrow native fields, custom catalog/remote import and
+conditional arena services remain. Do not enable writes based on synthetic tests.
+
+PROVENANCE / RESUME
+artifacts/qa082-final-build-inputs-20261019.json pins556sources/configs +5scripts
++6embedded assets. artifacts/qa082-final-source-preservation-v2.json verified567
+inputs and preserved QA080. Stage qa082-final-stage-20261019.json. Earlier individual
+agent manifests are superseded for final binary provenance by final input freeze.
+Exact final source/test EXE+PDB/dev EXE+PDB archive intended at:
+Backups/qa082-passing-test-and-dev-20261019/exact-images-and-sources.zip
+Confirm archive completed and roundtripVerified in
+artifacts/qa082-exact-evidence-archive-20261019.json (created after this handoff).
+Do not change included sources/handoff after archive without new evidence/version.

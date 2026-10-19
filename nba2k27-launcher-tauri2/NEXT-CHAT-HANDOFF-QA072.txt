@@ -1,0 +1,99 @@
+QA072 DEV CHECKPOINT — 2026-10-18 20:16 UTC
+Read QA071 and QA072-WIP for the detailed history. QA072 is ready as a staged dev build.
+
+RULES
+Dev only. Never install, promote, activate a staged build, launch/stop the game,
+control desktop UI or perform ad hoc game writes. User normal toggles+Play only.
+Preserve Data, Library, builds, backups and journals. Back up and fsync edits.
+User unavailable for testing until the two-hour work window ends.
+
+ACTIVE WORK WINDOW
+Started 19:53:37 UTC; ends 21:53:37 UTC (5:53pm America/New_York).
+Heartbeat two-hour-dev-parity-work is ACTIVE with 10-minute replays and final
+replay allowance through22:03:37 UTC. At/after deadline pause it and report the
+latest staged starter, validation and remaining live checks. Do not ask for QA
+inside the window. Do not create another automation. Continue useful offline work.
+
+STAGED BUILD (NOT ACTIVATED)
+Start QA072 Dev.vbs / Start QA072 Dev.ps1
+Dev/Pending/QA072/launcher.exe
+SHA 0FC793FBF4433FE55A9FCEC1BDBBBEA48D249042986303441A6C1A97CD479F35
+52,820,992 bytes.
+Payload DE06738A948896D8EAC2C1F4147B65D34068314B32D26F061305EBA4A972EB0C
+1,179,136 bytes. Both current pins updated; exact QA071 payload92B28...718E
+1,144,832bytes admitted recovery-only with size±1 refusals; prior recoveries kept.
+Active Dev/App remains QA070 SHA8655FF...399FC. Starter CheckOnly verified closed
+launcher/game and no activation. PS AST and VBS echo-only pass (VBS needed normal
+user settings access outside sandbox). Game43128/old lease is CLOSED: no oldPID probe.
+
+VALIDATION
+Whole Rust suite1276PASS,0FAIL,52ignored,49.87sec.
+Final test build21.90sec (12existing warnings); dev build38.63sec (47existingwarnings).
+Strict production native DLL build and version forwarding smokePASS.
+Dedicated expansion-bundle and full existing native fault/ownership suitesPASS.
+Independent peer reviewPASS after fixing guard reentry and full-span alias checks.
+Frontend unchanged; prior QA068223tests remain last frontend validation.
+Manifest artifacts/qa072-final-stage-20261018.json pins source/embedded assets.
+
+CHANGES
+WNBA: clean category dispatch/label before a new Home/QuickPlay roster arm, as WPF
+orders it. Budget the unchanged256-record journal before forward effects: roster4,
+first category12, retained-bridge category8; preserve restoration capacity and fail
+cleanly in stock state. Never budget-gate active observations or cleanup. Final
+forward CAS repeats fresh selection/source/authority checks. Dispatch protection
+uses RAII restoration on every return/throw. Proven offline selection departure can
+restore and prepare for reentry; unknown/foreign/source faults hold. Strict shared
+256-record fixtures complete21categoryentries then stop cleanly;512unlimitedcycles
+pass. Both-toggle profile/token/write-range audit found no overlap; livecombined
+and repeated-entry parity still require user test.
+Outfits: initial sample reduces owner4→2 and lineup3→2, preserving3samples/500ms,
+exact choices and all5durable publication checks. Reuse bounded lineup row reads
+before/after with scalar fallback. Description capture keeps full0x2970 bytes
+initial/end and fresh owner/array rereads; bounded read count21→14.
+Native expansion: replace14per-call intent appends for2three-piece players with4
+fully durable bundles. A precedesRelease+Init; B followsInit and fresh arrayproof,
+then Set+Bind. Private move-only permits require exact flush/readback/transport,
+exact ordered one-time calls, fresh effect guards, reentry refusal and no replay.
+Partial mutation stays uncertain and cannot be destructed. Whole-array overlap
+checks cover source arrays, actor, descriptions, owners and512B source strings.
+Same3092-byte synthetic benchmark14flushes5.1665ms→4flushes1.33805ms: this is NOT
+proof of game timing. No early trigger, removed stability or cached live proofs.
+Diagnostics: scoreboard preserves first failureReason through restoration; exact
+Mode-changed overlay read race keeps presentation within existing1.5s grace while
+raw observation clears immediately and actions stay denied. Other faults hold
+immediately. Blocked observer shows bounded name/PID/parent, no paths/cmdlines.
+Fresh identity queries reuse only64KiB per-thread path buffer; errors/reentry/UTF16
+and8threads tested. No identity/path cache.
+
+RESEARCH
+CNG provider reuse was measured and reverted: <1ms over2000hashes not worth scope.
+Global fresh process snapshot is dominant native authority cost (~8ms percheck).
+Agent wnba_integration is researching faster fresh complete snapshots using official
+NT process-info layouts with strict bounded parser and mandatory Toolhelp fallback.
+Do not remove checks/cache/TTL or production-integrate before review+faultfixtures.
+QA073 typed capacity diagnostic was approved after this stage: agent wnba_toggle_ui
+may edit its agreed WNBA/result/coordinator/bridge/Ruststatus files. Emit LIMIT_REACHED
+once only after both ownership flags false, continue worker cleanup, map Rust to
+existing reload phase so current UI displays it; HELD higher priority. Backups/fsync.
+Agent outfit_latency_qa066 researches further WPF/end-to-end delay only, no production
+edits. QA072 manifest remains fixed; later source differs only for nextQA073.
+
+LIVE BASELINE / REMAINING QA
+User accepted QA070 WNBA appearing after seconds; scoreboard, clothes, balls/arena
+work; clothes faster but notinstant. WNBA later held had old generic reason; do not
+invent historical cause. QA070 firstmatch→plan3001ms, nativeconsume→lastrecord1359ms
+(not final durable receipt). QA071/72 gains are offline validated only. User should
+later use only newest normal dev starter/toggle+Play, no extra test scripts. Check
+WNBA selection→match/Home→selection and RandomAll clothing visual delay/timinglogs.
+Do not claim instant or persistent parity until those live checks pass.
+
+PRESERVED HISTORICAL QUALIFICATION
+QA054 intermittent natural Rust test-process0xC0000005 remains unexplained.
+Do not represent later passing suites as a fix. Prior two bounded debugger runs
+passed; no proven product source/compiler/CPU/RAM cause, no global heap/BIOS change.
+Keep exact old EXE/PDB evidence described by QA054. QA072 whole suite passed once
+normally with4testthreads; no reason to broaden/rerun without a new concern.
+Parity evidence artifact now includes QA070 acceptance. Blacktop DIS->PART because
+the category works but repeat-entry/coverage/toggleOFF remain open. No offline-only
+feature markedLIVE. Current metric82.3%weighted is an estimate,52.4%liveweight;
+not a release-quality claim. Frontend parity descriptions remain historical.

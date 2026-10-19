@@ -1,0 +1,68 @@
+/* The editor shares launcher controls, with its own restrained accent palette. */
+#rosterSectionSwitch,#rosterLauncherButton,#rosterAutoAttach{display:none}
+#playerUnsavedStatus{margin-right:auto;font-size:12px;color:var(--muted)}
+#playerUnsavedStatus.is-edited{color:#ff9eaa}
+#playerQuickSwitch{width:100%;min-width:0;margin-top:12px;font-size:12px;padding:8px 28px 8px 10px}
+.player-reset-row{position:relative;padding-right:32px!important}
+.player-reset-field{position:absolute;right:4px;top:50%;transform:translateY(-50%);padding:2px 5px;min-width:0;font-size:16px}
+.has-staged-edit{box-shadow:inset 3px 0 var(--court)}
+html.roster-workspace.roster-browser #playerEditorModal>.player-studio{max-width:none}
+html.roster-workspace.roster-browser main{max-width:none;padding-bottom:48px}
+#rosterConnection{position:fixed;bottom:0;left:0;right:0;z-index:20000;padding:5px 16px;background:#171a1e;color:#a9afb7;border-top:1px solid #363c43;font-size:12px;text-align:center}
+#rosterConnection.disconnected{background:#54212b;color:#fff}
+/* Keep editor feedback away from the bottom Save & Verify actions. */
+html.roster-workspace #toast{z-index:21000;top:auto;right:auto;bottom:18px;left:18px;max-width:min(430px,calc(100vw - 36px));box-sizing:border-box;pointer-events:none}
+#playerEditBoundary.save-error{color:#ff9eaa;font-size:13px;padding:8px;border:1px solid #a91e2c;background:#351c23}
+html[data-theme='dark']{--bg:#071018;--panel:#101923;--panel-2:#172534;--line:#30495a;--text:#f1f7f4;--muted:#a9bac4}
+html[data-theme='dark'] body,html[data-theme='dark'] .app-shell>.sidebar{background:var(--bg)}
+html[data-theme='dark'] .hero-card{background:var(--panel-2);border-color:var(--line)}
+html.roster-workspace[data-theme='dark']{--bg:#071018;--panel:#101923;--panel-2:#172534;--line:#30495a;--text:#f1f7f4;--muted:#a9bac4;--court:#a8ed79;--court-dark:#5d9d49;--green:#67d59b;color-scheme:dark}
+.roster-workspace body{background:var(--bg)}
+.roster-workspace .app-shell{display:block}
+.roster-workspace .app-shell>main{height:100dvh;min-height:0}
+.roster-workspace .app-shell>.sidebar{display:none}
+.roster-workspace main{padding:24px 32px}
+.roster-workspace main>header .eyebrow{color:var(--muted)}
+.roster-workspace #rosterAutoAttach{display:flex;align-items:center;gap:8px;flex:0 1 auto;width:clamp(180px,24vw,340px);min-width:0;margin:5px 0 0 auto;padding:5px 9px;border:1px solid var(--line);border-radius:4px;background:#09121b;color:var(--muted);font-size:11px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.roster-workspace #rosterAutoAttach::before{content:'';width:7px;height:7px;flex:0 0 7px;border-radius:50%;background:var(--amber);box-shadow:0 0 8px color-mix(in srgb,var(--amber) 70%,transparent)}
+.roster-workspace #rosterAutoAttach[data-state='ready']{color:#dfffd0;border-color:#4e7a6d}
+.roster-workspace #rosterAutoAttach[data-state='ready']::before{background:var(--green);box-shadow:0 0 8px color-mix(in srgb,var(--green) 70%,transparent)}
+.roster-workspace .player-studio .studio-panels{--studio-row-odd:#172534;--studio-row-even:#101b26;--studio-row-active:#203b37;--studio-value:#09121b;--studio-value-line:#365469}
+.roster-workspace button.primary{background:#a8ed79;color:#08120c;border-color:#c0f59b}
+.roster-workspace button.primary:hover{background:#baf692}
+.roster-workspace button:focus-visible,.roster-workspace input:focus-visible,.roster-workspace select:focus-visible{outline:2px solid var(--court);outline-offset:2px}
+.roster-workspace #playerEditorModal{padding:16px;background:var(--bg);backdrop-filter:none}
+.roster-workspace #playerEditorModal>.player-studio{width:100%;max-width:1680px;height:calc(100dvh - 32px);max-height:calc(100dvh - 32px);padding:18px 22px;display:grid;grid-template-columns:190px minmax(0,1fr);grid-template-rows:auto auto minmax(0,1fr) auto auto auto;gap:0 20px;overflow:hidden;background:var(--bg);border:0}
+.roster-workspace .player-studio>.team-editor-head{grid-column:1;grid-row:1;margin:0;align-self:start;padding:0 40px 12px 0;position:relative}
+.roster-workspace #closePlayerEditor{position:absolute;right:0;top:0}
+.roster-workspace #choosePlayerPortrait,.roster-workspace #choosePlayerLogo{display:none!important}
+.roster-workspace .player-studio>.team-editor-head .eyebrow{font:italic 700 25px Bahnschrift,'Segoe UI',sans-serif;letter-spacing:.025em;color:var(--text);margin:0 0 4px}
+.roster-workspace .player-studio>.player-hero{grid-column:2;grid-row:1/3;background:linear-gradient(115deg,#172b3c,#09131d);margin-bottom:16px}
+.roster-workspace .player-studio>.studio-workspace{display:contents}
+.roster-workspace .player-studio .studio-tabs{grid-column:1;grid-row:2/4;min-height:0;padding:0;border:1px solid var(--line);border-radius:4px;gap:0;overflow-y:auto;justify-content:start;background:var(--panel)}
+.roster-workspace .player-studio .studio-tabs button{padding:16px 15px;border:0;border-bottom:1px solid var(--line);border-radius:0;color:var(--muted);font-size:14px;box-shadow:none}
+.roster-workspace .player-studio .studio-tabs button[aria-selected='true']{background:linear-gradient(100deg,#18314a,#1d423d);color:#dfffd0;box-shadow:inset 3px 0 var(--court)}
+.roster-workspace .player-studio .studio-panels{grid-column:2;grid-row:3;min-height:0;max-height:none;overflow:auto;padding-right:8px}
+.roster-workspace .player-studio>#playerArtStatus{grid-column:2;grid-row:4;margin:2px 0}
+.roster-workspace .player-studio>#playerEditBoundary{grid-column:1/-1;grid-row:5;margin:6px 0;font-size:10px}
+.roster-workspace .player-studio>.team-editor-actions{grid-column:1/-1;grid-row:6;position:static;margin:6px 0 0;padding:10px 0 0}
+.roster-workspace .player-studio .studio-category-tabs button[aria-selected='true']{background:#203b37;border-color:var(--court);color:#dfffd0}
+.roster-workspace .player-studio .team-edit-grid>label:focus-within{box-shadow:inset 3px 0 var(--court)}
+.roster-workspace .player-hero-overall strong{color:var(--text)}
+.roster-workspace #rosterLauncherButton{display:inline-flex;margin-left:auto}
+.roster-workspace #rosterSectionSwitch{display:flex;align-items:center;gap:5px;margin-left:10px;padding:4px;border:1px solid var(--line);border-radius:7px;background:#09121b}
+.roster-workspace .roster-section-button{min-width:92px;padding:8px 14px;border:1px solid transparent;border-radius:4px;background:transparent;color:var(--muted)}
+.roster-workspace .roster-section-button[aria-current='page']{background:linear-gradient(100deg,#18314a,#1d423d);border-color:#4e7a6d;color:#dfffd0;box-shadow:inset 3px 0 var(--court)}
+.roster-workspace #rosterLauncherButton{margin-left:10px}
+.roster-workspace #teamEditorModal{padding:16px;background:var(--bg);backdrop-filter:none}
+.roster-workspace #teamEditorModal>.team-editor{width:100%;max-width:1680px;height:calc(100dvh - 32px);max-height:calc(100dvh - 32px);padding:22px 26px;overflow:auto;overscroll-behavior:contain;background:var(--bg);border:0;border-radius:0;box-shadow:none}
+.roster-workspace #teamEditorModal>.team-editor>.team-editor-head{position:sticky;top:-22px;z-index:4;margin:-22px -26px 20px;padding:22px 26px 14px;background:color-mix(in srgb,var(--bg) 94%,transparent);border-bottom:1px solid var(--line);backdrop-filter:blur(8px)}
+.roster-workspace #teamEditorModal .team-editor-actions{position:sticky;bottom:-22px;z-index:4;margin:18px -26px -22px;padding:14px 26px 22px;background:color-mix(in srgb,var(--bg) 96%,transparent);border-top:1px solid var(--line);backdrop-filter:blur(8px)}
+.roster-workspace #playerEditorModal>.player-studio{grid-template-columns:clamp(230px,18vw,290px) minmax(0,1fr)}
+.roster-workspace .player-studio>.team-editor-head{padding-right:0}
+.roster-workspace .player-studio>.team-editor-head>div{width:100%;min-width:0}
+.roster-workspace .player-studio>.team-editor-head .studio-art-actions{display:none}
+.roster-workspace .player-studio>.team-editor-head .eyebrow{padding-right:42px}
+@media(max-width:1200px){.roster-workspace #playerEditorModal>.player-studio{grid-template-columns:155px minmax(0,1fr);gap:0 14px;padding:12px}.roster-workspace .player-hero{grid-template-columns:190px minmax(0,1fr) 115px;gap:10px}.roster-workspace .player-hero-bio{grid-template-columns:1fr 1fr;gap:6px}.roster-workspace .player-hero-bio>div:last-child{grid-column:1/-1}.roster-workspace .player-studio .studio-tabs button{padding:13px 12px}}
+@media(max-width:1200px){.roster-workspace #playerEditorModal>.player-studio{grid-template-columns:210px minmax(0,1fr)}}
+@media(max-width:900px){.roster-workspace #rosterAutoAttach{width:150px}.roster-workspace .roster-section-button{min-width:72px;padding-inline:9px}}

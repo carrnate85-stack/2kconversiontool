@@ -1,0 +1,75 @@
+{
+  "schema": "nba2k27-v2-blacktop-presentation-anchors-v1",
+  "sha256": "29A96471C55909FC2BCEA6C699C59238656A501C19B50C74ED64B0D842E576A1",
+  "settingsOwnerRva": 179188688,
+  "preloadTableRva": 179684456,
+  "recordStride": 51216,
+  "firstBlacktopRecord": 175,
+  "lastBlacktopRecord": 179,
+  "frontWindowOffset": 29736,
+  "frontFlagIndex": 8,
+  "anchors": [
+    {
+      "label": "stand-crowd-selector",
+      "rva": 40790368,
+      "hex": "4883EC28E82700E1FF837808007F1E803D1A6E4708007515488B0551CA3F08803801751C4883C428E973E43F01488B058C6447080FB680F90C00004883C428C30FB680492C00004883C428C3"
+    },
+    {
+      "label": "drone-selector",
+      "rva": 40795648,
+      "hex": "4883EC28E887EBE0FF837808007F1E803D7A594708007515488B05B1B53F08803801751C4883C428E903D73F01488B05EC4F47080FB680FE0C00004883C428C30FB6804E2C00004883C428C3"
+    },
+    {
+      "label": "dj-selector",
+      "rva": 40796704,
+      "hex": "4883EC28E867E7E0FF837808007F1E803D5A554708007515488B0591B13F08803801751C4883C428E903D33F01488B05CC4B47080FB680FF0C00004883C428C30FB6804F2C00004883C428C3"
+    },
+    {
+      "label": "mc-selector",
+      "rva": 40797744,
+      "hex": "4883EC28E857E3E0FF837808007F1E803D4A514708007515488B0581AD3F08803801751C4883C428E913CF3F01488B05BC4747080FB680000D00004883C428C30FB680502C00004883C428C3"
+    },
+    {
+      "label": "mc-coupled-selector",
+      "rva": 40800864,
+      "hex": "4883EC28E827D7E0FF837808007F1E803D1A454708007515488B0551A13F08803801751C4883C428E943C33F01488B058C3B47080FB680030D00004883C428C30FB680532C00004883C428C3"
+    },
+    {
+      "label": "preload-manager-publish",
+      "rva": 38748992,
+      "hex": "4989D04889CA488D0D1B816608E98EFD4000"
+    },
+    {
+      "label": "preload-clone-size",
+      "rva": 43008734,
+      "hex": "488B55004883C2084883C10841B86043F200"
+    },
+    {
+      "label": "preload-row-arithmetic",
+      "rva": 43009170,
+      "hex": "4863CF4869C910C80000837C0808000F84BA000000488D14084883C2084885D20F843C01000048895608896E10897E14"
+    },
+    {
+      "label": "blacktop-size-bounds",
+      "rva": 53450824,
+      "hex": "83FE040F871C010000"
+    },
+    {
+      "label": "blacktop-preset-175-plus-index",
+      "rva": 53451049,
+      "hex": "8D8EAF000000E8FC8C23FF"
+    },
+    {
+      "label": "standing-source-tag",
+      "rva": 62723554,
+      "hex": "0FB68729740000A804"
+    },
+    {
+      "label": "standing-source-flag",
+      "rva": 62723729,
+      "hex": "0FB68F30740000BABE0D9B5341B8AA4C0000E83862B1FE"
+    }
+  ],
+  "gameProcessAccess": false,
+  "gameFilesChanged": false
+}

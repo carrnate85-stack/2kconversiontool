@@ -1,0 +1,89 @@
+QA076 STAGED DEV CHECKPOINT - 2026-10-18 21:22 UTC
+Read this first. QA076-WIP and QA075-WIP retain full research/control details.
+Canonical C:\Users\carrn\CodexProjects\2kconversiontool\nba2k27-launcher-tauri2.
+
+LATEST STARTER / EXACT CANDIDATE (ROOT DID NOT ACTIVATE)
+Start QA076 Dev.vbs / Start QA076 Dev.ps1
+Dev/Pending/QA076/launcher.exe 53,072,384 bytes
+SHA256 EAFD641E7E964087D7594103474F64E70325C70F7C56C7996F7CB32E1DA14B20
+Payload D9A465F814AD3405E0B65B43F418F97B705ED8AC30D8CA5FEBC64A4A562A2B07
+1,193,472B; exact prior4FB...A3FA/1,190,912 admittedRECOVERYONLY with±1tests.
+Oldasset+2pinssafebackup Backups/qa076-native-payload-and-pins-20261018.
+Manifest artifacts/qa076-final-stage-20261018.json contains frozen source/assets.
+PS AST PASS; busy CheckOnly expectedrefusalPASS; VBS/checkecho-onlyPASS.
+User was invited to closeoldlauncher normally, useQA076, WNBA BlacktopON+Play,
+thenleaveBlacktopselection open. Pending async 'At Blacktop selection' response.
+Latest verified activeDevAppstillQA075SHA0FAC...B54FC, oldergame2320closedbyuser
+by21:21; onlyoldlauncher32020seen. Reverifycurrenthash/lease/PID beforeattribution.
+Neveractivate/rootlaunch/stopgameorcontrolUI. Normalusertoggle+Playonlyentry.
+
+DELIVERED QA076
+1. Userrequested RandomAll nowstreetwear-only, accessories[], originalrostershoes
+retained. No routineprogress/successreportpopup; actionablefailuresstillvisible.
+Frontend/App.tsx backedup/fsync andtsc--noEmitPASS. SourceSHA
+AA8164D4D699530F2B6C54CB51A8F5AEDC4E16B87E21CB026090B0D0129A6139.
+User sawnewUIviaViteHMR whileQA075binarywasactive; nextQA076manifestpinsnewUI.
+2. Private typed outfittrigger Owned+Submitted existingframes nowonedurable
+commit, oneflush/readback, exactpairWitness. Finalfullfreshhandoff/plan+trigger
+proof AFTERdurablepair BEFOREtriggerunlock. Allreadiness/stabilitygatesunchanged.
+CreatedexclusiveFile lockedBEFOREid/write/sync; failedexactunlink/unknownIDheld
+oneperpendingsession, earlyStoreDropquarantinesfile+directorypinsuntilprocess
+exit. Positiveclosedgameproofcanrelease; parentexitcannotatomicallycancelan
+alreadyenterednativecall. Nativefreshper-effectauthorityunchanged. No replay.
+3. WNBAdeepcaptureHELD nowincludesboundedfailureenums,row/countfacts, Context/
+snapshotdiffmaskandfirstfailedrepeatedscope, derivedonlyfromexistingreads.
+Exactreadorder/shortcircuit/guards/hold/restoreunchanged; noextramemoryreads,
+gamecalls/effects/permissions. OriginalHELDprefixretained; fixed384Bbuffer.
+FullindexrepairresearchNOTintegrated; encryptedresearchpackblockedkeypathabsent.
+
+VALIDATION / QUALIFICATIONS
+IndependentRusttransactionandnativeWNBAreviewsPASS.
+18transportfocusedtestsPASS0.55s (7newfunctions/8scenarios, everyphysicalbyteprefix,
+sync/readback/identity/createfailure, latehandoff, foreignID, failedunlink/Drop).
+Eightnativefocusedsuites+fullsyntheticselfmemory/transportfixturePASS.
+StrictC++20/O2/Wall/Wextra/Werror/static. ActualgamewasNOTopenedbyfixtures.
+FullDLLbuildPASS; isolatedsystemversionforwardsmokePASS. Initialmissing-Inative
+fixturecompilelogretained, thenrequiredincludepathcorrected; no sourcefailure.
+FinalRusttestbuild17.45s/12existingwarnings; finaldevbuild29.66s/47existingwarnings.
+ONEchangedtestimage natural boundedrunWITHOUTdebugger:
+1302PASS/0failed/54ignored/50.48s; childEXIT_CODE0 CLAIMED0 DUMP0.
+artifacts/qa076-final-full-rust-tests.log; qa074-natural-qa076-whole-1.txt.
+ExacttestEXE8B5F73DF2DB1B608CECBB0A735CFA041E660A040F6A54DC5F8E124A9A66E4323
+ExacttestPDBD382F3CF08246B7F5A08AA02DEB64823D2F4B8C342DEAAD4DC519783D82F5B1F
+RoundtripSHAverifiedZIP Backups/qa076-passing-test-image-20261018/exact-test-image.zip.
+Fullreport artifacts/qa076-validation-frozen-20261018.json.
+STOP repeatingunchangedtestimage. Passingnewimage doesNOTresolvehistoricalAV.
+
+HISTORICAL NATURAL TEST AV STILL UNRESOLVED
+QA073naturalwhole --threads4 failed0xC0000005; exactoriginalEXE/PDB/controlZIP
+preserved Backups/qa073-natural-test-av-20261018/exact-test-image.zip.
+OriginalEXE BC3B784A828DC5149C28A7F8D9688ECA302CCD46E7F5294D101C0CF99AE82D21
+OriginalPDB A97CB0292EA39E292C81400E5F77DF4F3AC658AA0614F0DBB7E2DFBF3804556A
+Failure artifacts/qa073-final-full-rust-tests.log +natural-test-av-identity.json.
+Passingdebuggerrun+passingchangedQA074/75/76imagesarenotcause/fix. Finalreportmust
+retainqualification. Noactualnaturalcrashdump; onlyvalidatedsyntheticcapture.
+Capturehandlercfg(test,windows,x86_64)only; productionexcludesit. No globalWER/
+PageHeap/registry/BIOS changes. releaseEligiblefalse/candidateOnlytrue retained.
+
+USER LIVE BASELINE / NEXT WNBA CHECK
+QA075exact0FAC...B54FC, normaluserPlaygame2320:
+readonlyinventory403teams/30NBA/15WNBAclubs doublePASS6828B; categoryPUBLISHED
+thenHELD 'deep roster capture or repeated departure scope is uncertain'.
+SourceREGISTERED15511890/PUBLISHED15530937/HELD15533390. LaterinventoryPASSnot
+retrospectiveproofofwhichdeepcapturefailed. NewQA076diagnosticswillidentifyit.
+UserconfirmsONEQA075match clothesalmostimmediately/veryquick. NativeREBUILT2,
+consume15661468->lastcomplete15661765=297ms(nativeportiononly,notwholetransition).
+Localevidence Backups/qa075-user-match-evidence-20261018 +sameartifactprefix.json.
+Shadowonlyobservation-unknown; noearlyadmissiontimingconclusion.
+NoQA076liveacceptanceYET. Onnewuserselectionreplyreadexactnewlease/hash/logPID
+andinterpretD/F/R/N/NBA/W/DIFF/CTX/S/Oenumsagainstfrozennativeheader. Agents
+wnba_toggle_ui/outfit_latency_qa066/wnba_integrationcomplete/available;reuse,
+avoidduplicateeffort. No new adhoclivewrites or usertestapps/scripts.
+
+WORK WINDOW / AUTOMATION
+Continueauthorizedworkuntil21:53:37UTC(5:53pmNewYork), unlessusersteersotherwise.
+HeartbeatIDtwo-hour-dev-parity-work ACTIVEevery5min; promptuseravailableQA075
+mustbenewlatestQA076ifupdated. At/afterdeadlinepauseheartbeatandoneconcise
+reportdeliveredchanges/remainingWNBAchecks/AVqualification/lateststarter.
+PreserveallData/Library/journals/backups/builds. Noinstall/promotion. Backuppreedit
+andfsync. Neverprint/log/copy/shipkeys;salt/keyresearchboundariesinQA075-WIP.

@@ -1,0 +1,81 @@
+QA064 DEV checkpoint, 2026-10-18
+No installation/promotion, game launch/control, agent live writes/nativecalls.
+Current game6628/UI26040+worker28304 stays QA063, no activation.
+
+FREESTYLE
+QA063 source registered but category transaction's picker changed; partial
+category changes restored and old runtime held. Saved live failure artifact.
+QA064 typed restored-publication retries require entire changed prefix restored,
+profile valid, COMPLETE categorytables original including untouched words, and
+exact source proof. Limit8 restored attempts; foreign/unknown/unrestored/source
+failures remain held. No guard removed. Regression proves partial failure can
+restore then freshly succeed; text alone cannot authorize retry. Current held
+process not rearmed; fix needs newDEV/freshPlay. ToggleON normalPlay works as
+QA063 with thisretryfix; no manualscripts. Test separately fromBlacktoptrial.
+
+BLACKTOP SOURCE-ONLY TEST
+New exact144byte two-entry0A aliases Learn2K673F6D519B5CC655 and default
+FE5CBA7819830553 to same unchangedencrypted403payload. Defaultalias isglobal
+to default-roster consumers. Natural Freestyle entry/exit used to reload after
+Home registration; direct Blacktop entry retainsstock370roster (knownprobe).
+Distinct72byteC27WNBT1 permission on SAME approval-nonce.bin path, PID/birth/
+noncebound. OldC27WNPA1 normalprofileunchanged; C27WNPC1 rejectsassource.
+Trialscript requires savedFreestyletoggleOFF, no approval/categorytoken or
+terminalreport; no overwrite/adoption. NativeHost selects fixedprivatefolder
+qa064-blacktop-source only; expectedindexcount2/filecount1. Normalprivatefolder
+qa058-wpf-era count1 unchanged. ExactAuthority/menu/native mutex/emptypriority/
+immutablepack and process-lifetime pins retained. No unregister/foreignreplace.
+Blacktop categorypatch/toggle remainsdisabled; this proves ONLY roster source.
+
+USER TEST
+Close game+launcher normally; Start QA064 Dev.vbs.
+Turn WNBA Freestyle OFF BEFORE Play. At Home run Test QA064 Blacktop Source.vbs.
+Wait REGISTERED, enter NBA Learn2K/Freestyle picker, return Home, enter Blacktop
+player selection and leave open for read-only probe. Expected403/30NBA/15WNBA,
+exactclubs, priority2. Registration alone ismetadata, not loadedroster/gameplay.
+No categorypermissioncreated. Do not combinewithnormalFreestyleON/autosource.
+
+ARTIFACTS
+Dev/Pending/QA064/launcher.exe 52176384bytes SHA256 BCB6FB163ACD7AB9F5041F91B85528ED87496A153F690AF16BA4FC433EFE2120
+NativeDLL1037312bytes SHA256 4164D1D8DB3161CA30688F41AD3ECDDDE152DB71C13D6458146F67741CDD9B71
+0A144bytesSHA0C25D0839B11B4AF085F587C1BAF4E74F821CD34D2B902FC950DBC91E5123CC9
+0B1762144bytesSHAD42B4E4DDFA03A83DF799A49A9BAEF1526A74393F4CFC44A5CE01AA2BF7CE7EE
+Fixture artifacts/qa064-wnba-blacktop-source-20261018 read-only, flushedverified,
+encryptedpayloadcopiedverbatim; no keys accessed. FinalEXE/DLLscriptpinssupplied.
+Rustpinsupdated; previousD39E...1035264 retainedrecoveryonly. Olderpayloadsretained.
+
+CHECKS
+StrictC++core/binding/fullDLLcompile+VersionProxySmokeTest PASS.
+85Rusttests PASS:runtime26,Freestyle15,journal4,launch3,sourcegate3,loader9,
+profile3,provider22;3explicitdisk-onlyignored. PythonWAD/probe13PASS (7WAD).
+Offline/locked/-j4testcompile+DEVbuildPASS,12/47existingwarnings.
+All3QA064PSscriptsparse;2VBS/checkPASS. StarterCheckOnlyrefusedactiveowners;
+trialCheckOnlyrefusedolderDEVhash beforeeffects. No broadreleasequalification.
+FrontendunchangedQA063. PriorPCbugcheckcauseunresolved. Estimatedoverall80.2%.
+
+EVIDENCE
+artifacts/qa064-freestyle-toggle-live-failure-20261018.json
+qa064-final-test-build.log;qa064-final-focused-tests.log;qa064-dev-build.log
+qa064-blacktop-source-fixture-and-approval-review-20261018.txt
+Backups/qa064-freestyle-entry-retry-20261018;qa064-native-payload-20261018;
+agentnative/scriptbackupsalsoqa064named. No oldbuild/cachetreesdeleted.
+Next probe tools/wnba_priority_loaded_roster_probe.py --blacktop --priority-manager
+--out artifacts/<fresh-name>.json; needs exactdevlease/inactiveBlacktoppicker.
+
+LIVE BLACKTOP SOURCE SUCCESS:
+QA064 exactEXE BCB6FB163ACD7AB9F5041F91B85528ED87496A153F690AF16BA4FC433EFE2120.
+Game33232 session000000000000000018dfb0214d181ee40000000000000003.
+Native source REGISTERED twoentrytrial. After natural Freestyle/Home/Blacktop,
+exact read-only stable double sample proves403teams,30NBA,15exactWNBAclubs,
+no duplicates, prioritypresent/nativeWAD812d868/2entries. Probe6828bytes,
+no keys/gamecalls/writes. Evidence qa064-blacktop-loaded-roster-readonly-20261018-1.json
+and qa064-blacktop-source-registered-33232-20261018.log. Blacktop categorypatch
+stilldisabled; no selection/match compatibility claim. User asked reentrytest;
+next task guarded V2 Blacktop categorybridge and sourceflow/toggle integration.
+
+RE-ENTRY PASS: user returnedHome and re-enteredBlacktop. Second exact owned
+read-only double sample matches first:403teams/30NBA/15exactclubs,2entrypriority.
+Evidence artifacts/qa064-blacktop-reentry-roster-readonly-20261018-1.json.
+Source load and natural menu re-entry validated; category/match remainpending.
+
+LIVE FREESTYLE TOGGLE PASS: User reports WNBA category appears on normal Play without scripts after retry correction. Evidence artifacts/qa064-freestyle-toggle-live-success-20261018.json. Blacktop category adapter remains separate ongoing work.

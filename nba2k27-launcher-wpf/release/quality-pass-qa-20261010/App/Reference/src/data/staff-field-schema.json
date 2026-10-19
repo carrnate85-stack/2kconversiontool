@@ -1,0 +1,780 @@
+{
+  "systems": [
+    "BALANCED",
+    "GRIT_AND_GRIND",
+    "PACE_AND_SPACE",
+    "PERIMETER",
+    "POST",
+    "TRIANGLE",
+    "SEVEN_SECONDS",
+    "DEFENSE"
+  ],
+  "roles": [
+    "COACH",
+    "SCOUT",
+    "TRAINER",
+    "GM",
+    "CFO",
+    "OWNER",
+    "HEAD_ASSISTANT",
+    "ASSISTANT_GM",
+    "SHOTDOCTOR",
+    "GUARDGURU",
+    "WINGWHISPERER",
+    "BIGMANCOACH",
+    "POSTDMASTER",
+    "PERIMETERDMASTER",
+    "DOMESTICSCOUT1",
+    "DOMESTICSCOUT2",
+    "DOMESTICSCOUT3",
+    "DOMESTICSCOUT4",
+    "FOREIGNSCOUT1",
+    "FOREIGNSCOUT2",
+    "STRENGTHTRAINER",
+    "STAMINATRAINER",
+    "SPORTSPSYCH",
+    "SPORTSSCIENCE",
+    "PHYSIO",
+    "SLEEPDOCTOR",
+    "FRONTOFFICEASSIST1",
+    "FRONTOFFICEASSIST2",
+    "FRONTOFFICEASSIST3",
+    "FRONTOFFICEASSIST4",
+    "FRONTOFFICEASSIST5",
+    "FRONTOFFICEASSIST6"
+  ],
+  "badges": [
+    {
+      "offset": 420,
+      "shift": 0,
+      "bits": 1,
+      "key": "NONEBadge"
+    },
+    {
+      "offset": 420,
+      "shift": 1,
+      "bits": 3,
+      "key": "WORK_ETHICBadge"
+    },
+    {
+      "offset": 420,
+      "shift": 4,
+      "bits": 1,
+      "key": "LOOSE_LIPSBadge"
+    },
+    {
+      "offset": 420,
+      "shift": 5,
+      "bits": 1,
+      "key": "FORMER_GMBadge"
+    },
+    {
+      "offset": 421,
+      "shift": 0,
+      "bits": 3,
+      "key": "WINGMANBadge"
+    },
+    {
+      "offset": 421,
+      "shift": 3,
+      "bits": 3,
+      "key": "RECRUITERBadge"
+    },
+    {
+      "offset": 421,
+      "shift": 6,
+      "bits": 1,
+      "key": "SNAKEBadge"
+    },
+    {
+      "offset": 422,
+      "shift": 0,
+      "bits": 3,
+      "key": "ECONOMICALBadge"
+    },
+    {
+      "offset": 422,
+      "shift": 3,
+      "bits": 3,
+      "key": "PROMOTERBadge"
+    },
+    {
+      "offset": 422,
+      "shift": 6,
+      "bits": 1,
+      "key": "INTROVERTBadge"
+    },
+    {
+      "offset": 422,
+      "shift": 7,
+      "bits": 1,
+      "key": "BULLYBadge"
+    },
+    {
+      "offset": 423,
+      "shift": 0,
+      "bits": 3,
+      "key": "TACTICIANBadge"
+    },
+    {
+      "offset": 423,
+      "shift": 3,
+      "bits": 3,
+      "key": "COACHING_LEGENDBadge"
+    },
+    {
+      "offset": 423,
+      "shift": 6,
+      "bits": 1,
+      "key": "FORMER_PLAYERBadge"
+    },
+    {
+      "offset": 424,
+      "shift": 0,
+      "bits": 3,
+      "key": "TEACHERBadge"
+    },
+    {
+      "offset": 424,
+      "shift": 3,
+      "bits": 3,
+      "key": "CLUTCHBadge"
+    },
+    {
+      "offset": 425,
+      "shift": 0,
+      "bits": 3,
+      "key": "REJUVENATORBadge"
+    },
+    {
+      "offset": 425,
+      "shift": 3,
+      "bits": 1,
+      "key": "SHORT_TIMERBadge"
+    },
+    {
+      "offset": 425,
+      "shift": 4,
+      "bits": 3,
+      "key": "COMPETITORBadge"
+    },
+    {
+      "offset": 425,
+      "shift": 7,
+      "bits": 1,
+      "key": "BLOODHOUNDBadge"
+    },
+    {
+      "offset": 426,
+      "shift": 0,
+      "bits": 1,
+      "key": "SLEUTHBadge"
+    },
+    {
+      "offset": 426,
+      "shift": 1,
+      "bits": 3,
+      "key": "DEDICATEDBadge"
+    },
+    {
+      "offset": 426,
+      "shift": 4,
+      "bits": 1,
+      "key": "LAZYBadge"
+    },
+    {
+      "offset": 426,
+      "shift": 5,
+      "bits": 1,
+      "key": "CARELESSBadge"
+    },
+    {
+      "offset": 426,
+      "shift": 6,
+      "bits": 1,
+      "key": "EXPERIMENTERBadge"
+    },
+    {
+      "offset": 426,
+      "shift": 7,
+      "bits": 1,
+      "key": "RELENTLESSBadge"
+    },
+    {
+      "offset": 427,
+      "shift": 0,
+      "bits": 3,
+      "key": "MED_HEADBadge"
+    },
+    {
+      "offset": 427,
+      "shift": 3,
+      "bits": 3,
+      "key": "UPPER_BODY_SPECIALISTBadge"
+    },
+    {
+      "offset": 428,
+      "shift": 0,
+      "bits": 3,
+      "key": "LOWER_BODY_SPECIALISTBadge"
+    },
+    {
+      "offset": 428,
+      "shift": 3,
+      "bits": 3,
+      "key": "SHOT_DOCTORBadge"
+    },
+    {
+      "offset": 429,
+      "shift": 0,
+      "bits": 3,
+      "key": "GUARD_GURUBadge"
+    },
+    {
+      "offset": 429,
+      "shift": 3,
+      "bits": 3,
+      "key": "WING_WHISPERERBadge"
+    },
+    {
+      "offset": 430,
+      "shift": 0,
+      "bits": 3,
+      "key": "BIG_MAN_COACHBadge"
+    },
+    {
+      "offset": 430,
+      "shift": 3,
+      "bits": 3,
+      "key": "POST_D_MASTERBadge"
+    },
+    {
+      "offset": 431,
+      "shift": 0,
+      "bits": 3,
+      "key": "PERIMETER_D_MASTERBadge"
+    },
+    {
+      "offset": 431,
+      "shift": 3,
+      "bits": 3,
+      "key": "DOMESTIC_SCOUTBadge"
+    },
+    {
+      "offset": 432,
+      "shift": 0,
+      "bits": 3,
+      "key": "FOREIGN_SCOUTBadge"
+    },
+    {
+      "offset": 432,
+      "shift": 3,
+      "bits": 3,
+      "key": "STRENGTH_TRAINERBadge"
+    },
+    {
+      "offset": 433,
+      "shift": 0,
+      "bits": 3,
+      "key": "STAMINA_TRAINERBadge"
+    },
+    {
+      "offset": 433,
+      "shift": 3,
+      "bits": 3,
+      "key": "SPORTS_PSYCHBadge"
+    },
+    {
+      "offset": 434,
+      "shift": 0,
+      "bits": 3,
+      "key": "SPORTS_SCIENCEBadge"
+    },
+    {
+      "offset": 434,
+      "shift": 3,
+      "bits": 3,
+      "key": "PHYSIOBadge"
+    },
+    {
+      "offset": 435,
+      "shift": 0,
+      "bits": 3,
+      "key": "SLEEP_DOCTORBadge"
+    },
+    {
+      "offset": 435,
+      "shift": 3,
+      "bits": 3,
+      "key": "FINANCIAL_ADVISORBadge"
+    },
+    {
+      "offset": 436,
+      "shift": 0,
+      "bits": 3,
+      "key": "SPONGEBadge"
+    },
+    {
+      "offset": 436,
+      "shift": 3,
+      "bits": 3,
+      "key": "OUR_HOUSEBadge"
+    },
+    {
+      "offset": 437,
+      "shift": 0,
+      "bits": 3,
+      "key": "MENTORBadge"
+    },
+    {
+      "offset": 437,
+      "shift": 3,
+      "bits": 1,
+      "key": "SINGLE_MINDEDBadge"
+    },
+    {
+      "offset": 437,
+      "shift": 4,
+      "bits": 3,
+      "key": "CLOUTBadge"
+    },
+    {
+      "offset": 438,
+      "shift": 0,
+      "bits": 3,
+      "key": "UNDERDOG_ADVOCATEBadge"
+    },
+    {
+      "offset": 438,
+      "shift": 3,
+      "bits": 1,
+      "key": "TOUGH_LOVEBadge"
+    },
+    {
+      "offset": 438,
+      "shift": 4,
+      "bits": 1,
+      "key": "OPPORTUNISTBadge"
+    },
+    {
+      "offset": 438,
+      "shift": 5,
+      "bits": 1,
+      "key": "CONNOISSEURBadge"
+    },
+    {
+      "offset": 438,
+      "shift": 6,
+      "bits": 1,
+      "key": "GAMBLERBadge"
+    },
+    {
+      "offset": 438,
+      "shift": 7,
+      "bits": 1,
+      "key": "PASSIVEBadge"
+    },
+    {
+      "offset": 439,
+      "shift": 0,
+      "bits": 1,
+      "key": "BRAT_PACKBadge"
+    },
+    {
+      "offset": 439,
+      "shift": 1,
+      "bits": 1,
+      "key": "GRIZZLEDBadge"
+    },
+    {
+      "offset": 439,
+      "shift": 2,
+      "bits": 1,
+      "key": "BIG_3_OR_BUSTBadge"
+    },
+    {
+      "offset": 439,
+      "shift": 3,
+      "bits": 3,
+      "key": "SHORT_LEASHBadge"
+    },
+    {
+      "offset": 440,
+      "shift": 0,
+      "bits": 3,
+      "key": "PACKAGE_DEALBadge"
+    },
+    {
+      "offset": 440,
+      "shift": 3,
+      "bits": 3,
+      "key": "MIND_GAMESBadge"
+    },
+    {
+      "offset": 441,
+      "shift": 0,
+      "bits": 3,
+      "key": "ZEN_MASTERBadge"
+    },
+    {
+      "offset": 441,
+      "shift": 3,
+      "bits": 3,
+      "key": "SOFT_TOUCHBadge"
+    },
+    {
+      "offset": 442,
+      "shift": 0,
+      "bits": 3,
+      "key": "SPELUNKERBadge"
+    },
+    {
+      "offset": 442,
+      "shift": 3,
+      "bits": 1,
+      "key": "CALCULATORBadge"
+    },
+    {
+      "offset": 442,
+      "shift": 4,
+      "bits": 1,
+      "key": "EYE_TESTBadge"
+    },
+    {
+      "offset": 442,
+      "shift": 5,
+      "bits": 1,
+      "key": "CAPITALIST_BACKSTORYBadge"
+    },
+    {
+      "offset": 442,
+      "shift": 6,
+      "bits": 1,
+      "key": "CAPITALIST_EXCLUSIVEBadge"
+    },
+    {
+      "offset": 442,
+      "shift": 7,
+      "bits": 1,
+      "key": "QUANT_BACKSTORYBadge"
+    },
+    {
+      "offset": 443,
+      "shift": 0,
+      "bits": 1,
+      "key": "QUANT_EXCLUSIVEBadge"
+    },
+    {
+      "offset": 443,
+      "shift": 1,
+      "bits": 1,
+      "key": "SCOUT_BACKSTORYBadge"
+    },
+    {
+      "offset": 443,
+      "shift": 2,
+      "bits": 1,
+      "key": "SCOUT_EXCLUSIVEBadge"
+    },
+    {
+      "offset": 443,
+      "shift": 3,
+      "bits": 1,
+      "key": "PLAYER_BACKSTORYBadge"
+    },
+    {
+      "offset": 443,
+      "shift": 4,
+      "bits": 1,
+      "key": "PLAYER_EXCLUSIVEBadge"
+    },
+    {
+      "offset": 443,
+      "shift": 5,
+      "bits": 1,
+      "key": "CLOSER_BACKSTORYBadge"
+    },
+    {
+      "offset": 443,
+      "shift": 6,
+      "bits": 1,
+      "key": "CLOSER_EXCLUSIVEBadge"
+    },
+    {
+      "offset": 443,
+      "shift": 7,
+      "bits": 1,
+      "key": "CUSTOM_BACKSTORYBadge"
+    },
+    {
+      "offset": 444,
+      "shift": 0,
+      "bits": 1,
+      "key": "CUSTOM_EXCLUSIVEBadge"
+    },
+    {
+      "offset": 444,
+      "shift": 1,
+      "bits": 1,
+      "key": "GIFT_OF_GABBadge"
+    },
+    {
+      "offset": 444,
+      "shift": 2,
+      "bits": 1,
+      "key": "SHOT_DOCTOR2Badge"
+    },
+    {
+      "offset": 444,
+      "shift": 3,
+      "bits": 1,
+      "key": "HIGH_OCTANE_OFFBadge"
+    },
+    {
+      "offset": 444,
+      "shift": 4,
+      "bits": 1,
+      "key": "HOT_STREAKBadge"
+    },
+    {
+      "offset": 444,
+      "shift": 5,
+      "bits": 1,
+      "key": "DEEP_BENCHBadge"
+    },
+    {
+      "offset": 444,
+      "shift": 6,
+      "bits": 1,
+      "key": "TOP_HEAVYBadge"
+    },
+    {
+      "offset": 444,
+      "shift": 7,
+      "bits": 1,
+      "key": "FLOOR_GENERALBadge"
+    },
+    {
+      "offset": 445,
+      "shift": 0,
+      "bits": 1,
+      "key": "GRIT_GRINDBadge"
+    },
+    {
+      "offset": 445,
+      "shift": 1,
+      "bits": 1,
+      "key": "HARD_PRACTICEBadge"
+    },
+    {
+      "offset": 445,
+      "shift": 2,
+      "bits": 1,
+      "key": "SHOT_CONTESTBadge"
+    },
+    {
+      "offset": 445,
+      "shift": 3,
+      "bits": 1,
+      "key": "INTENSE_TRAINERBadge"
+    },
+    {
+      "offset": 445,
+      "shift": 4,
+      "bits": 1,
+      "key": "LOAD_MANAGEMENTBadge"
+    },
+    {
+      "offset": 445,
+      "shift": 5,
+      "bits": 1,
+      "key": "HOME_GROWNBadge"
+    },
+    {
+      "offset": 445,
+      "shift": 6,
+      "bits": 1,
+      "key": "COASTAL_ELITEBadge"
+    },
+    {
+      "offset": 445,
+      "shift": 7,
+      "bits": 1,
+      "key": "BIG_BUDGETBadge"
+    },
+    {
+      "offset": 446,
+      "shift": 0,
+      "bits": 1,
+      "key": "MARKETERBadge"
+    },
+    {
+      "offset": 446,
+      "shift": 1,
+      "bits": 1,
+      "key": "TEAM_EFFORTBadge"
+    },
+    {
+      "offset": 446,
+      "shift": 2,
+      "bits": 1,
+      "key": "STRENGTH_IN_NUMSBadge"
+    },
+    {
+      "offset": 446,
+      "shift": 3,
+      "bits": 1,
+      "key": "REVOLVING_DOORBadge"
+    },
+    {
+      "offset": 446,
+      "shift": 4,
+      "bits": 1,
+      "key": "FRANCHISE_LEGACYBadge"
+    },
+    {
+      "offset": 446,
+      "shift": 5,
+      "bits": 1,
+      "key": "GOOD_RAPPORTBadge"
+    },
+    {
+      "offset": 446,
+      "shift": 6,
+      "bits": 1,
+      "key": "COLLABORATORBadge"
+    },
+    {
+      "offset": 446,
+      "shift": 7,
+      "bits": 1,
+      "key": "RECRUITINGBadge"
+    },
+    {
+      "offset": 447,
+      "shift": 0,
+      "bits": 1,
+      "key": "LOYALTY_OATHBadge"
+    },
+    {
+      "offset": 447,
+      "shift": 1,
+      "bits": 1,
+      "key": "WINNING_CULTUREBadge"
+    },
+    {
+      "offset": 447,
+      "shift": 2,
+      "bits": 1,
+      "key": "LOVEABLE_LOSERBadge"
+    },
+    {
+      "offset": 447,
+      "shift": 3,
+      "bits": 1,
+      "key": "PICK_POCKETBadge"
+    },
+    {
+      "offset": 447,
+      "shift": 4,
+      "bits": 1,
+      "key": "BLOCKBUSTERBadge"
+    },
+    {
+      "offset": 447,
+      "shift": 5,
+      "bits": 1,
+      "key": "ANTHROPOLOGISTBadge"
+    },
+    {
+      "offset": 447,
+      "shift": 6,
+      "bits": 1,
+      "key": "DATA_BROKERBadge"
+    },
+    {
+      "offset": 447,
+      "shift": 7,
+      "bits": 1,
+      "key": "DATA_ANALYSTBadge"
+    },
+    {
+      "offset": 448,
+      "shift": 0,
+      "bits": 1,
+      "key": "EAVESDROPPERBadge"
+    },
+    {
+      "offset": 448,
+      "shift": 1,
+      "bits": 1,
+      "key": "GUARD_EXPERTBadge"
+    },
+    {
+      "offset": 448,
+      "shift": 2,
+      "bits": 1,
+      "key": "FORWARD_EXPERTBadge"
+    },
+    {
+      "offset": 448,
+      "shift": 3,
+      "bits": 1,
+      "key": "FILM_ROOMBadge"
+    },
+    {
+      "offset": 448,
+      "shift": 4,
+      "bits": 1,
+      "key": "SEOBadge"
+    },
+    {
+      "offset": 448,
+      "shift": 5,
+      "bits": 1,
+      "key": "THE_PROCESSBadge"
+    },
+    {
+      "offset": 448,
+      "shift": 6,
+      "bits": 1,
+      "key": "BUSTABadge"
+    },
+    {
+      "offset": 448,
+      "shift": 7,
+      "bits": 1,
+      "key": "TRENDSETTERBadge"
+    },
+    {
+      "offset": 449,
+      "shift": 0,
+      "bits": 1,
+      "key": "COACHING_SPECIALISTBadge"
+    },
+    {
+      "offset": 449,
+      "shift": 1,
+      "bits": 1,
+      "key": "TRAINING_SPECIALISTBadge"
+    },
+    {
+      "offset": 449,
+      "shift": 2,
+      "bits": 1,
+      "key": "MBA_AND_A_SMILEBadge"
+    },
+    {
+      "offset": 449,
+      "shift": 3,
+      "bits": 1,
+      "key": "TOP_FACILITIESBadge"
+    },
+    {
+      "offset": 449,
+      "shift": 4,
+      "bits": 1,
+      "key": "CHAT_CONNOISSEURBadge"
+    }
+  ]
+}

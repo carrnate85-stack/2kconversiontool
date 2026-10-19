@@ -1,0 +1,115 @@
+2K LAUNCHER - QA067 DEV CHECKPOINT
+2026-10-18. Read this first, then NEXT-CHAT-HANDOFF-QA066.txt for the larger
+parity baseline. Canonical root is this nba2k27-launcher-tauri2 directory.
+
+USER SCOPE
+DEV ONLY. No installation/promotion without approval. Preserve Data/Library,
+all backups/builds and exact owned journals. No game launch/stop, desktop UI
+control, or ad hoc live-memory writes by agents. Normal toggles + Play only;
+exact read-only observations are authorized. Back up and durably fsync edits.
+User requested background work for an hour beginning17:59:19UTC on2026-10-18.
+Latest user requests: dropdown selection-only; clothing failed to carry into
+this QA066 match; keep improving Random All and WNBA integration.
+
+DELIVERED SOURCE CHANGES
+1. Random Player dropdown now contains only random mode choices. Removed its
+   automatic streetwear checkbox and explanatory/status paragraph. Separate
+   Random All report remains. Automatic first-fit behavior remains streetwear.
+2. Fresh V2 outfit source proof batches controller16B and description64B reads;
+   source reads8->4; lineup pointers one<=80B read per fresh observation.
+   Scalar fallback for failed/partial blocks, and fresh final checks retained.
+3. Automatic batches now skip only freshly proven native outfits with an exact
+   owned page AND verified, unconsumed current-match ledger choice. Requires
+   full PlayerKey, roster/slot/name/original pointer/current source/count/items.
+   Changed ownership refuses before any new intent. Manual overrides retain
+   all normal gates. All-skipped returns ready without new writes/events;
+   mixed batches operate only on new players and report actual count.
+   Older workers advertise no protection: frontend never sends them automatic
+   requests. Manual command JSON remains compatible. V2 alone advertises new
+   automaticChoiceProtection. Status records requestAction/Origin and retained
+   lastMutationRevision/Action/Origin; later List requests preserve mutation info.
+4. Scoreboard ownership no longer compares ONLY the8-byte context+88 lifecycle
+   list head. Five complete native function hashes + exact context class7724EE8
+   prove semantics. Header neighbors/global/allocation/bucket/resource/selected
+   descriptor ownership remain exact. Current held session is never adopted.
+5. Startup readiness accepts the exact native image RW arenaBDC7A00..BE07A00
+   proven from allocator initialization, not all MEM_IMAGE memory. Whole1F8
+   manager must fit arena and one region, exact exe allocation/class/singleton,
+   11 complete native method hashes and manager/allocator dispatch slots fresh.
+   Original private path, one-second stability and20-second fallback retained.
+   A test fixture missed simulated arena-region mutations; fixture corrected,
+   production guard unchanged. New live timing remains to be measured.
+6. Blacktop WNBA native admission now logs precise failed guard and bounded
+   delegate tag/region metadata at refusal. Guards and sticky hold unchanged.
+   Disk research DISPROVED lazy/unconstructed static delegate hypothesis:
+   delegate9B31BB0 is file-backed with vtable74CD158 and exact DIR64 relocation.
+   Do not relax tag guard or add blind constructor waits.
+
+QA066 LIVE EVIDENCE / UNRESOLVED ACCEPTANCE
+Game14320, exact session000000000000000018dfb3c81f8ce1080000000000000002.
+- Source REGISTERED2entries, category HELD before callback publication.
+  Fresh Blacktop inventory370teams/30NBA/0WNBA. Later picker admission probe
+  passed44checks, so new launch granular refusal is needed. Blacktop WNBA is
+  not live-certified and no WNBA parity status was promoted.
+- Random All revision8:2players verified/queued, write1630ms, game refresh0ms.
+- Carry failure journal8474B/20validCRCframes: two verified2-player batches,
+  then third slot0 three-streetwear-item request18:47:33.771UTC reached attempt
+  but no verification. Held `Selected outfit screen changed`; all carry timings
+  zero, no native match plan, native log ARMED/PLAYERS_REBUILT0. Overlay later
+  showed actual match/stage1. Third request origin was NOT recorded, so automatic
+  attribution/HMR reset remains unproven. Exact prior verified key/page match
+  does prove new suppression covers that duplicate if it was automatic.
+  Current held state remains untouched; use a normal fresh game for next test.
+- Startup verify45ms but native settle20,071ms: actual managerBDC7A50 is within
+  disk-proven native arena, causing previous private-only fallback.
+- User scoreboard hold span3+136 was exactly resource-context lifecycle head.
+- User previously confirmed F8 much more responsive; Ready/Waiting flip and
+  foreground behavior still require acceptance. Clothing latency is unresolved.
+
+STAGE / VALIDATION
+Final exact stage metadata and whole-suite result must be read from
+artifacts/qa067-final-stage-20261018.json. It exists only after staging succeeds.
+Starter Start QA067 Dev.vbs/.ps1 updates ONLY Dev/Portable/App, checks exact
+stage hash/size and idle game/launcher, backs up old EXE, durably flushes copy.
+Agent never activates it or installs/promotes. Current user closes normally.
+Dev EXE candidate EBAA028C608B2FF3CFF72A890CAB3D00599352EDB8C351EAB363A472B2F96ED8,
+52621824bytes. Embedded DLL72984DCC84C2B768F2B00802708A546409652255FD5AC81754448BA23D0BBE53,
+1137152bytes. Exact QA066 B057...90B9/1122304 recovery-only, plus older exact pins.
+Frontend43files/223tests passed; focused32automatic tests and tsc passed.
+Native strict -Werror build, forwarding smoke,2no-call admission tests passed.
+Focused scoreboard18passed/1ignored and actual installed Rust disk audit passed.
+Final whole Rust suite1241passed/0failed/52ignored. Startup module8passed including
+installed disk audit.415source files scanned, no empty/NUL source. Staged
+18:55:57UTC; never activated by agent. PowerShell starter AST passed.
+Whole final Rust/build logs: qa067-final-full-rust-tests.log,
+qa067-final-test-build.log, qa067-final-dev-build.log. Earlier before-* logs
+do not validate the final automatic-protection/startup-fixture source.
+
+KEY REPORTS
+artifacts/qa067-live-carry-failure-14320-20frames.json
+artifacts/qa067-automatic-choice-protection-and-live-failure.txt
+artifacts/qa067-random-all-bounded-reads-and-followup.txt
+artifacts/qa066-scoreboard-resource-context88-proof-20261018.json
+artifacts/qa067-startup-readiness-static-arena-proof-20261018.json
+artifacts/qa067-blacktop-static-delegate-construction-proof-20261018.json
+artifacts/qa066-blacktop-roster-open-readonly-20261018-2.json
+artifacts/qa066-blacktop-toggle-first-entry-readonly-20261018-1.json
+
+NEXT MEANINGFUL LIVE TEST
+Normal fresh QA067 launch through starter, requested WNBA toggles + Play.
+No trial scripts. Inspect exact-session category admission reason first.
+At Blacktop verify first automatic fit and manual Random All; check retained
+lastMutationOrigin and actual skipped duplicate behavior, then normal match
+carry timings/native receipt. Verify scoreboard repeated selection and startup
+settle duration. Agent reads logs/retained-identity memory; user plays normally.
+Do not declare outfits or WNBA fixed from offline tests alone.
+
+FURTHER SPEED WORK (DESIGN ONLY)
+Candidate private single-use fresh capture witness could remove immediate
+session.list + session.apply_many duplicate full capture while keeping every
+per-player prepare/publish proof and durable intent. Not implemented. Add real
+stage timing instrumentation before attributing write1630ms to one lane.
+Overall weighted parity remains81.8%; broader offline editor work is in QA066.
+
+FINAL STARTER CHECK: VBS /check echo-only PASS; no launcher executed.
+At18:57UTC active dev remained QA06602B207...7422, game14320 intact; QA067 only staged.

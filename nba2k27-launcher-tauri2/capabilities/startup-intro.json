@@ -1,0 +1,6 @@
+{
+  "identifier": "startup-intro",
+  "description": "Owned MP4 intro only; no launcher, filesystem, process or game commands.",
+  "windows": ["startup-intro"],
+  "permissions": ["allow-startup-intro-event", "core:event:allow-listen", "core:event:allow-unlisten"]
+}

@@ -1,0 +1,36 @@
+{
+  "schema": "nba2k27-v2-player-full-name-audio-v1",
+  "imageSha256": "29A96471C55909FC2BCEA6C699C59238656A501C19B50C74ED64B0D842E576A1",
+  "field": "FirstLastNameSID",
+  "offset": 744,
+  "bytes": 2,
+  "signed": true,
+  "requestMinimum": -1,
+  "requestMaximum": 32767,
+  "propertyNameRva": 7024314,
+  "anchors": [
+    {
+      "rva": 7024299,
+      "hex": "0fbfafe8020000c74424208d000000488d159af120064c89e14531c041b91c463ccbe8ce9a53044885c0740a4889c189eae88fa15304"
+    },
+    {
+      "rva": 6908149,
+      "hex": "4883ec204889f9bac8581e094531c0e8377c55044883c420668986e8020000"
+    }
+  ],
+  "methods": [
+    {
+      "rva": 79614064,
+      "bytes": 75,
+      "sha256": "3a13c19b60bdaba3ca33478c459d821935b49044af0ba67a5c0c1bab06899ca4"
+    },
+    {
+      "rva": 79619392,
+      "bytes": 349,
+      "sha256": "3dfdf2dbf8051874963baeb6ae5b64859aacdeafa78607862238f1cb6982b1c7"
+    }
+  ],
+  "adjacentFieldOffset": 746,
+  "evidence": "artifacts/qa081-two-hour-parity-research-20261018/editor-fields/audio-positive-id-proof-chain-final.json",
+  "qualification": "Mapped scalar only; no clip-bank membership or playback guarantee; no game access/calls or live acceptance. Existing independent full player serializer profile remains required."
+}

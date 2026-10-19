@@ -1,0 +1,243 @@
+/* WPF renderer/session-panels.css:72-107,178-195 (launcher catalog dialog). */
+.blacktop-catalog {
+  --court: var(--accent);
+  width: min(1040px, calc(100vw - 40px));
+  height: min(720px, calc(100vh - 40px));
+  padding: 0;
+  color: var(--text);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  box-shadow: 0 24px 80px #000a;
+  overflow: hidden;
+}
+.blacktop-catalog[open] {
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
+}
+.blacktop-catalog::backdrop {
+  background: #020806c7;
+}
+.blacktop-catalog-header,
+.blacktop-catalog-controls,
+.blacktop-catalog-footer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+}
+.blacktop-catalog-header {
+  justify-content: space-between;
+  border-bottom: 1px solid var(--line);
+}
+.blacktop-catalog-header h2 {
+  margin: 0;
+  font-size: 18px;
+}
+.blacktop-catalog-header small {
+  display: block;
+  margin-bottom: 3px;
+  color: var(--muted);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.blacktop-catalog-controls {
+  flex-wrap: wrap;
+  border-bottom: 1px solid var(--line);
+}
+.blacktop-catalog-controls > input {
+  flex: 1;
+  min-width: 240px;
+  height: 38px;
+}
+.blacktop-catalog-filters {
+  display: flex;
+  flex-basis: 100%;
+  gap: 6px;
+  overflow-x: auto;
+}
+.blacktop-catalog-filters button {
+  flex: none;
+  min-height: 30px;
+  padding: 5px 10px;
+  font-size: 11px;
+}
+.blacktop-catalog-filters button[aria-pressed="true"] {
+  color: #13200f;
+  background: var(--court);
+  border-color: var(--court);
+}
+.blacktop-catalog-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-content: start;
+  gap: 8px;
+  min-height: 0;
+  padding: 14px 16px;
+  overflow: auto;
+}
+.blacktop-catalog-entry {
+  position: relative;
+  min-width: 0;
+}
+.blacktop-catalog-item {
+  display: flex;
+  width: 100%;
+  min-height: 78px;
+  height: 100%;
+  padding: 11px 42px 11px 12px;
+  text-align: left;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+}
+.blacktop-catalog-item > strong {
+  font-size: 12px;
+}
+.blacktop-catalog-item > small {
+  color: var(--muted);
+  font-size: 10px;
+}
+.blacktop-catalog-item[aria-pressed="true"] {
+  border-color: var(--court);
+  background: color-mix(in srgb, var(--court) 12%, var(--panel));
+  box-shadow: inset 3px 0 var(--court);
+}
+.blacktop-catalog[data-catalog-kind="ball"] .blacktop-catalog-item {
+  min-height: 102px;
+}
+:root:not([data-theme="light"]) .blacktop-catalog[data-catalog-kind="ball"] {
+  color: #eef2f8;
+  background: #101821;
+  border-color: #354b5d;
+}
+:root:not([data-theme="light"])
+  .blacktop-catalog[data-catalog-kind="ball"]
+  .blacktop-catalog-grid {
+  background: #101821;
+}
+:root:not([data-theme="light"])
+  .blacktop-catalog[data-catalog-kind="ball"]
+  .blacktop-catalog-item {
+  background: #14212c;
+  border-color: #354b5d;
+}
+:root:not([data-theme="light"])
+  .blacktop-catalog[data-catalog-kind="ball"]
+  :is(.blacktop-catalog-header, .blacktop-catalog-controls, .blacktop-catalog-footer) {
+  background: #182635;
+  border-color: #35485a;
+}
+.blacktop-catalog-preview {
+  width: 64px;
+  height: 64px;
+  margin-bottom: 5px;
+  object-fit: contain;
+  align-self: center;
+}
+.blacktop-catalog[data-catalog-kind="scoreboard"] .blacktop-catalog-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.blacktop-catalog[data-catalog-kind="scoreboard"] .blacktop-catalog-item {
+  min-height: 164px;
+  justify-content: flex-start;
+  padding: 9px 11px;
+  gap: 5px;
+}
+.blacktop-scoreboard-preview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 103px;
+  width: 100%;
+  height: 103px;
+  min-width: 0;
+  min-height: 0;
+  padding: 5px;
+  box-sizing: border-box;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  background: #080d13;
+}
+.blacktop-scoreboard-preview img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  object-fit: contain;
+}
+.blacktop-scoreboard-preview-empty {
+  color: var(--muted);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+}
+.blacktop-catalog-item .blacktop-scoreboard-caption {
+  font-size: 10px;
+  line-height: 1.25;
+  white-space: normal;
+}
+.blacktop-catalog-ball {
+  display: grid;
+  place-items: center;
+  align-self: center;
+  width: 42px;
+  height: 42px;
+  margin-bottom: 4px;
+  color: #4b210b;
+  background: radial-gradient(circle at 34% 28%, #f7bb58, #c86e22 62%, #753315);
+  border-radius: 50%;
+  font-size: 20px;
+}
+.blacktop-catalog-star {
+  position: absolute;
+  top: 7px;
+  right: 7px;
+  width: 29px;
+  min-width: 29px;
+  height: 29px;
+  min-height: 29px !important;
+  padding: 0 !important;
+  color: var(--muted);
+  background: transparent !important;
+  border: 0 !important;
+  font-size: 19px;
+}
+.blacktop-catalog-star[aria-pressed="true"] {
+  color: #f1cf67;
+}
+.blacktop-catalog-empty {
+  grid-column: 1 / -1;
+  display: grid;
+  place-items: center;
+  min-height: 180px;
+  color: var(--muted);
+}
+.blacktop-catalog-footer {
+  justify-content: space-between;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 11px;
+}
+.blacktop-catalog-footer > div {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+@media (max-width: 1000px) {
+  .blacktop-catalog-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+@media (max-width: 760px) {
+  .blacktop-catalog-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 600px) {
+  .blacktop-catalog[data-catalog-kind="scoreboard"] .blacktop-catalog-grid {
+    grid-template-columns: 1fr;
+  }
+}

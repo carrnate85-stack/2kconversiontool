@@ -1,0 +1,252 @@
+2K LAUNCHER — NEXT CHAT HANDOFF
+Written 2026-10-18 after the QA054 dev checkpoint. Read this FIRST.
+
+CANONICAL PROJECT
+C:\Users\carrn\CodexProjects\2kconversiontool\nba2k27-launcher-tauri2
+
+USER DIRECTION / SAFETY
+- Rebuild in Rust + Tauri 2 + React/TypeScript, using installed WebView2.
+  Match WPF features, quality and styling; exact code parity is NOT required.
+- Priorities: working Blacktop, mod loading, outfits/F8, cameras, scaler,
+  Jukebox, WNBA. Do not let lower-priority editor work displace those.
+- Work in the DEV build. Make a final sharing build only when requested.
+- Preserve user Data/Library and portable-folder storage. No new AppData mess.
+- Back up files before editing; the project is largely untracked. Do not reset,
+  clean, delete builds, or overwrite other chats' edits without authorization.
+- No installation over the current App or promotion without approval.
+- No game launch or new live-memory write without user authorization. Keep
+  exact identity/ownership, journals, readback and restoration gates intact.
+- User reclaimed the desktop: do not use mouse/keyboard, open Explorer, or
+  launch another UI until invited. Background/offline work was allowed.
+- Never print, ship, or copy roster decryption keys into shared artifacts.
+- One launcher at a time. Never dismiss an unknown owner just to unblock Play.
+- Give a clickable launcher and estimated completion after a new checkpoint,
+  not after every message. Current estimate remains 80.2%, not live-certified.
+
+READING ORDER / STALE DOCUMENT WARNINGS
+1. This file.
+2. artifacts\qa054-dev-fixes-20261018.txt (complete current fix/test report).
+3. artifacts\qa054-test-av-investigation.md.
+4. artifacts\qa054-wnba-dll-route-review-20261018.md.
+5. CODEX-HANDOFF.md (Claude's detailed 0.53.1 baseline) and
+   artifacts\qa053-live-results.md (user's earlier live results).
+
+Do NOT treat the old handoff as current on these points:
+- Dev GUI/HMR WAS subsequently tested, not just compiled.
+- The handoff's own-launcher outfit-blocker diagnosis was not established;
+  the native bridge already excludes its retained parent and worker.
+- Eight-CPU affinity is NOT mandatory for the current Dev.ps1. Isolated
+  compiler runs passed on all 32 logical CPUs. Current default is unrestricted
+  affinity and Cargo -j8; -ConservativeCompiler retains the old fallback.
+  This does not establish the historical compiler-crash cause, and does not
+  explain the new intermittent TEST PROCESS access violations below.
+- Do not claim all VCRESOURCE requests inherently bypass the DLL: an actual
+  fallback route was statically located. Its source-admission gate is the issue.
+
+DEV LAUNCHER / WORKFLOW
+One-click starter:
+C:\Users\carrn\CodexProjects\2kconversiontool\nba2k27-launcher-tauri2\Start Dev.vbs
+Actual EXE:
+C:\Users\carrn\CodexProjects\2kconversiontool\nba2k27-launcher-tauri2\Dev\Portable\App\2k Launcher Rust Prototype.exe
+Build without opening: powershell -File .\Dev.ps1 -NoRun
+Vite: http://localhost:5173 (HTTP 200 verified at the end of QA054; recheck now).
+Starter starts/reuses Vite, builds incremental Rust, and opens the dev app.
+CSS/TSX hot reload; Rust changes require rebuild/restart.
+Dev data lives at Dev\Portable\{Data,Library,Logs,Cache}, NOT App\Data.
+The case-insensitive App/app root fix is implemented and regression-tested.
+Source/package badge remains 0.53.1; QA054 names this dev checkpoint, NOT a new
+release version. No final Build.ps1 build, Main installation, or promotion occurred.
+
+Current delivered dev EXE: 52003840 bytes
+SHA256 40F1BA28F5731CCC41522E1B28F6CA773C4C9F6A3A368452F95AFE4A57EBB4F4
+Reverify before attributing a future test to this exact binary.
+
+WPF REFERENCE LOCATIONS
+Feature guides in this project: docs\wpf-reference\HOW-TO-USE.md and index.md.
+Read the relevant feature guide before changing behavior/timing/styling.
+Retained WPF App:
+C:\Users\carrn\CodexProjects\2kconversiontool\nba2k27-launcher-wpf\release\quality-pass-qa-20261010\App
+Frozen UI/backend: Reference\src and Backend\host.cjs under that App.
+Retained generic DLL: Reference\runtime-resources\session-loader\version.dll
+Generic DLL source:
+C:\Users\carrn\CodexProjects\2kconversiontool\nba2k27-version-proxy\src
+Legacy helpers:
+C:\Users\carrn\CodexProjects\2kconversiontool\nba2k27-mod-launcher\unlocks-helper
+(TeamCategories.cs, CategoryPolicy.cs, BlacktopTeams.cs.)
+
+WHAT QA054 CHANGED — OFFLINE VERIFIED, NOT ALL LIVE VERIFIED
+1. Outfit foreground requests now reserve a priority queue and drain in-flight
+   background work/native revision completion instead of silently dropping.
+   Duplicate foreground writes reject explicitly; uncertain Apply is not retried.
+   frontend\outfit-request-queue.ts, NativeOutfits.tsx and their tests.
+2. Verified selected-player wardrobe snapshots hydrate Edit outfit. Known drafts
+   must compose to EXACT original items; unknown gear does not invent defaults
+   or retain another player's outfit. frontend\App.tsx, src\outfits.rs,
+   src\outfit_selection_session.rs, src\backend.rs.
+3. F8: independent 20 ms physical key-edge polling, immediate hide, stale-result
+   rejection, recoverable UI heartbeat stall. src\native_overlay.rs.
+4. Ball registry reads batch eight rows (500 rows -> 63 reads), retaining sparse
+   fallback and all stability/ownership guards. New runtime phase timings.
+   src\ball_v2.rs, src\ball_gameplay_runtime.rs.
+5. Launch: fresh bounded NtQuerySystemInformation snapshot with Toolhelp fallback;
+   NO authorization/snapshot caching or relaxed identity checks. Microbenchmark
+   showed 27.8% lower snapshot time, NOT a full-launch speed result.
+   Complete validated foreign selector bundles skip work that would be discarded.
+   src\session_safety.rs, src\selector_runtime.rs.
+6. Dev-only command authorization accepts exact localhost:5173 only in debug
+   without custom-protocol. Release authorization remains strict. src\main.rs.
+7. Portable App directory case-insensitivity fixed after an actual GUI test
+   exposed lowercase path nesting. Test-created nested data was preserved,
+   not deleted; see rollback section.
+8. Carry diagnostics now name the retained exact parent, and previously discarded
+   native pre-ARMED failures produce durable reasons. Native before-ARMED
+   admission differentiates bootstrap/lease/hash/in-memory profile failure.
+   This is NOT proof that clothes carry now works.
+9. Recovery recognizes the previous exact owned DLL payload for cleanup only.
+   New publication remains pinned to the new DLL, never the old one.
+10. Known-ineffective WNBA Freestyle delivery is disabled at feature-plan freeze
+    and in the UI, even for stale enabled settings. Preferences are preserved.
+
+NATIVE OUTFIT PAYLOAD
+assets\native\version-outfits-v2.dll: 1004544 bytes
+SHA256 5ED5246D8D1081D0CA136D1B59631D56DB549BB9A67000A6D55597FA7E4D155C
+Pins: src\outfit_worker_v2_loader.rs and src\provider_outfit_profile.rs.
+Old owned recovery-only payload: 1003520 bytes
+SHA256 645984B76691111224089F73A11B0BD8A9F8C7BECC22BB8E826A6EC4BB2CFF7C
+Build: scripts\build-outfit-match-v2-proxy.ps1. Tests passed for forwarding,
+fake-image profile, transaction faults, pinned transport, event DACL and report
+preservation. Independent disk audit matched 29 methods, 33 virtual slots and
+context anchors. No real game was opened or modified during that audit.
+
+OUTSTANDING 1: OUTFIT CARRY — NEXT LIVE CHECK
+Do not claim the worker simply rejects its own launcher. It already excludes
+the lease worker/parent, and lease ABI/path pins checked out. We fixed misleading
+diagnostics, not an established rebuild cause. Native bootstrap/run results used
+to disappear before ARMED; they now produce a standard FAILED report in
+Logs\game-session\nba2k27_saved_outfits_<gamePID>.log.
+Next approved live test should capture that exact status/report if carry fails.
+Do not weaken ownership or retry an uncertain rebuild to force success.
+
+OUTSTANDING 2: WNBA — MIXED ROSTER EXISTS, DELIVERY NOT IMPLEMENTED/VERIFIED
+Existing Claude scratch root:
+C:\Users\carrn\Documents\Codex\2026-10-17\task\roster-scratch
+Decoded and merged variants already exist; do not redo the merger by default.
+Full 403-team structure has 30 NBA and 15 WNBA clubs and passed offline schema,
+CRC and category checks. Appended player hash-index coverage is still a risk.
+WPF Freestyle changes FOUR STATIC DWORDS in category-order tables; it cannot
+add teams absent from the loaded roster. WPF Blacktop uses a separate native
+loader/bridge. Do not conflate the two mechanisms.
+
+The failed V2 override observed no Learn2K file-device query. Current source
+uses request source admission upstream of the provider alias lookup:
+REQUEST@VCCONTEXTMANAGER vtable RVA 0x810E118, slot19 -> 0x516DB40 -> 0x50C6C30.
+If request +0x10 is null, fallback calls manager getter 0x4B9C0A0, wrapper
+0x4BA1A00 -> ManagerOpen 0x4BA0C40. This REQUEST sets a NON-null source from
+object +0x498 (or static fallback), and size +0x4A0, before that branch.
+Aliases act later and cannot change this upstream source choice.
+Colon/path parameter +0x69 copies to object +0x239, but its actual consumer and
+namespace are unverified. Do not confuse it with the separate +0x230 flag.
+Next bounded OFFLINE research: source preparation RVA 0x5167070 and exact
+source +0x498/+0x4A0 ownership/lifetime. Need a verified scoped resource adapter,
+not speculative pointer writes, filename rewrites, or an executable stub.
+
+Evidence: artifacts\qa054-wnba-dll-route-review-20261018.md,
+qa054-wnba-dll-route-final-20261018.json, tools\wnba_dll_route_audit.py.
+
+Archive fallback is RESEARCH ONLY, not the user's preferred architecture.
+Original 0B slot offset 0x3BFD2276, packed length 1762528. Level9 candidate
+1762144 bytes fits with 384 spare and independently decrypts/verifies.
+artifacts\qa054-wnba-archive-candidate\verified-plan.json and
+learn2k_roster.level9.iff. There is NO apply function. Installed archives were
+not written. Do NOT apply or ship this candidate or the local key. A successful
+offline decoder does not establish gameplay compatibility or authorize patching.
+
+OUTSTANDING 3: INTERMITTENT RUST TEST-PROCESS AV — NOT FIXED
+Two normal full-suite runs exited 0xC0000005 near different pure roster tests:
+roster_v2_readonly::tests::v2_documents_feed_the_uniform_planner_end_to_end_with_oracle_bytes
+roster_v2_services::tests::every_staff_control_round_trips_inside_wpf_masks_and_ranges
+Latest Windows fault RVA 0x2795568 resolves against that exact image to memmove.
+No real crash caller stack was obtained. Older image offsets must NOT be
+symbolized against the newer PDB. No direct unsafe operation found in those
+pure fixture paths; no established source, compiler, CPU or RAM cause.
+
+Evidence chronology (do not hide failures by rerunning until green):
+- qa054-rust-tests.log: earlier AV.
+- qa054-rust-tests-rerun.log: 1171 pass / 48 ignored before two final additions.
+- qa054-rust-tests-final.log: final 1221-test run AV.
+- qa054-roster-isolation.log: 55 pass / 4 ignored.
+- qa054-runtime-affinity-isolation\results.json: all 12 repetitions passed
+  (two tests x three repeats x all32/former8 CPU masks).
+- qa054-rust-full-debug-unrestricted[-2]-stdout.log: TWO full current runs,
+  each 1173 pass / 0 fail / 48 ignored, 97.16 and 99.02 seconds, no AV.
+- Restricted sandbox produces 165 fixture AccessDenied failures; that is NOT
+  a product-regression count or a passing validation run.
+
+tools\debug-test-crash.cpp / artifacts\qa054-debug-test-crash-final.exe create
+only allowlisted offline test children with DEBUG_ONLY_THIS_PROCESS; no attach.
+Synthetic fixture validated first/second-chance AV capture, fault address,
+registers/raw stack. Symbolic unwind is best-effort. Raw candidates are NOT
+proven frames. _NO_DEBUG_HEAP=1 was per-command only, not persistent.
+See artifacts\qa054-test-av-investigation.md and qa054-debug-binary-identity.json.
+Two successful debugger runs do not fix or explain the earlier natural crashes.
+Investigation stopped after the bounded two full captures. A future scoped step
+can capture a naturally failing NON-debugged test child or use test-only heap
+instrumentation. No global WER/PageHeap registry or BIOS changes authorized.
+
+TEST STATUS / WHAT WAS ACTUALLY SEEN
+- Frontend 209 pass / 41 files; TypeScript clean.
+- Rust current full suite twice 1173 pass / 48 ignored under debugger; above
+  unresolved earlier AV remains an explicit qualification.
+- Payload recovery 9 pass; App-case path regression 1 pass.
+- WNBA merger 11 pass; new audit/patch-plan units 6 pass.
+- Actual dev GUI boot/backend navigation and temporary CSS HMR marker verified.
+  Marker removed and original stylesheet hash restored.
+- Actual offline top-aligned F8 preview and Edit outfit opening were seen.
+  Do not claim all game focus/toggle/carry behavior was live-tested in QA054.
+- No new QA054 gameplay results received yet. Append the user's next test
+  results here or to a separate evidence log before claiming LIVE status.
+- No more desktop input was used after the user reclaimed the PC.
+- No Main installation, user Data/Library, game memory or installed archive was
+  modified. Historical installed paths may have moved: inspect before installing.
+
+ROLLBACK / PRESERVED EVIDENCE
+Under the canonical project:
+Backups\qa054-root-20261018
+Backups\qa054-outfit-requests-20261018
+Backups\qa054-overlay-ball-20261018
+Backups\qa054-launch-speed-20261018
+Root backup contains first-ui-generated-nested-root (fresh test-created
+App\Data/Library/Cache/Logs moved recoverably, not user live-library data).
+Root backup also contains offline-test-image.zip (83393164 bytes): exact test
+EXE/PDB, both entry hashes independently compared to the originals.
+Test EXE SHA256 A19FF331AB582FE7C0DE73356F7187BEEC6C7C4C6C7B28E6437E989A435D4FF9
+Test PDB SHA256 CBEC5BC5305CED63413D78CFA4E1E974BFB9A4C4EEE8DD60C4596A15B3D90288
+Keep this pair to decode offsets even after a future rebuild overwrites target.
+Unrelated rustfmt-only changes were restored only after byte-exact comparison
+to formatting of a frozen source snapshot; intended task edits were retained.
+
+COMPILER NOTES (SEPARATE FROM THE TEST-PROCESS AV)
+CompilerLab-20261018\RESULTS.txt under the parent 2kconversiontool directory
+records four isolated optimized builds on unrestricted 32-CPU affinity, Rust
+1.99/1.98 and -j8/-j1; all passed. No BIOS change or launcher promotion occurred.
+Current Dev.ps1: offline/locked, target-qa054, default -j8; explicit conservative
+fallback -j1 and affinity 0xFF000000. Inspect Build.ps1 separately before a final
+build; do not assume every wrapper was changed. Tools are workspace-local at
+..\.toolchains\rust-exporter. Use dedicated target dirs to avoid link contention.
+
+NEXT ACTIONS, IN ORDER
+1. Ask for/record the user's QA054 dev results; do not assume a game is closed.
+2. For an approved live test: Play with WNBA OFF; note Steam-dispatch timing;
+   check auto outfits, two selected players' Edit outfit, manual Apply and random;
+   F8 hide/show, Alt-Tab, repeated catalogs; two ball choices and timings.
+3. Enter a match: inspect clothes carry, ball, scoreboard and removals. If carry
+   fails, read exact new worker report rather than guessing/retrying writes.
+4. Exit through Quick Play and re-enter to test rearming, then normal shutdown
+   and recovery. Preserve all uncertain-session receipts.
+5. WNBA offline source-admission investigation as above; no runtime enable until
+   an exact guarded route is proven and gameplay testing is authorized.
+6. Keep test-process AV unresolved in reports. Do not promote to release solely
+   because the latest reruns passed. Avoid another broad speculative rewrite.
+
+At handoff: QA054 is a DEV candidate, NOT all five original priorities finished,
+NOT a promoted release. Estimated weighted completion remains 80.2% unchanged.

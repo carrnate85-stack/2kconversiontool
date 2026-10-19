@@ -1,0 +1,885 @@
+{
+  "generatedUtc": "2026-10-17T12:41:43.3181988Z",
+  "workspace": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool",
+  "wpfSource": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf",
+  "rustSource": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2",
+  "sharedLegacyBackend": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher",
+  "wpfReleaseIdentity": {
+    "product": "2k-launcher-wpf",
+    "version": "0.1.0-wpf.24",
+    "channel": "Main",
+    "builtAt": "2026-10-10T23:48:14.995Z"
+  },
+  "wpfRetention": {
+    "schema": 1,
+    "main": "quality-pass-qa-20261010",
+    "rollback": "mod-library-scroll-qa-20261008"
+  },
+  "wpfLauncherExecutables": [
+    {
+      "path": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf\\bin\\Release\\net8.0-windows\\win-x64\\2k Launcher WPF.exe",
+      "bytes": 171520
+    },
+    {
+      "path": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf\\build-inputs\\electron-baseline\\App\\2k Launcher.exe",
+      "bytes": 244440576
+    },
+    {
+      "path": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf\\release\\mod-library-scroll-qa-20261008\\App\\2k Launcher WPF.exe",
+      "bytes": 171520
+    },
+    {
+      "path": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf\\release\\quality-pass-qa-20261010\\App\\2k Launcher WPF.exe",
+      "bytes": 171520
+    },
+    {
+      "path": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf\\release\\roster-expansion-qa-20261007\\App\\2k Launcher WPF.exe",
+      "bytes": 171520
+    }
+  ],
+  "wpfReleaseDirectories": [
+    {
+      "path": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf\\release\\2k Launcher WPF",
+      "launcherPresent": false
+    },
+    {
+      "path": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf\\release\\animation-background-stats-qa-20261007",
+      "launcherPresent": false
+    },
+    {
+      "path": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf\\release\\animation-camera-freethrow-qa-20261007",
+      "launcherPresent": false
+    },
+    {
+      "path": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf\\release\\animation-preview-qa-20261007",
+      "launcherPresent": false
+    },
+    {
+      "path": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf\\release\\beluba-broadcast-natural-qa-20261004",
+      "launcherPresent": false
+    },
+    {
+      "path": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf\\release\\beluba-side-natural-qa-20261004",
+      "launcherPresent": false
+    },
+    {
+      "path": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf\\release\\beluba-side-preserved-framing-qa-20261004",
+      "launcherPresent": false
+    },
+    {
+      "path": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf\\release\\birthday-years-pro-qa-20261004",
+      "launcherPresent": false
+    },
+    {
+      "path": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf\\release\\birthday-years-pro-qa-20261004-final",
+      "launcherPresent": false
+    },
+    {
+      "path": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf\\release\\coaches-staff-inspection-qa-20261007",
+      "launcherPresent": false
+    },
+    {
+      "path": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf\\release\\editor-staging-reset-qa-20261004",
+      "launcherPresent": false
+    },
+    {
+      "path": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf\\release\\editor-staging-reset-qa-20261004-final",
+      "launcherPresent": false
+    },
+    {
+      "path": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf\\release\\mod-library-scroll-qa-20261008",
+      "launcherPresent": true
+    },
+    {
+      "path": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf\\release\\overlay-lag-audit-20261004",
+      "launcherPresent": false
+    },
+    {
+      "path": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf\\release\\overlay-refresh-baseline-benchmark-20261004",
+      "launcherPresent": false
+    },
+    {
+      "path": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf\\release\\overlay-refresh-benchmark-20261004",
+      "launcherPresent": false
+    },
+    {
+      "path": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf\\release\\overlay-refresh-default-on-qa-20261007",
+      "launcherPresent": false
+    },
+    {
+      "path": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf\\release\\overlay-refresh-qa-20261004",
+      "launcherPresent": false
+    },
+    {
+      "path": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf\\release\\player23-catalog-qa-20261004",
+      "launcherPresent": false
+    },
+    {
+      "path": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf\\release\\player23-full-import-preview-qa-20261004",
+      "launcherPresent": false
+    },
+    {
+      "path": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf\\release\\player23-import-no-export-qa-20261004",
+      "launcherPresent": false
+    },
+    {
+      "path": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf\\release\\quality-pass-qa-20261010",
+      "launcherPresent": true
+    },
+    {
+      "path": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf\\release\\release-workflow-qa-20261010",
+      "launcherPresent": false
+    },
+    {
+      "path": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf\\release\\roster-edit-import-qa-20261004",
+      "launcherPresent": false
+    },
+    {
+      "path": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf\\release\\roster-expansion-qa-20261007",
+      "launcherPresent": true
+    },
+    {
+      "path": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf\\release\\roster-pointer-qa-20261004",
+      "launcherPresent": false
+    },
+    {
+      "path": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf\\release\\selected-year-import-qa-20261004",
+      "launcherPresent": false
+    },
+    {
+      "path": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf\\release\\startup-close-qa-20261004",
+      "launcherPresent": false
+    },
+    {
+      "path": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf\\release\\stats-catalog-compact-qa-20261004",
+      "launcherPresent": false
+    },
+    {
+      "path": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf\\release\\stats-catalog-compact-qa-20261004-final",
+      "launcherPresent": false
+    },
+    {
+      "path": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf\\release\\stats-catalog-compact-qa-20261004-v2",
+      "launcherPresent": false
+    },
+    {
+      "path": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf\\release\\stats-popup-preview-qa-20261004",
+      "launcherPresent": false
+    },
+    {
+      "path": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf\\release\\stats-popup-preview-qa-20261004-v2",
+      "launcherPresent": false
+    },
+    {
+      "path": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf\\release\\stats-two-popup-preview-qa-20261004",
+      "launcherPresent": false
+    },
+    {
+      "path": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf\\release\\stats-two-popup-preview-qa-20261004-final",
+      "launcherPresent": false
+    },
+    {
+      "path": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf\\release\\stats-two-popup-preview-qa-20261004-v2",
+      "launcherPresent": false
+    },
+    {
+      "path": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf\\release\\team-editing-qa-20261007",
+      "launcherPresent": false
+    }
+  ],
+  "wpfQaDirectories": [
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf\\qa\\animation-background-stats-20261007",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf\\qa\\animation-integration-20261007",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf\\qa\\animation-integration-refinements-20261007",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf\\qa\\arena-lobby-wpf18",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf\\qa\\catalog-response-wpf17",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf\\qa\\coaches-staff-inspection-20261007",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf\\qa\\cold",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf\\qa\\crowd-first-wpf9",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf\\qa\\crowd-five-wpf10",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf\\qa\\crowd-init-wpf8",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf\\qa\\crowd-rearm-wpf16",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf\\qa\\crowd-scoped-wpf7",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf\\qa\\crowd-wpf5",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf\\qa\\expanded-preview",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf\\qa\\hardening-wpf19",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf\\qa\\host-safety-wpf13",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf\\qa\\interactive-f8",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf\\qa\\mannequin-fixed",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf\\qa\\mod-library-scroll-20261008",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf\\qa\\persistent-bar-wpf15",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf\\qa\\presentation-layout-wpf10",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf\\qa\\probe2",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf\\qa\\quality-pass-20261010",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf\\qa\\random-controls",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf\\qa\\release-workflow-20261010",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf\\qa\\roster-expansion-20261007",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf\\qa\\session-wpf6",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf\\qa\\six-fixes-wpf12",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf\\qa\\six-fixes-wpf12-catalog-check",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf\\qa\\six-fixes-wpf12-final",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf\\qa\\six-fixes-wpf12-host",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf\\qa\\six-fixes-wpf12-verified",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf\\qa\\status-polish-wpf14",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf\\qa\\team-editing-20261007",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf\\qa\\wnba-reentry-wpf11",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-wpf\\qa\\wnba-reentry-wpf11-unrestricted"
+  ],
+  "wpfBackupDirectories": [
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\_backups\\launcher-wpf\\before-animation-preview-20261007",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\_backups\\launcher-wpf\\before-beluba-broadcast-20261004-165106-995f5482",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\_backups\\launcher-wpf\\before-catalog-response-20261002",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\_backups\\launcher-wpf\\before-coaches-final-20261007",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\_backups\\launcher-wpf\\before-crowd-five-presets-20261001",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\_backups\\launcher-wpf\\before-crowd-rearm-20261002",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\_backups\\launcher-wpf\\before-editor-staging-reset-qa-20261004-143358-28302799",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\_backups\\launcher-wpf\\before-host-safety-20261001",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\_backups\\launcher-wpf\\before-offline-hardening-wpf19-20261003",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\_backups\\launcher-wpf\\before-overlay-default-on-20261007",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\_backups\\launcher-wpf\\before-overlay-refresh-20261004",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\_backups\\launcher-wpf\\before-overlay-refresh-install-20261007-6e76df1709354ffdacbd6bc411e05494",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\_backups\\launcher-wpf\\before-persistent-bar-20261002",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\_backups\\launcher-wpf\\before-player23-import-popup-20261004-154254-53774f0c",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\_backups\\launcher-wpf\\before-rec-lobby-disable-20261002",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\_backups\\launcher-wpf\\before-roster-edit-import-qa-20261004-141102-73bd9509",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\_backups\\launcher-wpf\\before-roster-pointer-qa-20261004-135836-812c7a6a",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\_backups\\launcher-wpf\\before-selected-years-qa-20261004-125856-afa9d757",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\_backups\\launcher-wpf\\before-six-fixes-20261001",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\_backups\\launcher-wpf\\before-startup-close-qa-20261004-131342-fdffcffd",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\_backups\\launcher-wpf\\before-status-polish-20261002",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\_backups\\launcher-wpf\\before-wnba-reentry-20261001",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\_backups\\launcher-wpf\\before-wpf11-20261001",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\_backups\\launcher-wpf\\before-wpf12-20261001",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\_backups\\launcher-wpf\\before-wpf13-20261001",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\_backups\\launcher-wpf\\before-wpf15-20261002",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\_backups\\launcher-wpf\\before-wpf16-20261002",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\_backups\\launcher-wpf\\before-wpf17-20261002",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\_backups\\launcher-wpf\\before-wpf18-20261002",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\_backups\\launcher-wpf\\before-wpf3-20261001-105256",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\_backups\\launcher-wpf\\before-wpf4-20261001-114318",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\_backups\\launcher-wpf\\before-wpf5-20261001-135210",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\_backups\\launcher-wpf\\before-wpf6-20261001",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\_backups\\launcher-wpf\\before-wpf7-20261001",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\_backups\\launcher-wpf\\before-wpf8-20261001",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\_backups\\launcher-wpf\\before-wpf9-20261001"
+  ],
+  "rustBuilds": [
+    {
+      "version": "0.2.0",
+      "directory": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.2.0",
+      "exe": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.2.0\\Portable\\App\\2k Launcher Rust Prototype.exe",
+      "exePresent": true
+    },
+    {
+      "version": "0.3.0",
+      "directory": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.3.0",
+      "exe": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.3.0\\Portable\\App\\2k Launcher Rust Prototype.exe",
+      "exePresent": true
+    },
+    {
+      "version": "0.4.0",
+      "directory": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.4.0",
+      "exe": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.4.0\\Portable\\App\\2k Launcher Rust Prototype.exe",
+      "exePresent": true
+    },
+    {
+      "version": "0.5.0",
+      "directory": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.5.0",
+      "exe": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.5.0\\Portable\\App\\2k Launcher Rust Prototype.exe",
+      "exePresent": true
+    },
+    {
+      "version": "0.6.0",
+      "directory": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.6.0",
+      "exe": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.6.0\\Portable\\App\\2k Launcher Rust Prototype.exe",
+      "exePresent": true
+    },
+    {
+      "version": "0.7.0",
+      "directory": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.7.0",
+      "exe": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.7.0\\Portable\\App\\2k Launcher Rust Prototype.exe",
+      "exePresent": true
+    },
+    {
+      "version": "0.8.0",
+      "directory": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.8.0",
+      "exe": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.8.0\\Portable\\App\\2k Launcher Rust Prototype.exe",
+      "exePresent": true
+    },
+    {
+      "version": "0.9.0",
+      "directory": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.9.0",
+      "exe": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.9.0\\Portable\\App\\2k Launcher Rust Prototype.exe",
+      "exePresent": true
+    },
+    {
+      "version": "0.10.0",
+      "directory": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.10.0",
+      "exe": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.10.0\\Portable\\App\\2k Launcher Rust Prototype.exe",
+      "exePresent": true
+    },
+    {
+      "version": "0.11.0",
+      "directory": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.11.0",
+      "exe": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.11.0\\Portable\\App\\2k Launcher Rust Prototype.exe",
+      "exePresent": true
+    },
+    {
+      "version": "0.12.0",
+      "directory": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.12.0",
+      "exe": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.12.0\\Portable\\App\\2k Launcher Rust Prototype.exe",
+      "exePresent": true
+    },
+    {
+      "version": "0.13.0",
+      "directory": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.13.0",
+      "exe": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.13.0\\Portable\\App\\2k Launcher Rust Prototype.exe",
+      "exePresent": true
+    },
+    {
+      "version": "0.14.0",
+      "directory": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.14.0",
+      "exe": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.14.0\\Portable\\App\\2k Launcher Rust Prototype.exe",
+      "exePresent": true
+    },
+    {
+      "version": "0.15.0",
+      "directory": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.15.0",
+      "exe": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.15.0\\Portable\\App\\2k Launcher Rust Prototype.exe",
+      "exePresent": true
+    },
+    {
+      "version": "0.16.0",
+      "directory": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.16.0",
+      "exe": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.16.0\\Portable\\App\\2k Launcher Rust Prototype.exe",
+      "exePresent": true
+    },
+    {
+      "version": "0.17.0",
+      "directory": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.17.0",
+      "exe": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.17.0\\Portable\\App\\2k Launcher Rust Prototype.exe",
+      "exePresent": true
+    },
+    {
+      "version": "0.18.0",
+      "directory": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.18.0",
+      "exe": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.18.0\\Portable\\App\\2k Launcher Rust Prototype.exe",
+      "exePresent": true
+    },
+    {
+      "version": "0.19.0",
+      "directory": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.19.0",
+      "exe": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.19.0\\Portable\\App\\2k Launcher Rust Prototype.exe",
+      "exePresent": true
+    },
+    {
+      "version": "0.20.0",
+      "directory": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.20.0",
+      "exe": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.20.0\\Portable\\App\\2k Launcher Rust Prototype.exe",
+      "exePresent": true
+    },
+    {
+      "version": "0.21.0",
+      "directory": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.21.0",
+      "exe": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.21.0\\Portable\\App\\2k Launcher Rust Prototype.exe",
+      "exePresent": true
+    },
+    {
+      "version": "0.22.0",
+      "directory": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.22.0",
+      "exe": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.22.0\\Portable\\App\\2k Launcher Rust Prototype.exe",
+      "exePresent": true
+    },
+    {
+      "version": "0.23.0",
+      "directory": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.23.0",
+      "exe": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.23.0\\Portable\\App\\2k Launcher Rust Prototype.exe",
+      "exePresent": true
+    },
+    {
+      "version": "0.24.0",
+      "directory": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.24.0",
+      "exe": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.24.0\\Portable\\App\\2k Launcher Rust Prototype.exe",
+      "exePresent": true
+    },
+    {
+      "version": "0.25.0",
+      "directory": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.25.0",
+      "exe": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.25.0\\Portable\\App\\2k Launcher Rust Prototype.exe",
+      "exePresent": true
+    },
+    {
+      "version": "0.26.0",
+      "directory": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.26.0",
+      "exe": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.26.0\\Portable\\App\\2k Launcher Rust Prototype.exe",
+      "exePresent": true
+    },
+    {
+      "version": "0.27.0",
+      "directory": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.27.0",
+      "exe": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.27.0\\Portable\\App\\2k Launcher Rust Prototype.exe",
+      "exePresent": true
+    },
+    {
+      "version": "0.28.0",
+      "directory": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.28.0",
+      "exe": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.28.0\\Portable\\App\\2k Launcher Rust Prototype.exe",
+      "exePresent": true
+    },
+    {
+      "version": "0.29.0",
+      "directory": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.29.0",
+      "exe": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.29.0\\Portable\\App\\2k Launcher Rust Prototype.exe",
+      "exePresent": true
+    },
+    {
+      "version": "0.30.0",
+      "directory": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.30.0",
+      "exe": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.30.0\\Portable\\App\\2k Launcher Rust Prototype.exe",
+      "exePresent": true
+    },
+    {
+      "version": "0.31.0",
+      "directory": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.31.0",
+      "exe": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.31.0\\Portable\\App\\2k Launcher Rust Prototype.exe",
+      "exePresent": true
+    },
+    {
+      "version": "0.32.0",
+      "directory": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.32.0",
+      "exe": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.32.0\\Portable\\App\\2k Launcher Rust Prototype.exe",
+      "exePresent": true
+    },
+    {
+      "version": "0.32.1",
+      "directory": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.32.1",
+      "exe": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.32.1\\Portable\\App\\2k Launcher Rust Prototype.exe",
+      "exePresent": true
+    },
+    {
+      "version": "0.33.0",
+      "directory": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.33.0",
+      "exe": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.33.0\\Portable\\App\\2k Launcher Rust Prototype.exe",
+      "exePresent": true
+    },
+    {
+      "version": "0.34.0",
+      "directory": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.34.0",
+      "exe": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.34.0\\Portable\\App\\2k Launcher Rust Prototype.exe",
+      "exePresent": true
+    },
+    {
+      "version": "0.35.0",
+      "directory": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.35.0",
+      "exe": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.35.0\\Portable\\App\\2k Launcher Rust Prototype.exe",
+      "exePresent": true
+    },
+    {
+      "version": "0.36.0",
+      "directory": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.36.0",
+      "exe": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.36.0\\Portable\\App\\2k Launcher Rust Prototype.exe",
+      "exePresent": true
+    },
+    {
+      "version": "0.37.0",
+      "directory": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.37.0",
+      "exe": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.37.0\\Portable\\App\\2k Launcher Rust Prototype.exe",
+      "exePresent": true
+    },
+    {
+      "version": "0.38.0",
+      "directory": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.38.0",
+      "exe": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.38.0\\Portable\\App\\2k Launcher Rust Prototype.exe",
+      "exePresent": true
+    },
+    {
+      "version": "0.39.0",
+      "directory": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.39.0",
+      "exe": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.39.0\\Portable\\App\\2k Launcher Rust Prototype.exe",
+      "exePresent": true
+    },
+    {
+      "version": "0.40.0",
+      "directory": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.40.0",
+      "exe": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.40.0\\Portable\\App\\2k Launcher Rust Prototype.exe",
+      "exePresent": true
+    },
+    {
+      "version": "0.41.0",
+      "directory": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.41.0",
+      "exe": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.41.0\\Portable\\App\\2k Launcher Rust Prototype.exe",
+      "exePresent": true
+    },
+    {
+      "version": "0.42.0",
+      "directory": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.42.0",
+      "exe": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.42.0\\Portable\\App\\2k Launcher Rust Prototype.exe",
+      "exePresent": true
+    },
+    {
+      "version": "0.43.0",
+      "directory": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.43.0",
+      "exe": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.43.0\\Portable\\App\\2k Launcher Rust Prototype.exe",
+      "exePresent": true
+    },
+    {
+      "version": "0.44.0",
+      "directory": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.44.0",
+      "exe": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Builds\\0.44.0\\Portable\\App\\2k Launcher Rust Prototype.exe",
+      "exePresent": true
+    }
+  ],
+  "rustBackupDirectories": [
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\jukebox-decode-admission-20261016",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\jukebox-fixture-roots-20261016-1732",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\jukebox-plan-producer-20261016-1735",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\jukebox-production-wire-20261016-1718",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\jukebox-shutdown-smoke-20261016-1800",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\jukebox-status-sync-20261016-1740",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\native-launch-shutdown-gate-20261016",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\outfit-lease-cancel-review-20261017",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\player-folders-before-stable-id-20261016",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\player-folders-before-startup-perf-20261016",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\provider-phase-timing-20261017",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\qa037-loader-canonical-target-fix-20261016",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\qa037-outfit-admission-20261016",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\qa037-owned-close-prompt-20261016",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\qa037-play-home-20261016",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\qa037-root-outfit-integration-b47f26b337ac49769ee9b1460ab38104",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\qa038-session-progress-before-20261016",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\qa039-before-offline-fixes-20261016",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\qa040-before-ui-workflows-20261016",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\qa041-before-wnba-loader-20261016",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\qa044-before-camera-retry-20261017",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\selector-files-before-stable-id-20261016",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\v0.1.0-before-parity-20261011",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\v0.10-overlay-before-wardrobe-20261011-143620",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\v0.10.0-before-reference-import-20261011-145500",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\v0.11.0-before-season-math-20261011-150100",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\v0.12-working-tree-before-web-controls-20261011-151300",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\v0.12.0-before-measurements-colors-20261011-151800",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\v0.13.0-before-player-import-popup-20261011-154300",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\v0.14.0-before-original-browser-workspace-20261011-160000",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\v0.14.0-tested-browser-checkpoint-20261015",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\v0.15.0-native-roster-checkpoint-20261015",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\v0.16.0-native-player-save-checkpoint-20261015",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\v0.17.0-browser-transfers-checkpoint-20261015",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\v0.18.0-native-team-save-checkpoint-20261015",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\v0.19.0-native-uniform-save-checkpoint-20261016",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\v0.2.0-before-outfit-parity-20261011-092232",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\v0.20.0-native-mod-launch-checkpoint-20261016",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\v0.22.0-loader-fix-checkpoint-20261016",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\v0.23.0-readiness-fix-checkpoint-20261016",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\v0.24.0-before-ball-port-20261016",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\v0.25.0-before-ball-session-20261016",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\v0.26.0-before-player-config-port-20261016",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\v0.27.0-before-selector-generation-20261016",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\v0.28.0-before-blacktop-outfit-port-20261016",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\v0.29.0-before-game-v2-audit-20261016",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\v0.29.0-before-v2-readonly-profile-20261016",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\v0.3.0-before-team-parity-20261011-100446",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\v0.30.0-before-camera-scaler-freestyle-port-20261016",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\v0.31.0-before-camera-policy-port-20261016",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\v0.31.0-before-owner-refresh-fix-20261016",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\v0.32.1-before-v2-camera-scaler-freestyle-port-20261016",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\v0.33.0-verified-v2-feature-milestone-20261016",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\v0.34.0-verified-v2-arena-ball-rules-20261016",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\v0.35.0-before-ball-gameplay-verification-20261016",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\v0.35.0-before-scoreboard-integration-20261016",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\v0.35.0-verified-v2-gameplay-media-foundation-20261016",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\v0.36.0-main-media-promotion-guardfix-20261016",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\v0.36.0-verified-main-saved-media-20261016",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\v0.37.0-jukebox-simple-play-qa-20261016",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\v0.38.0-launch-progress-recovery-20261016",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\v0.39.0-camera-scaler-preparation-20261016",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\v0.4.0-before-seasons-20261011-112229",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\v0.40.0-browser-overlay-workflows-20261016",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\v0.41.0-wnba-freestyle-loader-20261016",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\v0.42.0-offline-hardening-20261017",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\v0.43.0-workflow-layouts-20261017",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\v0.5.0-before-session-20261011-113619",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\v0.6.0-before-native-launch-20261011-120334",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\v0.7.0-before-blacktop-observer-20261011-124157",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\v0.8.0-before-native-rules-20261011-135456",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\v0.9.0-before-native-overlay-20261011-141720",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\v016-before-tab-ownership-20261015-214942",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\v017-before-browser-transfers-20261015-220902",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\v018-before-team-backend-20261015-223400",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\v019-before-uniform-backend-20261015-230200",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\v020-before-final-verifier-20261016",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\v020-before-modded-launch-integration-20261016",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\v020-before-provider-files-20261016",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\v020-before-provider-pipe-20261016",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\v020-before-provider-worker-20261016",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\v021-before-arena-port-20261016",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\v022-before-loader-parent-handle-fix-20261016",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\v023-before-loader-readiness-diagnostics-20261016",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\v029-before-native-overlay-fixture-20261016",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\v029-before-outfit-match-transport-20261016-130902",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\v029-before-outfit-provider-ui-20261016-132525",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\v029-before-outfit-writer-tests-20261016-125442",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\v029-before-qa-packaging-20261016-134357",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\v029-outfit-core-before-writer-20261016",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\v029-v2-tooling-before-rtti-20261016",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\Backups\\v033-shared-runtime-pre-edit-20261016"
+  ],
+  "legacyBuildDirectories": [
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\2k-Launcher-Optional-Downloads-0.37.48",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\benchmark-v03744-portable-zip",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\beta-v03742-20260925",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\blacktop-ball-previews-qa-20260924",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\blacktop-bottom-256-qa-20260924",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\blacktop-catalog-jersey-fit-qa-20260925",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\blacktop-catalog-overlay-preview-qa-20260924",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\blacktop-catalog-speed-qa-20260924",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\blacktop-f8-sock-picker-qa-20260924",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\blacktop-fit-photo-qa-20260924",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\blacktop-fit-portable-qa-20260924",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\blacktop-jersey-numbers-qa-20260924",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\blacktop-layout-qa-v03772",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\blacktop-layout-qa-v03772-no-presentation",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\blacktop-shoe-color-qa-20260924",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\blacktop-shoe-slim-f8-qa-20260924",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\blacktop-sock-256-mannequin-qa-20260924",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\blacktop-sock-tile-ball-dark-qa-20260924",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\blacktop-top-256-qa-20260924",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\camera-service-test",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\fast-installer-v03742-20260925",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\final-v03740-20260925",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\final-v03741-20260925",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\folder-stage-03756",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\folder-stage-03757",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\folder-stage-03758",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\folder-stage-03759",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\folder-stage-03760",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\folder-stage-03761",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\folder-stage-03762",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\folder-stage-03763",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\folder-stage-03764",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\folder-stage-03765",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\folder-stage-03766",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\folder-stage-03767",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\folder-stage-03768",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\folder-stage-03769",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\folder-stage-03770",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\folder-stage-03771",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\folder-stage-03772",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\folder-stage-03773",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\folder-stage-03774",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\folder-stage-03775",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\folder-stage-03776",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\folder-stage-03777",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\folder-stage-03778",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\folder-stage-03779",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\folder-stage-03780",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\folder-stage-03781",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\folder-stage-03782",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\folder-stage-03783",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\folder-stage-03784",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\folder-stage-03785",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\folder-v03756",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\folder-v03757",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\folder-v03758",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\folder-v03759",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\folder-v03760",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\folder-v03761",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\folder-v03762",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\folder-v03763",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\folder-v03764",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\folder-v03765",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\folder-v03766",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\folder-v03767",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\folder-v03768",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\folder-v03769",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\folder-v03770",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\folder-v03771",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\folder-v03772",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\folder-v03773",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\folder-v03774",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\folder-v03775",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\folder-v03776",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\folder-v03777",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\folder-v03778",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\folder-v03779",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\folder-v03780",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\folder-v03781",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\folder-v03782",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\folder-v03783",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\folder-v03784",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\folder-v03785",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\game-mute-qa",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\game-rules-qa-20260925",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\game-rules-qa-v03740-20260925",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\game-volume-qa",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\launcher-self-test-data",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\light-v03743-20260925",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\light-v03744-20260925",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\maintenance-v010",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\maintenance-v011",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\mp4-codec-qa",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\mp4-overlay-qa",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\optional-previews-20261001",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\optional-previews-v03743-20260925",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\optional-previews-v03744-20260925",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\portable-cache-prototype",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\portable-v03745",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\portable-v03745-final",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\portable-v03746-organized",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\portable-v03746-organized-final",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\portable-v03747-storage-fix",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\presentation-accessories-qa-v03740-20260925",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\presentation-accessories-qa3-v03740-20260925",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\release-v03748-cached",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\release-v03749-cached",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\release-v03750-cached",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\release-v03751-cached",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\release-v03752-cached",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\release-v03753-cached",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\release-v03754-cached",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\release-v03755-cached",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\release-v03776-cached",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\self-test-0.30.0-final-user-data",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\self-test-0.30.0-user-data",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\self-test-0.30.1-user-data",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\self-test-0.30.2-user-data",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\self-test-0.30.3-user-data",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\self-test-dev-0.29.2-user-data",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\self-test-final-0.29.2-user-data",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\self-test-final-user-data",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\self-test-packaged-user-data",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\self-test-user-data",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\dist\\win-unpacked"
+  ],
+  "legacyShareDirectories": [
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.35.111",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.35.112",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.35.112-test.1",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.35.112-test.2",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.35.112-test.3",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.35.113",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.35.114",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.35.115",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.35.115-test.1",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.35.116-test.1",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.35.116-test.2",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.35.117-test.1",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.35.117-test.10",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.35.117-test.2",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.35.117-test.3",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.35.117-test.4",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.35.117-test.5",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.35.117-test.6",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.35.117-test.7",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.35.117-test.8",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.35.117-test.9",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.0",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.1",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.10",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.11",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.12",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.13",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.14",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.15",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.16",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.17",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.18",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.19",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.2",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.20",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.21",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.22",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.23",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.24",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.25",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.26",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.27",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.28",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.29",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.3",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.30",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.31",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.32",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.33",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.34",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.35",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.36",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.37",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.38",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.39",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.4",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.40",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.41",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.42",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.43",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.44",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.45",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.46",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.47",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.48-test.1",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.48-test.10",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.48-test.11",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.48-test.12",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.48-test.13",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.48-test.14",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.48-test.15",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.48-test.16",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.48-test.17",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.48-test.18",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.48-test.19",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.48-test.2",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.48-test.20",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.48-test.21",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.48-test.22",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.48-test.23",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.48-test.24",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.48-test.25",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.48-test.26",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.48-test.27",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.48-test.28",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.48-test.29",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.48-test.3",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.48-test.30",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.48-test.31",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.48-test.32",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.48-test.34",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.48-test.35",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.48-test.36",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.48-test.37",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.48-test.38",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.48-test.39",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.48-test.4",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.48-test.40",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.48-test.41",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.48-test.43",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.48-test.44",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.48-test.5",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.48-test.6",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.48-test.7",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.48-test.8",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.48-test.9",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.5",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.6",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.7",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.8",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-0.36.9",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-Beta-0.35.101",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-Beta-0.35.102",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-Beta-0.35.103",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-Beta-0.35.104",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-Beta-0.35.105",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-Beta-0.35.106",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-Beta-0.35.109",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-Beta-0.35.88",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-Beta-0.35.89",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-Beta-0.35.98",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-Scoreboard-Test-0.35.110-test.1",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-Scoreboard-Test-0.35.110-test.3",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-Test-0.35.106-test.1",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-Test-0.35.107-test.1",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\2k-Launcher-Test-0.35.108-test.1",
+    "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-mod-launcher\\share\\Updated-Opus-Playlists"
+  ],
+  "installedMainExe": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\NBA 2K27\\2k Launcher\\App\\2k Launcher Rust.exe",
+  "original03645Exe": "C:\\Users\\carrn\\Downloads\\2k-Launcher-0.36.45.exe",
+  "original03645Present": true
+}

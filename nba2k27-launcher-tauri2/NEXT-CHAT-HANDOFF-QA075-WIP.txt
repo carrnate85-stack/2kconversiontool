@@ -1,0 +1,126 @@
+NBA 2K27 RUST/TAURI DEV CHECKPOINT - QA075 WIP
+Written 2026-10-18 21:07 UTC. Read newest handoff by modification time first.
+
+WORK WINDOW / USER BOUNDARIES
+Authorized offline work ends 2026-10-18 21:53:37 UTC (5:53pm New York).
+Heartbeat two-hour-dev-parity-work ACTIVE every5min; pause it at/after deadline,
+then one concise final report. Do not create duplicate automation.
+No user testing during this window. No install/promotion/activation, game
+launch/stop, desktop control, ad hoc live writes, or cleanup of user data/builds.
+Future gameplay entry is user's normal toggles+Play only. Back up/fsync edits.
+Canonical project C:\Users\carrn\CodexProjects\2kconversiontool\nba2k27-launcher-tauri2.
+
+LATEST STAGED CANDIDATE - NOT ACTIVATED
+Start QA075 Dev.vbs / Start QA075 Dev.ps1
+Dev/Pending/QA075/launcher.exe = 53,047,296 bytes
+SHA256 0FAC4273DB3BCC3F7371A93F7552ED83796DB037B537F2DEC3D27484E22B54FC
+Native payload unchanged fromQA073:
+4FB74B375BE6DE36411574FAB624722F85121AEF1F0DE286E9C9EEC6B879A3FA /1,190,912B.
+Manifest artifacts/qa075-final-stage-20261018.json pins frozen sources/assets.
+PS AST+CheckOnly PASS; VBS /check echo-only PASS. Nothing activated.
+Active Dev/Portable/App/2k Launcher Rust Prototype.exe remains QA070:
+8655FF66923CC5BB80D662AE5A724BCD2B5BE25F0B550968B4D12748C5E399FC.
+Old starters/stages/backups retained.
+
+QA075 DELIVERED CHANGE / VALIDATION
+Read-only optional outfit timing shadow: debug_assertions AND
+C27_OUTFIT_READY_SHADOW=1 required. QA075starter sets process env immediately
+before actual user-triggered StartProcess only; CheckOnly exits before envchange.
+Provider child inherits env; no system/user env modification. Separate below-
+normal thread, own VM_READ|QUERY_INFORMATION|SYNCHRONIZE handle (0x100410).
+Facts only; no game calls, write handles, journal/ledger changes, actor plans,
+player names/pointers/choiceIDs in logs, or real admission weakening.
+Actual strictcapture body unchangedSHA
+ed744554feb804e4443ab1ae4a3093896673e88f9e70ecd7574c3e44827abebb.
+Private oldactor baseline prevents reused/unknown actors proving newmatchready.
+512KiB/probe,4KiB/read,8MiB/window,15s/window,max8windows; signed CPU debt
+25ms burst+25ms/sec; fullburst requiredbeforefreshprobe; all work charged.
+Any partial/transport/quota/cancel failure poisons observation. Max32events,
+each<1024B, create_new pinned ordinary local folder, sync_all background logger.
+Private monitor cancellation cannot cancel real outfit runtime.
+
+13 new synthetic tests PASS. Initial sparse fake allocation padding mistakes
+were fixed in TEST fixture only; failures retained in prior focused logs.
+Final focused log artifacts/qa075-shadow-focused-tests-final-2.log.
+Final test build22.24s/12existingwarnings; devbuild25.70s/47existingwarnings.
+ONE bounded changed fulltestimage run WITHOUT debugger:
+1295 PASS /0failed /54ignored /43.54s; EXIT_CODE0 CLAIMED0 DUMP0.
+artifacts/qa075-final-full-rust-tests.log
+artifacts/qa074-natural-qa075-whole-1.txt
+TestEXE ED8F590128B252F76E85FF3F39BFDA699054A19AB8AE7A92791B056498ED7F0C
+TestPDB 597B8A07CD552A556F84F0EDEFAC467417F9AFAA9D273131BAF87ECBDD933196
+Independent 5file peerreview PASS. This diagnostic is not a proven latency fix.
+
+UNRESOLVED NATURAL TEST ACCESS VIOLATION - DO NOT ERASE QUALIFICATION
+QA073 natural --test-threads4 crashed0xC0000005 after7.083s. Lastprintedtest is
+not proof of crashing thread. Exact original EXE/PDB retained roundtripSHA ZIP:
+Backups/qa073-natural-test-av-20261018/exact-test-image.zip.
+Original EXE BC3B784A828DC5149C28A7F8D9688ECA302CCD46E7F5294D101C0CF99AE82D21
+Original PDB A97CB0292EA39E292C81400E5F77DF4F3AC658AA0614F0DBB7E2DFBF3804556A
+Failure artifacts/qa073-final-full-rust-tests.log +natural-test-av-identity.json.
+One exact-image debugger pass did NOT resolve it. QA074diagnosticimage whole
+pass1282/54ignored also did NOT resolve it. Its exactpair ZIP preserved too.
+Test-only cfg(test,windows,x86_64) crashchannel installed via2line main+module;
+supervisor creates only allowlisted offlinefixture or exacttestexe, noattach/
+debugger/globalsettings. Minimal noheap dump via System32DbgHelp, PIDbirth+ready
+handshake,20sack,3minwatchdog, cleanup only retained createdchildhandle.
+Seven fixtures PASS; ignored Rust synthetic validC0000005/TID/context1232dump.
+No actual natural crash dump yet. STOP repeat runs of unchanged image.
+
+WNBA RESEARCH - IMPORTANT NEW FINDING, NOT INTEGRATED
+Table222e3502 = (N-2P) RobinHoodUniqueId hash buckets +P sortedAudio rows +P sorted
+Signature rows. Recovered exact algorithm reproduces both stock BASE5510 and
+WNBA3690 byteforbyte. MixedP5563,N18734=>B7608; old preservedBASEindex shifts
+boundaries and modeled lookup only5/5563 pass. Native may rebuild atload; this
+does NOT prove live failure or that all53appendedplayers are unusable.
+15WNBAclubs use209existingBASErows; appended53 referencedbyAllStars/USA/Sports.
+Raw nativeLE andRDATBE candidate, all5563lookup+11126sortedrows PASS:
+artifacts/qa074-wnba-index-research-candidate/manifest.json.
+Full IFF RESEARCHONLY candidate18,873,560B:
+9A25D4EF3ECD0AEE51D91E569585FCD62EDCA42B9AE5B8A75FD652725FDCFFF1
+artifacts/qa074-wnba-full-iff-research-candidate.
+Exactly32296indexbytes+12CRCbytes differ; everythingelse byteidentical.
+ZIP/reparse PASS; equal-lengthCRCdelta independently validated with unknown
+unchanged22B suffix. Historical QA054 exact oldmixed+gameSHAcrcsVerified:true
+anchor found, no fresh actualsaltread/recompute. Independent fullIFFreviewPASS
+structurally, conditional protectedCRC qualification retained.
+
+Encrypted VCZ wrapper/120or144B priorityWAD researchbuilder prepared+peerreviewPASS:
+tools/prepare_wnba_index_priority_research.py. Requires supplied existing local
+32Bkey decode exact pinned STOCKwrapper to pinned STOCKplaintext BEFORE encoding.
+No key bytes printed/hashed/copied/serialized/shipped; output exactkeyscan before
+freshartifactcreation. Pinned OodleDLL; newwrapper4MiBmax; oldarchive slotlimit is
+irrelevant to priorityroute. CURRENT packs/assets/native pins not modified.
+BLOCKED: no existing keyfile in exact known permitted portable/Data roots.
+No key content reads, new keys, broadprivate search, runtimecapture or guessing.
+artifacts/qa074-wnba-index-priority-key-contract-check.json.
+Do not ask user during offlinewindow or stall independent work.
+
+Proposal only (NOT production): artifacts/qa074-wnba-loaded-index-telemetry-proposal.json.
+Normal strict403/30/15picker/sourceauthority then H0/indexA/H1/indexB/H2, alldirty0,
+fullidentity/source guards,≤81920B/attempt≤3/generation. Classify originalnativeLE
+vsrebuiltshape vsother, no pointers/names/keys. With currentOLDpack matches_rebuilt
+supports native repair; repairedpack cannot distinguish preserve/rebuild.
+No actual live observations; category appearance != gameplay/index readiness.
+
+CURRENT NEXT WORK - QA076 NARROW OUTFIT PUBLICATION OPTIMIZATION
+Root approved agentwnba_integration implementing private typed two-existing-frame
+journal commit in outfit_journal.rs+outfit_match_files.rs+synthetic tests ONLY.
+Combine Owned(trigger=true) thenSubmitted under oneownedmutex, prevalidatecloned
+state/limits, oneflush+combinedexactreadback; bothframeWitness; final SAMEfresh
+handoff/plan verification AFTER durablepair BEFORE exclusive trigger close.
+Generic append/parser/events unchanged. Saves exactlyonejournalflush, absolute
+timing unknown. WPF already3samples250ms=500ms; do NOT shorten readiness.
+Report artifacts/qa075-wpf-transition-safe-publication-latency-review-20261018.json.
+Agentoutfit_latency_qa066 peerreview before root Cargo. Agenttarget21:25UTC.
+New issue: existing errorpath ignores unlink(trigger) failure then drops handle;
+new path must retain still-owned exclusive handle on unlinkfailure until game
+closed (boundedonepending/Store); earlyStoreDrop retention/nativeparentcancellation
+proof being reviewed. Do not weaken identity/cleanup/noReplay. No newsource yet.
+Root owns Cargo; agents no Cargo/game/live. Deadline21:53:37UTC remains.
+
+REMAINING LIVE CHECKS LATER / NO CLAIMS FROM OFFLINE CHECKS
+User acceptedQA070scoreboard/clothes/balls/arena, WNBAcategory afterdelay; clothes
+fasterbutnotinstant. NoQA071+ live acceptance. Normalnewstarter,toggle+Play,
+WNBApicker->match/Home->picker; RandomAllvisualtime and boundedshadowtiminglogs.
+Do not ask duringwindow. Keep originalAV qualification in final report.

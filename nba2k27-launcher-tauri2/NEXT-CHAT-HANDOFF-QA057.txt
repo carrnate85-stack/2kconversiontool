@@ -1,0 +1,44 @@
+QA057 — WNBA integration research checkpoint, not a new app build
+2026-10-18. Read QA054/055/056 handoffs for prior changes and constraints.
+
+User authorized continued WNBA dev integration. Keep runtime disabled until a
+proven scoped adapter exists; no install/promotion/archive patch/game launch
+or new live-write mechanism was authorized. Prior read-only game access persists.
+
+Read artifacts/qa057-wnba-integration-progress-20261018.txt for full findings,
+limits, reproduction scripts, read-only probe correction and evidence filenames.
+
+New proven source-layer map:
+- Resource wrapper is INLINE at base+0xBB9A8E8; +0x38 is context manager;
+  context manager+0x100 is VCFAST_LOAD_WIN32 (vtable RVA 0x812C7C8).
+- Read-only current game PID 8720 confirmed exact lease identity, path and V2
+  disk hash. Sampled fixed metadata only; no keys or writes/game calls.
+- Fast-load backend order: +0x48 override, +0x58 SET manifest, then +0x60
+  development manifest OR +0x50 WAD manifest OR +0x68 fallback.
+- Live sample: +0x48/+0x60 absent; SET/WAD/fallback present. Do not assume
+  development manifest injection alone overrides a roster already found by SET.
+- VCFAST_LOAD_FILE_DEVICE is a reverse adapter (fast-load -> file device),
+  not proof that the DLL provider can feed native roster source requests.
+- REQUEST +0x498/+0x4A0 belong to its embedded VCMEMORYSTREAM at +0x488.
+  Destructor owns stream/lock cleanup. Never substitute buffers speculatively.
+- Native development manifest parser 0x52022A0: magic 0x840F3ABB, 16-byte
+  header, 40-byte records, 72-byte runtime entries and string blob. Boot loader
+  0x5201FE0 reads via file manager 0x4BA20F0. Actual configured filename,
+  namespace, bootstrap timing and safe registration/removal are NOT proven.
+- Installed root 'manifest' is CSV and is not this binary boot manifest.
+
+Next implementation prerequisite: identify the actual registration API or natural
+boot-manifest configuration and exact owned lifecycle. Then create and offline
+test a single-roster adapter with cancellation/stock fallback/reentry/shutdown.
+No adapter or WNBA runtime integration was implemented in QA057. Do not describe
+the research as a gameplay-ready fix. Mixed-roster player hash-index risk also
+remains: WPF-era appends 53 unindexed players; national appends 11.
+
+New user launch report: checking game build took 24 seconds. Latest worker's
+verifying-game measured 11659 ms, players 7136 ms, settling 20112 ms; worker
+clock omits parent preflight/build checks, so it does not refute the user's time.
+
+Scripts compile and evidence consistency checks passed. No app source, native
+DLL or EXE changed in QA057. QA056 remains the latest staged dev fix. No new
+launcher needed for research-only checkpoint. Estimate remains 80.2%; natural
+Rust full-suite AV and prior QA055/056 gameplay/performance issues remain open.

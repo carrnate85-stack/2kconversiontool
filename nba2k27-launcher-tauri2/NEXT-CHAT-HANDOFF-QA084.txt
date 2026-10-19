@@ -1,0 +1,43 @@
+QA084 DEV CANDIDATE READY FOR FUTURE LIVE TESTING - STAGED, NOT ACTIVATED
+User authorized finishing major parity gaps dev-only. NO game launched, memory read/written, install, promotion or activation this turn. User Data/Library, prior stages/backups/journals preserved. QA081 heartbeat remains paused.
+
+STARTER
+Start QA084 Dev.vbs (or .ps1) -> Dev/Pending/QA084/launcher.exe
+EXE 03BFFF642F4EB7853F9B0F5B4DBD542BF8D60E9B8F002C4B45FA787026374630 / 58926592 bytes.
+VBS /check print-only PASS. PS -CheckOnly validated hash then correctly refused existing launcher PID35872; nothing replaced/launched. Close existing launcher normally before future user activation. Do not activate/install/promote automatically.
+
+DELIVERED ACTUAL PRODUCTION ROUTES
+- Composite height/wingspan Save: readonly native appearance generation/aliases, actual native masked atomicCAS, full row+appearance journal, owned conditional reverse and unknown/held no-replay.
+- Season add-older/remove-oldest/shared copy and reviewed bulk25-history import: immutable full graph intent, kernel state helper+independentwatchdog, complete prefix/reverse proofs. PlayerDNA all-source choice requires complete native caps, per-import retained review.
+- Isolated online ratings capture without native bridge, bounded exact source extraction, close acknowledgement before staging.
+- Manual player/team art native prepare/commit/cancel, exact tuple/receipt/FileID and bounded PNG library publication.
+- Native reserved arena/floor clone, team link last, full owner/pool aliases; saved profiles defaultdisabled, explicit native enable consent, initial futurePlay application only. Explicit selected legacy review/import never activates.
+- TeamDNA portable semantic roster type/historic year/unique existing arena staging; no crossbuild IDs/pointers, explicit Save still required.
+
+FINAL VALIDATION
+Rust1497 passed/54ignored,1551 exactenumerated in disjoint roster/catalog/rest, --test-threads=1, natural exactimage supervisor, no debugger, all EXIT_CODE=0 CLAIMED=0 DUMP=0. ExacttestEXE DDBA3DBB62B098B7F39B8218CEDA5AC6284F4DB4A95605EABE2D2C80D7A88DAA / PDB 18A2148F666E6C1756DE2E803689D63E52C97D6FF4FCABBC43B748E7D34E1C54.
+Frontend224tests/43files PASS,14Node regression scripts PASS,TypeScript/Vite PASS. Native10fixture executables PASS incl actual SEHfaultcallee+finalDLLunwind.
+Owned kernel helper:11unit/32actualhelper-deathcycles/13faultmatrix PASS. Fresh16MiBintent52proofs forward802.6ms/reverse817.2ms, SAME5s/8s deadlines, no cachedbytes/hash/no weakenedguards. This is synthetic journalcost, NOT gameplay timing. Plain debugsha2 previously hitdeadline; CNG fullfreshSHA fixes cost. Exactretained helperexit identity race fixed with <=250ms signaledexit proof ONLY, no unknownidentity termination/PIDlookup; independent graph verification mandatory.
+714frozen inputs verified. Final input freeze artifacts/qa084-final-build-inputs-v4-20261019.json supersedes all olderagent freezes. QA080/082/083 stages +originalDLL exacthash unchanged.
+
+NATIVE PAYLOAD
+New assets/native/version-outfits-v2-qa084.dll 1966080B SHA2E921A4E8B408996C20DEAD7412835A9197D67B83C05CE840130300A903120DD.
+Old assets/native/version-outfits-v2.dll 1215488B SHA83AF5D0613D1E90D51933F382C22D215F766A61A198CAFEB41E80606A1722518 untouched; retained as known recovery payload.
+Actual atomicCAS isolated O0 async-SEH PODobject in normal O2host, tested with deliberate noaccess exception. Earlier plainSEHv2 realfault preserved Backups/qa084-appearance-seh-v2-fault-evidence-20261019. Globalasync Clang optimizer crash preserved Backups/qa084-clang-async-core-av-20261019. Ownedhelper teardown failed syntheticimage/source also preserved and finalarchive includes images.
+
+REMAINING / ACCEPTANCE
+Implemented native/UI paths above need actual ordinary UI/game Save/reopen/cancel/conflict/held checks; no offline fixture or disk mapping establishes gameplay acceptance. No game launched because offline work was sufficient for implementation and available interaction could not prove committed roster reload.
+One confirmed narrower WPF behavior: automatic saved custom-arena reapplication after another roster reload in SAMElaunch. Keep once-per-launch no-replay until a proven committed reload epoch +resolved prior intent exists. Fresh exactPE6-method research disqualifies requestUID (increments before load), TLSguard and rootflags; do NOT use target drift/retry or invent epochoffsets. Report artifacts/qa084-major-parity-20261019/profile-reload-epoch-research/profile-reload-epoch-assessment.json.
+Selected private-history season structure is unsupported (retained WPF also refuses); nonselected private histories remain conservatively held by wholegraph policy. From clear/new allocation and orphan nativeRosterExport are not missing reachable retainedWPF capabilities; stockaudio preview already routed. No speculative writes added.
+WNBA lastuseraccepted bothmodes; no functionalWNBA/outfit/scaler admission change here. Re-entry/OFF and QA080 visibleplayer/referee scaler result stillpending; don't infer acceptance from retracted earlier 'both'.
+
+UNRESOLVED HISTORICAL CRASHES
+QA073 natural Rust AV remains UNRESOLVED, exact Backups/qa073-natural-test-av-20261018/exact-test-image.zip:
+EXE BC3B784A828DC5149C28A7F8D9688ECA302CCD46E7F5294D101C0CF99AE82D21
+PDB A97CB0292EA39E292C81400E5F77DF4F3AC658AA0614F0DBB7E2DFBF3804556A
+QA078 ClangO2 fixture crash also unexplained. Passing changed images/debugger runs do NOT resolve either.
+
+EVIDENCE / CONTINUATION
+Read artifacts/qa084-final-validation-20261019.json, qa084-final-stage-20261019.json, qa084-final-test-coverage.json and qa084-major-parity-20261019/checkpoint.json. Latest remaining-parity assessment plus source-pinned peer reviews live there and qa084-season-structure-20261019.
+Exact finalarchive Backups/qa084-passing-test-and-dev-20261019/exact-images-and-sources.zip is generated AFTER this handoff snapshot; confirm roundtripVerified in artifacts/qa084-exact-evidence-archive-20261019.json. Receipt is intentionally outside its own archive. Preserve allincluded sources/handoff afterarchive; use freshversioned evidence for changes.
+All3agents completed; reuse instead of duplicate spawns. Conservativeoffline build pinned rust-exporter CARGO_HOME/RUSTUP_HOME, affinity4278190080, -j1 --offline --locked --no-default-features --target-dir target-qa054 --bin nba2k27-launcher-tauri2. No recursive rustfmt. Tests needing readonlyancestorhandles required approved outside sandbox; no guard weakening.

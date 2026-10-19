@@ -1,0 +1,98 @@
+QA078 WORK IN PROGRESS - 2026-10-18
+Read QA077 final for preserved history and exact old test crash evidence.
+
+User explicitly resumed WNBA work after the two-hour window: use WPF behavior,
+fix BOTH Freestyle and Blacktop, get ready to test; DEV ONLY, no install/promote.
+Old heartbeat two-hour-dev-parity-work is PAUSED. Do not resume it implicitly.
+User separately asked to investigate scaler applying later than before.
+No root game launch/stop/desktop control/live writes; normal user Play only.
+
+PRODUCTION SOURCE IS NOW CHANGED, QA077 REMAINS LAST STAGED BUILD
+Do not claim QA078 ready or activate it until final validation/stage completes.
+No QA078 stage/starter exists at this checkpoint. Preserve all old builds/data.
+
+Freestyle implementation (wnba_integration agent, files frozen):
+src/freestyle_v2.rs, src/freestyle_v2_tests.rs, src/feature_runtime.rs.
+Full deep pair before plan; compact fresh complete context/profile/source and
+all12 navigation words around each scalar; full deep +compact postword4 before
+Applied. No context fields normalized. Typed readiness defer only BEFORE entry
+to journal.write_intent/protection/write. Any attempted publication error uses
+exact conditional reverse cleanup then terminal hold, including zero words.
+Known tradeoff relative to old8deep scans: mutable row changes detected after
+four writes rather than perword; WPF three-deep temporal behavior is reference.
+Root and independent outfit_latency_qa066 review found no concrete blocker.
+artifacts/qa078-freestyle-wpf-publication-source-audit-20261018.json
+artifacts/qa078-freestyle-independent-review.json
+First Rust no-run compile PASS48.8s; focused natural tests PASS19FS/2ignored and
+32feature_runtime/0ignored under bounded watcher, no claimed exception/dump.
+These precede final scaler ordering/DLL changes, so full final test still needed.
+
+Separate scaler scheduling change (same feature_runtime.rs; source frozen):
+initial unapplied/nonreset/notheld scaler runs ahead of camera publication;
+camera cleanup still first; one two-lane loop means no double tick. All scaler
+snapshot/plan/protection/intent/identity/opt-in guards unchanged. No500ms provider
+cadence or write admission changes. Existing saved journal confirms camera work
+preceded first scaler intent; no elapsed timing proof or claim visual fix yet.
+artifacts/qa078-scaler-first-apply-timing-source-review-20261018.md
+artifacts/qa078-scaler-initial-priority-source-audit-20261018.json
+feature_runtime.rs currentSHA1E55EDC7CB80F88790875E0F7826FF8F4AB2E37E9A17671C2EEDC6C60B7CA7C9.
+
+Blacktop core (wnba_toggle_ui agent, frozen):
+native/wnba_blacktop_category_core.hpp +category/coordinator fixtures.
+Explicit preparing state, one allocation intent/allocation, original generation,
+12attempt/10s monotonic bound including passive wait. Same original start bound
+into Host before intent; no reset. Only typed proven preinitialize context-only
+failure can wait. Exact source/consent/identity/route loss, actual deep readfault,
+changed generation, any initialize-record/effect attempt failure permanently
+holds. Already-held QA077 cannot reopen. Active/restore lifecycle unchanged.
+Core SHA0BFB585A38A8EA3494158B2CE57E499C1B0DC2F9196E2ADF2D46398DDD90B143.
+Categorytest98A8FDEB13E485ED0D43423CBB7D1D58B426DA627CBB0361D85C0550C724FB18.
+CoordinatortestDF04EED274434D0FD16DCBD821220D7C3293CFBB7D8A2D31A0F12246DC25B05F.
+
+NativeHost (outfit_latency_qa066 agent) still being finalized:
+native/wnba_blacktop_category_win.hpp +test/wnba-preinitialize-host-test.cpp.
+Original intent retained FileID/volume/bytes/path/ordinal and full pinned dirs.
+Owned8192 zero privateRW double proof; same retained full roster generation.
+Init attempt flag BEFORE durable INITIALIZEintent; final fresh proof beforememcpy.
+sample_input marks unstable only on proven same-generation completed-context-only
+failure; readfault remains stablepicker-deep-unavailable and causes hold.
+Bounded full roster2198768B via34 <=64KiB reads versus1209small reads, same fields
+and ending validation; no global read bounds or context predicates relaxed.
+Self fixtures passed1024contextmasks/13badfacts, zero/region/protection/size,
+actual self file intent ID/bytes/replacement/fullancestor pins,34partial failures.
+Restrictedtoken ancestor pin ERROR_ACCESS_DENIED: exact fixture passed escalated,
+production pins unchanged. No game access by fixture.
+Last frozen HostBD242... is NOW UNFROZEN for final inherited seal guard fix:
+after durableSEALintent, fresh authority/profile/prepared-byte/page proof before
+VirtualProtect/cacheflush/unwindreg, not only before intent. Agent implements
+prepared_bridge_state full8192 expected code/chain/function/zero-padding proof
+and self fault tests. Wait for final new hashes/report before building DLL.
+artifacts/qa078-host-preinitialize-integration-proof.json will be updated.
+
+ROOT PIPELINE STILL REQUIRED
+1. Final Host freeze +independent review; compile eight native fixtures at final
+   source (earlier root8PASS in artifacts/qa078-native/focused-tests.log; core
+   comments/newtests changed since that compile, final should be separate log).
+2. Strict nativeDLL compile +systemversion-forward smoke to NEWqa078-native path.
+   Backup asset and two pins ALREADY durably saved at
+   Backups/qa078-native-payload-and-pins-20261018. Do not overwrite prior builds.
+3. Copy new exact native asset/fsync, update PROXY_SHA/PROXY_BYTES +DLL_SHA pins;
+   add exact previousQA0771E3A...1,194,496B to recovery-only list and +/-1tests.
+4. Freeze source/config inputs, final cargo test no-run --offline --locked
+   --no-default-features --target-dir target-qa054 -j4. Run ONE bounded NATURAL
+   full suite using artifacts/qa073-natural-crash-supervisor.exe exactallowlisted
+   testEXE and prefix artifacts/qa074-natural-qa078-whole-1; --test-threads=4.
+   Capture artifacts/qa078-final-full-rust-tests.log. Historical QA073AV remains
+   unresolved even if pass. On AV preserve exactEXE/PDB/dump/log before rebuild.
+5. Dev cargo build sameflags. tools/qa078_stage_dev_checkpoint.py created and
+   syntaxchecked; call with --payload-sha SHA --payload-bytes N --build-inputs
+   reportpath. It writes CREATE_NEW QA078candidate/starter only, no activation.
+   Must create build-inputs JSON with sourceFiles from its source_files().
+6. Archive exact passing testEXE/PDB/log/control report, roundtrip hashes; validate
+   starter AST/CheckOnly idle-or-busy refusal (never activate), final sourcefreeze.
+7. Update reference and FINALhandoff, give one clickable QA078starter and concise
+   normalboth-toggle Play test guidance. Live acceptance still pending bothmodes
+   plus Home/re-entry. No separate apps/scripts for user.
+
+Do not weaken guards just to pass. Do not add keys/indexresearchassets. RandomAll
+streetwear/quiet UI and fast outfit carry stay unchanged. No install/promote.
