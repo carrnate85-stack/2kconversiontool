@@ -390,16 +390,32 @@ impl Store {
             .open(self.stage())?;
         // A crash before the identity commit deliberately holds this unknown
         // stage. Hash-only adoption could remove a user's replacement file.
-        closed()?;
-        stage.write_all(prepared)?;
-        closed()?;
-        stage.sync_all()?;
-        ordinary(&stage, false)?;
-        let mut next = self.record.clone();
-        next.file_identity = Some(identity(&stage)?);
-        next.publishing = true;
-        closed()?;
-        self.directories()?;
+        let preparation = (|| -> Result<_> {
+            closed()?;
+            stage.write_all(prepared)?;
+            closed()?;
+            stage.sync_all()?;
+            ordinary(&stage, false)?;
+            let mut next = self.record.clone();
+            next.file_identity = Some(identity(&stage)?);
+            next.publishing = true;
+            closed()?;
+            self.directories()?;
+            Ok(next)
+        })();
+        let next = match preparation {
+            Ok(next) => next,
+            Err(error) => {
+                // Only this retained create_new handle grants cleanup. Unknown
+                // crash stages still require the existing recorded identity.
+                return match loader_files::unlink(&stage) {
+                    Ok(()) => Err(error),
+                    Err(cleanup) => Err(anyhow::anyhow!(
+                        "{error:#}; owned camera stage cleanup failed: {cleanup:#}"
+                    )),
+                };
+            }
+        };
         self.append_publication(&mut receipt, next)?;
         self.verify_file(&mut stage)?;
         closed()?;
@@ -441,6 +457,19 @@ impl Store {
             "Camera localization stage remains; publication incomplete"
         );
         self.verify_file(&mut open(&self.target(), false)?)
+    }
+    /// Recover root authority only from this bounded exact-session receipt,
+    /// followed by its existing actual directory-identity validation.
+    pub(crate) fn recorded_root(portable: &Path, session: &str) -> Result<Option<PathBuf>> {
+        let _portable = Directories::pin(portable)?;
+        let _data = Directories::pin(&portable.join("Data"))?;
+        let marker = portable.join("Data").join(MARKER);
+        if missing(&marker)? {
+            return Ok(None);
+        }
+        let record = read_receipt(&mut open(&marker, false)?)?;
+        let store = Self::recover(portable, &record.root, session)?;
+        Ok(store.map(|s| s.record.root.clone()))
     }
     pub fn recover(portable: &Path, selected_root: &Path, session: &str) -> Result<Option<Self>> {
         let mut pins = vec![

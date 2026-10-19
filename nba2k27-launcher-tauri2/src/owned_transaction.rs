@@ -17,6 +17,7 @@ pub(crate) const MAX_RESPONSE: usize = 196_608;
 pub(crate) const FORWARD_MS: u64 = 5_000;
 pub(crate) const REVERSE_MS: u64 = 8_000;
 pub(crate) const WATCHDOG_MS: u64 = 10_000;
+pub(crate) const BOOTSTRAP_MS: u64 = 30_000;
 pub(crate) const GAME_SHA: &str =
     "29A96471C55909FC2BCEA6C699C59238656A501C19B50C74ED64B0D842E576A1";
 
@@ -131,7 +132,7 @@ pub(crate) fn execute(
 /// The actual existing global write guard remains borrowed for the entire
 /// child/watchdog transaction. No reentry exemption or temporary unlock exists.
 pub(crate) fn execute_guarded(
-    _gate: &std::sync::MutexGuard<'static, ()>,
+    _gate: &crate::session_safety::WriteGuard,
     root: &Path,
     game: &Identity,
     parent: &Identity,
@@ -159,6 +160,50 @@ pub(crate) fn maybe_run_helper(
     platform::maybe_run_helper(execute_inside, verify_inside)
 }
 
+/// The effect window starts at the authenticated freeze acknowledgement, never
+/// parent bootstrap. A separate finite bootstrap window applies until then.
+#[derive(Debug)]
+pub(crate) struct WatchdogDeadline {
+    bootstrap: u64,
+    effect: Option<u64>,
+    last: u64,
+    held: bool,
+}
+impl WatchdogDeadline {
+    pub(crate) fn new(bootstrap: u64) -> Self {
+        Self {
+            bootstrap,
+            effect: None,
+            last: bootstrap,
+            held: false,
+        }
+    }
+    pub(crate) fn check(&mut self, now: u64) -> Result<()> {
+        if self.held || now < self.last || now < self.bootstrap {
+            self.held = true;
+            anyhow::bail!("Watchdog clock is held");
+        }
+        self.last = now;
+        let (start, budget) = self
+            .effect
+            .map(|s| (s, WATCHDOG_MS))
+            .unwrap_or((self.bootstrap, BOOTSTRAP_MS));
+        if now - start >= budget {
+            self.held = true;
+            anyhow::bail!("Watchdog phase deadline expired");
+        }
+        Ok(())
+    }
+    pub(crate) fn freeze_ack(&mut self, now: u64) -> Result<()> {
+        self.check(now)?;
+        if self.effect.is_some() {
+            self.held = true;
+            anyhow::bail!("Freeze acknowledgement cannotrepeat");
+        }
+        self.effect = Some(now);
+        Ok(())
+    }
+}
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub(crate) enum Phase {
     BeforeFreeze,
@@ -250,7 +295,11 @@ impl Lifecycle {
 #[path = "owned_transaction_tests.rs"]
 mod tests;
 
-/// Filesystem-only exact-handle archival; caller must already prove game ended.
+/// Filesystem-only archival: game ended OR current private verified completion.
 pub(crate) fn archive_intent(file: &std::fs::File, target: &Path) -> Result<()> {
     platform::archive_intent(file, target)
+}
+
+pub(crate) fn forget_verified(game: &Identity, session: &str, sha: &str) -> Result<()> {
+    platform::forget_verified(game, session, sha)
 }

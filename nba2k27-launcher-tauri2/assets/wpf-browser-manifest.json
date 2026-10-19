@@ -370,8 +370,8 @@
     {
       "path": "/renderer/player-dna.js",
       "mime": "text/javascript; charset=utf-8",
-      "sha256": "cfa21e52026e9b1d9e86de2299b2599b37c9fa6311bdf749527a274f7f0ffe41",
-      "bytes": 18254
+      "sha256": "801baa5222e39350b90a6b7915176aafc3e931839e348f9e57fe2bfaaf9539d3",
+      "bytes": 18327
     },
     {
       "path": "/renderer/player-edit-session.js",
@@ -812,5 +812,5 @@
       "bytes": 6005
     }
   ],
-  "bytes": 1052531
+  "bytes": 1052534
 }

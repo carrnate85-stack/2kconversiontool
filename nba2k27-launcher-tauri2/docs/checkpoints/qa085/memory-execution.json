@@ -1,0 +1,22 @@
+{
+  "atUtc": "2026-10-19T19:59:20.251593+00:00",
+  "sourceFreezeSha256": "CAD69B142F2F6C3F5ABB1664D80406FF1F5F018344077C9571353BCB0FC6246A",
+  "lifecycle14": "PASS",
+  "unit15": "PASS",
+  "large52Forward52Reverse": "PASS",
+  "files": [
+    {
+      "path": "artifacts\\qa085-memory-review\\lifecycle-v2-run-1\\results.json",
+      "sha256": "267055F3DD61CC3B10660A007D01DCE61AE2195766B0DC9792728D03A108797B"
+    },
+    {
+      "path": "artifacts\\qa085-memory-review\\large-intent-v2-run-1\\results.json",
+      "sha256": "489FCD2B862853913B203B3C2A4DE9A577697BDC3BCECB29EDE1FFA8618C1A52"
+    },
+    {
+      "path": "artifacts\\qa085-memory-review\\unit-v2-run.log",
+      "sha256": "E3711D9A7BF1A3DD863B123BCA6992487E9EA67F00570195F056215D4BCB9E9A"
+    }
+  ],
+  "sharedTests": "Root owns rerun; no game access"
+}

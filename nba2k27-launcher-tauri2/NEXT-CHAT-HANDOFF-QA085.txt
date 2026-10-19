@@ -1,0 +1,47 @@
+QA085 - Claude review fixes, final dev candidate (2026-10-19)
+===========================================================
+Canonical workspace: C:\Users\carrn\CodexProjects\2kconversiontool\nba2k27-launcher-tauri2
+User authorized independently checking latest Claude GitHub review and fixing confirmed findings. Dev-only; no install/promote/activate or game/desktop control in this pass.
+Prior full-feature/parity baseline remains NEXT-CHAT-HANDOFF-QA084.txt for unmodified features.
+
+READY DEV CANDIDATE, NOT ACTIVATED
+Starter: Start QA085 Dev.vbs (or Start QA085 Dev.ps1)
+Staged EXE: Dev/Pending/QA085/launcher.exe
+SHA256: FF42FE0363AA996866A8B820B133297C7D030A142AA67F48CBF9B4DCBF07CBB0
+Bytes:59244032
+CheckOnly validated its hash and correctly held for existing launcher PID35872. Do not stop it automatically. Normal user close before using the new starter. No installed/stable launcher changed.
+
+REVIEW SCOPE AND DELIVERED WORK
+Reference: GitHub review commit859e27cdb6a7a22127eaa662ebea008d54ffeb9a (reviewed QA084 commit0fad871).
+Full41-finding disposition: docs/reviews/CODEX-RESPONSE-2026-10-19.md.
+Confirmed changes include preallocation audio/ZIP/PNG budgets, exact-owned temp cleanup, independent link/session recovery and physical-root receipts, bounded cancellation-independent reversal, true shared native write gate, ack-relative freeze timing, completed-intent capacity release without replay authority, legacy pending-journal admission, exact-hash retained Oodle loaders, atomic mod replacement with durable originals, update rollback identity witnesses, overlay command allowlist, header-idle bounds, true tab LRU, and frontend save/error/stale-response corrections.
+Final testing found and fixed explicit UTF16 terminator missing in the intent archive rename buffer (32 alignment cases), and Windows atomic replacement with retained original read handle (FileRenameInfoEx replace+POSIX flags; no readonly bypass/fallback). Atomic replacement is per-file, not batch power-loss atomicity or a cross-process FileID CAS.
+No native outfit payload change; assets/native/version-outfits-v2-qa084.dll remains SHA2E921A4E8B408996C20DEAD7412835A9197D67B83C05CE840130300A903120DD.
+
+VALIDATION
+Exact final Rust tests:1529passed,0failed,54ignored,1583enumerated, complete three-way coverage; no debugger.
+Test EXE: E688A2D777E13FDAEE0AAADEDC10565709736394A2B525B398B9CF17C99D6CBC
+Test PDB:74B733C4F0B3EEE2535C712D49FEAFEA76F2F9F1C4B618DEE5D98E3BB485E1FA
+Coverage:artifacts/qa085-final-test-coverage.json; inputs:artifacts/qa085-final-build-inputs-v2-20261019.json.
+232frontend tests,15Node browser/source scripts,TypeScript,Vite,dev Rust build PASS.
+Production-module synthetic fixtures:15unit,14lifecycle,real cross-process serialization/abandonment refusal,52+52large-intent checks PASS.
+Two additional ignored read-only installed-disk audits explicitly executed and PASS: stock selector decode and mannequin export (approved core+texture runtimes); no game process access or game-file writes.
+Git autocrlf=true blank-checkout proof:652actual inputs exact (13newpaths,7mixed-ending files);721frozenentries verified including69generated outputs not claimed Git inputs.
+artifacts/qa085-git-line-endings/final-current-v2/final-checkout-proof.json.
+Initial normal test failures (not AV) preserved with exact EXE/PDB/sources in Backups/qa085-first-rust-failures-20261019/exact-failing-images-and-inputs.zip; SHA6DBE4B50E3540B59F92046FB727A05D62DC8503D4A2FB6949B7617075B8DA2B3.
+Final exact archive: Backups/qa085-passing-test-and-dev-20261019/exact-images-and-sources.zip; verify using artifacts/qa085-exact-evidence-archive-20261019.json. It is created after this handoff so its checksum lives in that separate receipt.
+
+OPEN QUALIFICATIONS / NEXT WORK
+External unsigned update intake/runner disabled until an actual publisher public key/signing policy is provisioned. Explicit full-manifest+content+directory-identity PreviousApp rollback supported. Legacy schema1 update journals remain held for manual review, not guessed recovery.
+WIC image decode process containment remains deferred. Browser token already removed from history by embedded bridge; idle policy not changed. Unknown orphan filenames cannot be safely swept by prefix. Lenient malformed roster names require per-row read-only capability and downstream write/copy/rotation guards; proposal saved, strict policy retained. Polling consolidation not justified by measurement; F8 cadence unchanged.
+Whole-ntdll OS safety profile deliberately retained; other builds need proven profiles. A kernel refusing every exact-handle termination still causes an explicit passive safety hold rather than unsafe release of partial/frozen state.
+QA073 natural Rust test access violation remains UNRESOLVED, exact original EXE/PDB preserved in its earlier archive. QA078 Clang fixture crash unexplained. QA080 visible scaler acceptance remains pending. Offline tests do not prove live gameplay acceptance, WNBA/scaler/outfit effects or full feature parity.
+Future live checks via normal user toggles/Play only: native editor saves/reversal, F8 selection/catalog actions, WNBA persistence, outfit/scaler presentation; do not request special scripts or ad hoc writes.
+
+PRESERVATION / GIT
+QA084 staged EXE and full archive hashes unchanged; original outfit DLL unchanged. User Data/Library untouched by this work.
+Parent original Git HEAD e63fb73ceee02b26e97f0770de7cf3a00a5a5add and index SHA276BE23CC044838A3A44EAD03F5693F24739D9EC0F3BB4024D6FABF7AFDA599F unchanged; unrelated137files/42552insertions/752deletions remain staged. Never add/reset/commit that index.
+Isolated publishing checkout:artifacts/github-publish-qa084-20261019/checkout; branchqa085-claude-review-fixes, base859e27c. Prepared reviewable source-only branch; final publication receipt under artifacts/qa085-github-review-fixes. No local builds/user data/backups/keys uploaded. Source branch link: https://github.com/carrnate85-stack/2kconversiontool/tree/qa085-claude-review-fixes/nba2k27-launcher-tauri2
+
+BUILD STABILITY
+Retain current single-job cargo and processor affinity4278190080 workaround, test threads1. It is not a proven permanent hardware diagnosis. All QA085 agents frozen; no outstanding edits.

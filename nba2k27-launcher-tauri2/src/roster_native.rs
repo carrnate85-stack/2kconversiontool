@@ -996,6 +996,10 @@ impl Service {
         })?;
         let _write_gate = session_safety::write_gate()?;
         ensure!(
+            !crate::roster_v2_write::any_pending(root)?,
+            "A native roster transaction needs review; close NBA 2K27 before another legacy write"
+        );
+        ensure!(
             !self.stop.load(Ordering::Acquire),
             "Roster service is closing"
         );
@@ -1148,6 +1152,10 @@ impl Service {
             anyhow::anyhow!("Another roster operation is in progress. Wait before saving.")
         })?;
         let _write_gate = session_safety::write_gate()?;
+        ensure!(
+            !crate::roster_v2_write::any_pending(root)?,
+            "A native roster transaction needs review; close NBA 2K27 before another legacy write"
+        );
         ensure!(
             !self.stop.load(Ordering::Acquire),
             "Roster service is closing"
@@ -1328,6 +1336,10 @@ impl Service {
             anyhow::anyhow!("Another roster operation is in progress. Wait before saving.")
         })?;
         let _write_gate = session_safety::write_gate()?;
+        ensure!(
+            !crate::roster_v2_write::any_pending(root)?,
+            "A native roster transaction needs review; close NBA 2K27 before another legacy write"
+        );
         ensure!(
             !self.stop.load(Ordering::Acquire),
             "Roster service is closing"

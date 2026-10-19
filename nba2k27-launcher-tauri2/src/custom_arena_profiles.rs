@@ -181,6 +181,15 @@ impl Service {
         input: &Value,
         confirm: &dyn Fn(&str) -> bool,
     ) -> Result<Value> {
+        self.request_with_available(root, input, confirm, &crate::owned_transaction::available)
+    }
+    fn request_with_available(
+        &self,
+        root: &Path,
+        input: &Value,
+        confirm: &dyn Fn(&str) -> bool,
+        available: &dyn Fn() -> Result<()>,
+    ) -> Result<Value> {
         if input["action"] == "read" {
             ensure!(
                 input.as_object().is_some_and(|o| o.len() == 1),
@@ -232,7 +241,7 @@ impl Service {
             .position(|p| p.id == id)
             .context("Custom arena profile changed. Refresh the list.")?;
         if action == "enable" {
-            crate::owned_transaction::available()?;
+            available()?;
             ensure!(
                 confirm(
                     "Apply this saved custom arena on future Play sessions? The game is briefly paused while its roster is updated. If a partial update cannot be safely restored, the launcher may close that exact game to protect the roster. Existing games are not affected by changing this preference."

@@ -1,3 +1,4 @@
+import { finishModInstall } from "./mod-install-feedback";
 import { Fragment, useEffect, useRef, useState, type ReactNode } from "react";
 import { convertFileSrc } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
@@ -669,8 +670,7 @@ export function Mods(
       "mod-install-commit",
       modInstallArgs(plan, decisions),
     ).finally(() => setInstall(null));
-    await p.scan();
-    p.status(modInstallSummary(result));
+    await finishModInstall(modInstallSummary(result), p.scan, p.status);
   }
   const groups = sortModGroups(
     modGroups(p.mods, p.library.tags, root),

@@ -62,7 +62,9 @@ fn limit(target: &str) -> usize {
 fn cover_dir(path: &str) -> bool {
     path == "shared"
         || path.strip_prefix("shared/").is_some_and(|h| {
-            h.len() == 2 && h.bytes().all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b))
+            h.len() == 2
+                && h.bytes()
+                    .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b))
         })
 }
 /// Restore removes a folder it created only when it is an ordinary, empty one.
@@ -71,7 +73,9 @@ fn remove_if_empty(path: &Path) -> Result<()> {
         Err(e) if e.kind() == std::io::ErrorKind::NotFound => Ok(()),
         Err(e) => Err(e.into()),
         Ok(m) => {
-            if m.is_dir() && m.file_attributes() & 0x400 == 0 && fs::read_dir(path)?.next().is_none()
+            if m.is_dir()
+                && m.file_attributes() & 0x400 == 0
+                && fs::read_dir(path)?.next().is_none()
             {
                 fs::remove_dir(path)?;
             }
@@ -390,7 +394,11 @@ impl Record {
             textures <= cover::MAX_COVERS
                 && self.created.len() <= 1 + 256
                 && self.created.iter().all(|d| cover_dir(d))
-                && self.created.iter().collect::<std::collections::BTreeSet<_>>().len()
+                && self
+                    .created
+                    .iter()
+                    .collect::<std::collections::BTreeSet<_>>()
+                    .len()
                     == self.created.len(),
             "Invalid Jukebox cover publication"
         );
@@ -655,10 +663,7 @@ impl Store {
             }
             entries.push(Entry {
                 target: target.clone(),
-                stage: format!(
-                    ".2k-launcher-jukebox-{session}-{}.tmp",
-                    entries.len()
-                ),
+                stage: format!(".2k-launcher-jukebox-{session}-{}.tmp", entries.len()),
                 size: data.len(),
                 sha256: catalog::digest(data),
                 identity: None,
@@ -864,6 +869,19 @@ impl Store {
             ensure!(absent(&self.backup())?, "Unexpected Jukebox backup");
         }
         Ok(())
+    }
+    /// Recover root authority only from this bounded exact-session receipt,
+    /// followed by its existing actual directory-identity validation.
+    pub(crate) fn recorded_root(portable: &Path, session: &str) -> Result<Option<PathBuf>> {
+        let _portable = Pins::pin(portable)?;
+        let _data = Pins::pin(&portable.join("Data"))?;
+        let marker = portable.join("Data").join(MARKER);
+        if absent(&marker)? {
+            return Ok(None);
+        }
+        let record = read_record(&mut open(&marker, false, false)?)?;
+        let store = Self::recover(portable, &record.root, session)?;
+        Ok(store.map(|s| s.record.root.clone()))
     }
     pub fn recover(portable: &Path, mods: &Path, session: &str) -> Result<Option<Self>> {
         let portable = portable.canonicalize()?;

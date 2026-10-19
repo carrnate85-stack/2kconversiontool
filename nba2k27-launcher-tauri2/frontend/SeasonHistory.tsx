@@ -39,7 +39,7 @@ const totalLabels: Record<string, string> = {
 };
 const average = (total: number, games: number) =>
   games ? (total / games).toFixed(1) : "—";
-const seasonName = (year: number) => `${year - 1}–${String(year).slice(-2)}`;
+export const seasonName = (year: number) => Number.isInteger(year) && year >= 1900 && year <= 2155 ? `${year - 1}–${String(year).slice(-2)}` : "Invalid season year";
 const derivedLabels: Record<string, string> = {
   mpg: "MPG",
   ppg: "PPG",
@@ -299,15 +299,14 @@ export function SeasonHistory({
           <div className="dna-field-grid">
             <label>
               Season end year
-              <input
-                aria-label="Season end year"
-                type="number"
-                min={1900}
-                max={2155}
-                disabled={busy}
-                value={row.year}
-                onChange={(e) => edit({ ...row, year: Number(e.target.value) })}
-              />
+              <SeasonNumber label="Season end year" value={row.year} disabled={busy}
+                clearError={() => setError("")} commit={(year) => {
+                  if (!Number.isInteger(year) || year < 1900 || year > 2155) {
+                    setError("Enter a season end year from 1900 to 2155.");
+                    throw new Error("Invalid season end year");
+                  }
+                  edit({ ...row, year });
+                }} />
             </label>
             <label>
               Team
@@ -329,21 +328,14 @@ export function SeasonHistory({
             {Object.entries(schema.seasonLimits).map(([k, max]) => (
               <label key={k}>
                 {totalLabels[k] ?? k}
-                <input
-                  aria-label={`Season ${totalLabels[k] ?? k}`}
-                  type="number"
-                  min={k === "plusMinus" ? -16384 : 0}
-                  max={max}
-                  step={1}
-                  disabled={busy}
-                  value={row.totals[k]}
-                  onChange={(e) =>
-                    edit({
-                      ...row,
-                      totals: { ...row.totals, [k]: Number(e.target.value) },
-                    })
-                  }
-                />
+                <SeasonNumber label={`Season ${totalLabels[k] ?? k}`} value={row.totals[k]} disabled={busy}
+                  clearError={() => setError("")} commit={(number) => {
+                    if (!Number.isInteger(number) || number < (k === "plusMinus" ? -16384 : 0) || number > max) {
+                      setError(`Enter a valid ${totalLabels[k] ?? k} total.`);
+                      throw new Error("Invalid season total");
+                    }
+                    edit({ ...row, totals: { ...row.totals, [k]: number } });
+                  }} />
               </label>
             ))}
           </div>
@@ -400,7 +392,7 @@ export function SeasonHistory({
   );
 }
 
-function SeasonNumber({
+export function SeasonNumber({
   label,
   value,
   disabled,

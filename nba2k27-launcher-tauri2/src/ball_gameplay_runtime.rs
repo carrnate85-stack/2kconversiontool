@@ -322,12 +322,12 @@ const RESTORE_FAILURE_LIMIT: u8 = 8;
 const BURST_ATTEMPTS: usize = 6;
 const BURST_SPACING: std::time::Duration = std::time::Duration::from_millis(100);
 /// Sleeps one sample spacing without holding the global native write gate.
-fn pause(gate: &mut Option<std::sync::MutexGuard<'static, ()>>) {
+fn pause(gate: &mut Option<crate::session_safety::WriteGuard>) {
     drop(gate.take());
     std::thread::sleep(BURST_SPACING);
 }
 /// Retakes the write gate before any journal intent or publication.
-fn regain(gate: &mut Option<std::sync::MutexGuard<'static, ()>>) -> Result<()> {
+fn regain(gate: &mut Option<crate::session_safety::WriteGuard>) -> Result<()> {
     if gate.is_none() {
         *gate = Some(session_safety::write_gate()?);
     }

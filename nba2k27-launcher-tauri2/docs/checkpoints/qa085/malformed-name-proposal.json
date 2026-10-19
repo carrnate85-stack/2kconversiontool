@@ -1,0 +1,161 @@
+{
+  "utc": "2026-10-19T19:47:18.842539+00:00",
+  "finding": "L13",
+  "verdict": "Agree malformed display names can fail entire roster capture; Disagree that staff20-unit refusal itself is an accidental parity regression.",
+  "action": "Proposal only, as explicitly permitted when dependent writes cannot yet be proven fail-closed. No production/test files changed for L13.",
+  "reason": "Readonly decoder marker alone is insufficient: Access projection forcibly grants writable row state and supplies all455 ratings; PlayerDNA copies based only on live-roster source/array. Writer identity is only unique ID, not strict names. A partial lenient decoder fix could broaden write/copy admission.",
+  "safePlan": [
+    "Keep strict name()/writer parsers intact. Add separate DISPLAY-only decode using UTF16 lossiness and control escaping, with native nameValid=false marker on invalid UTF16/control/unterminated field policy. Never alter raw row/hash/ownership bytes.",
+    "Native Access projection for malformed player: readOnly true/writeAvailable false/nameStatus malformed, no editable info capabilities and ratingsRaw withheld from import/copy. List source selector excludes/marks invalid row. Backend selected-player Save/season/appearance routes explicitly refuse cached malformed native marker, not UI fields.",
+    "Malformed Team text similarly marks whole Team read-only and blocks Team Save, Uniform selected-Team dependency, staff/rotation/import/clone selection. Unknown or malformed names in unselected rows must not abort healthy row capture.",
+    "Keep rotation_members strict for affected team and shared/unproven name ownership; do not turn lossy display text into a membership/name token. decode_staff display fallback requires explicit readonly values/controls and plan_staff guard before any edit; its strict after-name validator remains.",
+    "Add actual capture fixture with100healthy+1malformed row; healthy row writable unchanged, malformed row displayed readonly, rawhash unchanged; tests copy/export/import/Save and all dependency routes zero effects. Malformed Team city/name and missingNUL/surrogate/control cases must be separate."
+  ],
+  "wpfQualification": "TeamStaffPatch.cs183\u2013189 explicitly rejects full20UTF16 units withoutNUL, and control/surrogate names. TeamRotations.cs18 rejects a player name withoutNUL in40B. Program DecodeUtf16 display is separately lenient; do not conflate display and write policy. These are current retained helper source paths; original QA081 pinned helper provenance remains the binary-equivalence authority.",
+  "refs": [
+    {
+      "path": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\src\\roster_v2_readonly.rs",
+      "sha256": "7D08AD819D1D302088177EF631E1C47788B76D931EDB24EACA3DE6432BFF651B",
+      "references": [
+        {
+          "needle": "fn name(",
+          "lines": [
+            268
+          ]
+        },
+        {
+          "needle": "fn decode_player(",
+          "lines": [
+            285
+          ]
+        },
+        {
+          "needle": "fn decode_team(",
+          "lines": [
+            303
+          ]
+        },
+        {
+          "needle": "fn build_document(",
+          "lines": [
+            621
+          ]
+        },
+        {
+          "needle": "fn details_verified(",
+          "lines": [
+            733
+          ]
+        }
+      ]
+    },
+    {
+      "path": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\src\\roster_v2_access.rs",
+      "sha256": "71E015D34CBC067EB95212BD473C1FC983FC821F259CD3E4E170EE583766846D",
+      "references": [
+        {
+          "needle": "\"nameStatus\":\"live-exact\"",
+          "lines": [
+            561
+          ]
+        },
+        {
+          "needle": "let result = crate::player_dna::snapshot_request",
+          "lines": [
+            2692
+          ]
+        },
+        {
+          "needle": "let mut value = services::decode_staff",
+          "lines": [
+            1780
+          ]
+        },
+        {
+          "needle": "fn editor_writes(",
+          "lines": [
+            1257
+          ]
+        }
+      ]
+    },
+    {
+      "path": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\src\\roster_v2_services.rs",
+      "sha256": "6FD4AB8BF1E4C95A0691E83BC3A13814ADA0772320808CB47B30CAFB150864AF",
+      "references": [
+        {
+          "needle": "pub(crate) fn staff_name",
+          "lines": [
+            228
+          ]
+        },
+        {
+          "needle": "pub(crate) fn plan_staff",
+          "lines": [
+            470
+          ]
+        },
+        {
+          "needle": "pub(crate) fn rotation_members",
+          "lines": [
+            522
+          ]
+        }
+      ]
+    },
+    {
+      "path": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-launcher-tauri2\\src\\player_dna.rs",
+      "sha256": "BA25C4A27472277C6AFF914DEE078FF3420211FA46D5EED7B84858CC5DBBD7A2",
+      "references": [
+        {
+          "needle": "pub(crate) fn snapshot_request",
+          "lines": [
+            81
+          ]
+        },
+        {
+          "needle": "pub fn from_player",
+          "lines": [
+            134
+          ]
+        }
+      ]
+    },
+    {
+      "path": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-roster-research\\src\\TeamStaffPatch.cs",
+      "sha256": "99B39D4978C1B7ED0A3C44376E6647B3D4E6EA60F84B1A52693F52DF6C0773E9",
+      "references": [
+        {
+          "needle": "static string Name",
+          "lines": [
+            183
+          ]
+        }
+      ]
+    },
+    {
+      "path": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-roster-research\\src\\TeamRotations.cs",
+      "sha256": "152AD50541FE1D2AC50A0561415EEAB66CAD3FBEB564DB38CD0EB0E92C8B5F96",
+      "references": [
+        {
+          "needle": "static string Name",
+          "lines": [
+            18
+          ]
+        }
+      ]
+    },
+    {
+      "path": "C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\nba2k27-roster-research\\src\\Program.cs",
+      "sha256": "FE074F2E456BE39BEA95564550A7655D59E30E9569DFC90584553021935342B5",
+      "references": [
+        {
+          "needle": "private static string DecodeUtf16",
+          "lines": [
+            440
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -14,6 +14,19 @@ use std::{
 use zip::{CompressionMethod, ZipArchive, ZipWriter, write::SimpleFileOptions};
 pub(crate) const MAX_SEGMENT: usize = 384 * 1024 * 1024;
 const MAX_ENTRY: usize = 256 * 1024 * 1024;
+pub(crate) const MAX_NATIVE_IMPORT: usize = 320 * 1024 * 1024;
+fn png(bytes: &[u8]) -> Result<()> {
+    ensure!(
+        bytes.len() >= 33
+            && bytes.len() <= 4 * 1024 * 1024
+            && bytes.starts_with(b"\x89PNG\r\n\x1a\n")
+            && &bytes[12..16] == b"IHDR"
+            && u32::from_be_bytes(bytes[16..20].try_into()?) == 256
+            && u32::from_be_bytes(bytes[20..24].try_into()?) == 256,
+        "Invalid 256x256 cover preview PNG"
+    );
+    Ok(())
+}
 pub(crate) type Entries = BTreeMap<String, Vec<u8>>;
 fn u16_at(b: &[u8], i: usize) -> u16 {
     u16::from_le_bytes(b[i..i + 2].try_into().unwrap())
@@ -346,8 +359,75 @@ pub(crate) fn import_entries(
     stock: &Music,
     decode_flac: &mut impl FnMut(&[u8], usize) -> Result<Vec<u8>>,
 ) -> Result<Import> {
+    let mut remaining = MAX_NATIVE_IMPORT;
+    import_entries_bounded(manifest, entries, stock, decode_flac, &mut remaining)
+}
+fn import_entries_bounded(
+    manifest: &Manifest,
+    entries: &Entries,
+    stock: &Music,
+    decode_flac: &mut impl FnMut(&[u8], usize) -> Result<Vec<u8>>,
+    remaining: &mut usize,
+) -> Result<Import> {
     validate_manifest(manifest)?;
     stock.validate()?;
+    // Preflight the ENTIRE segment before any decoded/output song allocation.
+    // A compressed member is not a budget for each reference to that member.
+    let mut used_audio = BTreeSet::new();
+    let mut needed = 0usize;
+    for song in &manifest.tracks {
+        let mut add = |bytes: usize| -> Result<()> {
+            needed = needed
+                .checked_add(bytes)
+                .context("Playlist native size overflow")?;
+            ensure!(
+                needed <= *remaining,
+                "Playlist exceeds bounded320MiB native import staging limit"
+            );
+            Ok(())
+        };
+        if song.kind == "custom" {
+            let name = song
+                .audio_file
+                .as_ref()
+                .context("Custom song has no audio")?;
+            ensure!(
+                used_audio.insert(name.to_ascii_lowercase()),
+                "Repeated playlist audio member"
+            );
+            let data = reference(entries, &song.audio_file, "audio/")?
+                .context("Custom song has no audio")?;
+            let size = match song.audio_codec.as_deref().unwrap_or("wav") {
+                "wav" => {
+                    if data.len() >= 4 && u32_at(data, 0) == audio::MAGIC {
+                        data.len()
+                    } else {
+                        audio::wave_pcm(data)?
+                            .len()
+                            .checked_add(54)
+                            .context("Audio size overflow")?
+                    }
+                }
+                "native-opus" => data.len(),
+                "flac" => song
+                    .audio_pcm_bytes
+                    .context("FLAC decoded size is missing")?
+                    .checked_add(54)
+                    .context("Audio size overflow")?,
+                _ => anyhow::bail!("Unsupported playlist audio codec"),
+            };
+            add(size)?;
+        }
+        for name in [&song.artwork_file, &song.artwork_preview_file] {
+            if let Some(data) = reference(entries, name, "artwork/")? {
+                add(data.len())?;
+            }
+        }
+        if let Some(preview) = reference(entries, &song.artwork_preview_file, "artwork/")? {
+            png(preview)?;
+        }
+    }
+    *remaining -= needed;
     let (mut songs, mut seen) = (Vec::new(), BTreeSet::new());
     for song in &manifest.tracks {
         song.metadata.validate()?;
@@ -490,7 +570,8 @@ pub(crate) fn import_entries(
                                 .eq_ignore_ascii_case(&catalog::digest(&wave)),
                             "FLAC decoded hash differs"
                         );
-                        audio::wrap(&wave)?
+                        drop(wave);
+                        audio::native_pcm(&decoded)?
                     }
                     _ => anyhow::bail!("Unsupported playlist audio codec"),
                 }
@@ -503,10 +584,7 @@ pub(crate) fn import_entries(
         }
         let preview = reference(entries, &song.artwork_preview_file, "artwork/")?;
         if let Some(p) = preview {
-            ensure!(
-                p.len() <= 4 * 1024 * 1024 && p.starts_with(b"\x89PNG\r\n\x1a\n"),
-                "Invalid cover preview"
-            );
+            png(p)?;
         }
         songs.push(ImportedSong {
             metadata: song.metadata.clone(),
@@ -568,6 +646,113 @@ mod tests {
             unique: 130,
             extra: Map::new(),
         }
+    }
+    #[test]
+    fn preflight_refuses_repeated_audio_and_aggregate_before_decoder() {
+        let mut a = Song {
+            kind: "custom".into(),
+            source_key: track().key(),
+            metadata: track(),
+            audio_file: Some("audio/a.flac".into()),
+            artwork_file: None,
+            artwork_preview_file: None,
+            audio_codec: Some("flac".into()),
+            audio_native_sha256: None,
+            audio_wave_sha256: Some("a".repeat(64)),
+            audio_pcm_bytes: Some(200 * 1024 * 1024),
+        };
+        let mut b = a.clone();
+        b.metadata.unique += 1;
+        b.source_key = b.metadata.key();
+        let mut manifest = Manifest {
+            schema: "nba2k27-2kplaylist-v4".into(),
+            name: "Bound".into(),
+            tracks: vec![a.clone(), b.clone()],
+            warnings: vec![],
+            multipart: None,
+        };
+        let stock = Music {
+            tracks: vec![],
+            extra: Map::new(),
+        };
+        let mut entries = Entries::from([("audio/a.flac".into(), vec![0; 42])]);
+        assert!(
+            import_entries(&manifest, &entries, &stock, &mut |_, _| panic!(
+                "decode before duplicate refusal"
+            ))
+            .err()
+            .unwrap()
+            .to_string()
+            .contains("Repeated")
+        );
+        b.audio_file = Some("audio/b.flac".into());
+        entries.insert("audio/b.flac".into(), vec![0; 42]);
+        manifest.tracks = vec![a.clone(), b];
+        assert!(
+            import_entries(&manifest, &entries, &stock, &mut |_, _| panic!(
+                "decode before aggregate refusal"
+            ))
+            .err()
+            .unwrap()
+            .to_string()
+            .contains("320MiB")
+        );
+        a.audio_file = Some("audio/a.wav".into());
+        a.audio_codec = None;
+        a.audio_pcm_bytes = None;
+        a.audio_wave_sha256 = None;
+        manifest.tracks = vec![a.clone()];
+        entries.insert("audio/a.wav".into(), audio::pcm_wave(&[0; 4]).unwrap());
+        let mut remaining = 57;
+        assert!(
+            import_entries_bounded(
+                &manifest,
+                &entries,
+                &stock,
+                &mut |_, _| panic!(),
+                &mut remaining
+            )
+            .is_err()
+        );
+        assert_eq!(remaining, 57);
+        remaining = 58;
+        assert!(
+            import_entries_bounded(
+                &manifest,
+                &entries,
+                &stock,
+                &mut |_, _| panic!(),
+                &mut remaining
+            )
+            .is_ok()
+        );
+        assert_eq!(remaining, 0);
+        a.artwork_preview_file = Some("artwork/p.png".into());
+        manifest.tracks = vec![a];
+        entries.insert("artwork/p.png".into(), b"\x89PNG\r\n\x1a\n".to_vec());
+        assert!(import_entries(&manifest, &entries, &stock, &mut |_, _| panic!()).is_err());
+        let mut a = manifest.tracks[0].clone();
+        a.artwork_preview_file = None;
+        a.audio_file = Some("audio/unknown.flac".into());
+        a.audio_codec = Some("flac".into());
+        a.audio_pcm_bytes = Some(4);
+        a.audio_wave_sha256 = Some(catalog::digest(&audio::pcm_wave(&[0; 4]).unwrap()));
+        let mut flac = vec![0; 42];
+        flac[..4].copy_from_slice(b"fLaC");
+        flac[7] = 34;
+        let info = (48000u64 << 44) | (1 << 41) | (15 << 36);
+        flac[18..26].copy_from_slice(&info.to_be_bytes());
+        entries.insert("audio/unknown.flac".into(), flac);
+        manifest.tracks = vec![a];
+        let mut called = 0;
+        let imported = import_entries(&manifest, &entries, &stock, &mut |_, expected| {
+            called += 1;
+            assert_eq!(expected, 4);
+            Ok(vec![0; 4])
+        })
+        .unwrap();
+        assert_eq!(called, 1);
+        assert_eq!(imported.songs[0].native_audio.as_ref().unwrap().len(), 58);
     }
     #[test]
     fn music_roundtrip_preserves_unknown_metadata() {
@@ -805,6 +990,7 @@ impl<R: Read + Seek> Container<R> {
         mut accept: impl FnMut(ImportedSong) -> Result<()>,
     ) -> Result<()> {
         let mut offset = 0usize;
+        let mut remaining = MAX_NATIVE_IMPORT;
         let mut identity = None;
         for i in 0..self.parts() {
             let entries = self.segment(i)?;
@@ -840,7 +1026,8 @@ impl<R: Read + Seek> Container<R> {
                 self.index.manifest.tracks.get(offset..end) == Some(manifest.tracks.as_slice()),
                 "Combined playlist order/metadata differs from segment"
             );
-            let import = import_entries(&manifest, &entries, stock, &mut decode)?;
+            let import =
+                import_entries_bounded(&manifest, &entries, stock, &mut decode, &mut remaining)?;
             for song in import.songs {
                 accept(song)?;
             }

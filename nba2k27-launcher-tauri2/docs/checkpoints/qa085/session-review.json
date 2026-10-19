@@ -1,0 +1,92 @@
+{
+  "utc": "2026-10-19T19:45:16.037459+00:00",
+  "scope": "QA085 approved M1/M6/M12/L9 only. No Cargo/game/desktop/build/install/promote/activate.",
+  "backup": "Backups/qa085-claude-review-20261019/session-before",
+  "verdicts": {
+    "M1": {
+      "verdict": "Agree",
+      "changes": [
+        "Player restore catches per-entry failure and continues other owned links, retains entire receipt when any held; never removes last copy without source FileID proof.",
+        "Provider and ended-session independent physical store cleanup aggregates failures and still attempts profile junction restoration. No final session clear on any error.",
+        "Physical selected root after profile receipt removal derives from bounded exact-session + directory-validated selector/camera/player/Jukebox receipts, rejects conflicting valid roots. No receipt authorizes a different root or session."
+      ]
+    },
+    "M6": {
+      "verdict": "Agree",
+      "changes": [
+        "Camera pre-publication preparation errors unlink only retained create_new stage handle.",
+        "Selector retains all create_new stage handles with DELETE through durable publication metadata; pre-publication error deletes only those owned handles.",
+        "Unknown existing/crash stages remain held under original strict hash/FileID policy."
+      ]
+    },
+    "M12": {
+      "verdict": "Partially agree",
+      "changes": [
+        "Existing process snapshot failures already return transient Ok; no change there.",
+        "Only private typed provider-status File::open/metadata/read I/O errors return unknown observation and retry.",
+        "JSON, size, reparse/ordinary, schema/owner, journal persistence, helper identity and other failures remain terminal; no blanket error clearing."
+      ]
+    },
+    "L9": {
+      "verdict": "Agree with lagging-publication qualification",
+      "changes": [
+        "Unpublished mismatching target left untouched; stages always strictly verified.",
+        "A matching target with unpublished flag may be actual rename whose marker commit failed; existing exact payload handling retained.",
+        "Published mismatching target still held; no target hash/foreign stage adoption."
+      ]
+    }
+  },
+  "validation": {
+    "rustfmt": "PASS9 owned files syntax parse only",
+    "Rust": "Not compiled or executed by agent; parent authoritative compile/targeted tests needed.",
+    "newFixtures": [
+      "missing source plus independent link cleanup/source last-copy preservation and same-receipt root discovery",
+      "selector cancel after first created stage removes retained own stages",
+      "camera cancel after create before identity commit removes retained own stage",
+      "unpublished foreign target restore accepted/preserved (updated old assertion)",
+      "lagged exact rename removed but foreign stage retains pending",
+      "Jukebox recorded root exact session",
+      "typed status I/O only versus corruption/owner/untyped persistence errors",
+      "independent cleanup all steps/errors preserved",
+      "root consensus rejects physical disagreement"
+    ]
+  },
+  "files": [
+    {
+      "path": "src/player_folders.rs",
+      "sha256": "9C0A7093A0144112DD316B51B3F2C14F3351324E797E242E790133FA3F1028BE"
+    },
+    {
+      "path": "src/camera_name_files.rs",
+      "sha256": "3707E51857CB3474AAFE89A5576CBD187533687C6CE5F4CBD85182085231FBF3"
+    },
+    {
+      "path": "src/camera_name_files_tests.rs",
+      "sha256": "2948A1A1FC1A5FD90ACD7A8ACC8C0476FBEF6DF25E1AEE7B5FCDA765F7BAC422"
+    },
+    {
+      "path": "src/selector_files.rs",
+      "sha256": "48FC187505198977410BDB746EFE13745C5FDC44BF32E0D47782D78F1F6035C5"
+    },
+    {
+      "path": "src/native_session.rs",
+      "sha256": "F638B073F8C6C372EF195DDA13CE5C63D24DDFF2BE596CB64C67A88B1D7AFFD7"
+    },
+    {
+      "path": "src/provider_launch.rs",
+      "sha256": "12A9BEDC2198531FD27AF36358E8EF615305FADF0B7446E439630C9DD4A1E92F"
+    },
+    {
+      "path": "src/loader_files.rs",
+      "sha256": "DC5C8206783DC78343DF808B976A07647D2ACCF60EB19A36C1D3B157A4899F13"
+    },
+    {
+      "path": "src/jukebox_files.rs",
+      "sha256": "464588AA384BBABDB90527FB889012B380018AC8EB877FC357E0DF6AA9601C27"
+    },
+    {
+      "path": "src/jukebox_files_tests.rs",
+      "sha256": "507F7A2388805F9EA72A13CB6621863A522399A5E2A558E3E21CEF13832935F8"
+    }
+  ]
+}

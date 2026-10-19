@@ -65,10 +65,11 @@ export function LauncherUpdatesCard({ setStatus }: { setStatus: Status }) {
   const [info, setInfo] = useState<BuildInfo | null>(null);
   const [busy, setBusy] = useState(false);
   const [text, setText] = useState("");
+  const [refreshError, setRefreshError] = useState("");
   const refresh = () =>
     call<BuildInfo>("launcher-tools-build-info")
-      .then(setInfo)
-      .catch(() => setInfo(null));
+      .then((next) => { setInfo(next); setRefreshError(""); })
+      .catch((error) => setRefreshError(message(error)));
   useEffect(() => {
     void refresh();
     const off = listen<{ message: string }>("launcher-update-progress", (e) =>
@@ -76,7 +77,7 @@ export function LauncherUpdatesCard({ setStatus }: { setStatus: Status }) {
     );
     return () => void off.then((f) => f());
   }, []);
-  if (!info) return null;
+  if (!info) return <ToolCard title="Launcher updates"><p role="status">{refreshError || "Loading update information…"}</p><button onClick={() => void refresh()}>Retry</button></ToolCard>;
   const pending = info.pending;
   const idleText =
     text || (info.lastResult ? info.lastResult.message : "");
@@ -103,6 +104,7 @@ export function LauncherUpdatesCard({ setStatus }: { setStatus: Status }) {
         </span>
       }
     >
+      {refreshError && <p role="status">Update information could not be refreshed: {refreshError}</p>}
       {info.builtAt && (
         <p className="settings-description" id="launcherBuildDate">
           Built {new Date(info.builtAt).toLocaleDateString()}

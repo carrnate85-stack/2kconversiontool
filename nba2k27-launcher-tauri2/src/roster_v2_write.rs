@@ -1473,6 +1473,10 @@ impl Owner {
     }
 }
 pub(crate) trait Access {
+    /// One-shot independently bounded retained-identity recovery; never forward permission.
+    fn begin_recovery(&self) -> Result<()> {
+        bail!("This adapter cannot enter bounded recovery")
+    }
     fn owner(&self) -> Result<Owner>;
     fn capture(&self) -> Result<Vec<u8>>;
     fn write(&self, offset: usize, bytes: &[u8]) -> Result<()>;
@@ -1798,6 +1802,7 @@ pub(crate) fn apply(
         }),
         Err(error) => {
             let rollback = (|| -> Result<()> {
+                m.begin_recovery()?;
                 for index in (0..attempted).rev() {
                     ensure!(m.owner()? == *owner, "Rollback owner changed");
                     let current = m.capture()?;

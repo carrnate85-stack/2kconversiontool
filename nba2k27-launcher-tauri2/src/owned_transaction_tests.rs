@@ -205,3 +205,126 @@ fn teardown_identity_failure_only_accepts_signaled_exact_retained_writer() {
         assert_eq!(error.to_string(), "original identity failure");
     }
 }
+
+#[test]
+fn watchdog_deadline_starts_at_ack_not_bootstrap_and_never_renews() {
+    let mut d = WatchdogDeadline::new(100);
+    d.check(3500).unwrap();
+    d.freeze_ack(3500).unwrap();
+    d.check(11499).unwrap();
+    assert!(d.freeze_ack(11500).is_err());
+    assert!(d.check(11501).is_err());
+    let mut d = WatchdogDeadline::new(100);
+    d.freeze_ack(3500).unwrap();
+    d.check(13499).unwrap();
+    assert!(d.check(13500).is_err());
+    let mut d = WatchdogDeadline::new(100);
+    d.check(30099).unwrap();
+    assert!(d.check(30100).is_err());
+    let mut d = WatchdogDeadline::new(100);
+    assert!(d.check(99).is_err());
+    assert!(d.freeze_ack(101).is_err());
+}
+#[test]
+fn authenticated_shutdown_is_bounded_and_stops_on_exact_handle_exit() {
+    use std::cell::Cell;
+    let n = Cell::new(0);
+    let waits = std::cell::RefCell::new(Vec::new());
+    assert!(
+        platform::bounded_retained_shutdown(
+            || {
+                n.set(n.get() + 1);
+                false
+            },
+            |ms| {
+                waits.borrow_mut().push(ms);
+                258
+            }
+        )
+        .is_err()
+    );
+    assert_eq!(n.get(), 3);
+    assert_eq!(*waits.borrow(), vec![0, 1000, 1000, 1000]);
+    platform::bounded_retained_shutdown(|| panic!("already stopped"), |_| 0).unwrap();
+    let n = Cell::new(0);
+    platform::bounded_retained_shutdown(
+        || {
+            n.set(n.get() + 1);
+            true
+        },
+        |ms| if ms == 0 { 258 } else { 0 },
+    )
+    .unwrap();
+    assert_eq!(n.get(), 1);
+}
+#[test]
+fn exited_thread_retries_whole_admission_once_unknown_failure_never_retries() {
+    let mut n = 0;
+    platform::bounded_thread_snapshot(|| {
+        n += 1;
+        Ok(n == 2)
+    })
+    .unwrap();
+    assert_eq!(n, 2);
+    let mut n = 0;
+    assert!(
+        platform::bounded_thread_snapshot(|| {
+            n += 1;
+            Ok(false)
+        })
+        .is_err()
+    );
+    assert_eq!(n, 2);
+    let mut n = 0;
+    assert!(
+        platform::bounded_thread_snapshot(|| {
+            n += 1;
+            anyhow::bail!("unknown")
+        })
+        .is_err()
+    );
+    assert_eq!(n, 1);
+}
+
+#[test]
+fn exact_handle_archive_never_appends_filename_bytes_at_alignment_boundaries() {
+    use std::{
+        fs::{self, OpenOptions},
+        io::Write,
+        os::windows::fs::OpenOptionsExt,
+    };
+    let dir = std::env::temp_dir().join(format!(
+        "C27-rename-boundaries-{}-{}",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos()
+    ));
+    fs::create_dir(&dir).unwrap();
+    for n in 0..32 {
+        let source = dir.join(format!("{n}.pending"));
+        let target = dir.join(format!("{}.completed", "a".repeat(64 + n)));
+        let mut f = OpenOptions::new()
+            .create_new(true)
+            .read(true)
+            .write(true)
+            .share_mode(1)
+            .open(&source)
+            .unwrap();
+        f.write_all(b"immutable evidence").unwrap();
+        f.sync_all().unwrap();
+        drop(f);
+        let f = OpenOptions::new()
+            .read(true)
+            .access_mode(0x80010000)
+            .share_mode(1)
+            .open(&source)
+            .unwrap();
+        platform::archive_intent(&f, &target).unwrap();
+        assert!(!source.exists());
+        assert_eq!(fs::read(&target).unwrap(), b"immutable evidence");
+    }
+    assert_eq!(fs::read_dir(&dir).unwrap().count(), 32);
+    fs::remove_dir_all(&dir).unwrap();
+}

@@ -1,0 +1,47 @@
+{
+  "createdUtc": "2026-10-19T19:47:13.881825+00:00",
+  "state": "SOURCE FROZEN; no Cargo/build/testexecution or actual update install by agent",
+  "files": [
+    {
+      "path": "src/launcher_update.rs",
+      "bytes": 47563,
+      "sha256": "FFF474396D4BA50170F9832B93206C53EA4CBCE5C73C9D34684AAEA346A5A41E"
+    }
+  ],
+  "backup": "Backups/qa085-claude-review-20261019/media-before/launcher_update.rs",
+  "verdicts": {
+    "M5": {
+      "verdict": "Agree",
+      "fix": "No trusted provisioned publisher key exists in updater; externally selected updates failclosed before any stage/copy/current-manifest mutation. Runner onlyallows a staged fullmanifest+files equal freshlyverified local PreviousApp, then rebinds exact directoryidentity at transactionstart. build_info exposesdisabledstatus+reason. No generatedkey/packagekey/userconfiguredkey masquerades as trust.",
+      "versionPolicy": "Numeric3component then prereleaseidentifier precedence rejects olderexternalversions; stable outranks prerelease, numeric suffixes compare numerically. Exactsameversion replacement onlyQA\u2192QA. Explicit PreviousApp rollback exempt."
+    },
+    "M7": {
+      "verdict": "Agree",
+      "fix": "Journal schema2 durablyrecords exact original App/PreviousApp +incoming fullmanifests and volume/FileID directoryidentities. Failedswap only clearsjournal after exactconditionalreverse and fulloriginalsverify. Recovery rejects differentvalidselfmanifest/directory. All errorsretainjournal; runnerdoesnotexecuteApp onfailed/heldrecovery.",
+      "compatibility": "Legacy schema1 journals lack original witnesses and remainheld withmanualreview explanation; no guessed restoration. Existing PreviousApp normalrollback stays supported."
+    }
+  },
+  "testsAdded": [
+    "incoming_authentication_is_closed_and_versions_cannot_downgrade",
+    "recovery_retains_journal_for_valid_but_foreign_app_or_previous",
+    "legacy_recovery_without_preimage_keeps_all_evidence"
+  ],
+  "testsUpdated": [
+    "apply_swaps_keeps_one_previous_and_rollback_round_trips: normal trusted transaction fixture usesprivatecfgtest bypass, explicit PreviousApp usesPRODUCTIONapply authgate",
+    "interrupted_swap_recovers_the_old_app: schema2 preimages beforeactualdirectoryrename andcommittedrecovery"
+  ],
+  "validation": "Explicit rustfmt --skip_children parsePASS; parent mustcompile/runlauncher_update tests. No candidate executable launched.",
+  "publisherProvisioningDesign": [
+    "Choose a real publisher offline signing authority outside packages/localuserinput; publish verification publickey via separatelyreviewed applicationrelease. No key material createdhere.",
+    "Detached versioned envelope binds exact canonicalrelease manifest bytes/digest, product/channel/version/algorithm/keyID; rejectunknownschema/alg/keyid, noncanonical signedmessage, mismatchedfileinventory.",
+    "Trustedkeyring compiledintoapp (or secure authenticated keyrotation chain anchoredincompiledkey), NEVER loadeduntrusted fromchosenpackage/settings. Provision keyrotation/revocation policy beforeenable.",
+    "Verify signature andversionbeforecopy, again on stagedbytes immediatelybeforerunnerswap; keep allfullfilehash/inventory/pathvalidation. ExplicitPreviousApp rollback separatetypedroute cannot grant newexternalupdateauthorization.",
+    "Tests: modifiedmanifest+rehashedpackage, replacedkey/signature, wrongproduct/channel/version, downgrade/prereleaseordering, unsignedpackage, signednewpackage, signedmanifest-copy drift betweenprepare/runner, explicitpreviousrollback."
+  ],
+  "limits": [
+    "Cryptographic externalupdateauth is disabledpendingrealpublishertrust provisioning; this is deliberatefailclosed, not completed signinginfrastructure.",
+    "Schema1 oldupdaterpending recovery needsmanualreview; sourcecannotinvent originalsnapshots.",
+    "DirectoryIDs+fullmanifests strengthenknownlocaltransactionrollback; not claimdefenseagainst administrator rewritingprocess/files/journal concurrently.",
+    "No install/promote/activate/desktop/game/GitHub actions; QA084 andhistoricalAV evidence unchanged."
+  ]
+}

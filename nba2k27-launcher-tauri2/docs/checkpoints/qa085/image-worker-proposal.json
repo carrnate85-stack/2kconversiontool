@@ -1,0 +1,42 @@
+{
+  "createdUtc": "2026-10-19T19:40:07.012129+00:00",
+  "issue": "L4",
+  "verdict": "Agree: current WIC image decode is in launcher and native calls are not interruptible by cancel/deadline",
+  "scope": "Research only per assigned ownership. No edits to jukebox_artwork.rs/roster_artwork_import.rs or main routing.",
+  "evidence": [
+    {
+      "path": "src/jukebox_artwork.rs",
+      "lines": "57-138",
+      "finding": "CreateDecoderFromStream/GetFrame/GetSize/format converter/scaler/CopyPixels nativeWIC calls happen in main process. Checks before/after cannot terminate a stuck nativecall. Input4MiB/singleframe/dim8192/16megapixel limit bounds ordinary allocation, not call duration."
+    },
+    {
+      "path": "src/jukebox_decode_worker.rs",
+      "finding": "Existing owned sameEXE/job private framedtransport and deadline/reap mechanism is sound reusable pattern; currentworker onlyaudio and protocol requires typednewmode."
+    }
+  ],
+  "minimalFutureImplementation": [
+    "New explicit image-worker mode in exact pinned/currentlauncherEXE; existing worker process/job identity pinning and kill-on-close Job; no gameprocess handle or librarywrite in child.",
+    "Bounded private request input<=4MiB + nonce/SHA, no caller URL/path/cachedauthorization; child WIC returns exact256x256RGBA262144B +SHA, atmostboundeddiagnostic.",
+    "Parent validates size/hash/nonce beforebufferaccept; walltimeout/cancel kills and reaps exactownedchild before pipejoin. No inprocessfallback onfailure.",
+    "Parent pure Rust TLD/PNG encoders preserve current256x256 output; caller existing manualart prepare/commit review staysunchanged.",
+    "Fixtures: malformedimage, oversizedheader, hugepixelmetadata, stallednativecall syntheticchild, cancel, childAV, earlyEOF, foreignnonce/hash, parentdeath/jobclose and cleanup. ActualWIC validPNG/JPEG/BMP/WebP synthetic inputs in child."
+  ],
+  "notClaimed": [
+    "No image worker implemented in this confined media patch.",
+    "No assertion WIC is malicious, currentassetcorruption observed or historicalRustAV explained."
+  ],
+  "sourcePins": [
+    {
+      "path": "src/jukebox_artwork.rs",
+      "sha256": "995C8B89CD1D8119CBF7B1820A108FE115CF4C89B026D493A24D59E21F42FD4C"
+    },
+    {
+      "path": "src/roster_artwork_import.rs",
+      "sha256": "BD2A069F924C43C6299998A2AB0AE78A1A463CC019ADDB9937744821B62FE8DF"
+    },
+    {
+      "path": "src/jukebox_decode_worker.rs",
+      "sha256": "583A9CD26CA1139D666A8113D0C1D050C37689F92B0E46476C6255533ED7A507"
+    }
+  ]
+}

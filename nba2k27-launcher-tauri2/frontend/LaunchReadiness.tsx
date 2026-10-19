@@ -78,6 +78,7 @@ export function LaunchReadiness({
   const [report, setReport] = useState<Report | null>(null),
     [busy, setBusy] = useState(false),
     [error, setError] = useState(""),
+    [pollError, setPollError] = useState(""),
     [session, setSession] = useState<Session | null>(null),
     [observer, setObserver] = useState<BlacktopObservation | null>(null),
     [confirm, setConfirm] = useState(false),
@@ -126,13 +127,14 @@ export function LaunchReadiness({
         if (alive && (!pending.current || launching.current)) {
           if (launching.current && ["idle", "closed"].includes(s.phase)) return;
           setSession(s);
+          setPollError("");
           if (s.phase === "closed" && !s.error) {
             setReport((old) => (old?.recoveryRequired ? null : old));
           }
           if (o) setObserver(o);
         }
       } catch (e) {
-        if (alive) setError(String(e));
+        if (alive) setPollError(String(e));
       } finally {
         polling = false;
       }
@@ -378,9 +380,9 @@ export function LaunchReadiness({
           {launchNotice}
         </p>
       )}
-      {(error || session?.error) && (
+      {(error || pollError || session?.error) && (
         <p role="alert" className="notice play-launch-alert">
-          {error || session?.error}
+          {error || pollError || session?.error}
         </p>
       )}
       {(report?.recoveryRequired ||
