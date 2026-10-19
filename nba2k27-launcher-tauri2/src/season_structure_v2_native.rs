@@ -1022,6 +1022,76 @@ pub(super) fn pending(root: &Path) -> Result<bool> {
     }
     Ok(false)
 }
+/// Retire only this process's authenticated watchdog completion. Disk receipts
+/// alone cannot reach this path, grant authority, or authorize replay on restart.
+fn archive_current_verified(root: &Path, game: &Identity, session: &str) -> Result<()> {
+    archive_current_verified_with(
+        root,
+        game,
+        session,
+        &crate::owned_transaction::verified_intent,
+        &crate::owned_transaction::forget_verified,
+    )
+}
+fn archive_current_verified_with(
+    root: &Path,
+    game: &Identity,
+    session: &str,
+    proof: &dyn Fn(&Identity, &str, &str) -> bool,
+    forget: &dyn Fn(&Identity, &str, &str) -> Result<()>,
+) -> Result<()> {
+    for path in inventory(root)? {
+        let (file, raw, meta, _) = read_pending(&path, true)?;
+        let sha = digest(&raw);
+        if &meta.game != game || meta.session != session || !proof(game, session, &sha) {
+            continue;
+        }
+        let receipt_path = path.with_extension("verified");
+        let mut receipt_file = OpenOptions::new()
+            .read(true)
+            .share_mode(1)
+            .custom_flags(0x0020_0000)
+            .open(&receipt_path)?;
+        use std::os::windows::fs::MetadataExt;
+        let metadata = receipt_file.metadata()?;
+        ensure!(
+            metadata.is_file() && metadata.file_attributes() & 0x400 == 0 && metadata.len() <= 8192,
+            "Invalid structural completion receipt"
+        );
+        let mut bytes = Vec::new();
+        Read::by_ref(&mut receipt_file)
+            .take(8193)
+            .read_to_end(&mut bytes)?;
+        ensure!(
+            bytes.len() as u64 == metadata.len()
+                && receipt_file.metadata()?.len() == metadata.len(),
+            "Structural completion receipt changed"
+        );
+        let receipt: Value = serde_json::from_slice(&bytes)?;
+        ensure!(
+            receipt.as_object().is_some_and(|v| v.len() == 6)
+                && receipt["schema"] == "nba2k27-season-structure-verified-v1"
+                && receipt["game"] == serde_json::to_value(game)?
+                && receipt["session"] == session
+                && receipt["intentSha256"] == sha
+                && receipt["transaction"] == meta.transaction
+                && matches!(
+                    receipt["status"].as_str(),
+                    Some("before" | "after" | "no-effect")
+                ),
+            "Structural completion receipt identity mismatch"
+        );
+        // DELETE access is held on the exact immutable intent, so namespace replacement
+        // cannot redirect the rename. Archive is evidence only, never a new live permit.
+        crate::owned_transaction::archive_intent(&file, &path.with_extension("completed"))?;
+        // Rename needs no byte mutation/write access. If filesystem metadata is
+        // lost on a crash, the immutable pending intent conservatively reappears;
+        // disk completion still cannot authorize live recovery after restart.
+        forget(game, session, &sha)?;
+    }
+    Ok(())
+}
+
 pub(super) fn resolve_ended(root: &Path, rows: &[Process]) -> Result<()> {
     ensure!(
         !rows
@@ -1140,6 +1210,7 @@ pub(super) fn execute_inside(ctx: &mut Transaction, spec: &Value) -> Result<Valu
     if let Err(original) = outcome {
         live.reverse = true;
         let rollback = (|| -> Result<()> {
+            live.access.begin_recovery()?;
             let observed = capture(
                 &live,
                 &live.access,
@@ -1382,6 +1453,7 @@ pub(super) fn editor(capture: &mut NativeCapture, request: &Editor<'_>) -> Resul
     capture.seasons.clear();
     capture.prepared_seasons.clear();
     capture.stale = true;
+    archive_current_verified(request.root, &b.game, &b.session)?;
     result.and_then(verified_completion)
 }
 pub(super) fn available(access: &Access) -> bool {
@@ -1721,6 +1793,7 @@ fn import_editor(tab: &mut NativeCapture, request: &Editor<'_>) -> Result<Value>
     tab.seasons.clear();
     tab.prepared_seasons.clear();
     tab.stale = true;
+    archive_current_verified(request.root, &b.game, &b.session)?;
     result.and_then(verified_completion)
 }
 

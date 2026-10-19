@@ -1074,7 +1074,7 @@ pub(super) fn reapply_profile(
     binding: &Binding,
     profile: &crate::custom_arena_profiles::Profile,
     mods_root: &Path,
-    gate: &std::sync::MutexGuard<'static, ()>,
+    gate: &crate::session_safety::WriteGuard,
 ) -> Result<Value> {
     let (_key, needs_write) = profile_admission(binding, profile, mods_root)?;
     if !needs_write {

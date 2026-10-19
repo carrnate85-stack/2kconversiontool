@@ -1,0 +1,33 @@
+{
+  "utc": "2026-10-19T20:09:53.712908+00:00",
+  "originalHead": "e63fb73ceee02b26e97f0770de7cf3a00a5a5add",
+  "originalIndexSha256": "276BE23CC044838A3A44EAD03F5693F24739D9EC0F3BB4024D6FABF7AFDA599F",
+  "originalStagedSummary": "137 files changed, 42552 insertions(+), 752 deletions(-)",
+  "preserved": [
+    {
+      "path": "Dev/Pending/QA084/launcher.exe",
+      "sha256": "03BFFF642F4EB7853F9B0F5B4DBD542BF8D60E9B8F002C4B45FA787026374630"
+    },
+    {
+      "path": "Backups/qa084-passing-test-and-dev-20261019/exact-images-and-sources.zip",
+      "sha256": "15F319EA7DBE2D834D56B9A4C9CCCCA73F10D436F9397133245F6621DC50AE29"
+    },
+    {
+      "path": "assets/native/version-outfits-v2.dll",
+      "sha256": "83AF5D0613D1E90D51933F382C22D215F766A61A198CAFEB41E80606A1722518"
+    },
+    {
+      "path": "assets/native/version-outfits-v2-qa084.dll",
+      "sha256": "2E921A4E8B408996C20DEAD7412835A9197D67B83C05CE840130300A903120DD"
+    }
+  ],
+  "devOnly": true,
+  "gameLaunched": false,
+  "gameMemoryRead": false,
+  "gameMemoryWrite": false,
+  "installed": false,
+  "promoted": false,
+  "activated": false,
+  "starterCheckOnlyHeldForExistingLauncherPid": 35872,
+  "positiveOodleDiskAudits": 2
+}

@@ -36,6 +36,36 @@ pub(crate) mod admission;
 const SCHEMA: &str = "nba2k27-jukebox-decode-v1";
 const MAX_LINE: usize = 4096;
 const MAX_OUTPUT: usize = jukebox_audio::MAX_FRAMES as usize * 4;
+fn declared_output_limit(input: &[u8]) -> Result<usize> {
+    if input.len() >= 42
+        && input.starts_with(b"fLaC")
+        && input[4] & 127 == 0
+        && input[5..8] == [0, 0, 34]
+    {
+        let info = u64::from_be_bytes(input[18..26].try_into()?);
+        let samples = info & 0xfffffffff;
+        if samples > 0
+            && info >> 44 == 48000
+            && ((info >> 41) & 7) + 1 == 2
+            && ((info >> 36) & 31) + 1 == 16
+        {
+            let bytes = samples.checked_mul(4).context("FLAC size overflow")?;
+            ensure!(
+                bytes <= MAX_OUTPUT as u64,
+                "FLAC decoded size exceeds bound"
+            );
+            return Ok(bytes as usize);
+        }
+    }
+    Ok(MAX_OUTPUT)
+}
+fn effective_output_limit(input: &[u8], requested: usize) -> Result<usize> {
+    ensure!(
+        (4..=MAX_OUTPUT).contains(&requested) && requested % 4 == 0,
+        "Invalid private audio output bound"
+    );
+    Ok(declared_output_limit(input)?.min(requested))
+}
 #[derive(Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 struct Request {
@@ -43,6 +73,8 @@ struct Request {
     nonce: String,
     size: usize,
     sha256: String,
+    #[serde(default)]
+    output_limit: Option<usize>,
 }
 #[derive(Serialize, Deserialize)]
 #[serde(tag = "kind", rename_all = "camelCase", deny_unknown_fields)]
@@ -100,6 +132,11 @@ pub(crate) fn run(nonce: &str) -> Result<()> {
                 && catalog::hex(&request.sha256, 64),
             "Invalid private audio worker request"
         );
+        let requested_limit = request.output_limit.unwrap_or(MAX_OUTPUT);
+        ensure!(
+            (4..=MAX_OUTPUT).contains(&requested_limit) && requested_limit % 4 == 0,
+            "Invalid private audio output bound"
+        );
         let mut source = vec![0; request.size];
         input.read_exact(&mut source)?;
         let mut trailing = [0];
@@ -109,6 +146,7 @@ pub(crate) fn run(nonce: &str) -> Result<()> {
             "Audio worker input length/hash differs"
         );
         let start = Instant::now();
+        let output_limit = effective_output_limit(&source, requested_limit)?;
         let mut last = Instant::now();
         let pcm = jukebox_decoder::decode_pcm(
             &source,
@@ -120,6 +158,10 @@ pub(crate) fn run(nonce: &str) -> Result<()> {
                 Ok(())
             },
             |frames| {
+                ensure!(
+                    (frames as usize).saturating_mul(4) <= output_limit,
+                    "Audio exceeds declared FLAC decoded size"
+                );
                 if last.elapsed() >= Duration::from_millis(200) {
                     send(
                         &mut output,
@@ -134,7 +176,7 @@ pub(crate) fn run(nonce: &str) -> Result<()> {
             },
         )?;
         ensure!(
-            !pcm.is_empty() && pcm.len() <= MAX_OUTPUT && pcm.len() % 4 == 0,
+            !pcm.is_empty() && pcm.len() <= output_limit && pcm.len() % 4 == 0,
             "Invalid audio worker PCM output"
         );
         send(
@@ -306,7 +348,12 @@ fn pin_parents(path: &Path) -> Result<ExecutableParents> {
     }
     Ok(ExecutableParents(files))
 }
-fn read_output(reader: impl Read, nonce: &str, sender: &mpsc::Sender<Event>) -> Result<()> {
+fn read_output(
+    reader: impl Read,
+    nonce: &str,
+    sender: &mpsc::Sender<Event>,
+    output_limit: usize,
+) -> Result<()> {
     let mut input = BufReader::new(reader);
     let mut last = 0u32;
     for _ in 0..1024 {
@@ -327,7 +374,7 @@ fn read_output(reader: impl Read, nonce: &str, sender: &mpsc::Sender<Event>) -> 
             } => {
                 ensure!(
                     n == nonce
-                        && (4..=MAX_OUTPUT).contains(&size)
+                        && (4..=output_limit).contains(&size)
                         && size % 4 == 0
                         && catalog::hex(&sha256, 64),
                     "Invalid audio helper result declaration"
@@ -373,6 +420,7 @@ pub(crate) fn decode(
         &mut progress,
         Duration::from_secs(130),
         || Ok(()),
+        None,
     )
 }
 /// The only production child-creation entry point. Admission is revalidated
@@ -394,6 +442,28 @@ pub(crate) fn decode_guarded(
         &mut progress,
         Duration::from_secs(130),
         guard,
+        None,
+    )
+}
+pub(crate) fn decode_guarded_limit(
+    executable: &Path,
+    input: &[u8],
+    nonce: &str,
+    cancel: Arc<AtomicBool>,
+    progress: impl FnMut(u32) -> Result<()>,
+    guard: impl FnMut() -> Result<()>,
+    limit: usize,
+) -> Result<Vec<u8>> {
+    let _exclusive = admission::hold()?;
+    decode_bounded(
+        executable,
+        input,
+        nonce,
+        cancel,
+        progress,
+        Duration::from_secs(130),
+        guard,
+        Some(limit),
     )
 }
 fn decode_bounded(
@@ -404,6 +474,7 @@ fn decode_bounded(
     mut progress: impl FnMut(u32) -> Result<()>,
     deadline: Duration,
     mut guard: impl FnMut() -> Result<()>,
+    requested_limit: Option<usize>,
 ) -> Result<Vec<u8>> {
     ensure!(
         executable.is_absolute()
@@ -414,6 +485,12 @@ fn decode_bounded(
     );
     ensure!(!cancel.load(Ordering::Acquire), "Audio import cancelled");
     let _parents = pin_parents(executable)?;
+    let requested = requested_limit.unwrap_or(MAX_OUTPUT);
+    ensure!(
+        (4..=MAX_OUTPUT).contains(&requested) && requested % 4 == 0,
+        "Invalid private audio output bound"
+    );
+    let output_limit = effective_output_limit(input, requested)?;
     let pinned = fs::OpenOptions::new()
         .read(true)
         .share_mode(1)
@@ -465,6 +542,7 @@ fn decode_bounded(
         nonce: nonce.into(),
         size: input.len(),
         sha256: catalog::digest(input),
+        output_limit: Some(output_limit),
     };
     let header = serde_json::to_vec(&request)?;
     let payload = input.to_vec();
@@ -494,7 +572,7 @@ fn decode_bounded(
     let (tx, rx) = mpsc::channel();
     let nonce = nonce.to_string();
     let reader = thread::spawn(move || {
-        if let Err(error) = read_output(stdout, &nonce, &tx) {
+        if let Err(error) = read_output(stdout, &nonce, &tx, output_limit) {
             let _ = tx.send(Event::Error(error));
         }
     });
@@ -511,6 +589,10 @@ fn decode_bounded(
                 Ok(Event::Complete(pcm)) => {
                     let end = Instant::now();
                     loop {
+                        ensure!(
+                            !cancel.load(Ordering::Acquire) && start.elapsed() < deadline,
+                            "Audio helper canceled or timed out after output"
+                        );
                         if let Some(status) = owned.child.try_wait()? {
                             ensure!(status.success(), "Audio helper failed after output");
                             return Ok(pcm);
@@ -571,11 +653,45 @@ pub(crate) fn decode_test_deadline(
         |_| Ok(()),
         deadline,
         || Ok(()),
+        None,
     )
 }
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn flac_declared_size_bounds_output_before_allocating_pcm() {
+        let mut input = vec![0; 42];
+        input[..4].copy_from_slice(b"fLaC");
+        input[7] = 34;
+        let info = (48000u64 << 44) | (1 << 41) | (15 << 36) | 2;
+        input[18..26].copy_from_slice(&info.to_be_bytes());
+        assert_eq!(declared_output_limit(&input).unwrap(), 8);
+        let nonce = "a".repeat(48);
+        let msg = Message::Complete {
+            nonce: nonce.clone(),
+            size: 12,
+            sha256: "a".repeat(64),
+        };
+        let mut encoded = serde_json::to_vec(&msg).unwrap();
+        encoded.push(b'\n');
+        let (tx, _) = mpsc::channel();
+        assert_eq!(
+            read_output(encoded.as_slice(), &nonce, &tx, 8)
+                .unwrap_err()
+                .to_string(),
+            "Invalid audio helper result declaration"
+        );
+        let unknown = (48000u64 << 44) | (1 << 41) | (15 << 36);
+        input[18..26].copy_from_slice(&unknown.to_be_bytes());
+        assert_eq!(declared_output_limit(&input).unwrap(), MAX_OUTPUT);
+        assert_eq!(effective_output_limit(&input, 8).unwrap(), 8);
+        assert!(effective_output_limit(&input, 0).is_err());
+        let info =
+            (48000u64 << 44) | (1 << 41) | (15 << 36) | (jukebox_audio::MAX_FRAMES as u64 + 1);
+        input[18..26].copy_from_slice(&info.to_be_bytes());
+        assert!(declared_output_limit(&input).is_err());
+    }
     #[test]
     fn final_admission_guard_runs_after_executable_pinning_and_refuses_child_creation() {
         let called = AtomicBool::new(false);
@@ -590,6 +706,7 @@ mod tests {
                 called.store(true, Ordering::Release);
                 anyhow::bail!("authoritative game became active")
             },
+            None,
         );
         assert!(called.load(Ordering::Acquire));
         assert!(format!("{:#}", result.unwrap_err()).contains("no child was created"));
@@ -597,14 +714,14 @@ mod tests {
     #[test]
     fn helper_headers_and_output_are_bounded_and_identity_checked() {
         let (tx, _) = mpsc::channel();
-        assert!(read_output(&b"not-json\n"[..], &"a".repeat(48), &tx).is_err());
+        assert!(read_output(&b"not-json\n"[..], &"a".repeat(48), &tx, MAX_OUTPUT).is_err());
         let msg = Message::Progress {
             nonce: "b".repeat(48),
             frames: 1,
         };
         let mut data = serde_json::to_vec(&msg).unwrap();
         data.push(b'\n');
-        assert!(read_output(&data[..], &"a".repeat(48), &tx).is_err());
+        assert!(read_output(&data[..], &"a".repeat(48), &tx, MAX_OUTPUT).is_err());
         let oversized = vec![b'x'; MAX_LINE + 1];
         let mut reader = BufReader::new(oversized.as_slice());
         assert!(line(&mut reader).is_err());

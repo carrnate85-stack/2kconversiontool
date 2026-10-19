@@ -940,3 +940,20 @@ fn origin_capability_refuses_zero_choices_and_unknown_current_text() {
         true
     );
 }
+
+#[test]
+fn tab_limit_evicts_least_recently_used_not_smallest_id() {
+    let (s, _, _, _) = service();
+    let b = binding();
+    let tabs = (0..17)
+        .map(|i| format!("{i:08x}-1111-4111-8111-111111111111"))
+        .collect::<Vec<_>>();
+    for tab in &tabs[..16] {
+        s.request("rosterAutoAttach", tab, &b).unwrap();
+    }
+    assert_eq!(s.status(&tabs[0]).unwrap()["status"], "ready");
+    s.request("rosterAutoAttach", &tabs[16], &b).unwrap();
+    assert_eq!(s.status(&tabs[0]).unwrap()["status"], "ready");
+    assert_eq!(s.status(&tabs[1]).unwrap()["status"], "idle");
+    assert_eq!(s.status(&tabs[16]).unwrap()["status"], "ready");
+}

@@ -52,7 +52,13 @@ const TEAM_ID: u32 = 0x2ABD_43F2;
 const PERSON_ID: u32 = 0x31BD_8AF6;
 const PLAYER_NAMES: [u32; 2] = [0x51D5_5A69, 0xF45F_B0F8];
 const PLAYER_AFFILIATION: [u32; 7] = [
-    0x8EBB_AB92, 0x29EF_21A7, 0x028C_93E4, 0x524E_6767, 0x2549_57F1, 0xBB2D_C252, 0x5EE8_ECF8,
+    0x8EBB_AB92,
+    0x29EF_21A7,
+    0x028C_93E4,
+    0x524E_6767,
+    0x2549_57F1,
+    0xBB2D_C252,
+    0x5EE8_ECF8,
 ];
 const HEADER_SIZE_FIELD: u32 = 0x3187_5000;
 const STRIDES: [(u32, usize); 5] = [
@@ -68,7 +74,9 @@ const NATIONAL_IDS: [u64; 2] = [69, 361];
 const WPF_INSERT_AFTER_ID: u64 = 477;
 const PLACEHOLDER_BASE: u64 = 64000;
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, serde::Serialize, serde::Deserialize)]
+#[derive(
+    Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, serde::Serialize, serde::Deserialize,
+)]
 #[serde(rename_all = "kebab-case")]
 pub(crate) enum Variant {
     /// The WPF-era 403-row structure (default).
@@ -109,7 +117,10 @@ impl Variant {
 }
 
 fn sha256_hex(bytes: &[u8]) -> String {
-    Sha256::digest(bytes).iter().map(|b| format!("{b:02x}")).collect()
+    Sha256::digest(bytes)
+        .iter()
+        .map(|b| format!("{b:02x}"))
+        .collect()
 }
 fn folder(portable: &Path) -> PathBuf {
     portable.join("Data").join(FOLDER)
@@ -121,7 +132,10 @@ fn folder(portable: &Path) -> PathBuf {
 pub(crate) fn capture_key(m: &impl Memory) -> Result<Vec<u8>> {
     m.checkpoint()?;
     let h = m.read(m.base(), 4096)?;
-    ensure!(h.len() == 4096 && h[..2] == *b"MZ", "Invalid game image header");
+    ensure!(
+        h.len() == 4096 && h[..2] == *b"MZ",
+        "Invalid game image header"
+    );
     let pe = u32::from_le_bytes(h[60..64].try_into()?) as usize;
     ensure!(
         (64..=3800).contains(&pe)
@@ -215,7 +229,9 @@ fn read_indexed<const N: usize>(
             .windows(8)
             .enumerate()
             .filter_map(|(i, w)| (w == needle).then_some(i));
-        let at = hits.next().with_context(|| format!("{name} is absent from the archive index"))?;
+        let at = hits
+            .next()
+            .with_context(|| format!("{name} is absent from the archive index"))?;
         ensure!(
             hits.next().is_none() && at + 24 <= bytes.len(),
             "Ambiguous or truncated archive index entry for {name}"
@@ -223,7 +239,10 @@ fn read_indexed<const N: usize>(
         // +8 is the decoded size; +12 holds packed size << 1 (verified on the
         // seven entries in roster-scratch/asset-provenance.json).
         let doubled = u32::from_le_bytes(bytes[at + 12..at + 16].try_into()?);
-        ensure!(doubled & 1 == 0, "Unexpected archive index flags for {name}");
+        ensure!(
+            doubled & 1 == 0,
+            "Unexpected archive index flags for {name}"
+        );
         let size = (doubled >> 1) as usize;
         let position = u64::from_le_bytes(bytes[at + 16..at + 24].try_into()?) >> 23;
         ensure!(
@@ -234,7 +253,9 @@ fn read_indexed<const N: usize>(
         for path in &archives {
             let file = open_plain(path)?;
             let meta = file.metadata()?;
-            let end = start.checked_add(meta.len()).context("Archive range overflow")?;
+            let end = start
+                .checked_add(meta.len())
+                .context("Archive range overflow")?;
             if position >= start && position + size as u64 <= end {
                 use std::os::windows::fs::FileExt;
                 let mut payload = vec![0u8; size];
@@ -263,30 +284,32 @@ fn read_indexed<const N: usize>(
 }
 
 type Decode = unsafe extern "C" fn(
-    *const u8, i64, *mut u8, i64, i32, i32, i32, *mut u8, i64, *mut u8, *mut u8, *mut u8, i64, i32,
+    *const u8,
+    i64,
+    *mut u8,
+    i64,
+    i32,
+    i32,
+    i32,
+    *mut u8,
+    i64,
+    *mut u8,
+    *mut u8,
+    *mut u8,
+    i64,
+    i32,
 ) -> i64;
 struct Oodle {
-    _library: libloading::Library,
+    _library: crate::trusted_oodle::Library,
     decode: Decode,
-    _pins: crate::loader_files::Directories,
 }
 impl Oodle {
     fn load(game: &Path) -> Result<Self> {
-        let path = game.join("data/oodle/oo2core_9_win64.dll");
-        let pins = crate::loader_files::Directories::pin(path.parent().unwrap())?;
-        drop(open_plain(&path)?);
-        let path = path.canonicalize()?;
-        // Absolute pinned installed DLL; dependency search limited to its
-        // directory and System32 (same policy as stock_selectors::Decoder).
-        let library: libloading::Library = unsafe {
-            libloading::os::windows::Library::load_with_flags(path.as_os_str(), 0x100 | 0x800)?
-        }
-        .into();
+        let library = crate::trusted_oodle::load(game, crate::trusted_oodle::Runtime::Core)?;
         let decode = *unsafe { library.get::<Decode>(b"OodleLZ_Decompress\0") }?;
         Ok(Self {
             _library: library,
             decode,
-            _pins: pins,
         })
     }
 }
@@ -302,7 +325,10 @@ fn decode(packed: &[u8], key: &[u8], oodle: &Oodle) -> Result<Vec<u8>> {
     let end = packed.len();
     let crc = u32::from_le_bytes(packed[end - 8..end - 4].try_into()?);
     let size = u32::from_le_bytes(packed[end - 4..].try_into()?) as usize;
-    ensure!((64..=64 * 1024 * 1024).contains(&size), "Stock roster size exceeds bounds");
+    ensure!(
+        (64..=64 * 1024 * 1024).contains(&size),
+        "Stock roster size exceeds bounds"
+    );
     let mut payload = packed[16..end - 8].to_vec();
     crate::vcblowfish::Blowfish::new(key)?.decrypt(&mut payload)?;
     let mut out = vec![0u8; size];
@@ -346,7 +372,10 @@ fn read_salt(exe: &Path) -> Result<Vec<u8>> {
     let sections = u16::from_le_bytes(head[pe + 6..pe + 8].try_into()?) as usize;
     let optional = u16::from_le_bytes(head[pe + 20..pe + 22].try_into()?) as usize;
     let table = pe + 24 + optional;
-    ensure!(table + 40 * sections <= head.len(), "Executable section table exceeds bounds");
+    ensure!(
+        table + 40 * sections <= head.len(),
+        "Executable section table exceeds bounds"
+    );
     for k in 0..sections {
         let s = &head[table + 40 * k..table + 40 * (k + 1)];
         let word = |at: usize| u32::from_le_bytes(s[at..at + 4].try_into().unwrap());
@@ -415,7 +444,9 @@ impl Merge {
         };
         let (off, names) = &self.pid;
         Ok(get(&b, *off, 16) == get(&s, *off, 16)
-            && names.iter().all(|(o, c)| wide(&b, *o, *c) == wide(&s, *o, *c)))
+            && names
+                .iter()
+                .all(|(o, c)| wide(&b, *o, *c) == wide(&s, *o, *c)))
     }
     fn staff_in_base(&mut self, i: usize) -> Result<bool> {
         let team_slots = self.team_slots(STAFF)?;
@@ -514,7 +545,12 @@ fn shift_team_refs(rows: &mut [Vec<u8>], slots: &[usize], at: usize, n: usize) {
         for &off in slots {
             let v = get(r, off, 64);
             if v != NULL_REF && (v >> 32) as usize >= at {
-                put(r, off, 64, ((((v >> 32) as usize + n) as u64) << 32) | (v & 0xFFFF_FFFF));
+                put(
+                    r,
+                    off,
+                    64,
+                    ((((v >> 32) as usize + n) as u64) << 32) | (v & 0xFFFF_FFFF),
+                );
             }
         }
     }
@@ -537,7 +573,12 @@ fn fresh_ids(rows: &mut [Vec<u8>], base: &[Vec<u8>], off: usize) {
     }
 }
 
-pub(crate) fn merge(base: Roster, src: Roster, variant: Variant, salt: &[u8]) -> Result<(Vec<u8>, Summary)> {
+pub(crate) fn merge(
+    base: Roster,
+    src: Roster,
+    variant: Variant,
+    salt: &[u8],
+) -> Result<(Vec<u8>, Summary)> {
     let types: BTreeMap<u32, u32> = src
         .type_map()
         .into_iter()
@@ -602,10 +643,21 @@ pub(crate) fn merge(base: Roster, src: Roster, variant: Variant, salt: &[u8]) ->
         !base_rows.iter().any(|r| kind(r) == WNBA_TYPE),
         "The base roster already contains WNBA teams"
     );
-    let base_by_id: BTreeMap<u64, usize> = base_rows.iter().enumerate().map(|(i, r)| (team_id(r), i)).collect();
-    ensure!(base_by_id.len() == base_rows.len(), "Base team IDs are not unique");
+    let base_by_id: BTreeMap<u64, usize> = base_rows
+        .iter()
+        .enumerate()
+        .map(|(i, r)| (team_id(r), i))
+        .collect();
+    ensure!(
+        base_by_id.len() == base_rows.len(),
+        "Base team IDs are not unique"
+    );
     let clubs: Vec<usize> = (0..src_rows.len())
-        .filter(|&i| type_f.iter().all(|f| get(&src_rows[i], f.offset, f.width) == WNBA_TYPE))
+        .filter(|&i| {
+            type_f
+                .iter()
+                .all(|f| get(&src_rows[i], f.offset, f.width) == WNBA_TYPE)
+        })
         .collect();
     let mut club_ids: Vec<u64> = clubs.iter().map(|&i| team_id(&src_rows[i])).collect();
     club_ids.sort();
@@ -625,7 +677,9 @@ pub(crate) fn merge(base: Roster, src: Roster, variant: Variant, salt: &[u8]) ->
             }))
             .collect(),
         Variant::WpfEra => (0..src_rows.len())
-            .filter(|&i| !tname(&src_rows[i]).is_empty() && !base_by_id.contains_key(&team_id(&src_rows[i])))
+            .filter(|&i| {
+                !tname(&src_rows[i]).is_empty() && !base_by_id.contains_key(&team_id(&src_rows[i]))
+            })
             .collect(),
     };
     let n = selected.len();
@@ -694,7 +748,12 @@ pub(crate) fn merge(base: Roster, src: Roster, variant: Variant, salt: &[u8]) ->
         }
     }
     ensure!(
-        teams.iter().map(|r| team_id(r)).collect::<BTreeSet<_>>().len() == teams.len(),
+        teams
+            .iter()
+            .map(|r| team_id(r))
+            .collect::<BTreeSet<_>>()
+            .len()
+            == teams.len(),
         "Merged team IDs are not unique"
     );
 
@@ -707,12 +766,18 @@ pub(crate) fn merge(base: Roster, src: Roster, variant: Variant, salt: &[u8]) ->
         let mut row = prows[i].clone();
         for &off in &p_team {
             let v = get(&srow, off, 64);
-            let Some(&t) = (v != NULL_REF).then(|| m.team_map.get(&((v >> 32) as usize))).flatten() else {
+            let Some(&t) = (v != NULL_REF)
+                .then(|| m.team_map.get(&((v >> 32) as usize)))
+                .flatten()
+            else {
                 continue;
             };
             let current = get(&row, off, 64);
             if current != NULL_REF {
-                ensure!((current >> 32) as usize == t, "Player {i}: base team reference is not empty");
+                ensure!(
+                    (current >> 32) as usize == t,
+                    "Player {i}: base team reference is not empty"
+                );
                 continue;
             }
             put(&mut row, off, 64, ((t as u64) << 32) | (v & 0xFFFF_FFFF));
@@ -733,7 +798,12 @@ pub(crate) fn merge(base: Roster, src: Roster, variant: Variant, salt: &[u8]) ->
             if v != NULL_REF
                 && let Some(&t) = m.team_map.get(&((v >> 32) as usize))
             {
-                put(&mut srows[i], off, 64, ((t as u64) << 32) | (v & 0xFFFF_FFFF));
+                put(
+                    &mut srows[i],
+                    off,
+                    64,
+                    ((t as u64) << 32) | (v & 0xFFFF_FFFF),
+                );
             }
         }
     }
@@ -760,7 +830,9 @@ pub(crate) fn merge(base: Roster, src: Roster, variant: Variant, salt: &[u8]) ->
     let align16 = |x: usize| (x + 15) & !15;
     let delta: usize = STRIDES
         .iter()
-        .map(|(id, stride)| align16(out.tables[id].rows * stride) - align16(m.base.tables[id].rows * stride))
+        .map(|(id, stride)| {
+            align16(out.tables[id].rows * stride) - align16(m.base.tables[id].rows * stride)
+        })
         .sum();
     let header = out.table(HEADER_TABLE)?;
     let mut row = header.rows_vec();
@@ -775,9 +847,19 @@ pub(crate) fn merge(base: Roster, src: Roster, variant: Variant, salt: &[u8]) ->
 
 /// Independent re-parse: CRCs, every reference in range, counts, and the
 /// offline-verified output hash for this variant.
-fn verify(bytes: &[u8], salt: &[u8], variant: Variant, at: usize, n: usize, appended: usize) -> Result<Summary> {
+fn verify(
+    bytes: &[u8],
+    salt: &[u8],
+    variant: Variant,
+    at: usize,
+    n: usize,
+    appended: usize,
+) -> Result<Summary> {
     let mut r = Roster::parse(bytes)?;
-    ensure!(r.bad_crcs(salt).is_empty(), "Merged roster CRC check failed");
+    ensure!(
+        r.bad_crcs(salt).is_empty(),
+        "Merged roster CRC check failed"
+    );
     let types = r.type_map();
     for id in r.order.clone() {
         let t = r.table(id)?;
@@ -810,7 +892,11 @@ fn verify(bytes: &[u8], salt: &[u8], variant: Variant, at: usize, n: usize, appe
     let id_f = field_by_name(&team, TEAM_ID)?;
     let mut team = team;
     let rows = team.rows_vec();
-    let count = |k: u64| rows.iter().filter(|x| get(x, kind_f.offset, kind_f.width) == k).count();
+    let count = |k: u64| {
+        rows.iter()
+            .filter(|x| get(x, kind_f.offset, kind_f.width) == k)
+            .count()
+    };
     let mut national: Vec<u64> = rows
         .iter()
         .filter(|x| get(x, kind_f.offset, kind_f.width) == NATIONAL_TYPE)
@@ -818,12 +904,18 @@ fn verify(bytes: &[u8], salt: &[u8], variant: Variant, at: usize, n: usize, appe
         .collect();
     national.sort();
     let (nba, wnba) = (count(0), count(WNBA_TYPE));
-    ensure!(nba == 30 && wnba == 15, "Merged roster must hold 30 NBA and 15 WNBA teams");
+    ensure!(
+        nba == 30 && wnba == 15,
+        "Merged roster must hold 30 NBA and 15 WNBA teams"
+    );
     if variant == Variant::WpfEra {
         ensure!(rows.len() == 403, "WPF-era roster must hold 403 teams");
     }
     if variant.exposes_categories() {
-        ensure!(national == NATIONAL_IDS, "Merged roster must hold both national teams");
+        ensure!(
+            national == NATIONAL_IDS,
+            "Merged roster must hold both national teams"
+        );
     }
     let sha = sha256_hex(bytes);
     ensure!(
@@ -880,7 +972,8 @@ pub(crate) fn build(
     let salt = read_salt(&game.join("NBA2K27.exe"))?;
     let [packed_nba, packed_wnba] = read_indexed(game, [PATH, WNBA_PATH], &check)?;
     ensure!(
-        sha256_hex(&packed_nba) == STOCK_NBA_SHA256 && sha256_hex(&packed_wnba) == STOCK_WNBA_SHA256,
+        sha256_hex(&packed_nba) == STOCK_NBA_SHA256
+            && sha256_hex(&packed_wnba) == STOCK_WNBA_SHA256,
         "Installed Learn2K rosters differ from the verified Version 2 files"
     );
     let oodle = Oodle::load(game)?;

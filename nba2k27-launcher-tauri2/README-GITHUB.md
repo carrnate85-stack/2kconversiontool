@@ -1,6 +1,6 @@
-# NBA 2K27 launcher — QA084 source checkpoint
+# NBA 2K27 launcher — QA085 review remediation
 
-Complete Rust/Tauri 2 launcher source and required embedded assets at QA084. This is an unpromoted development checkpoint; new editor paths still need live-game acceptance. Package version remains 0.53.1. The older README is historical; use NEXT-CHAT-HANDOFF-QA084.txt and docs/checkpoints/qa084 for current status.
+Complete Rust/Tauri 2 launcher source and required embedded assets, including QA085 review fixes. The retained native outfit payload is unchanged from QA084. This is an unpromoted development checkpoint; new editor paths still need live-game acceptance. Package version remains 0.53.1. The older README is historical; use NEXT-CHAT-HANDOFF-QA085.txt and docs/reviews/CODEX-RESPONSE-2026-10-19.md for current status.
 
 ## Build on Windows
 
@@ -35,3 +35,9 @@ Use one compiler job on the original workstation. Its documented affinity workar
 Includes backend/frontend, native source and required payloads, bundled assets, tests, scripts, schemas, documentation and source dependencies. Excludes personal Data/Library/Cache/Logs, dependency installs, compiler output, staged/installed binaries, backups, crash dumps and optional external thumbnail caches; local originals remain untouched. Historical QA starters reference excluded local staged builds. Checkpoint receipts reference local evidence archives that are intentionally excluded.
 
 Automatic custom-arena restoration after a roster reload within the same launch remains held until a committed native roster epoch is proven. Existing ownership, durability and no-replay guards remain.
+
+## QA085 review work
+
+Confirmed review fixes cover transaction recovery, shared native write admission, media bounds, filesystem cleanup, overlay command authority and frontend state. External unsigned updates are disabled until a publisher verification key is provisioned; explicit PreviousApp rollback remains guarded. WIC process containment, safe malformed-name row handling and other deferred items are listed in the review response. No gameplay acceptance, installation or promotion is implied.
+
+QA085 final validation: 1,529 Rust tests passed (54 explicitly ignored), 232 frontend tests, 15 browser/source scripts, TypeScript/Vite/dev builds, and two read-only installed-disk audits. Isolated native transaction fixtures also passed; see the review response and QA085 handoff for exact-image qualifications.

@@ -98,7 +98,7 @@
  const isAppliedRow=r=>['attributes','tendencies','badges','hotzones'].includes(r.group)||['firstName','lastName','heightCm','wingspanCm','weightLbs','fromName','positionId','secondaryPositionId'].includes(r.key);
  window.addEventListener('player-editor:open',clearWeb);
  fetchButton.addEventListener('click',async()=>{if(busy||!valid())return;if(current.editCapabilities){webStatus.textContent='Online page capture is not connected in this dev build. Use saved player-page data below, then review and Save & verify.';return;}const token=version;busy=true;enable();fetchButton.disabled=true;clearWeb();webStatus.textContent='Opening the ratings source. Let the selected player page load; close its window to cancel.';
-  try{const result=await window.modLauncher.playerDna({action:'2kdb',url:link.value.trim()});if(!result||token!==version||$('playerEditorModal').classList.contains('hidden'))return;
+  try{const result=await window.modLauncher.playerDna({action:'2kdb',url:link.value.trim()});if(token!==version||$('playerEditorModal').classList.contains('hidden'))return;if(!result){webStatus.textContent='Import canceled. Nothing was written.';return;}
    webStatus.textContent='Applying ratings and verifying changes…';
    const applied=await window.applyTwokdbRatings(result.data);if(applied.canceled){webStatus.textContent='Import canceled. Nothing was written.';return;}const count=applied.count;
    if(applied.warnings.length)result.warnings.push(...applied.warnings);

@@ -17,6 +17,8 @@ use std::{
     ffi::OsStr,
     fs,
     io::{BufRead, BufReader, Read},
+    mem::size_of,
+    os::windows::{ffi::OsStrExt, fs::OpenOptionsExt, io::AsRawHandle},
     path::{Component, Path, PathBuf},
     sync::Mutex,
     time::{Duration, Instant, SystemTime},
@@ -105,11 +107,17 @@ fn safe_part(part: &str) -> bool {
         .unwrap_or("")
         .trim_end()
         .to_ascii_uppercase();
-    let device = matches!(stem.as_str(), "CON" | "PRN" | "AUX" | "NUL")
-        || (stem.len() == 4
-            && (stem.starts_with("COM") || stem.starts_with("LPT"))
-            && stem.as_bytes()[3].is_ascii_digit());
+    let device = matches!(
+        stem.as_str(),
+        "CON" | "PRN" | "AUX" | "NUL" | "CONIN$" | "CONOUT$"
+    ) || (stem.len() == 4
+        && (stem.starts_with("COM") || stem.starts_with("LPT"))
+        && stem.as_bytes()[3].is_ascii_digit());
     !device
+        && !["COM", "LPT"].iter().any(|prefix| {
+            stem.strip_prefix(prefix)
+                .is_some_and(|n| matches!(n, "¹" | "²" | "³"))
+        })
 }
 /// Relative archive/package entry path (WPF `safeEntry`): no absolute or
 /// drive paths, no `.`/`..` segments, no device names or reserved characters.
@@ -1018,6 +1026,74 @@ fn metadata_matches(path: &Path, size: u64, modified: SystemTime) -> bool {
             && m.modified().unwrap_or(SystemTime::UNIX_EPOCH) == modified
     })
 }
+struct Staged<'a> {
+    item: &'a Item,
+    file: fs::File,
+    backup: Option<(PathBuf, fs::File)>,
+    published: bool,
+    _pins: crate::loader_files::Directories,
+}
+fn create_owned(path: &Path) -> Result<fs::File> {
+    Ok(fs::OpenOptions::new()
+        .read(true)
+        .write(true)
+        .create_new(true)
+        .access_mode(0x80000000 | 0x40000000 | 0x10000)
+        .share_mode(1)
+        .custom_flags(0x00200000)
+        .open(path)?)
+}
+fn same_file(file: &fs::File, path: &Path) -> Result<bool> {
+    use windows::Win32::{Foundation::HANDLE, Storage::FileSystem::*};
+    let other = fs::OpenOptions::new()
+        .read(true)
+        .share_mode(7)
+        .custom_flags(0x00200000)
+        .open(path)?;
+    let mut a = BY_HANDLE_FILE_INFORMATION::default();
+    let mut b = BY_HANDLE_FILE_INFORMATION::default();
+    unsafe {
+        GetFileInformationByHandle(HANDLE(file.as_raw_handle()), &mut a)?;
+        GetFileInformationByHandle(HANDLE(other.as_raw_handle()), &mut b)?;
+    }
+    Ok(a.dwVolumeSerialNumber == b.dwVolumeSerialNumber
+        && a.nFileIndexHigh == b.nFileIndexHigh
+        && a.nFileIndexLow == b.nFileIndexLow)
+}
+fn rename_owned(file: &fs::File, target: &Path, replace: bool) -> Result<()> {
+    use windows::Win32::{Foundation::HANDLE, Storage::FileSystem::*};
+    let name = std::path::absolute(target)?
+        .as_os_str()
+        .encode_wide()
+        .collect::<Vec<_>>();
+    ensure!(
+        !name.is_empty() && name.len() <= 32760 && !name.contains(&0),
+        "Mod path exceeds bounds"
+    );
+    let size = size_of::<FILE_RENAME_INFO>() + (name.len() + 1) * 2;
+    let mut buffer = vec![0u64; size.div_ceil(8)];
+    let info = buffer.as_mut_ptr() as *mut FILE_RENAME_INFO;
+    unsafe {
+        // FileRenameInfoEx REPLACE_IF_EXISTS | POSIX_SEMANTICS permits
+        // atomic replacement while our original read/DELETE-sharing handle
+        // stays open. It continues to deny concurrent writes through that
+        // handle. No readonly-attribute bypass or nonatomic fallback.
+        (*info).Anonymous.Flags = if replace { 0x1 | 0x2 } else { 0 };
+        (*info).FileNameLength = (name.len() * 2) as u32;
+        std::ptr::copy_nonoverlapping(name.as_ptr(), (*info).FileName.as_mut_ptr(), name.len());
+        SetFileInformationByHandle(
+            HANDLE(file.as_raw_handle()),
+            if replace {
+                FileRenameInfoEx
+            } else {
+                FileRenameInfo
+            },
+            info as _,
+            size as u32,
+        )?;
+    }
+    Ok(())
+}
 /// Installs a plan (WPF `installModPlan`) with per-file conflict decisions.
 /// `replace` and `keep` hold lowercase logical paths; every existing
 /// destination must appear in exactly one of them.
@@ -1044,8 +1120,9 @@ pub fn install(plan: &Plan, replace: &HashSet<String>, keep: &HashSet<String>) -
         .filter(|i| i.existing.is_none() || replace.contains(&i.logical.to_lowercase()))
         .collect();
     let kept = plan.items.len() - chosen.len();
-    // Stage a sibling temporary copy of every file first.
-    let mut staged: Vec<(&Item, PathBuf, Option<PathBuf>)> = Vec::new();
+    // Keep exact owned handles until commit/rollback completes. Each replace
+    // is one atomic handle rename; the old destination never disappears first.
+    let mut staged: Vec<Staged<'_>> = Vec::new();
     let stage = (|| -> Result<()> {
         for item in &chosen {
             ensure!(
@@ -1056,28 +1133,40 @@ pub fn install(plan: &Plan, replace: &HashSet<String>, keep: &HashSet<String>) -
             let parent = item
                 .destination
                 .parent()
-                .context("Destination parent missing")?;
+                .context("Missing destination folder")?;
             ensure!(
-                within(&plan.root, parent),
-                "Resolved destination is outside the mods folder."
+                parent.starts_with(&plan.root),
+                "Destination is outside the mods folder."
             );
             fs::create_dir_all(parent)?;
             plain_chain(
                 parent,
                 "Mod installation refuses linked destination folders.",
             )?;
-            let temporary =
-                parent.join(format!(".mod-install-{}.tmp", crate::backend::unique_id()));
-            let mut output = fs::OpenOptions::new()
-                .write(true)
-                .create_new(true)
-                .open(&temporary)?;
-            staged.push((*item, temporary, None));
-            let mut input = fs::File::open(&item.source)?;
-            let copied = std::io::copy(&mut (&mut input).take(item.size + 1), &mut output)?;
+            let pins = crate::loader_files::Directories::pin(parent)?;
+            let path = parent.join(format!(".mod-install-{}.tmp", crate::backend::unique_id()));
+            let file = create_owned(&path)?;
+            staged.push(Staged {
+                item,
+                file,
+                backup: None,
+                published: false,
+                _pins: pins,
+            });
+            let output = &mut &staged.last().unwrap().file;
+            let mut input = fs::OpenOptions::new()
+                .read(true)
+                .share_mode(1)
+                .custom_flags(0x00200000)
+                .open(&item.source)?;
+            ensure!(
+                !linked(&input.metadata()?),
+                "Linked mod input is unsupported"
+            );
+            let copied = std::io::copy(&mut (&mut input).take(item.size + 1), output)?;
             output.sync_all()?;
             ensure!(
-                copied == item.size,
+                copied == item.size && metadata_matches(&item.source, item.size, item.modified),
                 "{} changed after it was selected.",
                 item.name
             );
@@ -1085,65 +1174,97 @@ pub fn install(plan: &Plan, replace: &HashSet<String>, keep: &HashSet<String>) -
         Ok(())
     })();
     if let Err(error) = stage {
-        for (_, temporary, _) in &staged {
-            let _ = fs::remove_file(temporary);
+        for entry in &staged {
+            let _ = crate::loader_files::unlink(&entry.file);
         }
         return Err(error);
     }
-    let mut committed = 0usize;
     let commit = (|| -> Result<()> {
-        for (item, temporary, backup) in staged.iter_mut() {
-            let current = fs::symlink_metadata(&item.destination).ok();
-            let unchanged = match (&current, item.existing) {
-                (None, None) => true,
-                (Some(_), Some((size, modified))) => {
+        for entry in &mut staged {
+            let item = entry.item;
+            if let Some((size, modified)) = item.existing {
+                // Deny writes while making a durable original copy. DELETE
+                // sharing is necessary for atomic replacement, not for cleanup.
+                let input = fs::OpenOptions::new()
+                    .read(true)
+                    .share_mode(5)
+                    .custom_flags(0x00200000)
+                    .open(&item.destination)?;
+                ensure!(
                     metadata_matches(&item.destination, size, modified)
-                }
-                _ => false,
-            };
-            ensure!(
-                unchanged,
-                "{} changed while the install was being prepared.",
-                item.logical
-            );
-            if current.is_some() {
+                        && !linked(&input.metadata()?),
+                    "{} changed while the install was being prepared.",
+                    item.logical
+                );
                 let path = item
                     .destination
                     .with_file_name(format!(".mod-install-{}.bak", crate::backend::unique_id()));
-                fs::rename(&item.destination, &path)?;
-                *backup = Some(path);
+                let backup = create_owned(&path)?;
+                entry.backup = Some((path, backup));
+                let copied = std::io::copy(
+                    &mut (&input).take(size + 1),
+                    &mut &entry.backup.as_ref().unwrap().1,
+                )?;
+                entry.backup.as_ref().unwrap().1.sync_all()?;
+                ensure!(
+                    copied == size
+                        && same_file(&input, &item.destination)?
+                        && metadata_matches(&item.destination, size, modified),
+                    "Original mod changed before atomic replacement"
+                );
+                rename_owned(&entry.file, &item.destination, true)?;
+            } else {
+                // No replacement authority for a newly appeared destination.
+                rename_owned(&entry.file, &item.destination, false)?;
             }
-            committed += 1;
-            fs::rename(&*temporary, &item.destination)?;
+            entry.published = true;
+            entry.file.sync_all()?;
         }
         Ok(())
     })();
     if let Err(error) = commit {
-        for (item, _, backup) in staged[..committed].iter().rev() {
-            let _ = fs::remove_file(&item.destination);
-            if let Some(backup) = backup {
-                let _ = fs::rename(backup, &item.destination);
+        let mut held = Vec::new();
+        for entry in staged.into_iter().rev() {
+            // Handle-based unlink cannot delete an unrelated path replacement.
+            let removed = crate::loader_files::unlink(&entry.file);
+            drop(entry.file);
+            if entry.published {
+                if let Some((path, file)) = &entry.backup {
+                    if removed.is_err()
+                        || rename_owned(file, &entry.item.destination, false).is_err()
+                    {
+                        held.push(path.display().to_string());
+                    }
+                }
+            } else if let Some((_, file)) = &entry.backup {
+                let _ = crate::loader_files::unlink(file);
             }
         }
-        for (_, temporary, _) in &staged {
-            let _ = fs::remove_file(temporary);
-        }
+        ensure!(
+            held.is_empty(),
+            "Mod installation failed: {error:#}. Original backups preserved for recovery: {}",
+            held.join(", ")
+        );
         return Err(error);
     }
-    for (_, _, backup) in &staged {
-        if let Some(backup) = backup {
-            let _ = fs::remove_file(backup);
+    let mut cleanup_warnings = Vec::new();
+    for entry in &staged {
+        if let Some((path, file)) = &entry.backup {
+            if let Err(error) = crate::loader_files::unlink(file) {
+                cleanup_warnings.push(format!("Backup preserved at {}: {error:#}", path.display()));
+            }
         }
     }
     Ok(json!({
+        "cleanupWarnings": cleanup_warnings,
         "cancelled": false,
         "installed": staged.len(),
-        "replaced": staged.iter().filter(|(i, _, _)| i.existing.is_some()).count(),
+        "replaced": staged.iter().filter(|entry| entry.item.existing.is_some()).count(),
         "kept": kept,
         "ignored": plan.ignored.len(),
         "archives": plan.prepared.archives,
         "folders": plan.prepared.folders,
-        "items": staged.iter().map(|(i, _, _)| json!({"name":i.name,"logicalPath":i.logical,"size":i.size})).collect::<Vec<_>>(),
+        "items": staged.iter().map(|entry| { let i=entry.item; json!({"name":i.name,"logicalPath":i.logical,"size":i.size}) }).collect::<Vec<_>>(),
     }))
 }
 

@@ -487,8 +487,7 @@ fn rules_access_invalid_noop_stale_and_expired_leases_do_not_write() {
     }
     a.io.state.borrow_mut().values[1] = 1;
     assert!(a.apply_inner(&l, "ShotClock", 1).is_err());
-    static GATE: std::sync::Mutex<()> = std::sync::Mutex::new(());
-    let gate = GATE.lock().unwrap();
+    let gate = crate::session_safety::write_gate().unwrap();
     assert!(
         a.apply_under_gate(&l, "wrong", "ShotClock", 1, &gate)
             .is_err()

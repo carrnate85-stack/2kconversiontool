@@ -7,7 +7,7 @@ use std::{
     net::{TcpListener, TcpStream},
     sync::{
         Arc, Mutex,
-        atomic::{AtomicBool, Ordering},
+        atomic::{AtomicBool, AtomicUsize, Ordering},
     },
     thread::{self, JoinHandle},
     time::{Duration, Instant},
@@ -25,13 +25,23 @@ impl Server {
         listener.set_nonblocking(true)?;
         let stop = Arc::new(AtomicBool::new(false));
         let flag = stop.clone();
+        let active = Arc::new(AtomicUsize::new(0));
         let thread = thread::Builder::new()
             .name("jukebox-preview-http".into())
             .spawn(move || {
                 while !flag.load(Ordering::Acquire) {
                     match listener.accept() {
                         Ok((mut stream, peer)) if peer.ip().is_loopback() => {
-                            let _ = serve(&mut stream, &api, port, &flag);
+                            if let Some(permit) = Connection::claim(&active) {
+                                let api = api.clone();
+                                let flag = flag.clone();
+                                let _ = thread::Builder::new()
+                                    .name("jukebox-preview-connection".into())
+                                    .spawn(move || {
+                                        let _permit = permit;
+                                        let _ = serve(&mut stream, &api, port, &flag);
+                                    });
+                            }
                         }
                         Ok(_) => {}
                         Err(e) if e.kind() == std::io::ErrorKind::WouldBlock => {
@@ -66,6 +76,22 @@ impl Server {
             drop(t);
             thread::sleep(Duration::from_millis(5));
         }
+    }
+}
+struct Connection(Arc<AtomicUsize>);
+impl Connection {
+    fn claim(active: &Arc<AtomicUsize>) -> Option<Self> {
+        active
+            .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+                (n < 8).then_some(n + 1)
+            })
+            .ok()
+            .map(|_| Self(active.clone()))
+    }
+}
+impl Drop for Connection {
+    fn drop(&mut self) {
+        self.0.fetch_sub(1, Ordering::AcqRel);
     }
 }
 impl Drop for Server {
@@ -121,7 +147,7 @@ fn serve(stream: &mut TcpStream, api: &Api, port: u16, stop: &AtomicBool) -> Res
     let start = Instant::now();
     loop {
         ensure!(
-            !stop.load(Ordering::Acquire) && start.elapsed() < Duration::from_millis(800),
+            !stop.load(Ordering::Acquire) && start.elapsed() < Duration::from_millis(200),
             "Preview connection stopped"
         );
         let mut b = [0; 1024];
@@ -238,6 +264,19 @@ mod tests {
     include!("jukebox_test_paths.rs");
     use super::*;
     #[test]
+    fn connection_budget_is_bounded_and_released_on_drop() {
+        let active = Arc::new(AtomicUsize::new(0));
+        let mut held = Vec::new();
+        for _ in 0..8 {
+            held.push(Connection::claim(&active).unwrap());
+        }
+        assert!(Connection::claim(&active).is_none());
+        held.pop();
+        assert!(Connection::claim(&active).is_some());
+        drop(held);
+        assert_eq!(active.load(Ordering::Acquire), 0);
+    }
+    #[test]
     fn ranges_match_browser_audio_requests_and_reject_ambiguity() {
         assert_eq!(range(None, 100).unwrap(), (0, 99, false));
         assert_eq!(range(Some("bytes=0-"), 100).unwrap(), (0, 99, true));
@@ -307,6 +346,8 @@ mod tests {
             .prepare_preview(&key, &api.view().unwrap().revision)
             .unwrap();
         let server = Server::start(api.clone()).unwrap();
+        // An idle browser connection must not monopolize the accept loop.
+        let idle = TcpStream::connect((std::net::Ipv4Addr::LOCALHOST, server.port)).unwrap();
         let port = server.port;
         let request = |method: &str, path: &str, host: &str, extra: &str| {
             let mut stream = TcpStream::connect((std::net::Ipv4Addr::LOCALHOST, port)).unwrap();
@@ -373,6 +414,7 @@ mod tests {
         }
         api.release_preview(&p.token).unwrap();
         assert!(request("GET", &path, &host, "").starts_with(b"HTTP/1.1 404"));
+        drop(idle);
         server.shutdown();
         drop(server);
         api.shutdown(Duration::from_secs(1)).unwrap();

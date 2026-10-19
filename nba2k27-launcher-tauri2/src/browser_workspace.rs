@@ -31,7 +31,7 @@ const PREVIEW_JS: &str = r#"(() => {
       if(kind==='player')previewPlayerEditorLayout();
       else {
         openTeamEditor({source:'layout-preview',name:'76ers',cityName:'Philadelphia',cityShort:'PHI',stateShort:'PA',teamId:0,recordIndex:0,rosterTypeId:0});
-        document.getElementById('teamEditBoundary').textContent='Layout preview Ã‚Â· Sample data only. Nothing is read from or saved to the game.';
+        document.getElementById('teamEditBoundary').textContent='Layout preview · Sample data only. Nothing is read from or saved to the game.';
       }
     }
   },50);
@@ -190,7 +190,7 @@ fn read_request(stream: &mut TcpStream, stop: &AtomicBool) -> Result<Request> {
     let mut bytes = Vec::new();
     let (end, method, target, headers, length) = loop {
         ensure!(
-            !stop.load(Ordering::Acquire) && start.elapsed() < Duration::from_secs(3),
+            !stop.load(Ordering::Acquire) && start.elapsed() < Duration::from_millis(200),
             "Browser request expired"
         );
         if let Some(end) = bytes
@@ -1427,5 +1427,19 @@ mod tests {
             thread::sleep(Duration::from_millis(200));
         }
         runtime.shutdown();
+    }
+}
+
+#[cfg(test)]
+mod qa085_http_tests {
+    use super::*;
+    #[test]
+    fn idle_headers_release_worker_within_one_second() {
+        let listener = TcpListener::bind(("127.0.0.1", 0)).unwrap();
+        let _client = TcpStream::connect(listener.local_addr().unwrap()).unwrap();
+        let (mut stream, _) = listener.accept().unwrap();
+        let started = Instant::now();
+        assert!(read_request(&mut stream, &AtomicBool::new(false)).is_err());
+        assert!(started.elapsed() < Duration::from_secs(1));
     }
 }
