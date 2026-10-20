@@ -1479,6 +1479,9 @@ pub(crate) trait Access {
     /// Cancellation stops new work here. The other methods stay usable for
     /// bounded guarded rollback on the retained lease.
     fn checkpoint(&self) -> Result<()>;
+    /// Rollback retains the same ownership checks but must not be disabled by
+    /// the cancellation/deadline that caused the forward transaction to fail.
+    fn recovery(&self, _active: bool) {}
 }
 
 // -------------------------------------------------------------- journal ----
@@ -1797,6 +1800,7 @@ pub(crate) fn apply(
             read_back,
         }),
         Err(error) => {
+            m.recovery(true);
             let rollback = (|| -> Result<()> {
                 for index in (0..attempted).rev() {
                     ensure!(m.owner()? == *owner, "Rollback owner changed");
@@ -1816,6 +1820,7 @@ pub(crate) fn apply(
                 }
                 Ok(())
             })();
+            m.recovery(false);
             intent.pending = rollback.is_err();
             intent.result = if rollback.is_ok() {
                 "failed; original owned values verified"

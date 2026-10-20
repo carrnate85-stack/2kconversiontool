@@ -747,6 +747,45 @@ fn each_read_back_failure_or_reported_write_failure_rolls_back_the_owned_prefix(
     }
 }
 #[test]
+fn cancellation_after_a_write_still_allows_guarded_rollback() {
+    struct Cancelled {
+        inner: Fake,
+        recovery: Cell<bool>,
+    }
+    impl Access for Cancelled {
+        fn owner(&self) -> Result<Owner> {
+            self.checkpoint()?;
+            self.inner.owner()
+        }
+        fn capture(&self) -> Result<Vec<u8>> {
+            self.checkpoint()?;
+            self.inner.capture()
+        }
+        fn write(&self, offset: usize, bytes: &[u8]) -> Result<()> {
+            self.checkpoint()?;
+            self.inner.write(offset, bytes)
+        }
+        fn checkpoint(&self) -> Result<()> {
+            ensure!(
+                self.recovery.get() || self.inner.writes.get() == 0,
+                "Synthetic close cancellation"
+            );
+            Ok(())
+        }
+        fn recovery(&self, active: bool) {
+            self.recovery.set(active);
+        }
+    }
+    let (plan, owner) = player_plan();
+    let memory = Cancelled {
+        inner: Fake::new(&owner, &plan.before),
+        recovery: Cell::new(false),
+    };
+    assert!(apply(&memory, &owner, &plan, |_| Ok(())).is_err());
+    assert_eq!(*memory.inner.raw.borrow(), plan.before);
+    assert!(!memory.recovery.get());
+}
+#[test]
 fn partial_foreign_or_changed_owner_is_held_and_never_blindly_restored() {
     let (p, o) = player_plan();
     for kind in 0..3 {

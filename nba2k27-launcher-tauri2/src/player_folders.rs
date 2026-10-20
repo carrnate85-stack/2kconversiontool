@@ -468,6 +468,7 @@ impl Store {
                     .matches(&directory_id(&self.sig())?),
             "Player-folder directory ownership changed"
         );
+        let mut held = false;
         for entry in &self.record.entries {
             let staged = self.sig().join(&entry.staged);
             let staged_exists = !missing(&staged)?;
@@ -500,22 +501,34 @@ impl Store {
             // replaced the original source. Keep both receipt and data for review.
             let source = self.record.root.join(&entry.source);
             let _source_pin = Directories::pin(source.parent().unwrap())?;
-            let source_meta = fs::symlink_metadata(&source)?;
-            ensure!(
-                source_meta.is_file() && ordinary(&source_meta),
-                "Player source changed; owned link left for review"
-            );
-            let source = fs::OpenOptions::new()
+            let Ok(source_meta) = fs::symlink_metadata(&source) else {
+                held = true;
+                continue;
+            };
+            if !source_meta.is_file() || !ordinary(&source_meta) {
+                held = true;
+                continue;
+            }
+            let Ok(source) = fs::OpenOptions::new()
                 .read(true)
                 .share_mode(1 | 4)
                 .custom_flags(FILE_FLAG_OPEN_REPARSE_POINT.0)
-                .open(&source)?;
-            ensure!(
-                entry.identity.matches(&identity(&source)?),
-                "Player source was replaced; owned link left for review"
-            );
+                .open(&source)
+            else {
+                held = true;
+                continue;
+            };
+            if !entry.identity.matches(&identity(&source)?) {
+                held = true;
+                continue;
+            }
             closed()?;
             loader_files::unlink(&file)?;
+        }
+        if held {
+            // Other owned links have still been restored. Retain the receipt
+            // and the last-copy links so a later recovery can finish safely.
+            return Ok(());
         }
         let mut marker = open_file(&self.marker(), true)?;
         ensure!(
@@ -656,15 +669,17 @@ mod tests {
         drop(store);
         let f = Fixture::new();
         f.write("players/Amir/png1452.iff", b"last copy");
+        f.write("players/Amir/other.iff", b"independent");
         let mut store = f.store().unwrap();
         store.activate(|| Ok(())).unwrap();
         fs::remove_file(f.mods.join("players/Amir/png1452.iff")).unwrap();
-        assert!(store.restore(|| Ok(())).is_err());
+        store.restore(|| Ok(())).unwrap();
         assert!(store.marker().exists());
         assert_eq!(
             fs::read(f.mods.join("char/sig/png1452.iff")).unwrap(),
             b"last copy"
         );
+        assert!(!f.mods.join("char/sig/other.iff").exists());
     }
     #[test]
     fn tampered_receipt_foreign_root_and_junction_sources_are_refused() {
