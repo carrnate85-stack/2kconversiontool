@@ -1916,10 +1916,19 @@ export function App() {
     setSettings(next);
     saveQueue.current = saveQueue.current
       .then(async () => {
-        await call("save-settings", p);
+        const saved = await call<Settings>("save-settings", p);
+        settingsRef.current = saved;
+        setSettings(saved);
         setStatus("Saved");
       })
-      .catch((e) => {
+      .catch(async (e) => {
+        try {
+          const persisted = (await call<Bootstrap>("bootstrap")).settings;
+          settingsRef.current = persisted;
+          setSettings(persisted);
+        } catch {
+          // Keep the original save failure visible if recovery also fails.
+        }
         setError(String(e));
         setStatus("Settings not saved");
       });

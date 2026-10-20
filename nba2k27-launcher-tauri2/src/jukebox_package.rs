@@ -13,6 +13,7 @@ use std::{
 };
 use zip::{CompressionMethod, ZipArchive, ZipWriter, write::SimpleFileOptions};
 pub(crate) const MAX_SEGMENT: usize = 384 * 1024 * 1024;
+pub(crate) const MAX_NATIVE_IMPORT: usize = 320 * 1024 * 1024;
 const MAX_ENTRY: usize = 256 * 1024 * 1024;
 pub(crate) type Entries = BTreeMap<String, Vec<u8>>;
 fn u16_at(b: &[u8], i: usize) -> u16 {
@@ -318,6 +319,37 @@ fn tld(bytes: &[u8]) -> Result<()> {
     );
     Ok(())
 }
+#[derive(Default)]
+struct ImportBudget {
+    used: usize,
+}
+impl ImportBudget {
+    fn reserve(&mut self, bytes: usize) -> Result<()> {
+        self.used = self
+            .used
+            .checked_add(bytes)
+            .context("Playlist native size overflow")?;
+        ensure!(
+            self.used <= MAX_NATIVE_IMPORT,
+            "This playlist exceeds the bounded 320MiB native import staging limit; source and library retained"
+        );
+        Ok(())
+    }
+}
+fn unique_reference<'a>(
+    entries: &'a Entries,
+    name: &Option<String>,
+    prefix: &str,
+    used: &mut BTreeSet<String>,
+) -> Result<Option<&'a [u8]>> {
+    if let Some(name) = name {
+        ensure!(
+            used.insert(name.clone()),
+            "Playlist resource is referenced more than once"
+        );
+    }
+    reference(entries, name, prefix)
+}
 /// FLAC remains lossless and hash-verified. The host supplies a bounded decoder;
 /// absence/failure returns an error before any library or Mods publication.
 pub(crate) fn import_segment(
@@ -346,9 +378,25 @@ pub(crate) fn import_entries(
     stock: &Music,
     decode_flac: &mut impl FnMut(&[u8], usize) -> Result<Vec<u8>>,
 ) -> Result<Import> {
+    import_entries_bounded(
+        manifest,
+        entries,
+        stock,
+        decode_flac,
+        &mut ImportBudget::default(),
+    )
+}
+fn import_entries_bounded(
+    manifest: &Manifest,
+    entries: &Entries,
+    stock: &Music,
+    decode_flac: &mut impl FnMut(&[u8], usize) -> Result<Vec<u8>>,
+    budget: &mut ImportBudget,
+) -> Result<Import> {
     validate_manifest(manifest)?;
     stock.validate()?;
     let (mut songs, mut seen) = (Vec::new(), BTreeSet::new());
+    let mut used_members = BTreeSet::new();
     for song in &manifest.tracks {
         song.metadata.validate()?;
         ensure!(
@@ -400,8 +448,14 @@ pub(crate) fn import_entries(
                         && song.metadata.artist == song.metadata.artist.trim(),
                     "Stock override may change only printable title/artist and paired artwork"
                 );
-                let art = reference(entries, &song.artwork_file, "artwork/")?;
-                let preview = reference(entries, &song.artwork_preview_file, "artwork/")?;
+                let art =
+                    unique_reference(entries, &song.artwork_file, "artwork/", &mut used_members)?;
+                let preview = unique_reference(
+                    entries,
+                    &song.artwork_preview_file,
+                    "artwork/",
+                    &mut used_members,
+                )?;
                 ensure!(
                     art.is_some() == preview.is_some(),
                     "Stock override artwork must include both native cover and PNG preview"
@@ -420,6 +474,8 @@ pub(crate) fn import_entries(
                         "Invalid bounded stock override PNG"
                     );
                 }
+                budget.reserve(art.map_or(0, <[u8]>::len))?;
+                budget.reserve(preview.map_or(0, <[u8]>::len))?;
                 songs.push(ImportedSong {
                     metadata: song.metadata.clone(),
                     native_audio: None,
@@ -437,10 +493,14 @@ pub(crate) fn import_entries(
                         && !song.metadata.artist.trim().is_empty(),
                     "Custom song must use a library bank and named metadata, not overwrite a stock identity"
                 );
-                let data = reference(entries, &song.audio_file, "audio/")?
-                    .context("Custom song has no audio")?;
+                let data =
+                    unique_reference(entries, &song.audio_file, "audio/", &mut used_members)?
+                        .context("Custom song has no audio")?;
                 match song.audio_codec.as_deref().unwrap_or("wav") {
-                    "wav" => audio::wrap(data)?,
+                    "wav" => {
+                        budget.reserve(data.len().saturating_add(54))?;
+                        audio::wrap(data)?
+                    }
                     "native-opus" => {
                         ensure!(
                             song.audio_native_sha256
@@ -450,6 +510,7 @@ pub(crate) fn import_entries(
                             "Native Opus integrity failed"
                         );
                         audio::parse_opus(data)?;
+                        budget.reserve(data.len())?;
                         data.to_vec()
                     }
                     "flac" => {
@@ -480,6 +541,7 @@ pub(crate) fn import_entries(
                                 && (samples == 0 || samples * 4 == pcm as u64),
                             "FLAC sample format differs"
                         );
+                        budget.reserve(pcm.saturating_add(54))?;
                         let decoded = decode_flac(data, pcm)?;
                         ensure!(decoded.len() == pcm, "FLAC decoded size differs");
                         let wave = audio::pcm_wave(&decoded)?;
@@ -497,17 +559,24 @@ pub(crate) fn import_entries(
             }
             _ => anyhow::bail!("Unsupported playlist song kind"),
         };
-        let art = reference(entries, &song.artwork_file, "artwork/")?;
+        let art = unique_reference(entries, &song.artwork_file, "artwork/", &mut used_members)?;
         if let Some(a) = art {
             tld(a)?;
         }
-        let preview = reference(entries, &song.artwork_preview_file, "artwork/")?;
+        let preview = unique_reference(
+            entries,
+            &song.artwork_preview_file,
+            "artwork/",
+            &mut used_members,
+        )?;
         if let Some(p) = preview {
             ensure!(
                 p.len() <= 4 * 1024 * 1024 && p.starts_with(b"\x89PNG\r\n\x1a\n"),
                 "Invalid cover preview"
             );
         }
+        budget.reserve(art.map_or(0, <[u8]>::len))?;
+        budget.reserve(preview.map_or(0, <[u8]>::len))?;
         songs.push(ImportedSong {
             metadata: song.metadata.clone(),
             native_audio: Some(native),
@@ -683,6 +752,50 @@ mod tests {
             import_entries(&manifest, &Entries::new(), &stock, &mut |_, _| Ok(vec![])).is_err()
         );
     }
+    #[test]
+    fn repeated_resources_and_native_budget_are_rejected_before_allocation() {
+        let wave = audio::pcm_wave(&[0; 8]).unwrap();
+        let first = track();
+        let mut second = track();
+        second.bank += 1;
+        second.unique += 1;
+        let songs = [first.clone(), second.clone()]
+            .into_iter()
+            .map(|metadata| Song {
+                kind: "custom".into(),
+                source_key: metadata.key(),
+                metadata,
+                audio_file: Some("audio/shared.wav".into()),
+                artwork_file: None,
+                artwork_preview_file: None,
+                audio_codec: None,
+                audio_native_sha256: None,
+                audio_wave_sha256: None,
+                audio_pcm_bytes: None,
+            })
+            .collect();
+        let manifest = Manifest {
+            schema: "nba2k27-2kplaylist-v1".into(),
+            name: "Repeated resource".into(),
+            tracks: songs,
+            warnings: vec![],
+            multipart: None,
+        };
+        let entries = Entries::from([("audio/shared.wav".into(), wave)]);
+        let stock = Music {
+            tracks: vec![],
+            extra: Map::new(),
+        };
+        let error = match import_entries(&manifest, &entries, &stock, &mut |_, _| Ok(vec![])) {
+            Ok(_) => panic!("repeated resource was accepted"),
+            Err(error) => error.to_string(),
+        };
+        assert!(error.contains("referenced more than once"));
+
+        let mut budget = ImportBudget::default();
+        budget.reserve(MAX_NATIVE_IMPORT).unwrap();
+        assert!(budget.reserve(1).is_err());
+    }
 }
 
 const CONTAINER_MAGIC: &[u8] = b"2KPLAYLIST2\n";
@@ -806,6 +919,7 @@ impl<R: Read + Seek> Container<R> {
     ) -> Result<()> {
         let mut offset = 0usize;
         let mut identity = None;
+        let mut budget = ImportBudget::default();
         for i in 0..self.parts() {
             let entries = self.segment(i)?;
             let manifest: Manifest = serde_json::from_slice(
@@ -840,7 +954,8 @@ impl<R: Read + Seek> Container<R> {
                 self.index.manifest.tracks.get(offset..end) == Some(manifest.tracks.as_slice()),
                 "Combined playlist order/metadata differs from segment"
             );
-            let import = import_entries(&manifest, &entries, stock, &mut decode)?;
+            let import =
+                import_entries_bounded(&manifest, &entries, stock, &mut decode, &mut budget)?;
             for song in import.songs {
                 accept(song)?;
             }

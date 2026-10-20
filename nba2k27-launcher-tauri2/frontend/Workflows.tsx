@@ -669,8 +669,13 @@ export function Mods(
       "mod-install-commit",
       modInstallArgs(plan, decisions),
     ).finally(() => setInstall(null));
-    await p.scan();
-    p.status(modInstallSummary(result));
+    const summary = modInstallSummary(result);
+    p.status(summary);
+    try {
+      await p.scan();
+    } catch (error) {
+      p.status(`${summary} Library refresh failed: ${String(error)}`);
+    }
   }
   const groups = sortModGroups(
     modGroups(p.mods, p.library.tags, root),
