@@ -1,0 +1,5 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": { "strict": false },
+  "include": ["web/ui/**/*.ts", "web/globals.d.ts"]
+}

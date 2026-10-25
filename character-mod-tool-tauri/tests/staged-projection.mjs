@@ -1,0 +1,15 @@
+import assert from 'node:assert/strict';
+import { selectTangentMeshes } from '../worker/staged-projection.mjs';
+const regular = { sourceName: 'png1_geo_hair_dreads.iff' };
+const paired = { sourceName: 'CHAR\\SIG\\PNG1_GEO_HAIR_DREADS_TANGENTSPACE.IFF', tangentSpaceAttachment: true, tangentOffsets: [1] };
+const afro = { sourceName: 'char/sig/png1_geo_hair_afro_tangentspace.iff', tangentSpaceAttachment: true, tangentOffsets: [1] };
+const beard = { sourceName: 'png1_geo_facialhair_beard_tangentspace.iff', tangentSpaceAttachment: true, tangentOffsets: [1] };
+const headband = { sourceName: 'png1_geo_headband_tangentspace.iff', tangentSpaceAttachment: true, tangentOffsets: [1] };
+const meshes = [regular, paired, afro, beard, headband];
+const snapshot = structuredClone(meshes);
+assert.deepEqual(selectTangentMeshes(meshes, 'staged'), [afro, beard]);
+assert.deepEqual(selectTangentMeshes(meshes, 'all'), [paired, afro, beard, headband]);
+assert.deepEqual(selectTangentMeshes(meshes, 'facialhair'), [beard]);
+assert.deepEqual(selectTangentMeshes([paired], 'staged'), [paired]);
+assert.deepEqual(meshes, snapshot);
+console.log('Staged projection: unpaired hair, paired preservation, facial hair, full handoff selection and source immutability passed.');

@@ -1,0 +1,27 @@
+const fs = require('fs');
+const path = require('path');
+const { spawnSync } = require('child_process');
+const root = path.resolve(__dirname, '..');
+const artifacts = path.join(root, 'artifacts');
+const setup = JSON.parse(fs.readFileSync(path.join(artifacts, 'blender-test-setup.json')));
+const bundle = JSON.parse(fs.readFileSync(path.join(artifacts, 'blender-test-bundle.json')));
+const folder = path.join(artifacts, 'blender-roundtrip');
+fs.mkdirSync(folder, { recursive: true });
+bundle.textures.forEach((texture, i) => {
+  const bytes = Buffer.from(texture.bytes, 'base64');
+  if (bytes.subarray(0, 4).toString() !== 'DDS ') throw new Error('Invalid preview DDS');
+  texture.path = path.join(folder, `texture-${i}.dds`);
+  fs.writeFileSync(texture.path, bytes);
+  delete texture.bytes;
+});
+const bundlePath = path.join(folder, 'references.json');
+fs.writeFileSync(bundlePath, JSON.stringify(bundle));
+const engine = path.dirname(path.dirname(setup.settings.head_swap_tool));
+const returned = path.join(folder, 'png06827.iff');
+const signal = path.join(folder, 'return.json');
+const args = ['--background', '--factory-startup', '--python', path.join(engine, 'electron/blender_open_output.py'), '--python', path.join(__dirname, 'blender-inspect.py'), '--', '--iff', setup.target, '--addon', setup.settings.head_swap_tool, '--return-iff', returned, '--signal', signal, '--reference-bundle', bundlePath, '--jersey', path.join(artifacts, 'blender-test-jersey.iff'), '--auto-send', '--test-nudge', '--test-edit-mode'];
+const result = spawnSync(setup.settings.blender_exe, args, { windowsHide: true, timeout: 180000, maxBuffer: 5 * 1024 * 1024, env: { ...process.env, CMT_BLENDER_TEST_REPORT: path.join(artifacts, 'blender-roundtrip-report.json') } });
+const log = String(result.stdout || '') + String(result.stderr || '');
+fs.writeFileSync(path.join(artifacts, 'blender-roundtrip.log'), log);
+if (result.error || result.status || !log.includes('TAURI_BLENDER_ROUNDTRIP_OK')) throw result.error || new Error(log.slice(-7000));
+console.log(fs.readFileSync(path.join(artifacts, 'blender-roundtrip-report.json'), 'utf8'));

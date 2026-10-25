@@ -1,0 +1,140 @@
+--- a/engine/prototype_services.py
++++ b/engine/prototype_services.py
+@@ -551,16 +551,21 @@
+             return False
+ 
+     def blender_open(payload):
+-        target = Path(payload["target"]).resolve()
+-        valid_player(target)
+-        settings = bridge.fast_settings()
++        from prototype_blender_snapshot import launch_inputs, copy_input
++        snapshot = launch_inputs(payload, session) if payload.get("_blenderSnapshot") else None
++        target = Path(snapshot["target"] if snapshot else payload["target"]).resolve()
++        valid_player(Path(snapshot["source"]) if snapshot else target)
++        settings = snapshot["settings"] if snapshot else bridge.fast_settings()
+         folder = Path(tempfile.mkdtemp(prefix="blender-", dir=session))
+         try:
+             source_folder = folder / "input"
+             source_folder.mkdir()
+             source = source_folder / target.name
+-            shutil.copyfile(target, source)
+-            expected_digest = file_digest(source)
++            if snapshot:
++                copy_input(snapshot, snapshot["source"], source)
++            else:
++                shutil.copyfile(target, source)
++            expected_digest = snapshot["expectedDigest"] if snapshot else file_digest(source)
+             atomic_json(folder / 'handoff.json', {'target': str(target), 'expectedDigest': expected_digest})
+             returned = folder / target.name
+             signal = folder / "return.json"
+@@ -568,12 +573,15 @@
+             event = lambda state, message, **extra: bridge.emit_event("blender", message, state=state, sessionId=session_id, handoffId=payload.get("handoffId"), target=str(target), requestedTarget=str(payload["target"]), **extra)
+             args = [settings["blender_exe"], "--python", str(engine / "electron/blender_open_output.py"), "--", "--iff", str(source), "--addon", settings["head_swap_tool"], "--return-iff", str(returned), "--signal", str(signal)]
+             if payload.get("includeJersey") or payload.get("fitChest"):
+-                resources = preview_resources(payload)
++                resources = snapshot["resources"] if snapshot else preview_resources(payload)
+                 jersey = next((row["path"] for row in resources["options"]["companionPaths"] if row["kind"] == "preview-jersey" and "jersey" in row["name"]), None)
+                 if not jersey:
+                     raise ValueError("Static jersey could not be extracted.")
+                 reference = folder / "static-jersey.iff"
+-                shutil.copyfile(jersey, reference)
++                if snapshot:
++                    copy_input(snapshot, jersey, reference)
++                else:
++                    shutil.copyfile(jersey, reference)
+                 args.extend(["--jersey", str(reference)])
+             if payload.get("fitChest"):
+                 args.append("--fit-chest")
+--- a/engine/prototype_bridge.py
++++ b/engine/prototype_bridge.py
+@@ -8,6 +8,7 @@
+ sys.path.insert(0, str(root))
+ import app_settings
+ import prototype_services
++import prototype_blender_snapshot
+ import nba2k25_support
+ 
+ nba2k25_support.build_dds = prototype_services.build_rust_dds
+@@ -95,6 +96,7 @@
+             app, original_swap_validation, player_path, config_archives, companion_stages)
+     CharacterModTool.validate_everything_swap_outputs = validate_swap_distances
+ python_bridge.COMMANDS.update(prototype_services.commands(python_bridge, root, data))
++python_bridge.COMMANDS.update(prototype_blender_snapshot.commands(python_bridge, root, data))
+ import prototype_accessories
+ python_bridge.COMMANDS.update(prototype_accessories.recovery_hooks(python_bridge.COMMANDS, python_bridge.emit_event))
+ 
+--- a/tests/bridge-lifecycle.cjs
++++ b/tests/bridge-lifecycle.cjs
+@@ -14,6 +14,8 @@
+     event: { listen: async (_name, callback) => { event = callback; } },
+     core: { invoke: async (_name, { command, payload }) => {
+       if (command === 'runtime-info') return { smoke: false };
++      if (command === 'blender-snapshot-prepare') return { snapshotId: payload.handoffId };
++      if (command === 'blender-snapshot-release') return true;
+       if (command === 'cancel-command') { calls.push({ command, payload }); return true; }
+       const task = deferred(); calls.push({ command, payload, ...task }); return task.promise;
+     } }
+--- a/tests/player-preview-freshness.cjs
++++ b/tests/player-preview-freshness.cjs
+@@ -15,6 +15,8 @@
+   const window = { __TAURI__: { event: { listen: async (_, handler) => { event = handler; } }, core: {
+     invoke: async (_, { command, payload }) => {
+       if (command === 'runtime-info') return {};
++      if (command === 'blender-snapshot-prepare') return { snapshotId: payload.handoffId };
++      if (command === 'blender-snapshot-release') return true;
+       if (command === 'native-preview-resources') {
+         preparations++;
+         return { filePath: payload.target, resourceLease: 'fixture', fingerprint: sameFingerprint ? 'same' : 'unchanged:' + key(payload.target), options: { companionPaths: [] },
+--- a/tests/preview-resources.cjs
++++ b/tests/preview-resources.cjs
+@@ -20,6 +20,9 @@
+   const window = { __TAURI__: { event: { listen: async (_, handler) => { events = handler; } }, core: {
+     invoke: async (_, { command, payload }) => {
+       if (command === 'runtime-info') return {};
++      if (command === 'blender-snapshot-prepare') { const value = resources(true); return { ...value, snapshotId: value.resourceLease }; }
++      if (command === 'blender-snapshot-fallback') return { ...resources(false), snapshotId: payload.snapshotId };
++      if (command === 'blender-snapshot-release') { if (!live.delete(payload.snapshotId)) duplicate.push(payload.snapshotId); return true; }
+       if (command === 'native-preview-hair') {
+         const value = { native: true, resourceLease: resource('catalog:' + payload.assetId) };
+         if (holdPreparation) return new Promise(resolve => preparations.push(() => resolve(value)));
+--- a/tests/preview-scopes.cjs
++++ b/tests/preview-scopes.cjs
+@@ -12,7 +12,7 @@
+   const window = { __TAURI__: { event: { listen: async () => {} }, core: {
+     invoke: async (_name, { command, payload }) => {
+       if (command === 'runtime-info') return { smoke: false };
+-      if (command === 'cancel-preview') return true;
++      if (command === 'cancel-preview' || command === 'blender-snapshot-release') return true;
+       if (command === 'reset') { calls.push({ command, payload }); return true; }
+       if (closed) throw new Error('Owned test cleanup');
+       return new Promise((resolve, reject) => calls.push({ command, payload, resolve, reject }));
+@@ -67,7 +67,7 @@
+   const handoff = independent.api.openPreviewInBlender({ target: 'C:/test/player.iff', includeTextures: true }).catch(error => String(error));
+   await flush();
+   assert.equal(independent.calls[0].payload._cmtPreviewKind, 'independent');
+-  independent.calls[0].resolve({ native: false, filePath: 'C:/test/player.iff', options: {} });
++  independent.calls[0].resolve({ native: false, snapshotId: 'scope-lease', filePath: 'C:/test/player.iff', options: {} });
+   await flush();
+   const referenceWorker = independent.workers[0];
+   assert.equal(referenceWorker.message.latestOnly, false, 'Blender reference work must not be coalesced');
+--- a/tests/preview-barriers.cjs
++++ b/tests/preview-barriers.cjs
+@@ -26,7 +26,8 @@
+         if (!heldKinds.has(payload.kind)) return true;
+         return new Promise(resolve => holds.push({ kind: payload.kind, resolve }));
+       }
+-      if (command === 'reset') return true;
++      if (command === 'reset' || command === 'blender-snapshot-release') return true;
++      if (command === 'blender-snapshot-prepare') return { ...resources(Boolean(options.native)), snapshotId: 'barrier-lease' };
+       if (command === 'native-preview-hair') {
+         if (holdPreparation) return new Promise((resolve, reject) => holds.push({ kind: 'preparation', resolve, reject }));
+         return { native: Boolean(options.native) };
+@@ -134,7 +135,7 @@
+       : env.api.openPreviewInBlender({ target: 'C:/test/player.iff', includeTextures: true }).catch(String);
+     await flush();
+     assert(env.calls.some(call => kind === 'catalog' ? call.command === 'native-preview-hair'
+-      : call.command === 'native-preview-resources' && call.payload._cmtPreviewKind === kind));
++      : call.command === (kind === 'independent' ? 'blender-snapshot-prepare' : 'native-preview-resources') && call.payload._cmtPreviewKind === kind));
+     env.workers.at(-1).fail('Owned decode cleanup'); await task;
+     env.release(held); await stopping;
+   });

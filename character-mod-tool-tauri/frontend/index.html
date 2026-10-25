@@ -1,0 +1,702 @@
+<!DOCTYPE html><html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Character Mod Tool</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="blue-theme.css">
+    <link rel="stylesheet" href="configs.css">
+    <script src="theme.js"></script>
+  <link rel="stylesheet" href="preview-layout.css"></head>
+  <body>
+    <div class="startup-loading" id="startupLoading" role="status" aria-live="polite">
+      <i aria-hidden="true"></i>
+      <span id="startupLoadingMessage">Starting Character Mod Tool...</span>
+    </div>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="brand">
+          <span class="brand-mark">2K</span>
+          <div><strong>Character</strong><span>Mod Tool</span></div>
+        </div>
+        <nav aria-label="Workflows">
+          <button class="nav-item active" type="button" id="fullSwapTab"><span>FS</span>Full Swap</button>
+          <button class="nav-item" type="button" id="previewTab"><span>PV</span>Preview</button>
+          <button class="nav-item" type="button" id="configsTab"><span>CF</span>Configs</button>
+          <button class="nav-item" type="button" id="bodyTab"><span>BD</span>Body</button>
+          <button class="nav-item" type="button" id="hairTab"><span>HR</span>Hair</button>
+          <button class="nav-item" type="button" id="headbandTab"><span>HB</span>Headbands</button>
+          <button class="nav-item" type="button" id="cliTab"><span>CL</span>CLI</button>
+          <button class="nav-item" type="button" id="healthTab"><span>HC</span>Health</button>
+        </nav>
+        <div class="sidebar-games">
+          <div><i id="game26Dot"></i><span>NBA 2K26</span></div>
+          <div><i id="game27Dot"></i><span>NBA 2K27</span></div>
+        </div>
+        <div class="theme-switch segmented" role="group" aria-label="Appearance">
+          <button type="button" data-theme-choice="light" title="Light mode" aria-label="Light mode"><i data-lucide="sun"></i>Light</button>
+          <button type="button" data-theme-choice="dark" title="Dark mode" aria-label="Dark mode"><i data-lucide="moon"></i>Dark</button>
+        </div>
+      </aside>
+
+      <section class="workspace">
+        <header class="topbar">
+          <div>
+            <h1 id="workspaceTitle">Full Swap</h1>
+            <p id="engineStatus">Connecting to conversion engine...</p>
+          </div>
+          <div class="topbar-actions">
+            <button class="button secondary" type="button" id="newSwap">New Swap</button>
+            <button class="button secondary" type="button" id="openOutput">Open Output</button>
+            <button class="button secondary" type="button" id="openSettings">Settings</button>
+          </div>
+        </header>
+
+        <main id="configsView" class="configs-view" hidden="">
+          <header class="configs-heading">
+            <div><h2 id="configsPlayer">No staged player</h2><p id="configsStatus" role="status">No configurations loaded.</p></div>
+            <button class="button secondary" id="newConfig" type="button" disabled=""><i data-lucide="plus"></i>New Config</button>
+          </header>
+          <div class="configs-layout">
+            <div class="configs-list" id="configsList" aria-label="Player configurations"></div>
+            <section class="config-editor" id="configEditor" hidden="">
+              <header><h2 id="configEditorName"></h2><div class="config-editor-actions"><button class="button secondary" id="renameConfig" type="button" title="Rename configuration"><i data-lucide="pencil"></i>Rename</button><button class="button secondary" id="configDefault" type="button">Make Default</button></div></header>
+              <label>Hair<select id="configHair"></select></label>
+              <button class="button secondary" id="configChooseHair" type="button"><i data-lucide="scissors"></i>Choose Hair from Catalog</button>
+              <label>Facial Hair<select id="configFacialhair"></select></label>
+              <button class="button secondary" id="configChooseBeard" type="button"><i data-lucide="scissors"></i>Choose Facial Hair from Catalog</button>
+              <label>Headband<select id="configHeadband"></select></label>
+              <button class="button secondary" id="configAddHeadband" type="button"><i data-lucide="plus"></i>Add Headband</button>
+              <fieldset id="configOther"><legend>Other Accessories</legend></fieldset>
+              <footer><button class="button primary" id="saveConfig" type="button">Save Config</button><button class="button secondary" id="configShowPreview" type="button"><i data-lucide="box"></i>Preview</button></footer>
+            </section>
+          </div>
+        </main>
+        <div class="content-grid" id="fullSwapView">
+          <main class="conversion-workspace">
+            <div class="conversion-scroll">
+            <section class="character-grid" aria-label="Character selection">
+              <article class="character-panel" data-role="source">
+                <div class="panel-heading">
+                  <div><span class="step-number">1</span><h2>Source Character</h2></div>
+                  <span class="state-badge" id="sourceState">Not selected</span>
+                </div>
+                <div class="file-surface empty" id="sourceSurface">
+                  <div class="file-icon">SRC</div>
+                  <div class="file-copy">
+                    <strong id="sourceName">Choose a character package</strong>
+                    <span id="sourcePath">IFF, ZIP or RAR</span>
+                  </div>
+                </div>
+                <div class="panel-actions">
+                  <button class="button secondary" type="button" data-browse="source">Browse</button>
+                  <button class="button secondary" type="button" data-manifest="source">Select from Manifest</button>
+                </div>
+              </article>
+
+              <div class="direction" aria-hidden="true">TO</div>
+
+              <article class="character-panel" data-role="target">
+                <div class="panel-heading">
+                  <div><span class="step-number">2</span><h2>Target Character</h2></div>
+                  <span class="state-badge" id="targetState">Not selected</span>
+                </div>
+                <div class="file-surface empty" id="targetSurface">
+                  <div class="file-icon target">TGT</div>
+                  <div class="file-copy">
+                    <strong id="targetName">Choose a modern player slot</strong>
+                    <span id="targetPath">NBA 2K26 or NBA 2K27</span>
+                  </div>
+                </div>
+                <div class="panel-actions">
+                  <button class="button secondary" type="button" data-browse="target">Browse</button>
+                  <button class="button secondary" type="button" data-manifest="target">Select from Manifest</button>
+                  <button class="button secondary" type="button" id="selectTemplate">Select Template</button>
+                </div>
+              </article>
+            </section>
+
+            <section class="options-section">
+              <div class="section-heading">
+                <div><span class="step-number">3</span><h2>Transfer Options</h2></div>
+              </div>
+              <div class="option-row">
+                <label class="toggle-line" for="shrinkwrapBody">
+                  <span><strong>Shrinkwrap Body</strong><small>Transfer the source body proportions</small></span>
+                  <input id="shrinkwrapBody" type="checkbox" checked="">
+                  <i></i>
+                </label>
+                <label class="toggle-line" for="renamePackage">
+                  <span><strong>Rename Package</strong><small>Write the result under a different PNG ID</small></span>
+                  <input id="renamePackage" type="checkbox">
+                  <i></i>
+                </label>
+                <label class="field compact" id="renameField">
+                  <span>New PNG ID</span>
+                  <input id="renameId" type="text" inputmode="numeric" placeholder="4090" disabled="">
+                </label>
+              </div>
+              <div class="hair-swap-section" id="hairSwapSection">
+                <label class="toggle-line hair-toggle" for="includeHair">
+                  <span><strong>Include Hair Swap</strong><small>Convert legacy hair into the selected modern appearance slot</small></span>
+                  <input id="includeHair" type="checkbox" disabled="">
+                  <i></i>
+                </label>
+                <div class="hair-controls">
+                  <label class="field hair-source-field">
+                    <span>Source Hair</span>
+                    <select id="hairSource" disabled=""><option value="">No source hair detected</option></select>
+                  </label>
+                  <button class="button secondary" type="button" id="detectHair" disabled="">Detect</button>
+                  <button class="button secondary" type="button" id="browseHair" disabled="">Browse</button>
+                  <label class="field hair-slot-field">
+                    <span>Target Hair Slot</span>
+                    <select id="hairSlot" disabled=""><option value="">No target slots loaded</option></select>
+                  </label>
+                  <label class="field hair-output-field" for="hairOutputName">
+                    <span>Output Name (Optional)</span>
+                    <input id="hairOutputName" type="text" placeholder="hair" title="Blank keeps the target name" autocomplete="off" spellcheck="false" disabled="">
+                  </label>
+                </div>
+                <p class="hair-status" id="hairStatus">Select a source and target character to inspect hair.</p>
+              </div>
+              <div class="hair-swap-section" id="facialHairSwapSection">
+                <label class="toggle-line hair-toggle" for="includeFacialHair">
+                  <span><strong>Include Facial Hair Swap</strong><small>NBA 2K23 / 2K25 to NBA 2K27</small></span>
+                  <input id="includeFacialHair" type="checkbox" disabled="">
+                  <i></i>
+                </label>
+                <div class="hair-controls">
+                  <label class="field hair-source-field">
+                    <span>Source Facial Hair</span>
+                    <select id="facialHairSource" disabled=""><option value="">No source facial hair detected</option></select>
+                  </label>
+                  <button class="button secondary" type="button" id="detectFacialHair" disabled="">Detect</button>
+                  <button class="button secondary" type="button" id="browseFacialHair" disabled="">Browse</button>
+                  <label class="field hair-slot-field">
+                    <span>Target Facial Hair Slot</span>
+                    <select id="facialHairSlot" disabled=""><option value="">No target slots loaded</option></select>
+                  </label>
+                  <label class="field hair-output-field" for="facialHairOutputName">
+                    <span>Output Name (Optional)</span>
+                    <input id="facialHairOutputName" type="text" placeholder="facialhair" title="Blank keeps the target name" autocomplete="off" spellcheck="false" disabled="">
+                  </label>
+                </div>
+                <p class="hair-status" id="facialHairStatus">Select a source and target character to inspect facial hair.</p>
+              </div>
+            </section>
+
+            <section class="output-section">
+              <div class="output-copy">
+                <span>Output Folder</span>
+                <strong id="outputPath">Not configured</strong>
+              </div>
+              <button class="button secondary" type="button" id="chooseOutput">Change</button>
+            </section>
+            </div>
+
+            <footer class="run-bar">
+              <div>
+                <span id="readinessDot"></span>
+                <strong id="readinessText">Choose source and target characters</strong>
+              </div>
+              <button class="button primary" type="button" id="runSwap" disabled="">Run Full Swap</button>
+            </footer>
+          </main>
+
+          <aside class="activity-panel">
+            <div class="activity-heading">
+              <h2>Activity</h2>
+              <button class="text-button" type="button" id="clearActivity">Clear</button>
+            </div>
+            <div class="job-progress idle" id="jobProgress">
+              <div class="progress-meta"><strong id="progressTitle">Ready</strong><span id="progressValue"></span></div>
+              <div class="progress-track"><i id="progressFill"></i></div>
+            </div>
+            <div class="activity-log" id="activityLog" aria-live="polite"></div>
+            <div class="job-actions">
+              <button class="button danger" type="button" id="cancelSwap" disabled="">Cancel</button>
+              <button class="button secondary" type="button" id="openLastOutput" disabled="">Open Result</button>
+            </div>
+          </aside>
+        </div>
+
+        <main class="body-workspace" id="bodyView" hidden="">
+          <section class="body-session-bar">
+            <div class="body-player-summary">
+              <span id="bodySourceRole">Source</span>
+              <strong id="bodySourceName">No source selected</strong>
+              <small id="bodySourcePath">Select a source player in Full Swap.</small>
+            </div>
+            <div class="body-player-summary target-summary">
+              <span id="bodyTargetRole">Selected Target</span>
+              <strong id="bodyTargetName">No target selected</strong>
+              <small id="bodyTargetPath">Select a target player in Full Swap.</small>
+            </div>
+            <span class="state-badge" id="bodyState">Not loaded</span>
+          </section>
+          <section class="body-fit-pane">
+            <header class="hair-pane-heading">
+              <div>
+                <span class="section-kicker">Body Fit</span>
+                <h2>Source and Target Values</h2>
+              </div>
+              <div class="body-actions">
+                <input id="bodyFitSearch" type="search" placeholder="Search body-fit field">
+                <select id="bodyFitFilter" aria-label="Filter body-fit comparison">
+                  <option value="target">All Target Values</option>
+                  <option value="different">Different</option>
+                  <option value="matching">Matching</option>
+                  <option value="missing">Missing</option>
+                  <option value="edited">Edited</option>
+                </select>
+                <button class="button secondary" type="button" id="refreshBodyFit">Refresh</button>
+                <button class="button primary" type="button" id="saveBodyFit" disabled="">Apply Changes</button>
+                <button class="button primary" type="button" id="applyChestFix" disabled="">Apply Chest Fix</button>
+              </div>
+            </header>
+            <div class="body-fit-table-wrap">
+              <table class="body-fit-table">
+                <thead><tr><th>Field</th><th>Source</th><th>Target</th><th>Comparison</th></tr></thead>
+                <tbody id="bodyFitRows"></tbody>
+              </table>
+              <div class="catalog-empty" id="bodyFitEmpty">No body-fit session loaded.</div>
+            </div>
+            <footer class="body-fit-footer">
+              <span id="bodyFitCount">0 fields</span>
+              <strong id="bodyFitStatus">Select both players to load body-fit values.</strong>
+            </footer>
+          </section>
+        </main>
+
+        <main class="hair-workspace" id="hairView" hidden="">
+          <section class="working-player-bar">
+            <div class="working-player-copy">
+              <span>Working Player</span>
+              <strong id="workingPlayerName">No staged player</strong>
+              <small id="workingPlayerPath">Complete Full Swap or open an existing NBA 2K27 player.</small>
+            </div>
+            <span class="state-badge" id="workingPlayerState">Not selected</span>
+            <button class="button secondary" type="button" id="browseWorkingPlayer">Open Player</button>
+            <button class="button secondary" type="button" id="openWorkingPlayer" disabled="">Open Folder</button>
+          </section>
+
+          <section class="hair-editor-grid">
+            <div class="native-hair-catalog">
+              <header class="hair-pane-heading">
+                <div>
+                  <span class="section-kicker">NBA 2K27 Manifest</span>
+                  <h2>Source Asset</h2>
+                </div>
+                <span id="nativeHairCount">Not loaded</span>
+              </header>
+              <div class="native-hair-tools">
+                <div class="segmented" role="group" aria-label="Hair asset type">
+                  <button type="button" id="nativeHeadHair" class="active">Hair</button>
+                  <button type="button" id="nativeFacialHair">Facial Hair</button>
+                </div>
+                <input id="nativeHairSearch" type="search" placeholder="Search player, PNG, or asset">
+                <button class="native-hair-favorites-filter" type="button" id="nativeHairFavoritesOnly" aria-pressed="false" title="Show favorites only">
+                  <span aria-hidden="true">☆</span>
+                  Favorites
+                </button>
+              </div>
+              <div class="native-hair-table-wrap">
+                <div class="native-hair-catalog-loading" id="nativeHairCatalogLoading" hidden="">
+                  <i></i>
+                  <strong>Loading Hair...</strong>
+                </div>
+                <table class="native-hair-table">
+                  <thead><tr><th aria-label="Favorite"></th><th>Player</th><th>PNG</th><th>Asset</th><th>Item</th></tr></thead>
+                  <tbody id="nativeHairRows"></tbody>
+                </table>
+                <div class="catalog-empty" id="nativeHairEmpty">Open the Hair tab to load NBA 2K27 assets.</div>
+              </div>
+            </div>
+
+            <aside class="hair-install-pane">
+              <div class="native-hair-preview-shell">
+                <div class="viewer-camera-tools" data-viewer-tools="hair" aria-label="Hair preview controls">
+                  <button class="icon-button" data-viewer-action="head" title="Frame donor head" aria-label="Frame donor head"><i data-lucide="scan-face"></i></button>
+                  <button class="icon-button" data-viewer-action="front" title="Front view" aria-label="Front view"><i data-lucide="user-round"></i></button>
+                  <button class="icon-button" data-viewer-action="side" title="Side view" aria-label="Side view"><i data-lucide="rotate-cw"></i></button>
+                  <button class="icon-button" data-viewer-action="back" title="Back view" aria-label="Back view"><i data-lucide="rotate-ccw"></i></button>
+                  <button class="icon-button" data-viewer-action="fullscreen" title="Expand preview" aria-label="Expand preview"><i data-lucide="maximize"></i></button>
+                  <label>Lighting<select data-viewer-setting="lighting"><option value="studio">Studio</option><option value="legacy">Original</option></select></label>
+                  <label class="viewer-toggle"><input type="checkbox" data-viewer-setting="head" checked="">Head</label>
+                </div>
+                <canvas id="nativeHairBaseCanvas"></canvas>
+                <canvas id="nativeHairPreviewCanvas"></canvas>
+                <div class="native-hair-preview-empty" id="nativeHairPreviewEmpty">
+                  <strong>Asset Preview</strong>
+                  <span>Select a catalog row to inspect it.</span>
+                </div>
+                <div class="native-hair-preview-loading" id="nativeHairPreviewLoading" hidden="">
+                  <i></i>
+                  <strong>Loading Hair...</strong>
+                </div>
+              </div>
+              <div class="viewer-material-details" data-viewer-details="hair" hidden=""></div>
+              <label class="field">
+                <span>Target Slot</span>
+                <select id="nativeHairSlot" disabled=""><option value="">No working player loaded</option></select>
+              </label>
+              <label class="toggle-line native-copy-toggle" for="nativeHairCopyItem">
+                <span><strong>Copy Item Textures</strong><small id="nativeHairCopyHint">Use the selected NBA 2K27 texture item</small></span>
+                <input id="nativeHairCopyItem" type="checkbox" checked="">
+                <i></i>
+              </label>
+              <div class="native-hair-status" id="nativeHairStatus">Waiting for a working player.</div>
+              <button class="button primary native-install-button" type="button" id="installNativeHair" disabled="">Install Hair</button>
+            </aside>
+          </section>
+        </main>
+
+        <main class="headband-workspace" id="headbandView" hidden="">
+          <section class="working-player-bar">
+            <div class="working-player-copy">
+              <span>Staged Player</span>
+              <strong id="headbandWorkingName">No staged player</strong>
+              <small id="headbandWorkingPath">Complete Full Swap before editing headbands.</small>
+            </div>
+            <span class="state-badge" id="headbandWorkingState">Not selected</span>
+            <button class="button secondary" type="button" id="refreshHeadbands">Refresh</button>
+          </section>
+
+          <section class="headband-editor-grid">
+            <div class="headband-source-pane">
+              <header class="hair-pane-heading">
+                <div><span class="section-kicker">Full Swap Source</span><h2>Transfer Headband</h2></div>
+                <span id="headbandSourceCount">Not loaded</span>
+              </header>
+              <label class="field headband-field">
+                <span>Detected Source Headband</span>
+                <select id="headbandSource"><option value="">No source headband detected</option></select>
+              </label>
+              <div class="headband-selection" id="headbandSourceDetails">Select a staged player to inspect its Full Swap source.</div>
+              <button class="button primary headband-command" type="button" id="transferHeadband" disabled="">Transfer Source Headband</button>
+            </div>
+
+            <div class="headband-add-pane">
+              <header class="hair-pane-heading">
+                <div><span class="section-kicker">Built-In Assets</span><h2>Add Headband</h2></div>
+              </header>
+              <div class="headband-form">
+                <label class="field headband-field"><span>Style</span><select id="headbandStyle"></select></label>
+                <label class="field headband-field"><span>Appearance Configuration</span><select id="headbandConfig"></select></label>
+                <label class="field headband-field headband-color-field"><span>Color</span><input id="headbandColor" type="color" value="#ffffff"></label>
+                <label class="toggle-line" for="headbandLogo">
+                  <span><strong>NBA Logo</strong><small>Add the logo to the generated material</small></span>
+                  <input id="headbandLogo" type="checkbox" checked=""><i></i>
+                </label>
+                <label class="toggle-line" for="headbandLogoUpsideDown">
+                  <span><strong>Flip Logo</strong><small>Rotate the NBA logo upside down</small></span>
+                  <input id="headbandLogoUpsideDown" type="checkbox"><i></i>
+                </label>
+              </div>
+              <button class="button primary headband-command" type="button" id="addHeadband" disabled="">Add &amp; Fit Headband</button>
+            </div>
+          </section>
+          <footer class="headband-status" id="headbandStatus">Waiting for a staged player.</footer>
+        </main>
+
+        <main class="player-preview-workspace" id="previewView" hidden="">
+          <section class="working-player-bar preview-player-bar">
+            <div class="working-player-copy">
+              <span>Staged Player</span>
+              <strong id="previewWorkingName">No staged player</strong>
+              <small id="previewWorkingPath">Complete Full Swap before loading Preview.</small>
+            </div>
+            <span class="state-badge" id="previewWorkingState">Not selected</span>
+            <div class="preview-actions">
+              <label class="preview-config-field" for="previewConfigSelect">
+                <span>Configuration</span>
+                <select id="previewConfigSelect" disabled=""><option value="">No staged player</option></select>
+              </label>
+              <div class="preview-blender-options" aria-label="Blender preview options">
+                <label class="preview-check" for="previewBlenderHair">
+                  <input id="previewBlenderHair" type="checkbox" disabled="">
+                  <span>Hair</span>
+                </label>
+                <label class="preview-check" for="previewBlenderFacialHair">
+                  <input id="previewBlenderFacialHair" type="checkbox" disabled="">
+                  <span>Facial Hair</span>
+                </label>
+                <label class="preview-check" for="previewBlenderTextures">
+                  <input id="previewBlenderTextures" type="checkbox" disabled="">
+                  <span>Textures</span>
+                </label>
+              </div>
+              <button class="button secondary" type="button" id="openPreviewInBlender" disabled="">Open in Blender 5.1</button>
+              <button class="button secondary" type="button" id="refreshPreview" disabled="">Refresh Render</button>
+            </div>
+          </section>
+
+          <section class="player-preview-layout">
+            <div class="player-preview-viewport">
+              <canvas id="previewCanvas"></canvas>
+              <div class="player-preview-tools">
+                <button class="icon-button" type="button" id="previewFitView" title="Fit player" aria-label="Fit player" disabled=""><i data-lucide="scan"></i></button>
+                <button class="icon-button" type="button" id="previewWireframe" title="Wireframe" aria-label="Wireframe" disabled=""><i data-lucide="box"></i></button>
+                <div class="viewer-camera-tools inline" data-viewer-tools="player" aria-label="Player preview controls">
+                  <button class="icon-button" data-viewer-action="head" title="Frame face" aria-label="Frame face"><i data-lucide="scan-face"></i></button>
+                  <button class="icon-button" data-viewer-action="front" title="Front view" aria-label="Front view"><i data-lucide="user-round"></i></button>
+                  <button class="icon-button" data-viewer-action="side" title="Side view" aria-label="Side view"><i data-lucide="rotate-cw"></i></button>
+                  <button class="icon-button" data-viewer-action="back" title="Back view" aria-label="Back view"><i data-lucide="rotate-ccw"></i></button>
+                  <button class="icon-button" data-viewer-action="fullscreen" title="Expand preview" aria-label="Expand preview"><i data-lucide="maximize"></i></button>
+                  <label>Lighting<select data-viewer-setting="lighting"><option value="studio">Studio</option><option value="legacy">Original</option></select></label>
+                  <label>Surface<select data-viewer-setting="surface"><option value="textures">Textures</option><option value="clay">Neutral</option></select></label>
+                  <label class="viewer-toggle"><input type="checkbox" data-viewer-setting="grid" checked="">Grid</label>
+                </div>
+                <button class="button secondary" type="button" id="previewBodyFitToggle" disabled="">Body Fit</button>
+                <label class="preview-check" for="previewEyelashes">
+                  <input id="previewEyelashes" type="checkbox" disabled="">
+                  <span>Eyelashes</span>
+                </label>
+                <label class="preview-check" for="previewJersey">
+                  <input id="previewJersey" type="checkbox" disabled="">
+                  <span>Jersey</span>
+                </label>
+                <button class="button secondary" type="button" id="previewApplyChestCorrection" disabled="">Apply Chest Fix</button>
+              </div>
+              <section class="preview-body-fit" id="previewBodyFitPanel" hidden="">
+                <header class="preview-body-fit-heading">
+                  <div>
+                    <span>Body Fit</span>
+                    <strong id="previewBodyFitCount">0 areas</strong>
+                  </div>
+                  <div class="preview-body-fit-heading-actions">
+                    <button class="button secondary" type="button" id="previewCalculateFit" disabled="">Calculate Fit</button>
+                    <button class="icon-button" type="button" id="previewCloseBodyFit" title="Close Body Fit" aria-label="Close Body Fit">×</button>
+                  </div>
+                </header>
+                <div class="preview-body-fit-controls" id="previewBodyFitControls"></div>
+                <div class="preview-body-fit-actions">
+                  <button class="button secondary" type="button" id="previewRevertFit" disabled="">Revert</button>
+                  <button class="button primary" type="button" id="previewApplyFit" disabled="">Apply Changes</button>
+                </div>
+                <small class="preview-body-fit-status" id="previewBodyFitStatus">Load a staged player to edit its fit.</small>
+              </section>
+              <div class="player-preview-loading" id="previewLoading" hidden="">
+                <i></i>
+                <strong>Building staged player render...</strong>
+                <span id="previewLoadingDetail">Reading active meshes and materials.</span>
+              </div>
+              <div class="player-preview-empty" id="previewEmpty">
+                <strong>No staged player</strong>
+                <span>Complete Full Swap or open an existing player from Body.</span>
+              </div>
+            </div>
+
+            <aside class="player-preview-inspector">
+              <div class="preview-inspector-heading">
+                <span class="section-kicker">Render Summary</span>
+                <strong id="previewConfig">No configuration</strong>
+              </div>
+              <div class="player-preview-stats">
+                <div><span>Meshes</span><strong id="previewMeshCount">0</strong></div>
+                <div><span>Triangles</span><strong id="previewTriangleCount">0</strong></div>
+                <div><span>Textures</span><strong id="previewTextureCount">0</strong></div>
+                <div><span>Companions</span><strong id="previewCompanionCount">0</strong></div>
+              </div>
+              <div class="preview-inspector-section">
+                <span>Active Items</span>
+                <div class="preview-item-list" id="previewActiveItems">None loaded</div>
+              </div>
+              <div class="preview-inspector-section">
+                <span>Selected Mesh</span>
+                <strong id="previewSelectedMesh">Click a mesh in the render</strong>
+                <small id="previewSelectedTarget"></small>
+                <div class="viewer-material-details" data-viewer-details="player" hidden=""></div>
+              </div>
+              <div class="preview-inspector-section">
+                <span>Blender Round Trip</span>
+                <strong id="previewBlenderStatus">Ready</strong>
+                <small id="previewBlenderDetail">Open the staged player for fine adjustments.</small>
+              </div>
+              <div class="preview-warning-list" id="previewWarnings" hidden=""></div>
+            </aside>
+          </section>
+          <footer class="player-preview-status" id="previewStatus">Waiting for a staged player.</footer>
+        </main>
+
+        <main class="cli-workspace" id="cliView" hidden="">
+          <section class="cli-reader" aria-labelledby="cliReaderTitle">
+            <div class="cli-reader-heading">
+              <div>
+                <span class="section-kicker">Looyh Roster CLI 0.4.0</span>
+                <h2 id="cliReaderTitle">Selected Player Editor</h2>
+              </div>
+              <span class="state-badge" id="cliState">Ready</span>
+            </div>
+            <div class="cli-toolbar">
+              <label class="field" for="cliGame">
+                <span>Game</span>
+                <select id="cliGame">
+                  <option value="NBA2K27">NBA 2K27</option>
+                  <option value="NBA2K26">NBA 2K26</option>
+                  <option value="NBA2K25">NBA 2K25</option>
+                </select>
+              </label>
+              <button class="button primary" type="button" id="readRosterPlayer">Read Selected Player</button>
+            </div>
+            <div class="cli-value" aria-live="polite">
+              <span>Cyberface ID</span>
+              <strong id="cliCyberfaceId">----</strong>
+              <small id="cliPlayerSummary">No player read</small>
+            </div>
+            <div class="cli-field-grid" aria-label="Selected player fields">
+              <div><span>First Name</span><strong id="cliFirstName">--</strong></div>
+              <div><span>Last Name</span><strong id="cliLastName">--</strong></div>
+              <div><span>Player Key</span><strong id="cliPlayerKey">--</strong></div>
+              <div><span>Headshot ID</span><strong id="cliHeadshotId">--</strong></div>
+              <div><span>Portrait ID</span><strong id="cliPortraitId">--</strong></div>
+              <div><span>Nickname</span><strong id="cliNickname">--</strong></div>
+              <div><span>Jersey Nickname</span><strong id="cliJerseyNickname">--</strong></div>
+            </div>
+            <div class="cli-assignment">
+              <label class="field" for="cliEditField">
+                <span>Field</span>
+                <select id="cliEditField">
+                  <option value="CyberfaceID">Cyberface ID</option>
+                  <option value="HeadshotID">Headshot ID</option>
+                  <option value="PortraitID">Portrait ID</option>
+                  <option value="FirstName">First Name</option>
+                  <option value="LastName">Last Name</option>
+                </select>
+              </label>
+              <label class="field" for="cliEditValue">
+                <span>New Value</span>
+                <input id="cliEditValue" type="text" maxlength="64" placeholder="01759">
+              </label>
+              <button class="button secondary" type="button" id="applyRosterField" disabled="">Apply Field</button>
+            </div>
+            <div class="cli-language">
+              <label class="field" for="cliLanguage">
+                <span>CLI Language</span>
+                <select id="cliLanguage">
+                  <option value="auto">Auto</option>
+                  <option value="en">English</option>
+                  <option value="zh_hans">Chinese (Simplified)</option>
+                  <option value="zh_hant">Chinese (Traditional)</option>
+                  <option value="ja">Japanese</option>
+                  <option value="ko">Korean</option>
+                  <option value="es">Spanish</option>
+                  <option value="fr">French</option>
+                  <option value="it">Italian</option>
+                  <option value="de">German</option>
+                </select>
+              </label>
+              <button class="button quiet" type="button" id="saveCliLanguage">Save Language</button>
+            </div>
+            <div class="cli-reader-actions">
+              <p id="cliStatus">Waiting for a read.</p>
+            </div>
+          </section>
+        </main>
+
+        <main class="health-workspace" id="healthView" hidden="">
+          <header class="health-heading">
+            <div>
+              <span class="section-kicker">Local System Check</span>
+              <h2>Character Mod Tool Health</h2>
+              <p id="healthLastRun">Not checked yet</p>
+            </div>
+            <button class="button primary" type="button" id="runHealthCheck">Run Health Check</button>
+          </header>
+          <section class="health-summary" id="healthSummary" aria-live="polite">
+            <span class="health-summary-mark" id="healthSummaryMark">?</span>
+            <div><strong id="healthOverall">Ready to check</strong><small id="healthSummaryText">Run once to verify the local installation.</small></div>
+            <dl>
+              <div><dt>Passed</dt><dd id="healthPassCount">0</dd></div>
+              <div><dt>Warnings</dt><dd id="healthWarningCount">0</dd></div>
+              <div><dt>Errors</dt><dd id="healthErrorCount">0</dd></div>
+            </dl>
+          </section>
+          <div class="health-loading" id="healthLoading" hidden=""><i></i><span>Checking local components...</span></div>
+          <div class="health-groups" id="healthGroups">
+            <div class="health-empty">No health report has been run.</div>
+          </div>
+        </main>
+      </section>
+    </div>
+
+    <dialog id="manifestDialog" class="modal large-modal">
+      <form method="dialog" class="modal-shell">
+        <header class="modal-header">
+          <div><h2 id="manifestTitle">Select Player</h2><p id="manifestSummary">Loading manifest...</p></div>
+          <button class="icon-button" value="cancel" aria-label="Close">X</button>
+        </header>
+        <div class="catalog-tools">
+          <div class="segmented" role="group" aria-label="Game">
+            <button type="button" data-game="NBA 2K18" data-source-only="">NBA 2K18</button>
+            <button type="button" data-game="NBA 2K19" data-source-only="">NBA 2K19</button>
+            <button type="button" data-game="NBA 2K20" data-source-only="">NBA 2K20</button>
+            <button type="button" data-game="NBA 2K23" data-source-only="">NBA 2K23</button>
+            <button type="button" data-game="NBA 2K25" data-source-only="">NBA 2K25</button>
+            <button type="button" data-game="NBA 2K26">NBA 2K26</button>
+            <button type="button" data-game="NBA 2K27" class="active">NBA 2K27</button>
+          </div>
+          <input id="manifestSearch" type="search" placeholder="Search player or PNG ID">
+        </div>
+        <div class="catalog-table-wrap" id="manifestTableWrap">
+          <table class="catalog-table">
+            <thead><tr><th>Player</th><th>PNG</th><th id="manifestSupportHeading">Configs</th><th>Hair</th><th>Facial</th><th>Headband</th></tr></thead>
+            <tbody id="manifestRows"></tbody>
+          </table>
+          <div class="catalog-empty" id="catalogEmpty">Loading players...</div>
+        </div>
+        <footer class="modal-footer">
+          <span id="manifestCount"></span>
+          <button class="button secondary" value="cancel">Cancel</button>
+          <button class="button primary" type="button" id="useManifestPlayer" disabled="">Use Selected Player</button>
+        </footer>
+      </form>
+    </dialog>
+
+    <dialog id="templateDialog" class="modal template-modal">
+      <form method="dialog" class="modal-shell">
+        <header class="modal-header">
+          <div><h2>Select Overwrite Template</h2><p>NBA 2K27 target players approved for repeat swaps</p></div>
+          <button class="icon-button" value="cancel" aria-label="Close">X</button>
+        </header>
+        <div class="template-list" id="templateList"></div>
+        <footer class="modal-footer">
+          <span id="templateSummary">No template players assigned</span>
+          <button class="button secondary" value="cancel">Close</button>
+        </footer>
+      </form>
+    </dialog>
+
+    <dialog id="settingsDialog" class="modal settings-modal">
+      <form method="dialog" class="modal-shell">
+        <header class="modal-header">
+          <div><h2>Settings</h2><p>Local paths</p></div>
+          <button class="icon-button" value="cancel" aria-label="Close">X</button>
+        </header>
+        <div class="settings-fields">
+          <div class="field"><label for="settings26"><span>NBA 2K26 Folder</span></label><div class="settings-path"><input id="settings26" type="text"><button class="icon-button" type="button" data-setting-browse="settings26" title="Browse NBA 2K26 folder" aria-label="Browse NBA 2K26 folder"><i data-lucide="folder-open"></i></button></div></div>
+          <div class="field"><label for="settings27"><span>NBA 2K27 Folder</span></label><div class="settings-path"><input id="settings27" type="text"><button class="icon-button" type="button" data-setting-browse="settings27" title="Browse NBA 2K27 folder" aria-label="Browse NBA 2K27 folder"><i data-lucide="folder-open"></i></button></div></div>
+          <div class="field"><label for="settingsBlender"><span>Blender Executable</span></label><div class="settings-path"><input id="settingsBlender" type="text"><button class="icon-button" type="button" data-setting-browse="settingsBlender" title="Browse Blender executable" aria-label="Browse Blender executable"><i data-lucide="file-search"></i></button></div></div>
+          <div class="field"><label for="settingsAddon"><span>Head Swap Tool</span></label><div class="settings-path"><input id="settingsAddon" type="text"><button class="icon-button" type="button" data-setting-browse="settingsAddon" title="Browse Head Swap Tool folder" aria-label="Browse Head Swap Tool folder"><i data-lucide="folder-open"></i></button></div></div>
+          <div class="field"><label for="settingsMdt"><span>Mesh Data Transfer</span></label><div class="settings-path"><input id="settingsMdt" type="text"><button class="icon-button" type="button" data-setting-browse="settingsMdt" title="Browse Mesh Data Transfer folder" aria-label="Browse Mesh Data Transfer folder"><i data-lucide="folder-open"></i></button></div></div>
+          <div class="field"><label for="settingsOutput"><span>Output Folder</span></label><div class="settings-path"><input id="settingsOutput" type="text"><button class="icon-button" type="button" data-setting-browse="settingsOutput" title="Browse output folder" aria-label="Browse output folder"><i data-lucide="folder-open"></i></button></div></div>
+        </div>
+        <footer class="modal-footer">
+          <span id="settingsStatus" role="status"></span>
+          <button class="button secondary" value="cancel">Cancel</button>
+          <button class="button primary" type="button" id="saveSettings">Save Settings</button>
+        </footer>
+      </form>
+    </dialog>
+
+    <script src="tauri-bridge.js"></script>
+<script src="lucide.min.js"></script>
+    <script src="sidebar-ui.js"></script>
+    <script src="virtual-table.js"></script>
+    <script src="viewer-tools.js"></script>
+    <script src="app.js"></script>
+    <script src="configs-ui.js"></script>
+  
+
+</body></html>

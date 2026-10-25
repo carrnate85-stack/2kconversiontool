@@ -1,0 +1,33 @@
+.configs-view { min-height: 0; overflow: auto; padding: 24px; }
+.preview-config-field { display: grid; gap: 4px; width: 200px; max-width: 100%; min-width: 0; flex: 0 1 200px; font-size: 11px; }
+.preview-config-field select { width: 100%; min-width: 0; height: 34px; padding: 6px 8px; color: inherit; background: transparent; border: 1px solid #6b728077; border-radius: 4px; }
+.preview-config-field option { color: #111; background: #fff; }
+.configs-view[hidden], .config-editor[hidden] { display: none; }
+.configs-heading, .config-editor header, .config-editor footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.configs-heading { margin-bottom: 20px; }
+.config-editor-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.configs-heading h2, .config-editor h2 { font-size: 16px; margin: 0; overflow-wrap: anywhere; }
+.configs-heading p { font-size: 12px; margin: 6px 0; }
+.configs-layout { display: grid; grid-template-columns: minmax(200px, 1fr) minmax(280px, 2fr); gap: 24px; }
+.configs-list { min-width: 0; }
+.config-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 16px 0; border-bottom: 1px solid #6b728044; }
+.config-row.active { border-left: 3px solid #4595ef; padding-left: 12px; }
+.config-row strong, .config-row small { display: block; overflow-wrap: anywhere; }
+.config-row small { font-size: 11px; margin-top: 5px; opacity: .7; }
+.config-editor { display: grid; align-content: start; gap: 12px; min-width: 0; border-left: 1px solid #6b728044; padding-left: 24px; }
+.config-editor label { display: grid; gap: 5px; font-size: 12px; }
+.config-editor select, .config-create input, .config-create select { width: 100%; min-width: 0; padding: 8px; color: inherit; background: transparent; border: 1px solid #6b728077; border-radius: 4px; }
+.config-editor select option, .config-create select option { color: #111; background: #fff; }
+.config-editor > button { justify-self: start; }
+.config-editor fieldset { border: 0; padding: 10px 0; margin: 0; }
+.config-editor fieldset label { display: flex; align-items: center; gap: 8px; margin: 8px 0; }
+.config-editor footer { justify-content: flex-start; padding-top: 12px; }
+.configs-view .button { display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+.configs-view .button svg { width: 16px; height: 16px; }
+.config-create { width: min(440px, calc(100vw - 48px)); padding: 24px; border: 1px solid #6b728077; border-radius: 8px; color: inherit; background: #181c22; }
+html[data-theme="light"] .config-create { background: #fff; }
+.config-create form { display: grid; gap: 16px; }
+.config-create label { display: grid; gap: 8px; }
+.config-create footer { display: flex; gap: 8px; justify-content: flex-end; }
+.config-create::backdrop { background: #0008; }
+@media (max-width: 850px) { .configs-layout { grid-template-columns: 1fr; } .config-editor { border-left: 0; padding-left: 0; } }

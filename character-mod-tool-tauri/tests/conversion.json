@@ -1,0 +1,16 @@
+[
+  {"name":"bootstrap","command":"bootstrap","payload":{}},
+  {"name":"source","command":"extract","payload":{"gameLabel":"NBA 2K23","png":"4100"}},
+  {"name":"target","command":"extract","payload":{"gameLabel":"NBA 2K27","png":"06827"}},
+  {"name":"sourceInspection","command":"inspect","payload":{"filePath":{"$ref":"/source/mainPath"}}},
+  {"name":"hair","command":"hair-options","payload":{"source":{"$ref":"/source/mainPath"},"target":{"$ref":"/target/mainPath"},"sourceGame":"NBA 2K23","targetGame":"NBA 2K27"}},
+  {"name":"beard","command":"facial-hair-options","payload":{"source":{"$ref":"/source/mainPath"},"target":{"$ref":"/target/mainPath"},"sourceGame":"NBA 2K23","targetGame":"NBA 2K27"}},
+  {"name":"swap","command":"run-swap","payload":{
+    "source":{"$ref":"/source/mainPath"},"target":{"$ref":"/target/mainPath"},"sourceGame":"NBA 2K23","targetGame":"NBA 2K27",
+    "outputDir":"C:\\Users\\carrn\\CodexProjects\\2kconversiontool\\character-mod-tool-tauri\\artifacts\\conversion-output",
+    "shrinkwrapBody":true,"hairEnabled":false,
+    "facialHairEnabled":true,"facialHairSource":{"$ref":"/beard/candidates/0/path"},"facialHairTargetKey":{"$ref":"/beard/slots/0/key"}
+  }},
+  {"name":"fit","command":"body-fit","payload":{"source":{"$ref":"/source/mainPath"},"target":{"$ref":"/swap/output"}}},
+  {"name":"configs","command":"configs-list","payload":{"target":{"$ref":"/swap/output"}}}
+]

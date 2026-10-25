@@ -1,0 +1,36 @@
+{
+  "source": "nba2k27-exporter-wpf/Web/renderer/model-preview.js",
+  "sha256": "aba5f8342ad7262fcd8db4a043705a3491df2e83bcb933254a4f9ff1ef39d41d",
+  "adaptations": [
+    "const canvas = document.getElementById('previewCanvas');",
+    "scene.background = new THREE.Color(0x080b10);",
+    "scene.background.set(0x080b10);",
+    "scene.background.set(0x94bdd7);",
+    "alpha: false, powerPreference:",
+    "Math.min(window.devicePixelRatio || 1, 2)",
+    "renderer.shadowMap.enabled = true;",
+    "keyLight.castShadow = true;",
+    "if (draw) renderer.render(scene, camera);",
+    "if (viewerIsActive()) renderer.render(scene, camera);",
+    "const indices = typed(value, Uint32Array);",
+    "!options.deferRender && performance.now() - sliceStarted >= 8 && itemIndex + 1 < items.length",
+    "!options.deferRender && performance.now() - sliceStarted >= 8 && index + 1 < textureItems.length",
+    "const modal = canvas.closest('.modal-backdrop');",
+    "const speed = movementKeys.has('ShiftLeft') || movementKeys.has('ShiftRight') ? 900 : 300;",
+    "const hit = raycaster.intersectObjects(modelRoot.children, false)[0];",
+    "canvas.addEventListener('contextmenu'",
+    "const movementCodes = new Set([",
+    "window.modelPreview = {",
+    "  skinBoundaryPairs.set(key, pairs);\n  return pairs;"
+  ],
+  "dependencies": [
+    "vendor/three.module.min.js",
+    "vendor/three.core.min.js",
+    "vendor/DDSLoader.js",
+    "arena-capture.mjs",
+    "arena-layers.mjs",
+    "arena-overlays.mjs",
+    "arena-catalog.mjs",
+    "render-profiles.mjs"
+  ]
+}

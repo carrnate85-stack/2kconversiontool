@@ -1,0 +1,1 @@
+{"private":true,"dependencies":{"esbuild":"^0.25.0","buffer":"^6.0.3","fflate":"^0.8.2","path-browserify":"^1.0.1","typescript":"~5.9.3","parse5":"^7.3.0"}}

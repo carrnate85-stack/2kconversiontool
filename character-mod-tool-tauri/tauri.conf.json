@@ -1,0 +1,16 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Character Mod Tool",
+  "version": "0.2.56",
+  "identifier": "local.charactermodtool.tauri.prototype",
+  "build": { "frontendDist": "frontend" },
+  "app": {
+    "withGlobalTauri": true,
+    "windows": [],
+    "security": {
+      "csp": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src ipc: http://ipc.localhost; worker-src 'self' blob:; object-src 'none'; base-uri 'none'; frame-src 'none'",
+      "capabilities": [{ "identifier": "main-ui", "windows": ["main"], "permissions": ["core:event:allow-listen", "core:event:allow-unlisten"] }]
+    }
+  },
+  "bundle": { "active": false, "icon": ["app.ico"] }
+}

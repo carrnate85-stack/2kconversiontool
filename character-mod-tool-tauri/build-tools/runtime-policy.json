@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "excludedSitePackages": [
+    "pip",
+    "pip-*.dist-info",
+    "PyInstaller",
+    "pyinstaller-*.dist-info",
+    "_pyinstaller_hooks_contrib",
+    "pyinstaller_hooks_contrib-*.dist-info",
+    "setuptools",
+    "setuptools-*.dist-info",
+    "_distutils_hack",
+    "distutils-precedence.pth",
+    "pkg_resources",
+    "altgraph",
+    "altgraph-*.dist-info",
+    "pefile.py",
+    "pefile-*.dist-info",
+    "ordlookup",
+    "packaging",
+    "packaging-*.dist-info",
+    "win32ctypes",
+    "pywin32_ctypes-*.dist-info",
+    "capstone",
+    "capstone-*.dist-info"
+  ]
+}

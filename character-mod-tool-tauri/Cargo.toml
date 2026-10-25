@@ -1,0 +1,33 @@
+[package]
+name = "character-mod-tool-tauri"
+version = "0.2.56"
+edition = "2024"
+description = "Rust, Tauri 2 and TypeScript Character Mod Tool"
+
+[features]
+default = ["custom-protocol"]
+custom-protocol = ["tauri/custom-protocol"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+nba2k-assets = { path = "../shared/nba2k-assets" }
+flate2 = "1"
+half = "2"
+regex = "1"
+anyhow = "1"
+base64 = "0.22"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+sha2 = "0.10"
+zip = { version = "4", default-features = false, features = ["deflate"] }
+tauri = { version = "2", features = [] }
+webview2-com = "=0.39.1"
+windows = { version = "0.62", features = ["Win32_Foundation", "Win32_System_Com", "Win32_System_JobObjects", "Win32_System_Threading", "Win32_System_LibraryLoader", "Win32_UI_WindowsAndMessaging", "Win32_UI_Shell", "Win32_UI_Shell_Common", "Win32_UI_Controls", "Win32_UI_HiDpi", "Win32_Graphics_Gdi", "Win32_Security"] }
+
+[profile.release]
+lto = "thin"
+codegen-units = 8
+strip = true
+opt-level = "s"
