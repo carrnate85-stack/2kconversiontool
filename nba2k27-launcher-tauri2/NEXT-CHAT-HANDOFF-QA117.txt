@@ -1,0 +1,27 @@
+QA117 - VERIFIED HAT ARTWORK / PRO-AM SLEEVE PREVIEW - DEV ONLY
+2026-10-22. Version 0.53.21.
+
+Reported assets:
+- hat_baseball_fit_vandy_galaxytwill_tan_curve_back: required hat artwork missing.
+- acc_armsleeve_full_2kevents_proam_s1_org_left: accessory color material unsupported.
+
+Read-only installed archive inspection found both source resources intact. Hat vandy_galaxytwill_tex contains numbered 01_c and 02_c artwork alongside normals, while the worker assumed one dependency bundle per artwork slot. The orange Pro-Am sleeve contains a full-color orange/logo DDS and no static or dynamic color binding, but its shader was only accepted as a red/green color mask.
+
+Changes: tools/fit-preview/accessory-materials.js expands only the verified Vandy bundle with exactly two uniquely numbered color textures; missing, duplicate, extra or unknown patterns retain the original guarded rejection. Worker carries explicit texture identities and gives each layer a distinct SHA256 cache key, preventing one artwork layer replacing the other. Exact sleeve asset/material/shader/texture/range with no type-4 or type-9 bindings receives source-diffuse treatment. Other unsupported accessories remain unsupported. Generator applies unique guarded replacements after pinned worker-region checks, updates provenance, and retains source ownership/limits. No game writes or outfit-validation changes.
+
+Evidence: source table and 11 dependent/reference resources exported read-only into this artifact folder with existing Rust fit_assets::live test executable (built at QA113); source hash manifest identifies it. No game launch or memory access. Inspection JSON records actual bindings, group hashes, texture ranges and artwork placements. sleeve.png is a locally decoded diagnostic showing the orange Pro-Am Season One texture. The old bundled worker reproduces BOTH reported failures using these resources. Updated real bundled worker renders both as shown with no warnings, two distinct hat layers, original sleeve color. Warm rerun reuses both artwork keys and omits duplicate texture bytes. Node VM checks exercise production worker logic without a browser/GPU.
+
+Validation: two focused positive/negative material tests passed; real cold/warm worker tests passed; TypeScript, JavaScript syntax, five frontend host/label tests, Vite and native release build passed (existing native warnings). Runtime on-screen appearance remains unverified. No computer use, installation, promotion or user Data/Library changes.
+
+Candidate: Dev/Pending/QA117/launcher.exe
+SHA256: 1C025281BC9FDDD04B8CC53DF0C10D0350983E8DBE473C5CB87924A8375EB32C
+Bytes: 46866432
+PDB: Dev/Pending/QA117/launcher.pdb
+Starter: Open QA117 Dev.lnk -> Start QA117 Dev.ps1
+Starter verifies hash/size and requires old game/launcher closed. User click backs up/replaces Dev/Portable only; staging does not activate. Main/share unchanged.
+Backup: Backups/qa117-accessory-materials-20261022-105433
+Evidence: artifacts/qa117-accessory-materials
+Retains QA116 accessory cards and QA115/114 mannequin visuals/controls. QA073 natural Rust AV, QA078 fixture crash and QA106 Season History smoke persistence remain unresolved.
+
+Next user check: after closing the old dev launcher, use QA117 and preview the two reported accessories. Hat should show both numbered artwork layers on tan material; sleeve should show orange Pro-Am texture. Other unsupported accessories keep explicit status; no broad guessed mapping was added.
+Starter CheckOnly exit=0. No activation performed. QA117 staged hash verified; game/launcher closed; no activation performed.

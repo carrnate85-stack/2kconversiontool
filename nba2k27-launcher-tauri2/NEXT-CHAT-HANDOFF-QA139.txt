@@ -1,0 +1,13 @@
+QA139 — Concise Play labels — 2026-10-24
+DEV ONLY 0.53.43. No installation, promotion, activation, GitHub writes, game access or computer use.
+
+Play labels now exactly Startup Video, Mod Profile, Jukebox Playlist. Previous Startup video on next Play wording removed. Dropdown accessible names for Mod Profile/Jukebox Playlist match capitalization. Behavior, settings and selections unchanged. QA138 camera layout cleanup and earlier Downloads shortcuts retained.
+
+Validation: TypeScript,17focused tests/2files,Vite and dev release passed. Main/Share hash-verified unchanged at QA129. No live visual acceptance claimed. Original complete preview pack retained pending user upload. Prior QA073 Rust AV,QA078 Clang crash,QA106 Season History assertion remain unresolved.
+
+Candidate:C:\Users\carrn\CodexProjects\2kconversiontool\nba2k27-launcher-tauri2\Dev\Pending\QA139\launcher.exe
+SHA256:E69C66EC796CC8D4D52F77A29BFB1B2549844F3108AD7C09F14D63DA30202E33
+Bytes:48974336
+PDB SHA256:E23AAAA7A092338F599962887A90925B0C0662DE541126440AD46FAA13BAA3C9
+Starter:Open QA139 Dev.lnk / Start QA139 Dev.ps1. Exact-hash/idle guards retained. Close existing dev normally first. Do not promote curator build; omit dev-curator from future Main/Share.
+Backups:Backups/qa139-play-labels-20261024. Reports:artifacts/qa139-play-labels.

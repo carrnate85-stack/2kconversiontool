@@ -90,10 +90,7 @@ fn leaving_confirmed_match_clears_current_confirmation_while_loaded_restore_wait
         p.restore_stable(&f, &mut runner.restore_samples, 0)
             .is_err()
     );
-    assert_eq!(
-        f.read(p.address(), setting.len()).unwrap(),
-        setting
-    );
+    assert_eq!(f.read(p.address(), setting.len()).unwrap(), setting);
     f.patch(
         f.base() + crate::ball_v2::REFERENCES + 0x18 + 8,
         &0u32.to_le_bytes(),
@@ -427,7 +424,10 @@ fn burst_never_shortens_spacing_or_exceeds_its_bound() {
         &mut || pauses += 1,
     );
     assert!(matches!(result, Ok(None)));
-    assert_eq!((captures.get(), pauses), (BURST_ATTEMPTS, BURST_ATTEMPTS - 1));
+    assert_eq!(
+        (captures.get(), pauses),
+        (BURST_ATTEMPTS, BURST_ATTEMPTS - 1)
+    );
     // The started sequence is kept for the next poll, never shortened.
     assert!(samples.started());
 }
@@ -452,12 +452,9 @@ fn unsafe_or_failed_capture_resets_without_pausing() {
     assert_eq!(pauses, 0);
     assert!(!samples.started());
     let (_now, elapsed) = burst_clock();
-    let result = sample_burst(
-        &mut samples,
-        || anyhow::bail!("torn"),
-        elapsed,
-        &mut || pauses += 1,
-    );
+    let result = sample_burst(&mut samples, || anyhow::bail!("torn"), elapsed, &mut || {
+        pauses += 1
+    });
     assert!(matches!(result, Err(Burst::Capture(_))));
     assert_eq!(pauses, 0);
 }

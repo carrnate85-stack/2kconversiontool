@@ -1,0 +1,49 @@
+NBA 2K27 Rust/Tauri launcher handoff - QA098 - 2026-10-21
+
+QA098 fixes the Jukebox scroll regression reported in the installed QA097
+Main build. The exact QA098 sharing executable was promoted to Main on
+2026-10-21; the separate dev slot remains QA096.
+
+Delivered:
+- Restored a bounded viewport-aware scroll area for the Jukebox song list.
+- Allowed the whole Jukebox workspace to scroll on smaller window heights.
+- Added overscroll/touch behavior and stable scrollbar space.
+- Made the playlist song list keyboard-focusable for Page Up/Down and arrow
+  scrolling.
+- Restyled playlist Up/Down ordering controls to match Mod Library action
+  buttons with labels, accent arrows, disabled states and row focus feedback.
+- Added a markup regression assertion for the focusable list region.
+
+Validation:
+- Jukebox native tests: 40 passed.
+- Full frontend: 44 files / 233 tests passed.
+- TypeScript strict check passed.
+- Vite production build passed; the built CSS contains the new scroll rule
+  after the global rule that caused the regression.
+- Optimized offline locked release build passed.
+- The exact packaged candidate exited cleanly in two no-game smoke attempts.
+  Both reproduced the older unrelated QA087 Season History assertion after 13
+  checks: `Season totals/awards edits were not persisted`. Do not call the
+  complete smoke suite passed. No game writes occurred.
+
+Dev candidate:
+- Start QA098 Dev.vbs
+- Dev/Pending/QA098/launcher.exe
+- 46705664 bytes
+- SHA-256 247D54EB0D64F72C59243EAEA942FF8F0F13B3F71A27DDBC4FD17968FA528438
+
+Share candidate:
+- Builds/0.53.2/Share-QA098-Jukebox-Scroll/NBA 2K27 Launcher 0.53.2.exe
+- same exact bytes and hash as the dev candidate
+
+Installed Main:
+- version 0.53.2
+- SHA-256 247D54EB0D64F72C59243EAEA942FF8F0F13B3F71A27DDBC4FD17968FA528438
+- prior QA097 App backup: C:\Program Files (x86)\Steam\steamapps\common\NBA 2K27\2k Launcher\Recovery\App-before-QA098-20261021-162443-7952
+- receipt: artifacts/qa098-main-promotion-20261021-162443-7952.json
+- Data and Library inventories preserved; game and launcher stayed closed.
+
+Active dev remains QA096 until Start QA098 Dev.vbs is run. Do not replace this
+Main build again without explicit user approval. Preserve user Data/Library
+and all QA096/QA097/QA098 backups and journals. QA073's natural Rust access
+violation and QA078's Clang fixture 0xC0000409 remain unresolved.

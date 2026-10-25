@@ -44,9 +44,9 @@ impl Fake {
         header[60..64].copy_from_slice(&128u32.to_le_bytes());
         header[128..132].copy_from_slice(b"PE\0\0");
         header[132..134].copy_from_slice(&0x8664u16.to_le_bytes());
-        header[136..140].copy_from_slice(&0x6ac5_3765u32.to_le_bytes());
+        header[136..140].copy_from_slice(&0x6ad2_e48cu32.to_le_bytes());
         header[152..154].copy_from_slice(&0x20bu16.to_le_bytes());
-        header[208..212].copy_from_slice(&0x35bd_e000u32.to_le_bytes());
+        header[208..212].copy_from_slice(&0x3653_2000u32.to_le_bytes());
         m.put(BASE, &header);
         for &(rva, prefix, target) in RIP_ANCHORS {
             let mut bytes = prefix.to_vec();
@@ -59,7 +59,7 @@ impl Fake {
             m.put(BASE + rva, bytes);
         }
         for (rva, methods) in [
-            (WRAPPER, [0x0292_3180, 0x0292_31e0]),
+            (WRAPPER, [0x0292_3230, 0x0292_3290]),
             (MANAGER, [0x0081_da20, 0x0081_db40]),
             (MANAGER_INTERFACE, [0x0081_e1e0, 0x0081_db40]),
             (PLAYER, [0x0082_60b0, 0x0082_6160]),
@@ -429,7 +429,7 @@ fn actual_installed_version_two_scaler_profile_is_read_only() {
     }
     assert_eq!(
         format!("{:X}", digest.finalize()),
-        "29A96471C55909FC2BCEA6C699C59238656A501C19B50C74ED64B0D842E576A1"
+        "B673EB04593D6D5A4DFB9E270178E04C017BD9F277514D256EA98FFB792ED27B"
     );
     stream.seek(SeekFrom::Start(0)).unwrap();
     let mut h = vec![0; 4096];

@@ -1,0 +1,8 @@
+QA143 complete - 0.53.46 installed Main and Share.
+Game installation moved first in Settings. Launcher updates, Diagnostics & compatibility, Previous launcher library, Support, and Game build compatibility are gated by boot.capabilities.developerTools, retained in dev but hidden in production. Existing advanced developer Settings and Curator remain gated. WNBA and debug menus remain product features, included in production compiler features.
+Validation: TypeScript, 252 frontend tests across 48 files, Vite, optimized Rust release passed. Exact EXE isolated smoke loads and completes 13 checks, but still fails the pre-existing Season History totals/awards persistence assertion. No claim of full smoke or live gameplay acceptance. QA073 natural Rust test AV and QA078 Clang fixture crash remain unresolved. No game launch or computer use.
+Share: C:\Users\carrn\CodexProjects\2kconversiontool\nba2k27-launcher-tauri2\Builds\0.53.46\Share-QA143-Production\NBA 2K27 Launcher 0.53.46.exe
+Main: C:\Program Files (x86)\Steam\steamapps\common\NBA 2K27\2k Launcher\App\2k Launcher Rust.exe
+Both SHA256: B98D6EF4F3CF5F23C2AAF31CFED9C142ED794ACAD1961E202834EB1335EBF31C
+Promotion receipt: artifacts/qa143-main-promotion-20261024-155127-2756.json
+Data and Library unchanged; previous App recovery backup verified. Dev source retains the hidden cards; no separate new dev executable was built this turn.

@@ -28,3 +28,4 @@ import "./renderer/scoreboard-picker.css";
 import "./renderer/player-animation-preview.css";
 // Rust-only additions (features WPF never had), styled with WPF tokens.
 import "./wpf-bridge.css";
+import "../ux-polish.css";

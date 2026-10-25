@@ -36,8 +36,8 @@ fn version_two_fixture(hash: u32) -> Fixture {
         f.put(next, &bytes);
     }
     let header = f.data.get_mut(&base).unwrap();
-    header[136..140].copy_from_slice(&0x6AC53765u32.to_le_bytes());
-    header[208..212].copy_from_slice(&0x35BDE000u32.to_le_bytes());
+    header[136..140].copy_from_slice(&0x6AD2E48Cu32.to_le_bytes());
+    header[208..212].copy_from_slice(&0x36532000u32.to_le_bytes());
     header[152..154].copy_from_slice(&0x20Bu16.to_le_bytes());
     f.data.remove(&(base + 0x3ACB20));
     f.data.remove(&(base + 0x2610815));
@@ -55,7 +55,7 @@ fn version_two_fixture(hash: u32) -> Fixture {
         f.put(at, bytes);
     }
     for (at, methods) in [
-        (new.root_tag, [0x23120u64, 0x346B350]),
+        (new.root_tag, [0x23120u64, 0x346B4D0]),
         (new.model, [0x3D8A90, 0x3D8AF0]),
         (new.description, [0x14F0, 0x827040]),
     ] {
@@ -248,6 +248,9 @@ fn installed_version_two_observer_disk_audit() {
     };
     let p = observer_profile::validate(&disk).unwrap();
     assert_eq!(p.root, observer_profile::VERSION_TWO.root);
+    crate::rules_v2::verify_profile(&disk).unwrap();
+    crate::roster_v2_profile::verify_identity_profile(&disk).unwrap();
+    crate::freestyle_v2::validate_profile(&disk).unwrap();
     assert!(
         validate_build(&disk).is_err(),
         "Version 2 must still fail the legacy write gate"
@@ -267,7 +270,7 @@ fn installed_version_two_observer_disk_audit() {
     let sha = format!("{:X}", hash.finalize());
     assert_eq!(
         sha,
-        "29A96471C55909FC2BCEA6C699C59238656A501C19B50C74ED64B0D842E576A1"
+        "B673EB04593D6D5A4DFB9E270178E04C017BD9F277514D256EA98FFB792ED27B"
     );
     let root = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
         .join("artifacts")

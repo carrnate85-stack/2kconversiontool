@@ -9,54 +9,54 @@ const STRIDE: usize = 48;
 const MAX_ROWS: usize = 20000;
 const PROFILE: &[(u64, usize, &str)] = &[
     (
-        0x2d398d0,
+        0x2d39980,
         691,
-        "80b070e3a2d6433a7d29ea157d3d375e1d4d9ebd6b1381e5683117d8863994da",
+        "e78286b15fc41a433c8894e2100cd68df23b1d960096e4f82604d41f70e89ae8",
     ),
     (
-        0x2d3a3c0,
+        0x2d3a470,
         624,
-        "39212171afba42d7ad5927cd1954b34e3fdbe673c7da37ff7d72b41e1c669a1d",
+        "f33808d81c2b47c5b5285f85e18f03504569bc6d34d94856aaaac12afa0b44ec",
     ),
     (
-        0x2d94870,
+        0x2d94920,
         44,
-        "b59d8563e3efe32e155249a9be2721f8b7eff012c36244ea9aede9cdaa58aafa",
+        "edb68d84ddf852eb9f332ff0ce1bdab1dbecddc5164c3279e2350f0989804ad1",
     ),
     (
-        0x2d3d190,
+        0x2d3d240,
         33,
         "e0513cca9b2470e67858a9de387386af7637eb374e4f4e388ca9802a104a872e",
     ),
     (
-        0x2d3d1c0,
+        0x2d3d270,
         33,
         "7c3ebc366c9b04fe3dc0ea030de91ed070758f0b69faf524706632dee89c7db8",
     ),
     (
-        0x2d3d280,
+        0x2d3d330,
         33,
         "e4aa8dfc25d67f4cf537bc76ae9d407edd911e94be328aea2de1e2fea90cf0b4",
     ),
     (
-        0x2d3d250,
+        0x2d3d300,
         33,
         "e6dddf004a026758bc20e0d75152f0a37da763d00df85ce2e7f7ae64c9deea89",
     ),
     (
-        0x2d39c90,
+        0x2d39d40,
         707,
-        "b6fcd3246eea518c00952a78abb8542a4cf0353319905779bc04cd57f0bfcd0a",
+        "791799f118c6f83fc6aeab3e7cbba5f14f6f7151847257454f54d09d6c146f54",
     ),
     (
-        0x2d39bd0,
+        0x2d39c80,
         184,
-        "4161ebff5e519a4f943ac8004177feaa5b321c3c14deddf4727b02a631a87f0f",
+        "d543f51641df6213a87d5cd09151f03378b96c011af3b90824a463ba5d12662d",
     ),
     (
-        0x2d39fa0,
+        0x2d3a050,
         184,
-        "2646ed462a1a80bd42fbf6178a1d6e310d077651363f010836a0fbf411d68734",
+        "a67364405dd3d8e6982425c997d56122cede29d8a1df834639d68b1522b8b75b",
     ),
 ];
 
@@ -159,6 +159,11 @@ fn profile(m: &impl Memory) -> Result<bool> {
         }
     }
     Ok(true)
+}
+#[cfg(test)]
+pub(crate) fn verify_disk_profile(m: &impl Memory) -> Result<()> {
+    ensure!(profile(m)?, "Name/audio dictionary profile differs");
+    Ok(())
 }
 fn headers(m: &impl Memory, b: &Bounds) -> Result<[[u8; 16]; 2]> {
     Ok([

@@ -22,6 +22,7 @@ export type ModInstallPlan = {
   folders: number;
 };
 export type ModInstallResult = {
+  cleanupWarnings?: string[];
   installed: number;
   replaced: number;
   kept: number;
@@ -94,7 +95,8 @@ export function modInstallSummary(result: ModInstallResult) {
   if (result.kept) text += ` · kept ${result.kept.toLocaleString()}`;
   if (result.ignored)
     text += ` · ignored ${plural(result.ignored, "non-mod file")}`;
-  return `${text}.`;
+  const warnings = result.cleanupWarnings?.filter((warning) => typeof warning === "string" && warning.trim());
+  return `${text}.${warnings?.length ? ` Cleanup needs review: ${warnings.join(" · ")}` : ""}`;
 }
 
 /** WPF toast when routing issues block the install. */

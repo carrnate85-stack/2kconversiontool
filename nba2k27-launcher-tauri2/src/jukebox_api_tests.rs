@@ -1,4 +1,37 @@
 include!("jukebox_test_paths.rs");
+#[test]
+fn curated_download_import_bypasses_picker_preserves_selection_and_rejects_bad_payload() {
+    let f = Fixture::new();
+    let h = Arc::new(TestHost::default());
+    let api = open(&f, h.clone());
+    let id = create(&api);
+    call(
+        &api,
+        "jukebox:set-order",
+        json!({"playlistId":id,"trackKeys":["1:100:100"]}),
+    )
+    .unwrap();
+    call(&api, "jukebox:set-active", json!({"playlistId":id})).unwrap();
+    call(&api, "jukebox:refresh-bundle", json!({"playlistId":id})).unwrap();
+    assert_eq!(wait(&api).job.unwrap().phase, "completed");
+    let file = f.0.join("Library/Jukebox/Playlists/My playlist.2kplaylist");
+    assert!(h.playlist.lock().unwrap().is_none());
+    let added = api
+        .import_downloaded(&file, &AtomicBool::new(false), |_| {})
+        .unwrap();
+    let v = wait(&api);
+    assert_ne!(added, id);
+    assert_eq!(v.state.active_playlist_id.as_deref(), Some(id.as_str()));
+    assert_eq!(v.state.playlists.len(), 2);
+    assert_eq!(v.state.playlists[1].track_keys, vec!["1:100:100"]);
+    let bad = f.0.join("bad.2kplaylist");
+    fs::write(&bad, b"not a playlist archive").unwrap();
+    assert!(
+        api.import_downloaded(&bad, &AtomicBool::new(false), |_| {})
+            .is_err()
+    );
+    assert_eq!(api.view().unwrap().state.playlists.len(), 2);
+}
 use super::*;
 use serde_json::Map;
 use std::sync::atomic::{AtomicUsize, Ordering};
@@ -297,14 +330,21 @@ fn later_batch_failure_preserves_prior_completed_song_and_reports_partial_result
     let j = v.job.unwrap();
     // WPF batch add keeps going past a bad file and reports "Added X of Y".
     assert_eq!(j.phase, "completed");
-    assert!(j.message.contains("Added 1 of 2 songs. Bad.mp3:"), "{}", j.message);
+    assert!(
+        j.message.contains("Added 1 of 2 songs. Bad.mp3:"),
+        "{}",
+        j.message
+    );
     assert!(j.message.contains("unsupported test codec"));
     assert_eq!(v.state.playlists[0].track_keys.len(), 1);
 }
 #[test]
 fn filename_names_follow_wpf_infer_from_filename() {
     use super::names_from_filename as n;
-    assert_eq!(n("Drake - Hotline_Bling"), ("Drake".into(), "Hotline Bling".into()));
+    assert_eq!(
+        n("Drake - Hotline_Bling"),
+        ("Drake".into(), "Hotline Bling".into())
+    );
     assert_eq!(n("Artist \u{2013} Song"), ("Artist".into(), "Song".into()));
     assert_eq!(n("  my__song  "), ("Custom".into(), "my song".into()));
     assert_eq!(n("___"), ("Custom".into(), "Custom Song".into()));

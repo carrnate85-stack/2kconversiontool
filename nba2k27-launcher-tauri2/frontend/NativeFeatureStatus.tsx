@@ -5,6 +5,7 @@ const labels = {
   scaler: "Scaler",
   "wnba-freestyle": "WNBA Freestyle",
   "wnba-blacktop": "WNBA Blacktop",
+  "debug-menus": "Debug menus",
   presentation: "Court presentation",
 };
 const problemPhases = new Set([

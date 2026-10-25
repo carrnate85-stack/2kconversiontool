@@ -1,0 +1,20 @@
+QA124 version 0.53.28 is compiled and staged as a dev-only mannequin texture fix.
+
+Read artifacts\qa124-classic-shorts\REPORT.txt and worker-result.json first.
+
+The generated mannequin worker now retains the first available texture dependency as its final fallback after all existing preferred checks. This fixes 297 current classic/classic-retro/Nike shorts assets whose diffuse *_color DDS is bundled inside *_s_rdmo_tex or *_s_classic_rdmo_tex containers. Catalog photos were not changed.
+
+Exact dev EXE:
+- Dev\Pending\QA124\launcher.exe
+- 47003648 bytes
+- SHA256 236166C70F014ED835A533BE27CF52DA5DA9A612C62331CE88288D30D44F8CFD
+
+PDB SHA256 D9949D1378B33AE889FCA14F71F47A3D669A76AC95FDD087C53ED0300E64A063.
+
+User starter: Open QA124 Dev.lnk. Main and Share remain 0.53.27 with SHA256 CD68164C6872F1ECAEB96EA7D9EA2FD4270A3C5732E7291078EDC68107DE051B. Do not install or promote QA124 without explicit approval.
+
+The starter's CheckOnly run refused at the idle guard because installed Main was open as PID 31524; it did not activate or launch QA124. Ask the user to close Main normally before clicking QA124, only if they want to test.
+
+Real current-game container validation passed for one classic and one Nike asset, both selecting their embedded color DDS with no worker warnings. TypeScript, 245 frontend tests, Vite, JS syntax and native release build passed. Visual GPU/mannequin acceptance is pending.
+
+Prior unresolved QA073 Rust natural access violation, QA078 Clang fixture crash and QA106 Season History persistence qualification remain unchanged.

@@ -54,14 +54,14 @@ impl Fake {
         header[60..64].copy_from_slice(&128u32.to_le_bytes());
         header[128..132].copy_from_slice(b"PE\0\0");
         header[132..134].copy_from_slice(&0x8664u16.to_le_bytes());
-        header[136..140].copy_from_slice(&0x6ac5_3765u32.to_le_bytes());
+        header[136..140].copy_from_slice(&0x6ad2e48cu32.to_le_bytes());
         header[152..154].copy_from_slice(&0x20bu16.to_le_bytes());
-        header[208..212].copy_from_slice(&0x35bd_e000u32.to_le_bytes());
+        header[208..212].copy_from_slice(&0x36532000u32.to_le_bytes());
         m.put(BASE, &header);
         // This fixture explicitly models unsupported optional Arena code.
-        m.put(BASE + 0x2ed9aa0, &vec![0; 275]);
+        m.put(BASE + 0x2ed9b50, &vec![0; 275]);
         // Optional arena decoder is intentionally unavailable in this pre-existing fixture.
-        m.put(BASE + 0x2ed9aa0, &[0u8; 275]);
+        m.put(BASE + 0x2ed9b50, &[0u8; 275]);
         for &(rva, prefix, target) in owner::RIP_ANCHORS {
             let mut b = prefix.to_vec();
             b.extend_from_slice(
@@ -72,8 +72,8 @@ impl Fake {
         for &(rva, b) in owner::FIELD_ANCHORS {
             m.put(BASE + rva, b);
         }
-        m.q(BASE + owner::ROOT_CLASS, BASE + 0x024e_65f0);
-        m.q(BASE + owner::ROOT_CLASS + 8, BASE + 0x024e_6660);
+        m.q(BASE + owner::ROOT_CLASS, BASE + 0x024e_66a0);
+        m.q(BASE + owner::ROOT_CLASS + 8, BASE + 0x024e_6710);
         m.q(BASE + owner::ROOT, CONTAINER);
         m.q(CONTAINER, BASE + owner::ROOT_CLASS);
         m.q(CONTAINER + 0xa8, OWNER);
@@ -326,6 +326,21 @@ fn no_read_only_capture_can_bypass_the_real_body_fingerprint() {
 
 #[test]
 #[ignore]
+fn running_version_two_field_profile_is_verified_read_only() {
+    let pid: u32 = std::env::var("C27_ROSTER_GAME_PID")
+        .expect("Explicit read-only game PID required")
+        .parse().unwrap();
+    let processes = crate::session_safety::processes().unwrap();
+    let identity = processes.iter().find(|p| p.pid == pid)
+        .and_then(|p| p.identity.as_ref()).expect("Selected game must be running");
+    let root = std::path::Path::new(&identity.path).parent().unwrap();
+    let reader = crate::blacktop_native::Reader::open_observer(identity, root).unwrap();
+    verify_profile(&reader).unwrap();
+    println!("Live roster profile verified read-only: 455 player fields and all team/owner anchors; no game writes");
+}
+
+#[test]
+#[ignore]
 fn exact_version_two_field_profile_is_verified_from_disk_only() {
     use std::{
         fs::File,
@@ -545,11 +560,11 @@ fn verified_read_back_is_adopted_in_place_and_corrupt_caches_are_refused() {
     snap.replace(Kind::Team, 0, &team).unwrap();
     assert_eq!(snap.document()["teams"][0]["cityName"], "QA");
     let mut uniform = snap.row(Kind::Uniform, 0).unwrap().to_vec();
-    uniform[0x114..0x118].copy_from_slice(&0xFF11_2233u32.to_le_bytes());
+    uniform[0x114..0x118].copy_from_slice(&0xff112233u32.to_le_bytes());
     snap.replace(Kind::Uniform, 0, &uniform).unwrap();
     assert_eq!(
         snap.document()["teams"][0]["uniforms"][0]["primaryColor"],
-        0xFF11_2233u32
+        0xff112233u32
     );
     assert!(snap.replace(Kind::Uniform, 4, &uniform).is_err());
     assert!(snap.replace(Kind::Team, 0, &team[1..]).is_err());

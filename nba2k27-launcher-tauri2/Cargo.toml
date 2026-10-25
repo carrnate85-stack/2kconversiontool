@@ -1,8 +1,22 @@
 [package]
 name = "nba2k27-launcher-tauri2"
-version = "0.53.1"
+default-run = "nba2k27-launcher-tauri2"
+version = "0.53.46"
 edition = "2024"
 publish = false
+# Runtime data, historical QA captures, local Python packages and dependency
+# stores are not Rust package inputs. Keeping them out of Cargo fingerprinting
+# also prevents an inaccessible diagnostic cache from blocking a clean build.
+exclude = [
+  "artifacts/**",
+  "Backups/**",
+  "Builds/**",
+  "Dev/**",
+  "node_modules/**",
+  "Portable/**",
+  "target*/**",
+  "tools/**",
+]
 
 [dependencies]
 anyhow = "1"
@@ -21,6 +35,8 @@ tauri = { version = "2", default-features = false, features = ["wry", "compressi
 windows = { version = "0.62", features = ["Win32_Foundation", "Win32_Media_MediaFoundation", "Win32_Globalization", "Win32_System_Com", "Win32_System_LibraryLoader", "Win32_System_Threading", "Win32_System_Diagnostics_ToolHelp", "Win32_System_Diagnostics_Debug", "Win32_System_Memory", "Win32_System_JobObjects", "Win32_System_IO", "Win32_System_Pipes", "Win32_Security", "Win32_Security_Authorization", "Win32_Security_Cryptography", "Win32_UI_Shell", "Win32_UI_Shell_Common", "Win32_UI_WindowsAndMessaging", "Win32_UI_Input_KeyboardAndMouse", "Win32_Graphics_Gdi", "Win32_Graphics_Imaging", "Win32_Storage_FileSystem", "Win32_Networking_WinHttp"] }
 webview2-com = "0.39"
 windows-core = "=0.62.2"
+ed25519-dalek = { version = "2", optional = true }
+base64 = { version = "0.22", optional = true }
 
 [build-dependencies]
 tauri-build = "2"
@@ -28,6 +44,26 @@ tauri-build = "2"
 [features]
 default = ["custom-protocol"]
 custom-protocol = ["tauri/custom-protocol"]
+# Explicitly selected only for staged dev candidates. Normal release/install
+# builds retain the fail-closed WNBA category plan.
+dev-wnba-categories = []
+# Session-only debug-menu integration is staged/tested independently and is
+# never present in an ordinary release build unless explicitly selected.
+dev-debug-menus = []
+# Private curator UI and GitHub write commands. Never enable in sharing builds.
+dev-curator = []
+dev-hub-updates = ["dep:ed25519-dalek", "dep:base64"]
+dev-hub-update-fixtures = ["dev-hub-updates"]
+# Temporary staging gate for the release-intended Mod Library integration.
+# Normal release builds do not compile or package it until promotion is approved.
+dev-model-preview = []
+ed25519-dalek = ["dep:ed25519-dalek"]
+base64 = ["dep:base64"]
+
+[[bin]]
+name = "launcher-hub-readiness"
+path = "src/bin/launcher_hub_readiness.rs"
+required-features = ["dev-hub-updates"]
 
 [profile.release]
 opt-level = "s"
@@ -37,3 +73,13 @@ strip = true
 unexpected_cfgs = { level = "warn", check-cfg = ['cfg(settings_compat_offline)', 'cfg(feature, values("startup-audio-worker"))'] }
 
 
+
+[[bin]]
+name = "launcher-hub-update-worker"
+path = "src/bin/launcher_hub_update_worker.rs"
+required-features = ["dev-hub-updates"]
+
+[[bin]]
+name = "launcher-hub-shutdown-fixture"
+path = "src/bin/launcher_hub_shutdown_fixture.rs"
+required-features = ["dev-hub-update-fixtures"]

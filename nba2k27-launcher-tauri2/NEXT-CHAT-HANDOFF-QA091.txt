@@ -1,0 +1,42 @@
+QA091 DEV CHECKPOINT - 2026-10-21
+
+Scope
+- Fixes QA090 stopping before Steam dispatch when WNBA Freestyle or Blacktop was enabled.
+- Dev build only. Nothing was installed or promoted, and no game process was launched by development work.
+
+Exact reproduced runtime evidence
+- QA090 active launcher SHA-256 matched the staged candidate.
+- The launch journal closed cleanly without dispatching Steam.
+- Latest provider state reported steamDispatched=false and error="WNBA toggle setup is currently dev-only" after game verification succeeded.
+- The current game build was accepted as Version 2 with mod provider, observer, arena/ball, scoreboard and outfit carry mappings all present.
+
+Root cause and correction
+- QA089 added the explicit non-default dev-wnba-categories feature to the backend capability and frozen feature plan.
+- wnba_priority_launch::Prepared::open still independently required cfg!(debug_assertions), which is false in every optimized staged candidate.
+- That remaining gate now uses feature_plan::dev_wnba_categories(), the same explicit QA-only feature used by bootstrap and the frozen launch plan.
+- All remaining cfg!(debug_assertions) uses were audited. The only runtime expression left is the opt-in outfit timing shadow observer, which intentionally stays off in optimized builds and supplies no gameplay admission.
+
+Validation
+- cargo fmt completed.
+- Debug feature-plan suite: 12 passed, 0 failed.
+- Optimized release feature-plan suite with --features dev-wnba-categories: 12 passed, 0 failed. This directly proves the explicit dev feature remains active when debug_assertions is false.
+- The prior QA090 exact installed-game provider disk gate remains passed; no build mapping or native payload changed in QA091.
+- cargo build --release --features dev-wnba-categories completed successfully.
+- The staged binary was durably flushed and its exact size/hash verified.
+- Start QA091 Dev.ps1 syntax and embedded staged constants were verified. CheckOnly passed with the game/launcher closed and performed no activation.
+
+QA091 candidate
+- Staged executable: Dev/Pending/QA091/launcher.exe
+- Bytes: 46668800
+- SHA-256: AE69ADFAF1EF4B443F89CD82910EEA5C23B1E035DA6135F99587CD5F274054BF
+- Starter: Start QA091 Dev.vbs
+- Native payload remains QA088's remapped version-outfits-v2-qa088.dll, SHA-256 1A6DAD61915869BF2E56636A910563D27BFE967052DC5BD3E2D243505F7BBB00.
+
+Live acceptance still required
+- Start QA091 with WNBA Blacktop ON and use Play normally.
+- Verify Steam dispatch occurs, the game starts, and the WNBA category appears in Blacktop selection.
+
+Preserved qualifications
+- QA073 natural native pre-initialization fixture remains unresolved at exit -1073740791.
+- QA078 Clang outfit fixture remains unresolved at exit -1073740791 (0xC0000409).
+- General roster/team editor serializer mapping remains separate post-patch work.

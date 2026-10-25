@@ -4,11 +4,26 @@
   "files": {
     "index.html": {
       "from": "renderer/fit-preview/index.html",
-      "sha256": "ef90a8beda359fdaf57784c8944cc6df2c0e9564d689f0e64e64ad5bfd803e33"
+      "sha256": "63c34f1079c7ef0d30819dad3504fa039603eb40025a82d6e0019bbb471402ad",
+      "sourceSha256": "ef90a8beda359fdaf57784c8944cc6df2c0e9564d689f0e64e64ad5bfd803e33",
+      "adaptations": [
+        "QA113 lightweight studio lighting and static CSS backdrop.",
+        "QA114 camera/backdrop controls, view preservation and narrow-view refit.",
+        "QA115 procedural contact shadow: one two-triangle plane; no textures, shadow maps or animation loop."
+      ]
     },
     "fast-viewer.js": {
       "from": "renderer/fit-preview/fast-viewer.js",
-      "sha256": "746dc6833f7df1b76c507737d202f1b5bd98ce3e6f129e9fc55d0400a6db83a0"
+      "sha256": "ee818a031f45e8bd77549a642e59fc88db7cc6784be2fbd758ea13becb04b742",
+      "sourceSha256": "746dc6833f7df1b76c507737d202f1b5bd98ce3e6f129e9fc55d0400a6db83a0",
+      "adaptations": [
+        "QA113 lightweight studio lighting and static CSS backdrop.",
+        "QA114 camera/backdrop controls, view preservation and narrow-view refit.",
+        "QA115 procedural contact shadow: one two-triangle plane; no textures, shadow maps or animation loop.",
+        "QA120 source LogoN RGB-region palettes, cache identity and part reuse updates; no extra rendering pass.",
+        "QA121 recover full-range RGB mask weights after sRGB sampling; distinguish ranged and ordinary artwork shader programs.",
+        "QA122 exact-source WNBA sleeve palettes follow acc_nologo opaque color output; alpha policy included in shader cache identity."
+      ]
     },
     "vendor/three.module.min.js": {
       "from": "renderer/fit-preview/vendor/three.module.min.js",
@@ -22,9 +37,36 @@
       "from": "renderer/fit-preview/vendor/DDSLoader.js",
       "sha256": "3345b051adcd82dd79bfd6c26354253e8ddde19d9720e52a16003fc942914d32"
     },
+    "fast-viewer.js#artwork-color": {
+      "from": "tools/fit-preview/artwork-color.js",
+      "sha256": "f698650504f98a4580291ccb282e970b39c0cee815f92c52d35faf13faff8397"
+    },
+    "studio.css": {
+      "from": "tools/fit-preview/studio.css",
+      "sha256": "118c98dc409beba773c99f168b20869142bc38d6451d10b732ea702f00d70c56"
+    },
     "fit-runtime.js#core/fast-clothing-preview-worker.js": {
       "from": "core/fast-clothing-preview-worker.js",
-      "sha256": "ef252969514f75c61dd8edd450a74482825941a5cf51dc579d72ac58c9a5bf76"
+      "sha256": "ef252969514f75c61dd8edd450a74482825941a5cf51dc579d72ac58c9a5bf76",
+      "adaptations": [
+        "Allow an empty visual draft to display the mannequin; retain max-seven and asset-name validation.",
+        "QA118 audited source-diffuse sleeve/headband variants and numbered hat artwork bundles; exact texture/material allowlist.",
+        "QA119 exact CRC32 of source TXTR paths maps hat slots, repeated decals and base-bundle artwork; guarded baked-color hats and static clover sleeves.",
+        "QA120 source clothing_default LogoNColorizeR/G/B and current identity defaults; exact per-asset guarded palettes.",
+        "QA121 verified full-range and opaque clothing_default hats with exact format, dimensions and range guards; sleeves remain guarded.",
+        "QA122 twelve source-bound WNBA sleeves: acc_nologo RGB-only texture sampling and opaque output, verified retained DXIL and current identity defaults.",
+        "QA123 exact-source catalog RGB palettes and ordered accessory logo bindings; required mapped artwork fails closed on resource changes.",
+        "QA124 combined uniform texture containers remain eligible after preferred dependency checks; embedded color DDS selection is unchanged.",
+        "QA117 verified Vandy numbered artwork slots with distinct cache identities and Pro-Am S1 source-color sleeve."
+      ]
+    },
+    "fit-runtime.js#accessory-material-map": {
+      "from": "tools/fit-preview/accessory-material-map.json",
+      "sha256": "01a68c6f091d7972dc9e082efb5c9050c9be9f2e640f74bd931636ced65a8ce9"
+    },
+    "fit-runtime.js#accessory-materials": {
+      "from": "tools/fit-preview/accessory-materials.js",
+      "sha256": "7a976e9a4339288bec95f2664b5822bd8e348dd256987aa27d36d22804a12070"
     },
     "fit-runtime.js#vendor/archive-preview/core/iff.js": {
       "from": "vendor/archive-preview/core/iff.js",
@@ -67,7 +109,7 @@
       "sha256": "c572cff4a44b5a473becd40a0037a517d5679a2aaefc0eae453d9b7f88d4561a"
     },
     "fit-runtime.js": {
-      "sha256": "5c30024dca9be33dfed9644fbedb25f1eb7182d0037b62dd88e160506e224a50"
+      "sha256": "035431bc2c6cf515d9d1899574157aeac9ac8411c015dca7639ee4c5e5c45ffa"
     }
   }
 }

@@ -123,3 +123,9 @@ describe("mod install review", () => {
     expect(modInstallSource({ ...plan, archives: 0 })).toBe("3 selected files");
   });
 });
+
+it("successful install remains successful while retained-backup cleanup warnings stay visible", () => {
+  expect(modInstallSummary({installed:1,replaced:1,kept:0,ignored:0,archives:0,folders:0,
+    cleanupWarnings:["Backup preserved at D:/Mods/.mod-install-owned.bak: sharing violation"]}))
+    .toBe("Installed 1 mod file · replaced 1. Cleanup needs review: Backup preserved at D:/Mods/.mod-install-owned.bak: sharing violation");
+});

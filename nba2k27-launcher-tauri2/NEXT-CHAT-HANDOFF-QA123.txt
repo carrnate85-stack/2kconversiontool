@@ -1,0 +1,58 @@
+QA123 complete accessory catalog audit - 2026-10-22
+
+DEV ONLY. No install, promotion, app activation, desktop control, game launch/stop or live memory access. Installed and sharing launchers, Data/Library and prior artifacts are preserved. Game archives were read offline through the retained read-only exporter test executable.
+
+Results
+- Audited all 20939 source accessory entries with the actual generated preview worker over exported resources. Composite baseline/result details are in comparison.json and final-baseline.json.
+- 963 previously unavailable items now pass: {"headwear":112,"eyewear":1,"faceMask":1,"headband":149,"leftArm":325,"backpack":3,"waist":2,"leftHand":17,"leftLeg":1,"neckwear":9,"rightArm":325,"rightHand":17,"rightLeg":1}.
+- 13527 total shown; 7412 remain unsupported. Zero supported-state regressions in the checked set.
+- This includes 951 palette/artwork candidates plus 12 additional hats (14 extra hat checks overlap two of the original candidates).
+- The audit's original resource-name filter accidentally excluded color resources containing "mask". Exported every remaining declared texture dependency, then reran all 259 resource/material/artwork failures on the ORIGINAL QA122 runtime. The resulting 182 already-supported cases are explicitly excluded from the improvement count. No source behavior was changed to hide this audit error.
+
+Implementation
+- tools/fit-preview/accessory-material-map.json adds 963 catalogMaterials and 336 catalogArtwork records. Existing diffuse/hats/boundHats/boundDiffuse/opaqueSleeves groups remain structurally identical to the pre-edit backup.
+- Exact asset/material/shader identities, full ordered binding records, texture names, format, dimensions and range guard each exception. New dynamic colors or modified metadata reject the mapping. No general unsupported-shader bypass.
+- Verified source ColorizeR/G/B and LogoNColorizeR/G/B records map to the existing preview RGB palettes. Current default identity palettes cover absent overrides. Named BlackLightColorize fields are distinguished from the normal studio palette; this does not implement blacklight/court effects.
+- Ordered logo bindings use the CRC32 of the exact source TXTR path, explicit six-slot positions and unique DDS matches. They preserve repeated images and source logo colors. Headbands and sleeves use the same verified artwork path as hats. Missing required mapped artwork removes the part rather than silently drawing an incomplete accessory.
+- Reuses the existing opaqueColor/fullRangeMask viewer path. No new lighting/render pass, animation loop, asset download or game outfit mutation. Generated JS/provenance rebuilt through the generator. Runtime size 4267 KiB (uncompressed); lazy preview loading remains as before.
+
+Source evidence and limitations
+- Retained localbuildglobal_decoded.iff identifies acc_logo1 (75571da5), acc_logo2 (ec5e4c1f), acc_two_logos (d07ead71), acc_nologo (dfee4fe6) and clothing_default (5b22e7c4). Current installed item/texture/default metadata is used for mapping validation.
+- 115 retained pixel-shader pass references / 49 unique binaries for acc_logo1/acc_logo2/acc_two_logos/clothing_default were disassembled with the Windows SDK DXC. No dx.op.discard in these binaries. TextureBurnWriteWrite color output alpha is 1: PS.777a94e0462a8e5e.shader.txt:344, PS.794788b4639b471a.shader.txt:453, and PS.33acb513ae2cf45e.shader.txt. QA122 already records the acc_nologo RGB-only/opaque-output evidence.
+- Current localbuildglobal shader bytecode is still undecoded. Historical DXIL plus current source bindings support this bounded dev implementation; this is not current-shader disassembly or GPU/visual/gameplay acceptance.
+- jewelry_blueice (9f45d953) remains blocked: the retained binary SCNE decoder reports an unknown value tag. Do not guess a metallic/iridescent response. remaining-material-groups.json groups the unresolved shader cases.
+
+Validation
+- Final 963/963 changed-item worker checks pass (all-final-summary.json). All previous 3731 audited accessories pass the initial QA123 runtime. The final revision only adds 12 exact entries; mapping-scope.json proves every existing entry is identical. No source logic changed after that prior-item sweep began.
+- 86 original and 14 extra cold/warm cases pass with preserved base/logo palettes, distinct artwork cache keys and omitted cached texture bytes. Two injected missing required sleeve/headband resources fail closed; no partial part is emitted.
+- 18 focused helper/viewer tests; TypeScript; 245 frontend tests across 47 files; JS syntax checks; Vite; native release all pass. Native build retains 90 warnings; Vite retains the chunk-size advisory. No runtime app/game testing was performed.
+- Built dist preview files exactly match the hashed generated sources. Starter -CheckOnly passes and verifies exact size/hash without activation.
+
+Remaining unsupported entries (catalog includes female and debug records)
+- 62: The accessory material could not be decoded.
+- 233: Emissive or animated accessory materials are not supported yet.
+- 5850: The mannequin supports men's clothing only.
+- 290: The source texture animation needs a verified playback controller and frame composition.
+- 14: This finish needs a verified metallic or iridescent material response.
+- 16: The head attachment bind pose is incompatible.
+- 791: The accessory color material is not supported yet.
+- 1: Required hat artwork could not be decoded.
+- 1: The emissive color depends on an unresolved dynamic color binding.
+- 20: A safe body replacement mask is not verified for this limb yet.
+- 100: Boxing gloves need a closed-hand pose and a verified hand occlusion mask.
+- 34: This tape needs body-surface projection and a verified occlusion mask.
+
+These require female mannequin support, source shader/dynamic-color work, animation playback, reliable body masks/projection/pose, attachment transforms or decoder/resource fixes. Do not equate these entries with user-visible unique products or claim the whole catalog now has visual acceptance.
+
+Build
+Version 0.53.27; Dev/Pending/QA123/launcher.exe; 47004160 bytes.
+EXE SHA256 4823AD420F1533C0D2555A3F5EA0DE0080AD3B6BE3EA78F4C010BC331A35EDDA
+PDB SHA256 BD197049F3CE6E7483FB6FE8EB2F89D9A037B2C8F741FD903434B156F92EBF6C
+User starter: Open QA123 Dev.lnk / Start QA123 Dev.ps1. A future user click backs up and activates Dev/Portable only. This task ran CheckOnly.
+Earlier 951-item staged candidate preserved at Dev/Pending/QA123-initial-951, with its starter/hash metadata under this report directory. It is not the final starter target.
+Backup before editing: Backups\qa123-catalog-audit-20261022-164807
+
+Continuation
+Read comparison.json, remaining.json, remaining-material-groups.json and this report. source-hashes.json/reference-hashes.json pin the evidence. All planning/export/audit helpers and logs are retained here. The untouched QA073 natural Rust access violation with exact EXE/PDB evidence, QA078 Clang fixture crash, and QA106 Season History smoke persistence limitation remain unresolved.
+
+Full artifact directory: C:\Users\carrn\CodexProjects\2kconversiontool\nba2k27-launcher-tauri2\artifacts\qa123-catalog-audit

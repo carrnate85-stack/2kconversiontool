@@ -1,0 +1,41 @@
+2K LAUNCHER — NEXT CHAT HANDOFF QA104
+Written 2026-10-21 after correcting the blank QA103 production build.
+
+CANONICAL PROJECT
+C:\Users\carrn\CodexProjects\2kconversiontool\nba2k27-launcher-tauri2
+
+CURRENT MAIN / SHARE / DEV
+- Version: 0.53.8, candidate QA104.
+- Main: C:\Program Files (x86)\Steam\steamapps\common\NBA 2K27\2k Launcher\App\2k Launcher Rust.exe
+- Share: Builds\0.53.8\Share-QA104-Production-UI\NBA 2K27 Launcher 0.53.8.exe
+- Dev: Dev\Pending\QA104\launcher.exe
+- bytes: 46738432
+- SHA-256: 33FFBB1F6736DE46D9B0206635E9FF9058EE382397BBCFAAB91C7577856EAABE
+
+QA104 CORRECTION
+- QA103 was built with --no-default-features, disabling Tauri custom-protocol.
+  It opened a blank white WebView because its embedded production UI could not
+  load. Its smoke timeout was the same defect and should have blocked promotion.
+- QA104 was rebuilt in fresh target-qa104 with default custom-protocol plus
+  dev-wnba-categories and dev-debug-menus.
+- Both the staged and installed QA104 executable loaded the embedded UI, wrote
+  13 smoke checks and exited with code 0.
+- The smoke result remains false only for the older retained Season History
+  totals/awards persistence assertion.
+
+QA103 STARTUP VIDEO FIX RETAINED
+- Play drains the settings save queue before native launch dispatch.
+- A settings save failure blocks launch.
+- Startup video is labeled as a next-Play choice and its active session phase
+  or error is visible on the Play page.
+
+PROMOTION
+- Main, Share and Dev have the exact hash above.
+- All 175 Data files and 482 Library files were hash-verified unchanged.
+- Recovery: C:\Program Files (x86)\Steam\steamapps\common\NBA 2K27\2k Launcher\Recovery\App-before-QA104-20261021-194423-6628
+- Receipt: artifacts\qa104-main-promotion-20261021-194423-6628.json
+
+NEXT LIVE CHECK
+- Open Main normally; the full UI should render.
+- Then select/enable a startup video and click Play immediately to exercise the
+  fixed save barrier. Live playback is not yet claimed by offline validation.

@@ -1,0 +1,18 @@
+QA108 — ARENA ALL-TAB ORDER — DEV ONLY
+2026-10-22. Version 0.53.12.
+
+User request: on arena catalog All tab, Default first, then outdoor courts, then gyms.
+Implementation: stable priority sort in backend choices route for kind=arena and group=All, before pagination. Default, Outdoor, Gyms, remaining original order. Filter tabs/favorites unchanged. Both main catalog and F8 consume this choices route. No gameplay or selection changes.
+Real catalog inspection: 165 entries; Default + 7 other outdoor courts, then 15 gyms, then remaining entries. First NBA court at zero-based index 23. order-check.json preserves first-page evidence.
+
+Validation: existing backend::tests::catalog_exclusions_and_paging passed (1 test); Vite build passed. Native release compilation/staging tracked in build.log and candidate.json. No game launch, live-memory inspection or computer use performed. Existing running QA107 is not replaced or stopped automatically.
+
+Preservation: source backed up to Backups/qa108-arena-order-*; edits and reports durably flushed. Main/share builds untouched. QA107 visual corrections retained. Historical QA073 Rust AV, QA078 Clang crash and prior Season History smoke failure remain unresolved.
+
+Separate hosting question (NOT implemented): Import preview ZIP currently opens local file picker and passes archive to existing validating previews importer. Can add a direct-HTTPS download + checksum + progress/cancel flow, then reuse importer. MediaFire Premium direct download bandwidth can support it; ordinary free links/bandwidth exhaustion land on webpage. ChatGPT Sites has public hosting/file storage but exact public binary URL behavior and limits for this pack need validation. User has not supplied hosted URL or asked to publish/upload a pack.
+User explicitly does not want computer use; preserve that preference.
+Candidate: Dev/Pending/QA108/launcher.exe
+SHA256: 61CE66C26BE1CA1C560D4C54E502AE54494C24CA30ABB24CE3B369F9ADD8CD4D
+Bytes: 46756352
+Starter: Open QA108 Dev.lnk (guarded, staged only).
+Release compile passed. Candidate not activated; no UI/game started.

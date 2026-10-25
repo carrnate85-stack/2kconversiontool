@@ -38,8 +38,8 @@ impl Fixture {
         h[128..132].copy_from_slice(b"PE\0\0");
         h[132..134].copy_from_slice(&0x8664u16.to_le_bytes());
         h[152..154].copy_from_slice(&0x20Bu16.to_le_bytes());
-        h[136..140].copy_from_slice(&0x6AC53765u32.to_le_bytes());
-        h[208..212].copy_from_slice(&0x35BDE000u32.to_le_bytes());
+        h[136..140].copy_from_slice(&0x6AD2E48Cu32.to_le_bytes());
+        h[208..212].copy_from_slice(&0x36532000u32.to_le_bytes());
         f.rva(0, &h);
         for &(rva, prefix, target) in RIP_ANCHORS {
             let mut b = prefix.to_vec();
@@ -60,7 +60,7 @@ impl Fixture {
         );
         f.rva(
             PICKER_VTABLE,
-            &[0x23120u64, 0x38299A0, 0x24EB5C0]
+            &[0x23120u64, 0x3829C20, 0x24EB670]
                 .into_iter()
                 .flat_map(|n| (BASE + n).to_le_bytes())
                 .collect::<Vec<_>>(),
@@ -134,7 +134,7 @@ impl Memory for Fixture {
 }
 impl Regions for Fixture {
     fn region(&self, at: u64, _len: usize) -> Result<Region> {
-        let image = at >= BASE && at < BASE + 0x35BDE000;
+        let image = at >= BASE && at < BASE + 0x36532000;
         Ok(Region {
             allocation: if image {
                 BASE
@@ -301,7 +301,7 @@ fn profile_rejects_prior_build_rip_target_vtable_and_patched_filter() {
             }
             2 => f.rva(PICKER_VTABLE, &[0; 24]),
             3 => f.rva(MASK_PAGES, &[0; 40]),
-            _ => f.rva(0x2DDA683, &[0; 7]),
+            _ => f.rva(0x2DDA733, &[0; 7]),
         }
         assert!(validate_profile(&f).is_err(), "mutation {mutation}");
     }
@@ -485,7 +485,7 @@ fn allocation_types_guards_and_mismatched_owners_reject_without_reads() {
     }
     impl Regions for BadRegions {
         fn region(&self, at: u64, _n: usize) -> Result<Region> {
-            let image = at >= BASE && at < BASE + 0x35BDE000;
+            let image = at >= BASE && at < BASE + 0x36532000;
             Ok(Region {
                 allocation: if image {
                     BASE

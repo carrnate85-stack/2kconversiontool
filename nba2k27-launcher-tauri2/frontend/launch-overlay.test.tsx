@@ -50,9 +50,16 @@ describe("WPF launch overlay", () => {
     expect(html).toContain('aria-label="NBA 2K27 startup progress"');
     expect(html).toContain("STARTING GAME");
     expect(html).toContain("Starting NBA 2K27…");
-    expect(html).toContain("Starting local asset loader");
+    expect(html).toContain("Preparing mod support");
     expect(html).toContain(
       "Keep this launcher open. This window clears automatically when the game is ready.",
     );
+  });
+  it("keeps failure recovery and technical details available", () => {
+    const html = renderToStaticMarkup(<LaunchOverlay startedAt={Date.now()} phase="needs-review" error="Scoreboard restore descriptor ownership data changed: 0x123" onDone={() => {}} />);
+    expect(html).toContain("Scoreboard switching is paused");
+    expect(html).toContain("Copy report");
+    expect(html).toContain("Dismiss");
+    expect(html).toContain("0x123");
   });
 });

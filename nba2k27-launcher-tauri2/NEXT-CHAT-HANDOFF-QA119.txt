@@ -1,0 +1,28 @@
+QA119 - SOURCE-BOUND HAT ARTWORK / STATIC SLEEVE PREVIEWS - DEV ONLY
+2026-10-22. Version 0.53.23.
+
+USER REQUEST: Continue fixing unsupported accessory previews. Dev build only; no installation or promotion. No computer use, game launch/stop or live memory access was performed. Existing read-only exported sources from QA117/118 were reused. Main/share and user Data/Library unchanged.
+
+DELIVERED: 204 newly shown accessories relative to QA118: 196 hats and 8 monochrome clover sleeves. The follow-up audit tested 1,046 variants: all 886 previously unavailable QA118 candidates plus changed and representative supported controls across 49 geometry/shader groups. Zero supported-state regressions in this set. Final baseline retains 682 unavailable variants within the original 3,731 QA118 candidate subset (587 required artwork, 95 color material). These counts are not a claim about the entire 20,939-item catalog.
+
+SOURCE DISCOVERY: Type-2 texture values are CRC32 of the full internal TXTR path without its .TXTR extension, not CRC32 of the short texture name. For example common_data/textures/decals/sponsor/prostandard/prostandard_pro_wordmark_c hashes to 3502185297, matching the source binding. Parsed 2,037 resource metadata sets into texture-bindings.json; duplicate or ambiguous matches are rejected. The six artwork texture parameters are 2643559201, 542896111, 4258084458, 2159947826, 1562962359, 3772941689; source records place each immediately before its corresponding existing scale/offset parameter block. remaining-inspection.json retains the per-item bindings, DDS identities and placement evidence.
+
+IMPLEMENTATION: 196 exact per-asset binding maps require identical source records and declared dependencies plus a unique exact hashed DDS filename in each loaded resource. This supports reused logos and logos stored in the base-color bundle, preserving actual source slot order. Null unused slots are retained. The worker reuses already loaded resources; no new archive loads for those embedded/repeated images. Explicit source-mapped _c DDS artwork can contain words such as metal in its name, fixing Paper Planes metal-pin color artwork falsely rejected by the generic normal/metal-map filter. Unknown artwork continues through existing conservative checks.
+
+68 of these hats also have a verified baked-color base texture: no primary/secondary/tertiary tint bindings, only neutral white other color values, no dynamic color binding, opaque source DDS, exact source record/texture/range fingerprint. Their source color is preserved. Eight St Patrick's clover sleeve variants use opaque green finished-color textures without tint records; exact mappings now permit these. Transparent WNBA sleeve variants remain unsupported, as do nonneutral unverified tint/effect combinations. Source texture samples are in texture-samples.png; those are texture diagnostics, not rendered mannequin screenshots.
+
+VALIDATION: All 215 focused changed/control variants shown, including 11 already supported clover variants. All 1,046 regression sweep requests completed, with 204 improvements and zero supported-state regressions. Twelve targeted cold/warm cases all shown; repeated texture keys preserve the same DDS identity, separate images do not collide, and warm responses omit already cached bytes. Six helper tests cover every new source map and changed/absent/duplicated resources, stale records, tint injection, malformed ranges and prior QA118 cases. TypeScript, 245 frontend tests in 47 files, JS syntax, Vite and native release build passed. Native build retains 90 existing warnings. No on-screen/GPU or gameplay acceptance is claimed. This is an offline preview-data improvement.
+
+DEV BUILD: Dev/Pending/QA119/launcher.exe
+SHA256: FE7849552D301124496DFE69040334D9226024EF50D86300C66CB5F721832569
+Bytes: 46909952
+PDB SHA256: 69DA2F8DE1D67DD7DCF00F04EA0A12375FF1343D57B96C585CA18AD347526622
+Starter: Open QA119 Dev.lnk -> Start QA119 Dev.ps1
+CheckOnly passed hash/size and idle checks; no activation. User clicking starter backs up/replaces Dev/Portable only. Close previous dev launcher first. Nothing installed or promoted.
+Backup: Backups\qa119-accessory-followup-20261022-114539
+Evidence: artifacts/qa119-accessory-followup (comparison.json, final-baseline.json, improvements.json, texture-bindings.json, remaining-inspection.json, worker results, helper/frontend/build logs, source-hashes.json).
+Changed source: tools/fit-preview/accessory-material-map.json, accessory-materials.js, accessory-materials.test.mjs, tools/build-fit-preview-runtime.mjs, generated worker/provenance and version files. Source-backed map generation helper retained in the audit directory. No extra renderer pass or animation loop added; EXE is 14,336 bytes larger than QA118.
+
+NEXT: Inspect Paper Planes pin hats, New Era Statement/City2025, supported Mitchell & Ness/Pro Standard hats, and St Patrick's clover sleeves through normal dev UI. For further support, investigate exact artwork tint semantics and remaining base-material color fields before enabling the 587 missing-artwork / 95 unsupported-material candidates. The full texture-path binding discovery enables reliable mapping; do not replace it with dependency order guesses. Broader animated/unsupported-geometry catalog families remain outside this candidate set.
+
+Prior unresolved evidence retained: QA073 natural Rust test AV, QA078 Clang fixture crash, QA106 Season History smoke persistence. No offline check resolves those.

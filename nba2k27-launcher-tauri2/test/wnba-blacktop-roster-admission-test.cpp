@@ -24,7 +24,7 @@ int main(){
  detail.requested=ImageMetadata::from(true,base-8,base);
  detail.playnow=ImageMetadata::from(false,base+0x9B31BB0,base);
  assert(format_telemetry(detail)=="ret=1 ctx=unstable:92df06de/6509837b,s=3,a=0,k=0 d=null/foreign/? uid=?");
- assert(image_metadata(ImageMetadata::from(true,base+0x35BDE000,base))=="foreign");
+ assert(image_metadata(ImageMetadata::from(true,base+0x36532000,base))=="foreign");
 
  // Exact observed QA067 metadata: image data, loader copy-on-write, same image.
  // Pure values only: these assertions invoke no process or native game APIs.

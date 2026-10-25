@@ -1,0 +1,15 @@
+QA140 — Downloads header spacing — 2026-10-24
+DEV ONLY 0.53.44. No install, promotion, activation, GitHub publication, game access or computer use.
+
+Found Downloads-specific typography overrides differed from shared header geometry:26px icon vs30px,11px icon-to-title margin vs13px,-3px baseline vs-4px,6px subtitle top margin vs8px and1.45 subtitle line-height vs1.5 in Play/Presentation. Removed duplicate Downloads icon geometry so it inherits shared30px/13px/-4px rule, retaining its download artwork mask. Subtitle now8px and1.5 matching Presentation/Play. Shared88px header container and title font unchanged. This is source/CSS comparison; no live visual measurement or acceptance claimed.
+
+User follow-up included: Scaler subtitle Adjust player and arena character sizes for your next session. Settings subtitle Manage your game location and launcher preferences. Both use the same8px margin/13px size/1.5line-height/muted color as Downloads, appear only on their own active page, and remain hidden elsewhere.
+
+TypeScript,Vite and dev release build passed. No new tests for this low-impact styling-only change. Main/Share hash-verified unchanged at QA129. QA139 labels and earlier shortcuts/layout preserved. Original complete preview pack retained pending upload. QA073 natural Rust AV,QA078 Clang crash,QA106 Season History assertion remain unresolved.
+
+Candidate:C:\Users\carrn\CodexProjects\2kconversiontool\nba2k27-launcher-tauri2\Dev\Pending\QA140\launcher.exe
+SHA256:62D60D63DCEE2BD1D00E2AA35590778E978C0A9D96FFD0CE88168330DEFC1788
+Bytes:48974336
+PDB SHA256:E637160D56AD6093A564B335273C946675C286D6FEAAC44EDA6C1BB88D2193DC
+Starter:Open QA140 Dev.lnk / Start QA140 Dev.ps1. Exact-hash/idle guards retained. Close existing dev normally first. Do not promote curator EXE; omit dev-curator from future Main/Share.
+Backups:Backups/qa140-downloads-header-20261024. Reports:artifacts/qa140-downloads-header.

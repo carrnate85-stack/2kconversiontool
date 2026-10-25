@@ -3,11 +3,13 @@ import { describe, expect, it, vi } from "vitest";
 import { LaunchReadiness } from "./LaunchReadiness";
 import {
   inspectPlay,
+  launchAfterSettingsSaved,
   launchRequest,
   playNeedsConfirm,
   playSummary,
   readyToConfirm,
   sessionPollInterval,
+  terminalLaunchFailure,
   type PlayReport,
 } from "./PlayLaunch";
 
@@ -83,18 +85,18 @@ describe("Simple guarded Play home", () => {
       ).label,
     ).toBe("Needs attention");
   });
-  it("shows one real Play button and preserved choices, with Advanced closed and no mounted QA stack", () => {
+  it("shows one real Play button and preserved choices without the Advanced QA section", () => {
     const html = renderToStaticMarkup(
-      <LaunchReadiness gameRoot="C:/Game" modsRoot="C:/Mods">
+      <LaunchReadiness gameRoot="C:/Game" modsRoot="C:/Mods" debugMenus={false}>
         <div>Mod profile · Jukebox playlist · Startup video</div>
       </LaunchReadiness>,
     );
     expect(html.match(/data-primary-play=/g)).toHaveLength(1);
     expect(html).toContain('aria-label="Play NBA 2K27"');
     expect(html).toContain("Play session");
-    expect(html).toContain('data-play-advanced="true"');
+    expect(html).not.toContain('data-play-advanced');
     expect(html).not.toMatch(/<details[^>]*\sopen(?:=|\s|>)/);
-    expect(html).toContain("Advanced");
+    expect(html).not.toContain("Advanced");
     expect(html).toContain("Mod profile · Jukebox playlist · Startup video");
     expect(html).not.toContain("Preview session");
     expect(html).not.toContain("Launch with mod profile (QA)");
@@ -103,7 +105,7 @@ describe("Simple guarded Play home", () => {
   });
   it("does not expose a clickable Play when no game folder is configured", () => {
     const html = renderToStaticMarkup(
-      <LaunchReadiness gameRoot="" modsRoot="" />,
+      <LaunchReadiness gameRoot="" modsRoot="" debugMenus={false} />,
     );
     expect(html).toMatch(/<button[^>]*data-primary-play[^>]*disabled/);
     expect(html).toContain("Choose your NBA 2K27 folder in Settings.");
@@ -117,6 +119,29 @@ describe("Simple guarded Play home", () => {
     expect(readyToConfirm(await inspectPlay(request))).toBe(true);
     expect(readyToConfirm(await inspectPlay(request))).toBe(true);
     expect(channels).toEqual(["launch-preflight", "launch-preflight"]);
+  });
+  it("waits for the latest saved choices before dispatching Play", async () => {
+    let finishSave!: () => void;
+    const waitForSettings = vi.fn(
+      () => new Promise<void>((resolve) => (finishSave = resolve)),
+    );
+    const dispatch = vi.fn(async () => "started");
+    const pending = launchAfterSettingsSaved(waitForSettings, dispatch);
+    await Promise.resolve();
+    expect(waitForSettings).toHaveBeenCalledOnce();
+    expect(dispatch).not.toHaveBeenCalled();
+    finishSave();
+    await expect(pending).resolves.toBe("started");
+    expect(dispatch).toHaveBeenCalledOnce();
+  });
+  it("does not dispatch Play when the settings barrier fails", async () => {
+    const dispatch = vi.fn(async () => "started");
+    await expect(
+      launchAfterSettingsSaved(async () => {
+        throw new Error("settings were not saved");
+      }, dispatch),
+    ).rejects.toThrow("settings were not saved");
+    expect(dispatch).not.toHaveBeenCalled();
   });
   it("requires all known safe preflight conditions rather than one truthy checksPassed field", () => {
     expect(readyToConfirm(ready())).toBe(true);
@@ -164,7 +189,11 @@ describe("Simple guarded Play home", () => {
       );
     }
     const html = renderToStaticMarkup(
-      <LaunchReadiness gameRoot="C:/Game" modsRoot="C:/Mods" />,
+      <LaunchReadiness
+        gameRoot="C:/Game"
+        modsRoot="C:/Mods"
+        debugMenus={false}
+      />,
     );
     expect(html).not.toContain('type="checkbox"');
     expect(html).not.toContain("I will play offline");
@@ -176,6 +205,16 @@ describe("Simple guarded Play home", () => {
         acknowledgement: "native-modded-qa-explicit-blacktop",
         gameRoot: "C:/Game",
         modsRoot: "C:/Mods",
+        debugMenus: false,
+      },
+    });
+    expect(launchRequest(true, "C:/Game", "C:/Mods", true)).toEqual({
+      channel: "native-launch-modded",
+      args: {
+        acknowledgement: "native-modded-qa-explicit-blacktop",
+        gameRoot: "C:/Game",
+        modsRoot: "C:/Mods",
+        debugMenus: true,
       },
     });
     expect(launchRequest(false, "C:/Game", "C:/Mods")).toEqual({
@@ -192,10 +231,38 @@ describe("Simple guarded Play home", () => {
     expect(sessionPollInterval("needs-review", false)).toBe(1000);
     expect(sessionPollInterval("idle", true)).toBe(1000);
   });
+  it("ends a lost launch request when the backend has durably closed it", () => {
+    expect(
+      terminalLaunchFailure(
+        { phase: "closed", message: "Provider bootstrap failed" },
+        999,
+      ),
+    ).toBeNull();
+    expect(
+      terminalLaunchFailure(
+        { phase: "closed", message: "Provider bootstrap failed" },
+        1000,
+      ),
+    ).toBe("Provider bootstrap failed");
+    expect(
+      terminalLaunchFailure(
+        {
+          phase: "closed",
+          message: "Stopped",
+          nativeProvider: { error: "Exact provider failure" },
+        },
+        5000,
+      ),
+    ).toBe("Exact provider failure");
+    expect(
+      terminalLaunchFailure(
+        { phase: "waiting-for-game", message: "Still preparing" },
+        30_000,
+      ),
+    ).toBeNull();
+  });
   it("uses real session phases without claiming game feature or playback verification", () => {
-    expect(playSummary({ phase: "game-running" }, null).label).toBe(
-      "Running",
-    );
+    expect(playSummary({ phase: "game-running" }, null).label).toBe("Running");
     expect(playSummary({ phase: "game-running" }, null).title).toBe(
       "Session in progress",
     );

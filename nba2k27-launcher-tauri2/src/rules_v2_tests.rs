@@ -75,14 +75,16 @@ pub(crate) fn fixture() -> Fake {
     h[0x80..0x84].copy_from_slice(b"PE\0\0");
     h[0x84..0x86].copy_from_slice(&0x8664u16.to_le_bytes());
     h[0x98..0x9A].copy_from_slice(&0x20Bu16.to_le_bytes());
-    h[0x88..0x8C].copy_from_slice(&0x6AC53765u32.to_le_bytes());
+    h[0x88..0x8C].copy_from_slice(&0x6AD2E48Cu32.to_le_bytes());
     h[0xD0..0xD4].copy_from_slice(&(IMAGE_BYTES as u32).to_le_bytes());
     f.put(base, &h);
     for getter in catalog().unwrap()["fields"].as_array().unwrap() {
-        f.put(
-            base + getter["rva"].as_u64().unwrap(),
-            &hex(getter["hex"].as_str().unwrap()).unwrap(),
-        );
+        let id = getter["id"].as_str().unwrap();
+        let at = updated_getter(id, getter["rva"].as_u64().unwrap());
+        let mut bytes = hex(getter["hex"].as_str().unwrap()).unwrap();
+        let relative = (OWNER as i64 - at as i64 - 7) as i32;
+        bytes[3..7].copy_from_slice(&relative.to_le_bytes());
+        f.put(base + at, &bytes);
     }
     for &(rva, prefix, target) in RIP_ANCHORS {
         let mut code = prefix.to_vec();
@@ -96,7 +98,7 @@ pub(crate) fn fixture() -> Fake {
     }
     f.put(
         base + ROOT_TAG,
-        &[base + 0x23120, base + 0x346B350]
+        &[base + 0x23120, base + 0x346B4D0]
             .into_iter()
             .flat_map(u64::to_le_bytes)
             .collect::<Vec<_>>(),
@@ -118,7 +120,11 @@ fn rules_v2_every_original_mapping_has_an_independent_native_getter() {
     verify_profile(&f).unwrap();
     let table = catalog().unwrap();
     for getter in table["fields"].as_array().unwrap() {
-        let address = f.base + getter["rva"].as_u64().unwrap();
+        let address = f.base
+            + updated_getter(
+                getter["id"].as_str().unwrap(),
+                getter["rva"].as_u64().unwrap(),
+            );
         let original = f.bytes[&address];
         f.put(address, &[original ^ 1]);
         assert!(
@@ -136,7 +142,7 @@ fn rules_v2_old_or_unknown_builds_stop_before_any_offset_read() {
     f.reads.set(0);
     assert!(verify_profile(&f).is_err());
     assert_eq!(f.reads.get(), 1);
-    f.d(0x88, 0x6AC53765);
+    f.d(0x88, 0x6AD2E48C);
     f.d(0xD0, 0x36558000);
     f.reads.set(0);
     assert!(verify_profile(&f).is_err());
@@ -335,7 +341,10 @@ fn rules_v2_context_stops_after_two_identical_samples() {
 fn dense_getter_fixture() -> Fake {
     let mut f = fixture();
     for getter in catalog().unwrap()["fields"].as_array().unwrap() {
-        let page = getter["rva"].as_u64().unwrap() & !4095;
+        let page = updated_getter(
+            getter["id"].as_str().unwrap(),
+            getter["rva"].as_u64().unwrap(),
+        ) & !4095;
         for i in 0..4096 {
             f.bytes.entry(f.base + page + i).or_insert(0);
         }
@@ -350,8 +359,13 @@ fn rules_v2_grouped_getters_read_six_fresh_spans_and_reject_late_mutation() {
     assert_eq!(f.reads.get(), 17);
     let getters = catalog().unwrap()["fields"].as_array().unwrap();
     for getter in [getters.last().unwrap(), &getters[getters.len() / 2]] {
-        let at = f.base + getter["rva"].as_u64().unwrap();
-        let expected = hex(getter["hex"].as_str().unwrap()).unwrap();
+        let mapped = updated_getter(
+            getter["id"].as_str().unwrap(),
+            getter["rva"].as_u64().unwrap(),
+        );
+        let at = f.base + mapped;
+        let mut expected = hex(getter["hex"].as_str().unwrap()).unwrap();
+        expected[3..7].copy_from_slice(&((OWNER as i64 - mapped as i64 - 7) as i32).to_le_bytes());
         let end = at + expected.len() as u64 - 1;
         f.put(end, &[expected[expected.len() - 1] ^ 1]);
         assert!(
@@ -361,7 +375,11 @@ fn rules_v2_grouped_getters_read_six_fresh_spans_and_reject_late_mutation() {
         f.put(end, &expected[expected.len() - 1..]);
     }
     // A successful earlier invocation grants no authority to a later call.
-    let at = f.base + getters[0]["rva"].as_u64().unwrap();
+    let at = f.base
+        + updated_getter(
+            getters[0]["id"].as_str().unwrap(),
+            getters[0]["rva"].as_u64().unwrap(),
+        );
     f.put(at, &[0x90]);
     assert!(verify_profile(&f).is_err());
 }
@@ -378,7 +396,7 @@ fn rules_v2_group_read_partial_and_error_retry_all_scalar_getters() {
         }
         fn read(&self, at: u64, len: usize) -> Result<Vec<u8>> {
             // Second grouped span has padding; no scalar getter has this size.
-            if at == self.inner.base + 0x25A8630 && len == 2367 {
+            if at == self.inner.base + 0x25A86E0 && len == 2303 {
                 self.faults.set(self.faults.get() + 1);
                 if !self.partial {
                     anyhow::bail!("injected grouped read error");
@@ -404,7 +422,11 @@ fn rules_v2_group_read_partial_and_error_retry_all_scalar_getters() {
             .unwrap()
             .last()
             .unwrap();
-        let at = f.inner.base + getter["rva"].as_u64().unwrap();
+        let at = f.inner.base
+            + updated_getter(
+                getter["id"].as_str().unwrap(),
+                getter["rva"].as_u64().unwrap(),
+            );
         f.inner.put(at, &[0x90]);
         assert!(verify_profile(&f).is_err());
     }
@@ -423,12 +445,12 @@ fn rules_v2_observed_group_mismatch_cannot_be_erased_by_later_transport_error() 
         }
         fn read(&self, at: u64, len: usize) -> Result<Vec<u8>> {
             self.reads.set(self.reads.get() + 1);
-            if at == self.inner.base + 0x25A8630 && len == 2367 {
+            if at == self.inner.base + 0x25A86E0 && len == 2303 {
                 self.late_error.set(true);
                 anyhow::bail!("later group transport failure; scalar code would now be good");
             }
             let mut bytes = self.inner.read(at, len)?;
-            if at == self.inner.base + 0x25A7510 && self.reads.get() == 2 {
+            if at == self.inner.base + 0x25A75C0 && self.reads.get() == 2 {
                 // First complete group is temporarily bad; any scalar retry
                 // would return the pristine fixture and hide this observation.
                 bytes[0] ^= 1;

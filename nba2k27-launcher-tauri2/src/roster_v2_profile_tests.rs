@@ -44,9 +44,9 @@ impl Fake {
         h[60..64].copy_from_slice(&128u32.to_le_bytes());
         h[128..132].copy_from_slice(b"PE\0\0");
         h[132..134].copy_from_slice(&0x8664u16.to_le_bytes());
-        h[136..140].copy_from_slice(&0x6ac5_3765u32.to_le_bytes());
+        h[136..140].copy_from_slice(&0x6ad2e48cu32.to_le_bytes());
         h[152..154].copy_from_slice(&0x20bu16.to_le_bytes());
-        h[208..212].copy_from_slice(&0x35bd_e000u32.to_le_bytes());
+        h[208..212].copy_from_slice(&0x36532000u32.to_le_bytes());
         m.put(BASE, &h);
         for &(rva, prefix, target) in RIP_ANCHORS {
             let mut b = prefix.to_vec();
@@ -58,8 +58,8 @@ impl Fake {
         for &(rva, b) in FIELD_ANCHORS {
             m.put(BASE + rva, b);
         }
-        m.q(BASE + ROOT_CLASS, BASE + 0x024e_65f0);
-        m.q(BASE + ROOT_CLASS + 8, BASE + 0x024e_6660);
+        m.q(BASE + ROOT_CLASS, BASE + 0x024e_66a0);
+        m.q(BASE + ROOT_CLASS + 8, BASE + 0x024e_6710);
         m.q(BASE + ROOT, CONTAINER);
         m.q(CONTAINER, BASE + ROOT_CLASS);
         m.q(CONTAINER + 0xa8, OWNER_AT);
@@ -274,7 +274,7 @@ fn exact_installed_version_two_roster_profile_is_disk_only() {
     }
     assert_eq!(
         format!("{:X}", hash.finalize()),
-        "29A96471C55909FC2BCEA6C699C59238656A501C19B50C74ED64B0D842E576A1"
+        "B673EB04593D6D5A4DFB9E270178E04C017BD9F277514D256EA98FFB792ED27B"
     );
     file.seek(SeekFrom::Start(0)).unwrap();
     let mut header = vec![0; 4096];

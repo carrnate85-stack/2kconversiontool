@@ -487,7 +487,7 @@ impl<I: RulesIo> RulesAccessV2<I> {
         token: &str,
         field: &str,
         value: u32,
-        _gate: &MutexGuard<'static, ()>,
+        _gate: &crate::session_safety::WriteGuard,
     ) -> Result<()> {
         lease.validate(token, &self.binding.game, &self.binding.session)?;
         self.apply_inner(lease, field, value)

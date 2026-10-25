@@ -1,0 +1,47 @@
+/* Static studio backdrop: no images, animation, filters or extra 3D geometry. */
+html { background: #101923; }
+body {
+  background: radial-gradient(ellipse at 50% 38%, #344554 0%, #1c2a36 46%, #101923 84%);
+  box-shadow: inset 0 0 0 1px #a9cce014;
+}
+body[data-backdrop=light] {
+  background: radial-gradient(ellipse at 50% 38%, #eef1f3 0%, #c4cdd4 52%, #9caab5 100%);
+}
+.studio-controls {
+  position: absolute;
+  inset: 12px 12px auto;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  pointer-events: none;
+}
+.studio-controls > div { display: flex; gap: 4px; pointer-events: auto; }
+.studio-controls button {
+  padding: 7px 12px;
+  border: 1px solid #52697b;
+  border-radius: 6px;
+  background: #132331ed;
+  color: #e3edf5;
+  font: 600 11px system-ui;
+  cursor: pointer;
+}
+.studio-controls button:hover { background: #2a4153; }
+.studio-controls button[aria-pressed=true] { border-color: #85c4ad; background: #24443d; }
+.studio-controls button:focus-visible { outline: 2px solid #b7e5ff; outline-offset: 2px; }
+body > small {
+  left: 50% !important;
+  right: auto !important;
+  bottom: 16px !important;
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: calc(100% - 32px);
+  box-sizing: border-box;
+  padding: 7px 14px;
+  border: 1px solid #8099af40;
+  border-radius: 20px;
+  background: #0c1622e8;
+  color: #c5d7e6 !important;
+  font-size: 11px;
+  line-height: 1.5;
+}

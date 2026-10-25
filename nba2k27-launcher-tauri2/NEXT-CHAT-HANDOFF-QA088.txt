@@ -1,0 +1,41 @@
+QA088 DEV CHECKPOINT - 2026-10-21
+
+Scope
+- Dev-only response to the October 21 NBA 2K27 patch: launcher reported unsupported game build and WNBA was not selectable in Blacktop.
+- Nothing was installed or promoted. The game was not launched. QA087 remains the active dev copy until the user starts QA088.
+
+Pinned current game
+- Steam build: 26004539
+- PE timestamp/image: 6AD2E48C / 36532000
+- Bytes: 880329496
+- SHA-256: B673EB04593D6D5A4DFB9E270178E04C017BD9F277514D256EA98FFB792ED27B
+
+Delivered
+- Remapped Blacktop's separate native category switch, continuation, roster delegate, method bodies, vtable neighbors, label methods, pdata and unwind chain to the current executable.
+- Updated native image bounds and Blacktop policy constants.
+- Rebuilt the combined outfit/WNBA native payload and retained the exact QA087 payload as recovery-only.
+- Exact current executable now passes the launcher's read-only compatibility check; the Blacktop roster disk profile passes against the installed EXE.
+- QA088 payload SHA-256: 1A6DAD61915869BF2E56636A910563D27BFE967052DC5BD3E2D243505F7BBB00 (1966080 bytes).
+- QA088 launcher SHA-256: F42E91860B33F0FF386D958254BA11D676375B91B3A4E0790AE388551D834D37 (46661120 bytes).
+
+Validation
+- Native selector, scoreboard text, audio, Freestyle, build-profile, roster appearance, Blacktop category/coordinator/roster/label/admission and exact roster disk-profile tests passed.
+- Native payload smoke test and asynchronous exception-unwind check passed.
+- Rust payload digest, previous-payload recovery, loader identity (9 tests), Blacktop policy (5 tests), current installed build relocation/compatibility, and exact installed outfit disk audit passed.
+- Release build completed and Start QA088 Dev.ps1 -CheckOnly passed with the game and launcher closed.
+
+Qualifications
+- Live Blacktop selection has not been tested on QA088. Required acceptance: turn WNBA Blacktop ON, Play normally, enter Blacktop selection, confirm the WNBA category is selectable and no unsupported-build message appears.
+- QA073's natural native pre-initialization fixture still exits -1073740791 and remains unresolved; no passing debugger result supersedes it.
+- QA078's Clang outfit fixture reproduced exit -1073740791 (0xC0000409). It remains explicitly qualified, not passed. Evidence: artifacts/qa088-native-payload-20261021/QA078-UNRESOLVED.txt.
+- The general roster/team editor serializer remains reported as needing post-patch mapping. This does not block the remapped Blacktop WNBA native route.
+
+Dev candidate
+- Start QA088 Dev.vbs
+- Staged executable: Dev/Pending/QA088/launcher.exe
+- The starter verifies the exact staged hash and requires the game/launcher to be closed before replacing the dev copy. It does not install or promote a release.
+
+Research evidence
+- artifacts/qa088-blacktop-wnba-remap/blacktop-static-map.json
+- artifacts/qa088-blacktop-wnba-remap/map_blacktop.py
+- artifacts/qa088-native-payload-20261021/

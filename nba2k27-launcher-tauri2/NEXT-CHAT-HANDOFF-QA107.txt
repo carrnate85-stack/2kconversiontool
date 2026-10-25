@@ -1,0 +1,34 @@
+QA107 COMPACT CONTROLS — DEV ONLY
+2026-10-22, version 0.53.11. No install or promotion authorized.
+
+CHANGES
+- Jukebox Up/Down are arrow icons only, with accessible labels/tooltips and dark button styling.
+- Song actions stay on one line. Compact ellipsis opens the existing Move to position dialog.
+- Camera reorder controls are arrow-only, explicitly centered/sized; removed overflowing Up/Down labels.
+- Removed Advanced QA dropdown and observer polling from Play. Kept automatic Play preflight, visible failures, all blockers and conditional recovery controls.
+- Open QA107 Dev.lnk targets the dev executable directly. No PowerShell helper on normal shortcut launch.
+
+ARTIFACT
+Dev/Pending/QA107/launcher.exe
+Dev/Portable/App/2k Launcher Rust Prototype.exe activated for user dev review only.
+SHA256 E51A7AE4CE2C214F12E0A1B48885CD93C50795F0C88201F205771DDAFEDDCAEC
+Bytes 46838272
+PDB and build log: artifacts/qa107-compact-controls
+Prior source files backed up in Backups/qa107-before-jukebox-compact-*
+Prior dev EXE backed up by Start QA107 Dev.ps1.
+
+VALIDATION
+TypeScript passed; Vite passed; frontend 45 files / 240 tests passed.
+Release compiled using dev-wnba-categories,dev-debug-menus and existing default custom-protocol.
+Native app visibly opened as v0.53.11; Play has no Advanced dropdown.
+User then stated: "looks much better i inspecte dit".
+No gameplay checks performed. No mod installs or restores performed.
+Existing QA106 Season History packaged smoke failure remains unresolved; this pass did not rerun that full smoke.
+QA073 Rust natural AV and QA078 Clang crash evidence remain unresolved.
+
+USER PREFERENCE
+User explicitly stopped Computer Use: "dotn want computer use". Do not control their desktop again unless explicitly reauthorized. User inspected visual changes themselves.
+
+STARTER NOTE
+Windows PowerShell launched via shortcut failed to resolve Get-FileHash because of its inherited module environment; hidden error helpers were stopped by verified exact script command lines. Direct shortcut now targets verified Dev/Portable EXE. Start QA107 Dev.ps1 is retained for guarded staging, but normal user launch uses the direct .lnk.
+No installed Main or sharing EXE was changed.

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useRetainedDraft } from "./UxFeedback";
 
 export function scalerPercent(value: number) {
   const percent = Math.round(value * 100);
@@ -55,8 +55,7 @@ export function ScalerSettings({
   onGroupsChange: (groups: ScalerGroups) => void;
 }) {
   const saved = scalerPercent(value);
-  const [draft, setDraft] = useState(saved);
-  useEffect(() => setDraft(saved), [saved]);
+  const [draft, setDraft] = useRetainedDraft("scaler-size-draft", saved);
   const storedIsSupported = scalerSupported(value);
   const changed = !storedIsSupported || draft !== saved;
   return (
@@ -73,7 +72,7 @@ export function ScalerSettings({
           <label className="scaler-enable scaler-group-primary">
             <span>
               <strong>Players &amp; referees</strong>
-              <small>Main scale switch · always included in Version 2</small>
+              <small>Always included · use 100% for original size</small>
             </span>
             <input type="checkbox" id="scalerEnabled" checked disabled readOnly />
           </label>
@@ -144,7 +143,7 @@ export function ScalerSettings({
           <span className="status-dot ready" aria-hidden="true" />
           <p id="scalerStatus" role="status" aria-live="polite">
             {changed
-              ? `${draft}% is staged for the next Play launch.`
+              ? `${draft}% has unsaved changes. Save size before Play.`
               : `${saved}% is saved for the next Play launch.`}
           </p>
         </div>
@@ -158,6 +157,7 @@ export function ScalerSettings({
           >
             Save size
           </button>
+          {changed && <button className="secondary" onClick={() => setDraft(saved)}>Discard changes</button>}
           <button
             id="scalerReset"
             className="secondary"

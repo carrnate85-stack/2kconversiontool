@@ -69,6 +69,31 @@ export function OverlayOutfitEditor({
   const [saved, setSaved] = useState<Outfit | null>(null);
   const [picker, setPicker] = useState<Picker | null>(null);
   const pool = outfit.pool ?? "male";
+  const pickRevision = useRef(0), pickPending = useRef(false);
+  const [picking, setPicking] = useState(false);
+  const currentPick = useRef({ outfit, picker, binding: control.binding });
+  currentPick.current = { outfit, picker, binding: control.binding };
+  useEffect(() => () => { ++pickRevision.current; }, []);
+  const closePicker = () => {
+    ++pickRevision.current;
+    pickPending.current = false;
+    setPicking(false);
+    setPicker(null);
+  };
+  async function choosePiece(asset: string) {
+    if (!picker || pickPending.current) return;
+    const revision = ++pickRevision.current, before = currentPick.current;
+    pickPending.current = true;
+    setPicking(true);
+    const valid = () => revision === pickRevision.current &&
+      currentPick.current.outfit === before.outfit && currentPick.current.picker === before.picker &&
+      currentPick.current.binding === before.binding;
+    try {
+      const next = await call<Outfit>("select-outfit-piece", { outfit, slot: picker.slot, asset });
+      if (valid()) { setOutfit(next); closePicker(); }
+    } catch (error) { if (valid()) setMessage(String(error)); }
+    finally { if (revision === pickRevision.current) { pickPending.current = false; setPicking(false); } }
+  }
   useEffect(() => {
     let alive = true;
     call<Piece[]>("outfit-pieces", { outfit })
@@ -313,15 +338,9 @@ export function OverlayOutfitEditor({
           playerName={name}
           pool={pool}
           selected={assetFor(picker.slot)}
-          onClose={() => setPicker(null)}
-          onChoose={(asset) =>
-            call<Outfit>("select-outfit-piece", { outfit, slot: picker.slot, asset })
-              .then((o) => {
-                setOutfit(o);
-                setPicker(null);
-              })
-              .catch((e) => setMessage(String(e)))
-          }
+          pending={picking}
+          onClose={closePicker}
+          onChoose={choosePiece}
         />
       )}
     </div>
@@ -329,13 +348,14 @@ export function OverlayOutfitEditor({
 }
 // WPF renderer/clothing-picker.js in the overlay: a full-window dialog with
 // search, category chips, 18 tiles per page and a page counter.
-function ClothingPicker({
+export function ClothingPicker({
   picker,
   playerName,
   pool,
   selected,
   onClose,
   onChoose,
+  pending,
 }: {
   picker: Picker;
   playerName: string;
@@ -343,16 +363,19 @@ function ClothingPicker({
   selected: string;
   onClose: () => void;
   onChoose: (asset: string) => void;
+  pending: boolean;
 }) {
   const [query, setQuery] = useState(""),
     [group, setGroup] = useState("All"),
     [offset, setOffset] = useState(0),
     [items, setItems] = useState<Garment[]>([]),
     [total, setTotal] = useState(0),
-    [groups, setGroups] = useState<string[]>([]);
+    [groups, setGroups] = useState<string[]>([]),
+    [loadError, setLoadError] = useState("");
   const request = useRef(0);
   useEffect(() => {
     const id = ++request.current;
+    setLoadError("");
     const timer = setTimeout(
       () =>
         void call<{ items: Garment[]; total: number; groups: string[] }>("wardrobe", {
@@ -365,14 +388,18 @@ function ClothingPicker({
         })
           .then((r) => {
             if (id !== request.current) return;
+            setLoadError("");
             setItems(r.items);
             setTotal(r.total);
             setGroups(r.groups);
           })
-          .catch(() => {}),
+          .catch((error) => {
+            if (id !== request.current) return;
+            setItems([]); setTotal(0); setLoadError(String(error));
+          }),
       query ? 100 : 0,
     );
-    return () => clearTimeout(timer);
+    return () => { ++request.current; clearTimeout(timer); };
   }, [picker.slot, query, group, offset, pool]);
   useEffect(() => {
     // Escape returns to the editor before the overlay's own Escape handling.
@@ -437,6 +464,7 @@ function ClothingPicker({
             ))}
           </div>
         </div>
+        {loadError && <p role="alert">Clothing could not be loaded: {loadError}</p>}
         <div className="clothing-picker-grid garment-grid">
           {items.map((g) => {
             const image = garmentImage(g);
@@ -448,6 +476,7 @@ function ClothingPicker({
                 type="button"
                 aria-pressed={isSelected}
                 title={label(g.asset)}
+                disabled={pending}
                 onClick={() => onChoose(g.asset)}
               >
                 <span className="clothing-picture">

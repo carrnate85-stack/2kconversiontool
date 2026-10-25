@@ -17,7 +17,7 @@ const WINDOW: u64 = 0x2C48;
 const FRONT: u64 = 0x7428;
 const AMBIENT: u64 = 0x73F8;
 const STRIDE: u64 = 0xC810;
-const SHA: &str = "29A96471C55909FC2BCEA6C699C59238656A501C19B50C74ED64B0D842E576A1";
+const SHA: &str = "B673EB04593D6D5A4DFB9E270178E04C017BD9F277514D256EA98FFB792ED27B";
 fn at(m: &impl Memory, offset: u64) -> Result<u64> {
     m.base()
         .checked_add(offset)

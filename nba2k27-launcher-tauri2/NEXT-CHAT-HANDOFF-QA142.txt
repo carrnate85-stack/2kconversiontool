@@ -1,0 +1,13 @@
+QA142 FINAL — Corrected Main and Share production0.53.45 installed.
+IMPORTANT USER CLARIFICATION: WNBA and gameplay debug menus ARE production product features. Their legacy Cargo names dev-wnba-categories/dev-debug-menus must remain ENABLED for Main/Share. The user meant Curator and developer Settings tools should be excluded. Supersedes QA141's mistaken all-dev-feature removal.
+Production command: cargo build --release --offline --locked --no-default-features --features custom-protocol,dev-wnba-categories,dev-debug-menus. NEVER enable dev-curator for sharing/Main unless explicitly requested.
+Native bootstrap developerTools capability is cfg(dev-curator). Settings developer diagnostics/Ctrl+Shift+D listener, memory-capture UI/hotkey and runtime/readiness panels hidden in production. Game capture and resolver/provider/bridge diagnostic IPC additionally guarded. Compatibility check, WPF import, support export and regular settings retained.
+Main:C:\Program Files (x86)\Steam\steamapps\common\NBA 2K27\2k Launcher\App\2k Launcher Rust.exe
+Share:C:\Users\carrn\CodexProjects\2kconversiontool\nba2k27-launcher-tauri2\Builds\0.53.45\Share-QA142-Production\NBA 2K27 Launcher 0.53.45.exe
+SHA256:EDA52241F07DE9B9ABE1165D23E1942D724D02D73BBCE4275A50952007C6FA71
+PDB SHA256:6E21F8E03FF9407DFD4DACA2D8FD416DD38317B66E8BA319E0EA62291E238B39
+Recovery:C:\Program Files (x86)\Steam\steamapps\common\NBA 2K27\2k Launcher\Recovery\App-before-QA142-20261024-152708-6672
+Receipt:C:\Users\carrn\CodexProjects\2kconversiontool\nba2k27-launcher-tauri2\artifacts\qa142-main-promotion-20261024-152708-6672.json
+Data/Library preserved and prior App backup verified; no game or launcher started during promotion.
+Validation:252frontend tests,TypeScript,Vite,production native build passed. Exact production features confirmed; no debug assertions or dev-curator. Exact EXE UI smoke passed13checks then unchanged QA106 Season History persistence assertion; full smoke NOT passed. No live gameplay acceptance claimed. QA073 natural Rust AV and QA078 Clang crash unresolved.
+Current dev staged QA140 is unchanged; newer source includes the Settings gating. Older complete preview pack remains default pending replacement upload.

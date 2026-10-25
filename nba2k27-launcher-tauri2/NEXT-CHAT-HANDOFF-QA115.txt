@@ -1,0 +1,24 @@
+QA115 - MANNEQUIN VISUAL POLISH - DEV ONLY
+2026-10-22. Version 0.53.19.
+
+Implements the three requested visual improvements:
+- Procedural soft contact cue beneath feet: one two-triangle horizontal plane, a radial alpha shader, no textures or shadow-map/offscreen passes. Repositions only with outfit changes/refit, follows model world bounds across sizes, excludes itself from mannequin framing, includes itself in depth clipping bounds, disposes resources on pagehide. Visible in existing light/dark backdrops and existing orbit/pan/zoom. Rendering remains on demand. This is an approximate grounding cue, not a physically cast shadow.
+- Sidebar reduced from 400 to 300 pixels on larger screens, 270 on medium screens; mannequin receives the freed width. Narrow screens retain stacked layout with 52% preview allocation. Existing sidebar scroll retained.
+- Selected clothing cards have fixed matching image wells, neutral slate gradients, equal padding, contain-fit uncropped images and consistent two-line labels. Full names remain available in hover titles and accessible button labels. Existing image files/cache paths unchanged.
+
+Sources: tools/fit-preview/contact-shadow.js incorporated reproducibly by tools/build-fit-preview-runtime.mjs; frontend/wpf/renderer/fit-preview.css; frontend/FitPreview.tsx. Generated viewer provenance updated. Worker byte hash unchanged from QA114. No game/runtime behavior changed.
+
+Validation: TypeScript and viewer JavaScript syntax passed. Four Node viewer tests passed, including contact placement with translated and scaled bounds, empty bounds, two-triangle geometry, no texture uniforms, and existing view/backdrop controls. Five frontend host/label tests passed. Vite and native release build passed with existing warnings. No browser/desktop control or GPU/visual/timing acceptance; user check pending. Added one small material and draw call, no promise of literally zero GPU cost.
+
+Candidate: Dev/Pending/QA115/launcher.exe
+SHA256: C89D6CC6CE920957297D56E868AEC31A93E0D4328FDFAC2EE265623A1B92DC7F
+Bytes: 46865408
+PDB: Dev/Pending/QA115/launcher.pdb
+Starter: Open QA115 Dev.lnk -> Start QA115 Dev.ps1
+Starter verifies staged size/hash and requires current game/launcher closed. On user click only backs up and replaces Dev/Portable. No automatic activation, installation or main/share promotion. No user Data/Library changes.
+Backup: Backups/qa115-mannequin-layout-20261022-104057
+Evidence: artifacts/qa115-mannequin-layout
+Retains all QA114 camera controls and quiet updates, QA113 lights/shoe order and QA112 labels. Existing QA073 natural Rust AV, QA078 fixture crash and QA106 Season History smoke persistence remain unresolved.
+
+User check: close current dev launcher, open QA115, inspect the shadow under both backdrops and when orbiting/resetting, the larger mannequin stage and uniform clothing cards. No game session needed for these changes.
+Starter CheckOnly exit=0. No activation performed. QA115 staged hash verified; game/launcher closed; no activation performed.

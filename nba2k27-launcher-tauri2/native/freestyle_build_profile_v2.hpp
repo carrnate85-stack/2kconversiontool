@@ -24,6 +24,7 @@ inline const FreestyleBuildProfile* freestyle_build_profile(std::uint32_t timest
   if(timestamp==0x6A974D13 && image_size==0x368C3000)return &original;
   if(timestamp==0x6AA2013D && image_size==0x36558000)return &september11;
   if(timestamp==0x6AC53765 && image_size==0x35BDE000)return &version2;
+  if(timestamp==0x6AD2E48C && image_size==0x36532000)return &version2;
   return nullptr;
 }
 }

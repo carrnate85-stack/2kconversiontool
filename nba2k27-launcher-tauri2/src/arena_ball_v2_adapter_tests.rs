@@ -298,6 +298,42 @@ fn v2_ball_actual_engine_receipt_and_runner_rearm_through_quick_play_main_and_ow
 }
 
 #[test]
+#[cfg(feature = "dev-model-preview")]
+fn v2_custom_arena_rechecks_roster_refresh_without_new_selection_request() {
+    use crate::{custom_blacktop as custom, provider_assets::Service};
+    use std::{fs, sync::{Arc, atomic::AtomicBool}};
+    let files = SessionFiles::new();
+    fs::create_dir(files.0.join("levels")).unwrap();
+    fs::write(files.0.join("levels/custom.iff"), b"fixture").unwrap();
+    let entry = custom::request(&files.0, &files.0, &serde_json::json!({"action":"add","name":"Adapter custom","baseId":"blacktop-stock","arenaSource":"levels/custom.iff","floorSource":null})).unwrap();
+    let choice = entry["id"].as_str().unwrap();
+    let assets = Service::open(&files.0, &[], &[], Arc::new(AtomicBool::new(false))).unwrap();
+    custom::publish(&files.0, &files.0, &assets, Some(choice)).unwrap();
+    let access = ArenaAccess { host: files.host(Fake::arena(choice)), profiled: Default::default() };
+    let before = access.capture(&arena::choice(choice).unwrap(), &arena::STOCK).unwrap().record.unwrap();
+    let mut runner = crate::arena_runtime::Runner::new(&files.0, access.host.session(), access.host.identity()).unwrap();
+    let queue = crate::arena_runtime::Queue::new(); queue.request(choice, || Ok(())).unwrap();
+    runner.tick(&queue, &access, Some("selection"), true).unwrap();
+    assert_eq!(access.host.writes.get(), 2);
+    access.host.patch(before.address + 0x7E, &before.fields);
+    runner.tick(&queue, &access, Some("match"), true).unwrap();
+    assert_eq!(access.host.writes.get(), 2, "never refresh filenames in a match");
+    runner.tick(&queue, &access, Some("selection"), true).unwrap();
+    assert_eq!(queue.view().unwrap().phase, "ready");
+    assert_eq!(access.host.writes.get(), 5);
+    // Another refresh during the same selection visit is caught as well.
+    access.host.patch(before.address + 0x7E, &before.fields);
+    runner.tick(&queue, &access, Some("selection"), true).unwrap();
+    assert_eq!(access.host.writes.get(), 8);
+    runner.tick(&queue, &access, Some("selection"), true).unwrap();
+    assert_eq!(access.host.writes.get(), 8, "unchanged fields are read-only");
+    access.host.patch(before.address + 0x7E, b"x");
+    runner.tick(&queue, &access, Some("selection"), true).unwrap();
+    assert_eq!(access.host.writes.get(), 8, "foreign filename changes must never be overwritten");
+    assert_ne!(queue.view().unwrap().phase, "ready");
+    runner.engine.game_ended(|| Ok(())).unwrap();
+}
+#[test]
 fn v2_arena_actual_engine_receipt_preserves_mapping_across_menus_and_restores_at_selection() {
     let files = SessionFiles::new();
     let choice = "arena_brickleyfacility_int";
@@ -387,7 +423,7 @@ fn v2_adapter_arena_real_access_trait_orders_exact_template_then_mapping_then_re
     let r = intent.record.as_ref().unwrap();
     let next = intent.replacement.as_ref().unwrap();
     access
-        .assets(arena::choice(&intent.selected).unwrap())
+        .assets(&arena::choice(&intent.selected).unwrap())
         .unwrap();
     access.template(r, &r.fields, next).unwrap();
     access.mapping(&arena::STOCK, &intent.mapping).unwrap();

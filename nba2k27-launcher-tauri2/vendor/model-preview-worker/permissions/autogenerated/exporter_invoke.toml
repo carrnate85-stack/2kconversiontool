@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-exporter-invoke"
+description = "Enables the exporter_invoke command without any pre-configured scope."
+commands.allow = ["exporter_invoke"]
+
+[[permission]]
+identifier = "deny-exporter-invoke"
+description = "Denies the exporter_invoke command without any pre-configured scope."
+commands.deny = ["exporter_invoke"]

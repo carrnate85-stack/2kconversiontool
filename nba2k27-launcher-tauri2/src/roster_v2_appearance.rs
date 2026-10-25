@@ -118,7 +118,7 @@ pub(crate) fn verify_profile(m: &impl Memory) -> Result<()> {
     ensure!(
         proof["schema"] == "qa066-v2-appearance-disk-proof-v1"
             && proof["imageSha256"]
-                == "29A96471C55909FC2BCEA6C699C59238656A501C19B50C74ED64B0D842E576A1",
+                == "B673EB04593D6D5A4DFB9E270178E04C017BD9F277514D256EA98FFB792ED27B",
         "Appearance reference mismatch"
     );
     for code in proof["nativeCodeProofs"]
@@ -168,12 +168,12 @@ pub(crate) fn verify_profile(m: &impl Memory) -> Result<()> {
     }
     for (instruction, target, name) in [
         (
-            0x2E24B3Au64,
-            0x68ED802u64,
+            0x2e24beau64,
+            0x68ed802u64,
             "APPEARANCEDATA::SetHeightInTenthsOfMM",
         ),
         (
-            0x2E24C2E,
+            0x2e24cde,
             0x68ED8E0,
             "APPEARANCEDATA::SetWingspanInTenthsOfMM",
         ),

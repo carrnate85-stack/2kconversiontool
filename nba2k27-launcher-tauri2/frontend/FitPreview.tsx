@@ -5,9 +5,13 @@ import React, { useEffect, useRef, useState } from "react";
 import { call, garmentImage } from "./api";
 import { fitPreview, type FitPayload } from "./fit-preview-host";
 import type { Garment, Outfit } from "./types";
+import { shoeLabel, previewWarning } from "./shoe-labels";
+import { outfitAccessorySlots } from "./OverlayOutfitEditor";
 
 // clothing-catalog-ui.js label + fit-preview-ui.js readableName.
 export function readableName(asset: string) {
+  const shoe = shoeLabel(asset);
+  if (shoe) return shoe;
   const label = asset
     .replace(/^female_/, "")
     .replace(/^acc_sock_/, "")
@@ -64,10 +68,10 @@ export function useGameThumbnail(asset: string | undefined, preferred?: string) 
   }, [asset, preferred]);
   return url;
 }
-function Photo({ label, asset, garment, onBrowse }: { label: string; asset?: string; garment?: Garment; onBrowse: () => void }) {
+function Photo({ label, asset, garment, onBrowse, icon, disabled }: { label: string; asset?: string; garment?: Garment; onBrowse: () => void; icon?: string; disabled?: boolean }) {
   const url = useGameThumbnail(asset, garment ? garmentImage(garment) : undefined);
   return (
-    <button type="button" className="fit-preview-selected-photo" aria-label={`Browse ${label.toLowerCase()} catalog`} onClick={onBrowse}>
+    <button type="button" className="fit-preview-selected-photo" disabled={disabled} title={asset ? readableName(asset) : `Choose ${label.toLowerCase()}`} aria-label={`Browse ${label.toLowerCase()} catalog${asset ? `: ${readableName(asset)}` : ""}`} onClick={onBrowse}>
       <small>{label}</small>
       <div className={`fit-preview-selected-picture${url ? "" : " has-fallback"}`} data-asset={asset ?? ""}>
         {asset === "Shirtless" || asset === "NO SHIRT" ? (
@@ -75,8 +79,8 @@ function Photo({ label, asset, garment, onBrowse }: { label: string; asset?: str
         ) : url ? (
           <img src={url} alt="" />
         ) : (
-          <svg viewBox="0 0 32 32" aria-hidden="true">
-            <path d={shapes[label] ?? shapes.Top} />
+          <svg viewBox={icon ? "0 0 24 24" : "0 0 32 32"} aria-hidden="true">
+            <path d={icon ?? shapes[label] ?? shapes.Top} />
           </svg>
         )}
       </div>
@@ -95,7 +99,7 @@ export function FitPreviewDialog(p: {
 }) {
   const frame = useRef<HTMLIFrameElement>(null);
   const original = useRef(p.outfit);
-  const state = useRef({ ready: false, generation: 0, mannequinShown: false, knownMeshes: [] as string[], knownTextures: [] as string[] });
+  const state = useRef({ ready: false, generation: 0, mannequinShown: false, outfitShown: false, knownMeshes: [] as string[], knownTextures: [] as string[] });
   const [status, setStatus] = useState({ text: "Loading the mannequin…", state: "loading" });
   const [loading, setLoading] = useState(true);
   const [result, setResult] = useState<FitPayload | null>(null);
@@ -108,10 +112,13 @@ export function FitPreviewDialog(p: {
       if (event.source !== frame.current?.contentWindow) return;
       const s = state.current;
       if (event.data?.type === "fit-preview:ready") {
-        Object.assign(s, { knownMeshes: [], knownTextures: [], mannequinShown: false, ready: true });
+        Object.assign(s, { knownMeshes: [], knownTextures: [], mannequinShown: false, outfitShown: false, ready: true });
         setReadyTick((n) => n + 1);
       }
-      if (event.data?.type === "fit-preview:displayed") s.mannequinShown = true;
+      if (event.data?.type === "fit-preview:displayed") {
+        s.mannequinShown = true;
+        if (!event.data.progress) s.outfitShown = true;
+      }
       if (event.data?.type === "fit-preview:known") {
         s.knownMeshes = event.data.meshes || [];
         s.knownTextures = event.data.textures || [];
@@ -132,21 +139,25 @@ export function FitPreviewDialog(p: {
     const s = state.current;
     if (!s.ready) return;
     const token = ++s.generation;
+    let compositionWarnings: string[] = [];
     setStatus({ text: "Updating fit…", state: "loading" });
     setLoading(true);
+    setResult(null);
     const timer = setTimeout(() => {
-      call<{ items: string[] }>("previews:fit-items", p.outfit)
+      call<{ items: string[]; warnings?: string[] }>("previews:fit-items", p.outfit)
         .then((composed) => {
           if (token !== s.generation) return null;
           setItems(composed.items);
+          compositionWarnings = composed.warnings ?? [];
           return fitPreview.render(
             { items: composed.items, knownMeshes: s.knownMeshes, knownTextures: s.knownTextures, showMannequinEarly: !s.mannequinShown },
             (progress) => {
-              if (token !== s.generation) return;
+              // Keep the completed outfit visible during later updates. Final payloads
+              // include all resources absent from the request's known-cache snapshot.
+              if (token !== s.generation || s.outfitShown) return;
               post(progress);
-              if (progress.parts.length) setLoading(false);
               setStatus({
-                text: progress.stage === "mannequin" ? "Mannequin ready · loading outfit…" : `${progress.parts.length} garments · ${progress.stats.ms} ms base · loading artwork…`,
+                text: "Loading outfit…",
                 state: "loading",
               });
             },
@@ -156,7 +167,7 @@ export function FitPreviewDialog(p: {
           if (!payload || token !== s.generation) return;
           post(payload);
           setLoading(false);
-          setResult(payload);
+          setResult({ ...payload, warnings: [...compositionWarnings, ...(payload.warnings ?? [])] });
           const unavailable = (payload.accessories || []).filter((a) => a.state === "unavailable");
           setStatus({
             text: unavailable.length ? `Preview ready · ${unavailable.length} accessory preview${unavailable.length === 1 ? "" : "s"} unavailable` : "Preview ready",
@@ -169,7 +180,7 @@ export function FitPreviewDialog(p: {
           setStatus({ text: String(error?.message ?? error).replace(/^Error: /, ""), state: "error" });
         });
     }, 35);
-    return () => clearTimeout(timer);
+    return () => { clearTimeout(timer); s.generation++; };
   }, [p.outfit, readyTick]);
   function finish(message?: string) {
     state.current.generation++;
@@ -191,7 +202,7 @@ export function FitPreviewDialog(p: {
   const shoe = p.outfit.shoes === "Currently installed" ? items.find((a) => /^shoe_/.test(a)) : p.outfit.shoes;
   const accessories = result?.accessories ?? [];
   const warnings = [
-    ...(result?.warnings ?? []).map((w) => (/shoe color resources are unavailable/i.test(w) ? "Shoe colors unavailable. A neutral shoe shape is shown." : w)),
+    ...(result?.warnings ?? []).map((w) => (/shoe color resources are unavailable/i.test(w) ? "Shoe colors unavailable. A neutral shoe shape is shown." : previewWarning(w))),
     ...accessories.filter((a) => a.state === "unavailable").map((a) => `${readableName(a.asset)}: ${a.reason}`),
   ];
   return (
@@ -242,25 +253,22 @@ export function FitPreviewDialog(p: {
                 <div className="accessory-slots-heading">
                   <strong>Accessories</strong> <span>{p.outfit.accessories.length} selected</span>
                 </div>
+                <div className="fit-preview-accessory-grid">
                 {p.outfit.accessories.map((asset) => {
                   const r = accessories.find((a) => a.asset === asset);
+                  const slot = slotOf(asset) ?? r?.slot;
+                  const definition = outfitAccessorySlots.find(([id]) => id === slot);
                   return (
-                    <div className="accessory-slot" key={asset}>
-                      <button
-                        type="button"
-                        className="accessory-tile"
-                        title={`Change ${readableName(asset)}`}
-                        disabled={!slotOf(asset)}
-                        onClick={() => p.onBrowse(slotOf(asset)!)}
-                      >
-                        {readableName(asset)}
-                      </button>{" "}
+                    <div className="fit-preview-accessory-card" key={asset}>
+                      <Photo label={definition?.[1] ?? "Accessory"} asset={asset} garment={picture(asset)}
+                        icon={definition?.[2] ?? "M5 5h14v14H5z M9 12h6"} disabled={!slot}
+                        onBrowse={() => { if (slot) p.onBrowse(slot); }} />
                       <small className="accessory-preview-badge" data-state={r?.state || "checking"} title={r?.reason || ""}>
                         {r?.state === "shown" ? "3D preview" : r?.state === "unavailable" ? "3D unavailable" : "Checking preview"}
                       </small>
                       <button
                         type="button"
-                        className="accessory-tile-remove"
+                        className="fit-preview-accessory-remove"
                         aria-label={`Remove ${readableName(asset)}`}
                         onClick={() => p.setOutfit({ ...p.outfit, accessories: p.outfit.accessories.filter((x) => x !== asset) })}
                       >
@@ -269,6 +277,7 @@ export function FitPreviewDialog(p: {
                     </div>
                   );
                 })}
+                </div>
               </div>
             )}
             {warnings.length > 0 && <p className="fit-preview-warning">{warnings.join(" ")}</p>}

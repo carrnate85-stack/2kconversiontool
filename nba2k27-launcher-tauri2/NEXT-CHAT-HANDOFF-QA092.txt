@@ -1,0 +1,67 @@
+QA092 DEV CHECKPOINT - 2026-10-21
+
+Scope
+- Fixes the current patched game refusing the shared WNBA native source, which left WNBA teams absent in Freestyle and also affected Blacktop.
+- Dev build only. Nothing was installed, promoted, or copied into the active dev app by development work.
+
+Root cause
+- QA091 reached the exact-session WNBA approval and inactive Home gate, then refused with "Pinned private pack, native profile, or inactive-menu gate rejected."
+- Both private WNBA packs and their hashes were intact.
+- The shared WNBA priority profile still described the pre-patch QA058 executable. All nine pinned method hashes differed on Steam build 26004539.
+
+Current game identity
+- NBA2K27.exe bytes: 880329496
+- PE timestamp/image: 6AD2E48C / 36532000
+- SHA-256: B673EB04593D6D5A4DFB9E270178E04C017BD9F277514D256EA98FFB792ED27B
+
+Remapped shared WNBA source
+- register 0x51F2630, 349 bytes, SHA-256 1C737B693C44B81FE65B21B36BEDC3B7CBD493C0BB31BA15F4653385436E4ABD
+- lock 0x4B996E0, 39 bytes, SHA-256 D9F6316D4CE9216689495EB75196C887B0BE70FC72D02E39DC6F0F443254932D
+- unlock 0x4B996A0, 62 bytes, SHA-256 02B4F63273FFC4F607A30A7B29462ECEB040C15D434B9E68BCC7B6DEEDD93834
+- WAD methods: 0x5200D60/49, 0x5200FA0/2222, 0x5201A50/360, 0x5201960/143, 0x5200E10/292 and 0x51F8400/141, each pinned to its current SHA in native/wnba_priority_v2_profile.hpp.
+- source wrapper remains 0xBB9A8E8.
+- manager/WAD vtables are now 0x812C8C8 and 0x812D968.
+- All nine methods are unique relocation-masked matches and exact current .pdata boundaries. RTTI resolves each required table uniquely.
+
+Future patch mapping
+- scripts/Map-WNBA-Priority-Profile.ps1 and scripts/map-wnba-priority-profile.py are retained repeatable disk-only tools.
+- They do not open the game process or modify the launcher/game. They emit artifacts/wnba-priority-remap/priority-static-map-<SHA-prefix>.json and fail if any method, table, wrapper or unwind boundary is ambiguous.
+- Usage and review steps are in docs/WNBA-PATCH-REMAP.md.
+
+Native payload
+- assets/native/version-outfits-v2-qa092.dll
+- Bytes: 1966080
+- SHA-256: 009674489CB0C3A5CBAE193DFA9D0747D4E7C6F823193407612E15C48E8587C4
+- QA088's exact payload remains admitted for recovery only. New publication accepts only QA092.
+
+Validation
+- The reusable disk mapper reproduced all nine unique current methods and both unique RTTI tables against the exact installed EXE.
+- 17 native checks passed: selector, scoreboard text, audio index, Freestyle audio/build profiles, roster appearance core/SEH, four Blacktop category/coordinator/roster/label cores, two Blacktop roster admission/profile checks, WNBA priority core/binding, and VersionProxy forwarding smoke.
+- Payload unwind inspection proved the asynchronous exception handler remains present.
+- The QA078 Clang outfit fixture reproduced exit -1073740791 (0xC0000409); it remains unresolved and is not counted as a pass.
+- Rust debug checks passed: 5 WNBA source/category tests, exact prior-payload recovery, provider structure/header/refusal checks, and the opt-in exact installed-game disk audit.
+- The optimized dev-feature build passed all 5 WNBA source/category tests.
+- cargo fmt and cargo fmt --check passed.
+- cargo build --release --features dev-wnba-categories completed successfully.
+
+QA092 candidate
+- Staged executable: Dev/Pending/QA092/launcher.exe
+- Bytes: 46669312
+- SHA-256: FE13706533890987BA78FE163E0D4B2CAECEE9EB60DDFD0061EFCB3430882E1E
+- Starter: Start QA092 Dev.vbs
+
+Starter status
+- The starter's syntax and embedded hash/size were verified.
+- CheckOnly correctly refused while the existing QA091 dev launcher PID 34704 remained open; no activation occurred. Close that launcher normally before starting QA092.
+- The starter rechecks game/launcher idleness, stages a backup of the active dev executable, copies only the exact QA092 candidate, durably flushes it, verifies its SHA, and launches the dev copy. It does not install or promote a release.
+
+Live acceptance still required
+- Close the currently open launcher normally.
+- Start QA092, turn WNBA Freestyle ON, and use Play normally.
+- Remain at Home briefly for exact-session source registration, then enter Freestyle and confirm WNBA teams appear.
+- Blacktop uses the same corrected source profile; repeated Freestyle/Blacktop entry remains live acceptance, not established by offline checks.
+
+Preserved qualifications
+- QA073 natural Rust test access violation and its exact EXE/PDB evidence remain unresolved.
+- QA078 Clang fixture crash remains unresolved.
+- Offline/static success does not establish live WNBA category visibility or gameplay persistence.

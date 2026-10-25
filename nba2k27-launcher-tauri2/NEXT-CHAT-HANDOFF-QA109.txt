@@ -1,0 +1,16 @@
+QA109 — UNLOCKS STRIP REMOVAL — DEV ONLY
+2026-10-22. Version 0.53.13.
+Removed redundant Team access / Experimental strip and its right-side launch note from Unlocks, plus unused strip CSS. Existing sections and toggles remain together. All gameplay, availability and persistence behavior unchanged. Retains QA108 All-tab arena ordering and QA107 compact controls.
+
+Validation: TypeScript passed; 4 existing UnlocksPanel tests passed; Vite and native release build passed. No desktop control, app/game launch, live memory or installs performed. No promotion. Existing running dev is left alone; candidate staged for user's next launch.
+
+Candidate: Dev/Pending/QA109/launcher.exe
+SHA256: 22418DE021E03864C3E655C8C6AD002BD1D122C810D1F0641F0B54F4D3F29AC8
+Bytes: 46755840
+Starter: Open QA109 Dev.lnk (uses explicit built-in PowerShell modules; verifies staged hash/size, refuses if game/app active, backs up prior Dev/Portable EXE before replacing only that dev copy).
+Evidence/PDB: artifacts/qa109-unlocks-strip
+Source backups: Backups/qa109-unlocks-strip-*
+
+User does not want Computer Use; do not control desktop without explicit reauthorization.
+Main and sharing builds untouched. Prior Season History packaged smoke failure, QA073 Rust natural AV and QA078 Clang crash remain unresolved. No gameplay acceptance claimed.
+Hosted optional previews/videos/playlists remain a proposal; no downloader or uploads added.

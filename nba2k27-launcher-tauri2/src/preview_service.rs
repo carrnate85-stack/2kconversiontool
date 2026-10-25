@@ -540,6 +540,21 @@ impl Service {
     /// (the shoe is removed for the game), so preview the style's shoes instead.
     fn fit_items(args: &Value) -> Result<Value> {
         let mut outfit: crate::backend::Outfit = serde_json::from_value(args.clone())?;
+        ensure!(outfit.accessories.len() <= 3, "Maximum 3 accessories");
+        ensure!(
+            [
+                &outfit.top,
+                &outfit.bottom,
+                &outfit.shoes,
+                &outfit.socks,
+                &outfit.street_id,
+                &outfit.layer
+            ]
+            .into_iter()
+            .chain(outfit.accessories.iter())
+            .all(|s| s.len() <= 240),
+            "Asset ID exceeds limit"
+        );
         ensure!(
             outfit.pool == "male",
             "The mannequin preview currently supports men’s clothing."
@@ -548,9 +563,97 @@ impl Service {
             outfit.shoes.clear();
         }
         let catalog = crate::outfits::catalog()?;
-        let items = catalog.compose(&catalog.selection(&outfit)?)?;
-        ensure!(items.len() <= 7, "Unsupported outfit preview.");
-        Ok(json!({"items":items}))
+        if let Ok(items) = catalog.selection(&outfit).and_then(|s| catalog.compose(&s)) {
+            ensure!(items.len() <= 7, "Unsupported outfit preview.");
+            return Ok(json!({"items":items,"warnings":[]}));
+        }
+        // Recover stale/missing IDs only when all compatible observed variants
+        // produce the same preview. Do not choose between different layers.
+        let top = if outfit.top == "Shirtless" {
+            "NO SHIRT"
+        } else {
+            &outfit.top
+        };
+        let mut resolved: Option<Vec<String>> = None;
+        let mut ambiguous = false;
+        for preset in catalog.presets.iter().filter(|p| {
+            p.pool.as_deref() == Some("male")
+                && p.top.as_deref() == Some(top)
+                && !p.id.starts_with("accessory-test-")
+        }) {
+            let mut candidate = outfit.clone();
+            candidate.street_id = preset.id.clone();
+            candidate.bottom = candidate.bottom.replace(' ', "_");
+            if let Ok(items) = catalog
+                .selection(&candidate)
+                .and_then(|s| catalog.compose(&s))
+            {
+                if resolved.as_ref().is_some_and(|previous| previous != &items) {
+                    ambiguous = true;
+                    break;
+                }
+                resolved = Some(items);
+            }
+        }
+        if !ambiguous {
+            if let Some(items) = resolved {
+                return Ok(json!({"items":items,"warnings":[],"variantRecovered":true}));
+            }
+        }
+        // A visual draft is useful even before it has a verified game variant.
+        // Do not rebind/save the draft or relax Catalog::selection/compose, which
+        // remain authoritative for saving, export and game application.
+        let mut warnings = vec!["Previewing your selected pieces. This combination still needs a compatible fit before it can be saved or applied.".to_string()];
+        let base = catalog
+            .base(&outfit.street_id)
+            .ok()
+            .filter(|p| p.pool.as_deref() == Some("male") && p.top.as_deref() == Some(top));
+        let shoe = if outfit.shoes.is_empty() {
+            base.and_then(|p| p.shoes.first())
+                .map(String::as_str)
+                .unwrap_or("")
+        } else {
+            &outfit.shoes
+        };
+        let mut items = Vec::new();
+        for raw in [
+            outfit.top.as_str(),
+            outfit.bottom.as_str(),
+            outfit.socks.as_str(),
+            shoe,
+            outfit.layer.as_str(),
+        ]
+        .into_iter()
+        .chain(outfit.accessories.iter().map(String::as_str))
+        {
+            if matches!(
+                raw,
+                "" | "Shirtless" | "NO SHIRT" | "none" | "Currently installed"
+            ) {
+                continue;
+            }
+            // Older initial drafts used display labels instead of underscore IDs.
+            let asset = raw.replace(' ', "_");
+            if asset.len() > 200
+                || !asset
+                    .bytes()
+                    .all(|b| b.is_ascii_alphanumeric() || b == b'_')
+            {
+                warnings.push(format!("Preview unavailable for {raw}."));
+                continue;
+            }
+            if items.contains(&asset) {
+                continue;
+            }
+            if items.len() == 7 {
+                warnings.push(format!(
+                    "{raw} is not shown: preview supports seven pieces."
+                ));
+                continue;
+            }
+            items.push(asset);
+        }
+        Ok(json!({"items":items,"warnings":warnings}))
     }
     /// Male preset originals for WPF previewNames (filtered in the worker).
     fn fit_originals() -> Result<Value> {
@@ -614,6 +717,100 @@ impl Service {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    #[ignore = "Read-only installed-game shoe identity investigation; requires C27_LIVE_GAME_DIR"]
+    fn shoe_0215_installed_identity_read_only() {
+        let root = PathBuf::from(std::env::var("C27_LIVE_GAME_DIR").unwrap());
+        let assets = FitAssets::default();
+        let game = assets.game(&root).unwrap();
+        for id in ["0215", "0000", "1000"] {
+            let name = format!("shoes/shoe_style_{id}.iff");
+            println!("{name}: {:?}", game.size(&name));
+            if id == "0215" && game.size(&name).is_some() {
+                let bytes = game.export(&name, &assets.checkpoint()).unwrap();
+                fs::write("artifacts/qa112-shoe-catalog/shoe_style_0215.iff", bytes).unwrap();
+            }
+        }
+    }
+    #[test]
+    fn mannequin_unbound_and_stale_drafts_do_not_relax_game_validation() {
+        let initial = json!({"name":"My outfit","top":"Shirtless","bottom":"basketball shorts solid blk","shoes":"Currently installed","accessories":[]});
+        let preview = Service::fit_items(&initial).unwrap();
+        assert_eq!(preview["items"], json!(["basketball_shorts_solid_blk"]));
+        assert!(
+            preview["variantRecovered"] == true
+                || !preview["warnings"].as_array().unwrap().is_empty()
+        );
+        let catalog = crate::outfits::catalog().unwrap();
+        let mut outfit: crate::backend::Outfit = serde_json::from_value(initial).unwrap();
+        assert!(catalog.selection(&outfit).is_err());
+        outfit.name.clear(); // Naming an outfit is required to save, not to view it.
+        assert!(Service::fit_items(&serde_json::to_value(&outfit).unwrap()).is_ok());
+        outfit.street_id = "removed-variant".into();
+        outfit.top = "tanktop_solid_gry".into();
+        outfit.shoes = "shoe_0000_default".into();
+        let preview = Service::fit_items(&serde_json::to_value(&outfit).unwrap()).unwrap();
+        for expected in [
+            "tanktop_solid_gry",
+            "basketball_shorts_solid_blk",
+            "shoe_0000_default",
+        ] {
+            assert!(
+                preview["items"]
+                    .as_array()
+                    .unwrap()
+                    .iter()
+                    .any(|item| item == expected)
+            );
+        }
+        assert_eq!(outfit.street_id, "removed-variant");
+        assert!(catalog.selection(&outfit).is_err());
+        outfit.top = "../bad".into();
+        let preview = Service::fit_items(&serde_json::to_value(&outfit).unwrap()).unwrap();
+        assert!(
+            !preview["items"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .any(|a| a == "../bad")
+        );
+        outfit.top = "Shirtless".into();
+        outfit.bottom.clear();
+        outfit.shoes.clear();
+        assert_eq!(
+            Service::fit_items(&serde_json::to_value(&outfit).unwrap()).unwrap()["items"],
+            json!([])
+        );
+        outfit.pool = "female".into();
+        assert!(Service::fit_items(&serde_json::to_value(&outfit).unwrap()).is_err());
+    }
+    #[test]
+    fn mannequin_can_recover_an_unambiguous_variant_without_mutating_the_draft() {
+        let catalog = crate::outfits::catalog().unwrap();
+        for preset in catalog
+            .presets
+            .iter()
+            .filter(|p| p.pool.as_deref() == Some("male"))
+        {
+            let Ok(mut outfit) = catalog.original_outfit(&preset.id, "Preview") else {
+                continue;
+            };
+            let Ok(expected) = catalog.selection(&outfit).and_then(|s| catalog.compose(&s)) else {
+                continue;
+            };
+            outfit.street_id = "stale-id".into();
+            let args = serde_json::to_value(&outfit).unwrap();
+            let result = Service::fit_items(&args).unwrap();
+            if result["variantRecovered"] == true {
+                assert_eq!(result["items"], json!(expected));
+                assert_eq!(result["warnings"], json!([]));
+                assert_eq!(args["streetId"], "stale-id");
+                assert!(catalog.selection(&outfit).is_err());
+                return;
+            }
+        }
+        panic!("Expected at least one uniquely recoverable observed outfit");
+    }
     #[test]
     fn gate_limits_concurrency() {
         let gate = Arc::new(Gate::default());

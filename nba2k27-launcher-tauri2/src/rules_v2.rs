@@ -18,26 +18,45 @@ const CURRENT: u64 = 0x0AD07BD0;
 const ALTERNATE: u64 = 0x0AD07BCC;
 const ACTIVE: u64 = 0x0AB5D790;
 const SHA: &str = "29A96471C55909FC2BCEA6C699C59238656A501C19B50C74ED64B0D842E576A1";
-const IMAGE_BYTES: u64 = 0x35BDE000;
+const IMAGE_BYTES: u64 = 0x36532000;
 pub(crate) const RIP_ANCHORS: &[(u64, &[u8], u64)] = &[
-    (0x3457D80, &[0x48, 0x8D, 0x05], ROOT_TAG),
-    (0x3457D87, &[0x48, 0x89, 0x05], ROOT),
-    (0x25AA3D0, &[0x48, 0x8B, 0x05], OWNER),
-    (0x308C649, &[0x48, 0x8D, 0x05], MODES),
-    (0x308C650, &[0x48, 0x63, 0x0D], ALTERNATE),
-    (0x300D703, &[0x48, 0x63, 0x05], CURRENT),
+    (0x3457F00, &[0x48, 0x8D, 0x05], ROOT_TAG),
+    (0x3457F07, &[0x48, 0x89, 0x05], ROOT),
+    (0x25AA480, &[0x48, 0x8B, 0x05], OWNER),
+    (0x308C6F9, &[0x48, 0x8D, 0x05], MODES),
+    (0x308C700, &[0x48, 0x63, 0x0D], ALTERNATE),
+    (0x300D7B3, &[0x48, 0x63, 0x05], CURRENT),
 ];
 pub(crate) const FIELD_ANCHORS: &[(u64, &[u8])] = &[
-    (0x32FB9B6, &[0x8B, 0x81, 0xA8, 0x0E, 0, 0]),
-    (0x24F7EC5, &[0x80, 0x3D, 0xC4, 0x58, 0x66, 0x08, 0]),
+    (0x32FBB36, &[0x8B, 0x81, 0xA8, 0x0E, 0, 0]),
+    (0x24F7F75, &[0x80, 0x3D, 0x14, 0x58, 0x66, 0x08, 0]),
     // Native mode getter loads the same rules owner, then its +A04 mode.
     (
-        0x24F5450,
+        0x24F5500,
         &[
-            0x48, 0x8B, 0x05, 0xC9, 0x79, 0x66, 0x08, 0x8B, 0x80, 0x04, 0x0A, 0, 0, 0xC3,
+            0x48, 0x8B, 0x05, 0x19, 0x79, 0x66, 0x08, 0x8B, 0x80, 0x04, 0x0A, 0, 0, 0xC3,
         ],
     ),
 ];
+
+pub(crate) fn updated_getter(id: &str, old: u64) -> u64 {
+    match id {
+        "OverTheBackRule" => 0x25B0BA0,
+        "GenericPersonalFoulRule" => 0x25B0840,
+        "ChargingRule" => 0x25B0A20,
+        "OffensiveOffballFoulRule" => 0x25B0A80,
+        "DefensiveOffballFoulRule" => 0x25B0AE0,
+        "BlockingRule" => 0x25B09C0,
+        "ReachingFoulRule" => 0x25B08A0,
+        "LooseBallRule" => 0x25B0C00,
+        "ShootingFoulRule" => 0x25B0900,
+        "IntentionalFoul" => 0x25B0C60,
+        "IllegalPick" => 0x25B0B40,
+        "TechnicalFoulRule" => 0x25B0960,
+        "FlagrantFoulRule" => 0x25B07E0,
+        _ => old + 0xB0,
+    }
+}
 fn read(m: &impl Memory, at: u64, len: usize) -> Result<Vec<u8>> {
     ensure!(
         len > 0
@@ -157,7 +176,7 @@ pub(crate) fn verify_profile(m: &impl Memory) -> Result<()> {
             && &bytes[pe..pe + 4] == b"PE\0\0"
             && &bytes[pe + 4..pe + 6] == [0x64, 0x86]
             && &bytes[pe + 24..pe + 26] == [0x0B, 0x02]
-            && u32::from_le_bytes(bytes[pe + 8..pe + 12].try_into()?) == 0x6AC53765
+            && u32::from_le_bytes(bytes[pe + 8..pe + 12].try_into()?) == 0x6AD2E48C
             && u32::from_le_bytes(bytes[pe + 80..pe + 84].try_into()?) == IMAGE_BYTES as u32,
         "Game Rules are not mapped for this game build"
     );
@@ -178,12 +197,16 @@ pub(crate) fn verify_profile(m: &impl Memory) -> Result<()> {
                 && getter["ownerRva"].as_u64() == Some(OWNER),
             "Game Rules field mapping differs from verified reference"
         );
-        let at = getter["rva"]
+        let old_at = getter["rva"]
             .as_u64()
             .context("Missing rule getter address")?;
-        let expected = hex(getter["hex"]
+        let at = updated_getter(field.id, old_at);
+        let mut expected = hex(getter["hex"]
             .as_str()
             .context("Missing rule getter bytes")?)?;
+        let relative = i32::try_from(OWNER as i64 - at as i64 - 7)
+            .context("Updated Game Rules getter displacement overflow")?;
+        expected[3..7].copy_from_slice(&relative.to_le_bytes());
         ensure!(
             at >= 0x1000
                 && at + (expected.len() as u64) < 0x5D00000
@@ -220,7 +243,7 @@ pub(crate) fn verify_profile(m: &impl Memory) -> Result<()> {
     let table = read(m, rva(m, ROOT_TAG)?, 16)?;
     ensure!(
         u64::from_le_bytes(table[..8].try_into()?) == rva(m, 0x23120)?
-            && u64::from_le_bytes(table[8..].try_into()?) == rva(m, 0x346B350)?,
+            && u64::from_le_bytes(table[8..].try_into()?) == rva(m, 0x346B4D0)?,
         "Version 2 Blacktop class identity changed"
     );
     m.checkpoint()

@@ -1,4 +1,5 @@
 // Build-time only. No Node runtime is distributed with the prototype.
+import "./prepare-shoe-labels.mjs";
 import fs from "node:fs";
 import path from "node:path";
 import zlib from "node:zlib";

@@ -107,8 +107,20 @@ fn fresh(p: &Path) -> Result<File> {
         .create_new(true)
         .custom_flags(0x00200000)
         .open(p)?;
-    ordinary(&f, false)?;
+    if let Err(error) = ordinary(&f, false) {
+        remove(&f).context("Could not clean exact newly-created nonordinary stage")?;
+        return Err(error);
+    }
     Ok(f)
+}
+fn with_stage<T>(path: &Path, work: impl FnOnce(&mut File, &mut bool) -> Result<T>) -> Result<T> {
+    let mut file = fresh(path)?;
+    let mut published = false;
+    let result = work(&mut file, &mut published);
+    if result.is_err() && !published {
+        remove(&file).context("Failed operation could not remove its exact owned stage")?;
+    }
+    result
 }
 fn read(f: &mut File, max: usize) -> Result<Vec<u8>> {
     ordinary(f, false)?;
@@ -411,19 +423,22 @@ pub(crate) fn cache_native(root: &Path, bytes: &[u8], nonce: &str) -> Result<Nat
         return verify();
     }
     let stage = root.join(format!(".2k-jukebox-{nonce}.tmp"));
-    let mut f = fresh(&stage)?;
-    f.write_all(bytes)?;
-    f.sync_all()?;
-    let owner = Owned::capture(&mut f, jukebox_audio::MAX_AUDIO)?;
-    if let Err(error) = rename(&f, &target) {
-        if !absent(&target)? && verify().is_ok() {
-            owner.check(&mut f, jukebox_audio::MAX_AUDIO)?;
-            remove(&f)?;
+    with_stage(&stage, |f, published| {
+        f.write_all(bytes)?;
+        f.sync_all()?;
+        let owner = Owned::capture(f, jukebox_audio::MAX_AUDIO)?;
+        if let Err(error) = rename(f, &target) {
+            if !absent(&target)? && verify().is_ok() {
+                owner.check(f, jukebox_audio::MAX_AUDIO)?;
+                remove(f)?;
+            } else {
+                return Err(error);
+            }
         } else {
-            return Err(error);
+            *published = true;
         }
-    }
-    drop(f);
+        Ok(())
+    })?;
     verify()
 }
 pub(crate) fn read_cached(root: &Path, sha: &str, size: usize) -> Result<NativeSource> {
@@ -557,12 +572,15 @@ pub(crate) fn cache_art(
         return Ok((hash, data.len()));
     }
     let stage = root.join(format!(".2k-jukebox-{nonce}.art.tmp"));
-    let mut f = fresh(&stage)?;
-    f.write_all(data)?;
-    f.sync_all()?;
-    let owned = Owned::capture(&mut f, 4 * 1024 * 1024)?;
-    rename(&f, &target)?;
-    owned.check(&mut f, 4 * 1024 * 1024)?;
+    with_stage(&stage, |f, published| {
+        f.write_all(data)?;
+        f.sync_all()?;
+        let owned = Owned::capture(f, 4 * 1024 * 1024)?;
+        rename(f, &target)?;
+        *published = true;
+        owned.check(f, 4 * 1024 * 1024)?;
+        Ok(())
+    })?;
     Ok((hash, data.len()))
 }
 
@@ -595,6 +613,47 @@ mod tests {
             );
             fs::remove_dir_all(&self.0).unwrap();
         }
+    }
+    #[test]
+    fn failed_stages_delete_only_the_exact_unpublished_owned_handle() {
+        let f = Fixture::new();
+        let stage = f.0.join("stage.tmp");
+        let target = f.0.join("foreign.bin");
+        fs::write(&target, b"foreign").unwrap();
+        assert!(
+            with_stage::<()>(&stage, |file, _| {
+                file.write_all(b"partial")?;
+                anyhow::bail!("injected disk failure")
+            })
+            .is_err()
+        );
+        assert!(!stage.exists());
+        assert_eq!(fs::read(&target).unwrap(), b"foreign");
+        assert!(
+            with_stage::<()>(&target, |_, _| panic!("foreign existing must not open")).is_err()
+        );
+        assert_eq!(fs::read(&target).unwrap(), b"foreign");
+        assert!(
+            with_stage::<()>(&stage, |file, _| {
+                file.write_all(b"staged")?;
+                rename(file, &target)
+            })
+            .is_err()
+        );
+        assert!(!stage.exists());
+        assert_eq!(fs::read(&target).unwrap(), b"foreign");
+        let published = f.0.join("published.bin");
+        assert!(
+            with_stage::<()>(&stage, |file, done| {
+                file.write_all(b"published")?;
+                rename(file, &published)?;
+                *done = true;
+                anyhow::bail!("postpublication readback refusal")
+            })
+            .is_err()
+        );
+        assert!(!stage.exists());
+        assert_eq!(fs::read(&published).unwrap(), b"published");
     }
     #[test]
     fn catalog_updates_are_durable_and_stale_editors_cannot_overwrite() {

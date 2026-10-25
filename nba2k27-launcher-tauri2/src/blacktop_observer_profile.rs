@@ -48,21 +48,21 @@ pub(super) const VERSION_TWO: Profile = Profile {
 // Cross-checked against disk disassembly, not a uniform offset adjustment.
 // All RIP displacements must still resolve to the exact mapped target.
 pub(crate) const RIP_ANCHORS: &[(u64, &[u8], u64)] = &[
-    (0x3457D80, &[0x48, 0x8D, 0x05], VERSION_TWO.root_tag),
-    (0x3457D87, &[0x48, 0x89, 0x05], VERSION_TWO.root),
-    (0x25AA3D0, &[0x48, 0x8B, 0x05], VERSION_TWO.owner),
-    (0x308C649, &[0x48, 0x8D, 0x05], VERSION_TWO.modes),
-    (0x308C650, &[0x48, 0x63, 0x0D], VERSION_TWO.alternate),
-    (0x300D703, &[0x48, 0x63, 0x05], VERSION_TWO.current),
-    (0x32F799A, &[0x89, 0x05], VERSION_TWO.lineup + 4),
-    (0x32F79A0, &[0x89, 0x05], VERSION_TWO.lineup + 8),
+    (0x3457F00, &[0x48, 0x8D, 0x05], VERSION_TWO.root_tag),
+    (0x3457F07, &[0x48, 0x89, 0x05], VERSION_TWO.root),
+    (0x25AA480, &[0x48, 0x8B, 0x05], VERSION_TWO.owner),
+    (0x308C6F9, &[0x48, 0x8D, 0x05], VERSION_TWO.modes),
+    (0x308C700, &[0x48, 0x63, 0x0D], VERSION_TWO.alternate),
+    (0x300D7B3, &[0x48, 0x63, 0x05], VERSION_TWO.current),
+    (0x32F7B1A, &[0x89, 0x05], VERSION_TWO.lineup + 4),
+    (0x32F7B20, &[0x89, 0x05], VERSION_TWO.lineup + 8),
 ];
 pub(crate) const FIELD_ANCHORS: &[(u64, &[u8])] = &[
     (0x3B2050, REFRESH),
-    (0x32FB9B6, &[0x8B, 0x81, 0xA8, 0x0E, 0, 0]),
-    (0x32FB9E0, &[0x48, 0x8B, 0x8E, 0x80, 0x10, 0, 0]),
+    (0x32FBB36, &[0x8B, 0x81, 0xA8, 0x0E, 0, 0]),
+    (0x32FBB60, &[0x48, 0x8B, 0x8E, 0x80, 0x10, 0, 0]),
     // Active-game flag check. Include the immediate in the RIP length.
-    (0x24F7EC5, &[0x80, 0x3D, 0xC4, 0x58, 0x66, 0x08, 0]),
+    (0x24F7F75, &[0x80, 0x3D, 0x14, 0x58, 0x66, 0x08, 0]),
 ];
 pub(super) fn validate(m: &impl Memory) -> Result<Profile> {
     let h = m.read(m.base(), 4096)?;
@@ -84,7 +84,7 @@ pub(super) fn validate(m: &impl Memory) -> Result<Profile> {
         return Ok(LEGACY);
     }
     ensure!(
-        (stamp, size) == (0x6AC53765, 0x35BDE000),
+        (stamp, size) == (0x6AD2E48C, 0x36532000),
         "This game build has no verified read-only observer profile"
     );
     ensure!(
@@ -113,7 +113,7 @@ pub(super) fn validate(m: &impl Memory) -> Result<Profile> {
     // Independently proved RTTI primary tables: PLAYNOW_BLACKTOP and
     // CHARACTER::CONTAINER, not a player-type label invented by the UI.
     for (rva, methods) in [
-        (VERSION_TWO.root_tag, [0x23120u64, 0x346B350]),
+        (VERSION_TWO.root_tag, [0x23120u64, 0x346B4D0]),
         (VERSION_TWO.model, [0x3D8A90, 0x3D8AF0]),
         (VERSION_TWO.description, [0x14F0, 0x827040]),
     ] {

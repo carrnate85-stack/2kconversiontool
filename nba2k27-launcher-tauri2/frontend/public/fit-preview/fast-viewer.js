@@ -3,18 +3,43 @@ import {DDSLoader} from './vendor/DDSLoader.js';
 
 const canvas=document.getElementById('previewCanvas');
 const errorBox=document.getElementById('error');
-const scene=new THREE.Scene();scene.background=new THREE.Color(0x10151b);
+const scene=new THREE.Scene();scene.background=null;
+// One procedural two-triangle ellipse. No texture, shadow map or offscreen pass.
+function createContactShadow() {
+ const geometry=new THREE.PlaneGeometry(1,1);
+ const material=new THREE.ShaderMaterial({
+  transparent:true,depthWrite:false,
+  vertexShader:'varying vec2 shadowUv; void main(){shadowUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}',
+  fragmentShader:'varying vec2 shadowUv; void main(){float r=length((shadowUv-0.5)*2.0);float a=(1.0-smoothstep(0.1,1.0,r))*0.23;gl_FragColor=vec4(0.02,0.025,0.035,a);}'
+ });
+ const mesh=new THREE.Mesh(geometry,material);
+ mesh.rotation.x=-Math.PI/2;mesh.visible=false;mesh.renderOrder=-1;
+ return mesh;
+}
+const contactShadow=createContactShadow();
+scene.add(contactShadow);
+function positionContactShadow(bounds) {
+ if(bounds.isEmpty()){contactShadow.visible=false;return;}
+ const size=bounds.getSize(new THREE.Vector3()),center=bounds.getCenter(new THREE.Vector3());
+ const height=Math.max(size.y,0.001);
+ contactShadow.position.set(center.x,bounds.min.y-height*0.001,center.z);
+ contactShadow.scale.set(Math.max(size.x*1.1,height*0.42),Math.max(size.z*1.5,height*0.27),1);
+ contactShadow.visible=true;
+ contactShadow.updateMatrixWorld(true);
+}
+
 const camera=new THREE.PerspectiveCamera(42,1,0.01,100000);
-const renderer=new THREE.WebGLRenderer({canvas,antialias:false,powerPreference:'high-performance'});
+const renderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:false,powerPreference:'high-performance'});
 renderer.outputColorSpace=THREE.SRGBColorSpace;
 renderer.setPixelRatio(Math.min(devicePixelRatio||1,1.5));
-scene.add(new THREE.AmbientLight(0xffffff,0.7));
-const key=new THREE.DirectionalLight(0xffffff,1.1);key.position.set(3,6,5);scene.add(key);
-const fill=new THREE.DirectionalLight(0xd8e8ff,0.35);fill.position.set(-4,2,-3);scene.add(fill);
+scene.add(new THREE.HemisphereLight(0xf4f7ff,0x687887,0.95));
+const key=new THREE.DirectionalLight(0xffffff,1.4);key.position.set(3,6,5);scene.add(key);
+const fill=new THREE.DirectionalLight(0xe1edff,0.65);fill.position.set(-4,2,-3);scene.add(fill);
 const model=new THREE.Group();model.rotation.x=-Math.PI/2;scene.add(model);
 const bodyGroup=new THREE.Group(),clothesGroup=new THREE.Group();const accessoryGroup=new THREE.Group();model.add(bodyGroup,clothesGroup,accessoryGroup);
 const meshes=new Map(),textures=new Map();
 let activeParts=new Map();
+let viewFramed=false;
 let bodyKey='',yaw=0.45,pitch=0.1,distance=10,clipRadius=1,target=new THREE.Vector3(),drag=null;
 // Keyboard panning belongs to the focused canvas, never the catalog/search UI.
 canvas.tabIndex=0;
@@ -106,10 +131,22 @@ function dds(key,item){
   return texture;
  }catch{return null;}
 }
+// QA120: source LogoNColorizeR/G/B colors use the same RGB-region model as clothing.
+function configureArtworkPalette(shader,prefix,palette,declarations){
+ if(!palette)return '';
+ const channels=['Red','Green','Blue'];
+ channels.forEach((channel,i)=>{
+  shader.uniforms[prefix+channel]={value:new THREE.Color().setRGB(...palette[i].map(v=>v/255),THREE.SRGBColorSpace)};
+  declarations.push(`uniform vec3 ${prefix}${channel};`);
+ });
+ return `artwork.rgb=artwork.r*${prefix}Red+artwork.g*${prefix}Green+artwork.b*${prefix}Blue;`;
+}
+
 function colorShader(material,palette,range,artworks,emission=null){
+ const opaqueColor=palette?.opaqueColor===true;
  if(palette?.diffuse)palette=null;
  const active=artworks.filter(item=>item.texture&&item.placement);
- if(!palette&&!range&&!active.length&&!emission)return;
+ if(!palette&&!range&&!active.length&&!emission&&!opaqueColor)return;
  material.onBeforeCompile=shader=>{
   shader.uniforms.previewMin={value:new THREE.Vector4(...(range?.min||[0,0,0,0]))};
   shader.uniforms.previewMax={value:new THREE.Vector4(...(range?.max||[1,1,1,1]))};
@@ -122,8 +159,9 @@ function colorShader(material,palette,range,artworks,emission=null){
    declarations.push('uniform sampler2D previewEmission;uniform vec4 previewEmissionMin;uniform vec4 previewEmissionMax;uniform vec3 previewEmissionColor;uniform float previewEmissionGain;');
    shader.fragmentShader=shader.fragmentShader.replace('#include <emissivemap_fragment>','vec4 sourceEmission=mix(previewEmissionMin,previewEmissionMax,texture2D(previewEmission,vMapUv));totalEmissiveRadiance=previewEmissionColor*previewEmissionGain*sourceEmission.r*sourceEmission.a;');
   }
-  active.forEach(({texture,placement},index)=>{
+  active.forEach(({texture,placement,palette},index)=>{
    const prefix=`previewArt${index}`,artRange=texture.userData.range;
+   const colorize=(palette&&!artRange?'artwork.rgb=previewLinearToSrgb(artwork.rgb);':'')+configureArtworkPalette(shader,prefix,palette,declarations);
    shader.uniforms[prefix]={value:texture};
    shader.uniforms[`${prefix}Min`]={value:new THREE.Vector4(...(artRange?.min||[0,0,0,0]))};
    shader.uniforms[`${prefix}Max`]={value:new THREE.Vector4(...(artRange?.max||[1,1,1,1]))};
@@ -132,15 +170,15 @@ function colorShader(material,palette,range,artworks,emission=null){
    shader.uniforms[`${prefix}Offset`]={value:new THREE.Vector2(...placement.offset)};
    shader.uniforms[`${prefix}Angle`]={value:THREE.MathUtils.degToRad(placement.rotation)};
    declarations.push(`uniform sampler2D ${prefix}; uniform vec4 ${prefix}Min; uniform vec4 ${prefix}Max; uniform vec4 ${prefix}Mask; uniform vec2 ${prefix}Scale; uniform vec2 ${prefix}Offset; uniform float ${prefix}Angle;`);
-   steps.push(`{vec2 shifted=vMapUv+${prefix}Offset-vec2(0.5);float c=cos(${prefix}Angle),s=sin(${prefix}Angle);vec2 artworkUv=vec2(c*shifted.x-s*shifted.y,s*shifted.x+c*shifted.y)*${prefix}Scale+vec2(0.5);if(all(greaterThanEqual(artworkUv,vec2(0.0)))&&all(lessThanEqual(artworkUv,vec2(1.0)))){vec4 artwork=texture2D(${prefix},artworkUv);vec4 decodedArtwork=mix(${prefix}Min,${prefix}Max,artwork);artwork=mix(artwork,decodedArtwork,${prefix}Mask);sampledDiffuseColor.rgb=mix(sampledDiffuseColor.rgb,artwork.rgb,artwork.a);}}`);
+   steps.push(`{vec2 shifted=vMapUv+${prefix}Offset-vec2(0.5);float c=cos(${prefix}Angle),s=sin(${prefix}Angle);vec2 artworkUv=vec2(c*shifted.x-s*shifted.y,s*shifted.x+c*shifted.y)*${prefix}Scale+vec2(0.5);if(all(greaterThanEqual(artworkUv,vec2(0.0)))&&all(lessThanEqual(artworkUv,vec2(1.0)))){vec4 artwork=texture2D(${prefix},artworkUv);vec4 decodedArtwork=mix(${prefix}Min,${prefix}Max,artwork);artwork=mix(artwork,decodedArtwork,${prefix}Mask);${colorize}sampledDiffuseColor.rgb=mix(sampledDiffuseColor.rgb,artwork.rgb,artwork.a);}}`);
   });
   if(palette){const linear=rgb=>new THREE.Color().setRGB(...rgb.map(x=>x/255),THREE.SRGBColorSpace);shader.uniforms.previewPrimary={value:linear(palette.primary)};shader.uniforms.previewSecondary={value:linear(palette.secondary)};shader.uniforms.previewTertiary={value:linear(palette.tertiary||[255,255,255])};}
-  shader.fragmentShader=shader.fragmentShader.replace('#include <map_pars_fragment>','#include <map_pars_fragment>\nuniform vec4 previewMin; uniform vec4 previewMax; uniform vec4 previewMask;'+(palette?'\nuniform vec3 previewPrimary; uniform vec3 previewSecondary; uniform vec3 previewTertiary;':'')+'\n'+declarations.join('\n')+'\nvec3 previewSrgbToLinear(vec3 c){return mix(c/12.92,pow((c+0.055)/1.055,vec3(2.4)),step(vec3(0.04045),c));}')
-   .replace('#include <map_fragment>',`#ifdef USE_MAP\nvec4 sampledDiffuseColor = texture2D(map,vMapUv);\nvec4 decodedColor = mix(previewMin,previewMax,sampledDiffuseColor);\nsampledDiffuseColor=mix(sampledDiffuseColor,decodedColor,previewMask);\n${palette?'sampledDiffuseColor.rgb=sampledDiffuseColor.r*previewPrimary+sampledDiffuseColor.g*previewSecondary+sampledDiffuseColor.b*previewTertiary;':range?'sampledDiffuseColor.rgb=previewSrgbToLinear(sampledDiffuseColor.rgb);':''}\n${steps.join('\n')}\ndiffuseColor*=sampledDiffuseColor;\n#endif`);
+  shader.fragmentShader=shader.fragmentShader.replace('#include <map_pars_fragment>','#include <map_pars_fragment>\nuniform vec4 previewMin; uniform vec4 previewMax; uniform vec4 previewMask;'+(palette?'\nuniform vec3 previewPrimary; uniform vec3 previewSecondary; uniform vec3 previewTertiary;':'')+'\n'+declarations.join('\n')+'\nvec3 previewLinearToSrgb(vec3 c){return mix(c*12.92,1.055*pow(max(c,vec3(0.0)),vec3(1.0/2.4))-0.055,step(vec3(0.0031308),c));}vec3 previewSrgbToLinear(vec3 c){return mix(c/12.92,pow((c+0.055)/1.055,vec3(2.4)),step(vec3(0.04045),c));}')
+   .replace('#include <map_fragment>',`#ifdef USE_MAP\nvec4 sampledDiffuseColor = texture2D(map,vMapUv);\nvec4 decodedColor = mix(previewMin,previewMax,sampledDiffuseColor);\nsampledDiffuseColor=mix(sampledDiffuseColor,decodedColor,previewMask);\n${palette?.fullRangeMask&&!range?'sampledDiffuseColor.rgb=previewLinearToSrgb(sampledDiffuseColor.rgb);':''}\n${palette?'sampledDiffuseColor.rgb=sampledDiffuseColor.r*previewPrimary+sampledDiffuseColor.g*previewSecondary+sampledDiffuseColor.b*previewTertiary;':range?'sampledDiffuseColor.rgb=previewSrgbToLinear(sampledDiffuseColor.rgb);':''}\n${steps.join('\n')}\n${opaqueColor?'sampledDiffuseColor.a=1.0;':''}diffuseColor*=sampledDiffuseColor;\n#endif`);
  };
- material.customProgramCacheKey=()=>`clothing-preview-${Boolean(palette)}-${Boolean(range)}-${active.length}-${Boolean(emission)}`;
+ material.customProgramCacheKey=()=>`clothing-preview-${Boolean(opaqueColor)}-${Boolean(palette)}-${Boolean(palette?.fullRangeMask)}-${Boolean(range)}-${active.length}-${Boolean(emission)}-${active.map(a=>`${Boolean(a.palette)}:${Boolean(a.texture.userData.range)}`).join('|')}`;
 }
-function makeMeshes(key,payload,palettes,texture,neutral=false,overlays=[],placements=[],shoeTextures=null,materialTextures=null,emission=null){
+function makeMeshes(key,payload,palettes,texture,neutral=false,overlays=[],placements=[],shoeTextures=null,materialTextures=null,emission=null,overlayPalettes=[]){
  return geometry(key,payload).map((item,i)=>{
   const materials=item.groups.map((group,j)=>{
    const map=neutral?null:materialTextures?materialTextures[i]?.[j]:shoeTextures?(/^R_/i.test(group.material)?shoeTextures.right:shoeTextures.left):texture;
@@ -152,7 +190,7 @@ function makeMeshes(key,payload,palettes,texture,neutral=false,overlays=[],place
    if(neutral&&/^(?:hidden_shader|[lr]_armpithair_shader|eyelashes_shader)$/i.test(group.material))material.visible=false;
    if(palettes?.[i]?.[j]?.transparent){material.transparent=true;material.depthWrite=false;material.roughness=0.2;}
    const glow=emission?{texture:emission.texture,palette:emission.palettes[i][j]}:null;
-   if(map)colorShader(material,palettes?.[i]?.[j],map.userData.range,overlays.map((art,index)=>({texture:art,placement:placements[index]?.[i]?.[j]})),glow);
+   if(map)colorShader(material,palettes?.[i]?.[j],map.userData.range,overlays.map((art,index)=>({texture:art,placement:placements[index]?.[i]?.[j],palette:overlayPalettes[index]})),glow);
    return material;
   });
   if(!materials.length)materials.push(new THREE.MeshStandardMaterial({color:neutral?0x929da8:0xb1b5bc,side:THREE.DoubleSide}));
@@ -199,7 +237,10 @@ function fit(){
  const bounds=new THREE.Box3().setFromObject(model);
  if(bounds.isEmpty())return;
  bounds.getCenter(target);const size=bounds.getSize(new THREE.Vector3());clipRadius=size.length()/2;
- distance=Math.max(size.x,size.y,size.z)/(2*Math.tan(THREE.MathUtils.degToRad(camera.fov/2)))*1.25;
+ distance=Math.max(size.x,size.y,size.z)/(2*Math.tan(THREE.MathUtils.degToRad(camera.fov/2)))*1.25*Math.max(1,canvas.clientHeight/Math.max(1,canvas.clientWidth));
+ positionContactShadow(bounds);
+ const depthBounds=bounds.clone().expandByObject(contactShadow);
+ clipRadius=depthBounds.getSize(new THREE.Vector3()).length()/2+depthBounds.getCenter(new THREE.Vector3()).distanceTo(target);
  draw();
 }
 function known(){parent.postMessage({type:'fit-preview:known',meshes:[...meshes.keys()],textures:[...textures.keys()]},'*');}
@@ -212,14 +253,14 @@ window.addEventListener('message',event=>{
    for(const object of [...bodyGroup.children]){bodyGroup.remove(object);for(const material of Array.isArray(object.material)?object.material:[object.material])material?.dispose();}
    bodyKey=payload.mannequin.key;
    bodyGroup.add(...makeMeshes(bodyKey,payload.mannequin.meshes,null,null,true));
-   fit();
+   if(!viewFramed){fit();viewFramed=true;}
   }
   const previous=activeParts,next=new Map(),occurrences=new Map();let reused=0;
   for(const part of payload.parts){
    const occurrence=occurrences.get(part.asset)||0;occurrences.set(part.asset,occurrence+1);
    const identity=`${part.asset}\0${occurrence}`;
    const overlaySlots=[1,2,3,4,5,6],overlaySuffix=slot=>slot===1?'':slot;
-   const signature=`${part.meshKey}:${part.textureKey}:${part.emissionTextureKey||''}:${JSON.stringify(part.emissionPalettes||[])}:${JSON.stringify(part.materialTextureKeys||[])}:${part.shoeTextureKeys?.left||''}:${part.shoeTextureKeys?.right||''}:${part.jerseyBigLogoKey||''}:${part.jerseyPatchKey||''}:${part.jerseyNumberAtlasKey||''}:${part.jerseyNumber||''}:${overlaySlots.map(slot=>part[`overlayKey${overlaySuffix(slot)}`]).join(':')}:${JSON.stringify(part.palettes)}`;
+   const signature=`${part.meshKey}:${part.textureKey}:${part.emissionTextureKey||''}:${JSON.stringify(part.emissionPalettes||[])}:${JSON.stringify(part.materialTextureKeys||[])}:${part.shoeTextureKeys?.left||''}:${part.shoeTextureKeys?.right||''}:${part.jerseyBigLogoKey||''}:${part.jerseyPatchKey||''}:${part.jerseyNumberAtlasKey||''}:${part.jerseyNumber||''}:${overlaySlots.map(slot=>part[`overlayKey${overlaySuffix(slot)}`]).join(':')}:${JSON.stringify(part.palettes)}:${JSON.stringify(part.overlayPalettes||[])}`;
    const old=previous.get(identity);
    if(old?.signature===signature&&(!part.texture||textures.has(part.textureKey))&&(!part.emissionTextureKey||textures.has(part.emissionTextureKey))&&(!part.materialTextureKeys||part.materialTextureKeys.flat().every(key=>textures.has(key)))&&(!part.shoeTextureKeys||['left','right'].every(side=>textures.has(part.shoeTextureKeys[side])))&&(!part.jerseyBigLogo||textures.has(part.jerseyBigLogoKey))&&(!part.jerseyPatch||textures.has(part.jerseyPatchKey))&&(!part.jerseyNumberAtlas||textures.has(part.jerseyNumberAtlasKey))&&overlaySlots.every(slot=>!part[`overlay${overlaySuffix(slot)}`]||textures.has(part[`overlayKey${overlaySuffix(slot)}`]))){next.set(identity,old);reused++;continue;}
    if(old)dropPart(old);
@@ -228,7 +269,7 @@ window.addEventListener('message',event=>{
    const placements=overlaySlots.map(slot=>part[`overlayPlacements${overlaySuffix(slot)}`]);
    const materialTextures=part.materialTextureKeys?.map((groups,i)=>groups.map((key,j)=>dds(key,part.materialTextures?.[i]?.[j])));
    const emission=part.emissionTextureKey?{texture:dds(part.emissionTextureKey,part.emissionTexture),palettes:part.emissionPalettes}:null;if(emission&&!emission.texture)throw Error('The emission texture is missing.');
-   const objects=makeMeshes(part.meshKey,part.meshes,part.palettes,texture,false,overlays,placements,shoeTextures,materialTextures,emission);
+   const objects=makeMeshes(part.meshKey,part.meshes,part.palettes,texture,false,overlays,placements,shoeTextures,materialTextures,emission,part.overlayPalettes||[]);
    if(part.accessorySlot){
     if(part.placement!=='body-space')throw Error('Unsupported accessory attachment.');
     accessoryGroup.add(...objects);
@@ -243,6 +284,7 @@ window.addEventListener('message',event=>{
   for(const [identity,part] of previous)if(!next.has(identity))dropPart(part);
   activeParts=next;
   const clipBounds=new THREE.Box3().setFromObject(model);
+  positionContactShadow(clipBounds);clipBounds.expandByObject(contactShadow);
   clipRadius=clipBounds.getSize(new THREE.Vector3()).length()/2+clipBounds.getCenter(new THREE.Vector3()).distanceTo(target);
   errorBox.classList.remove('visible');draw();known();
   parent.postMessage({type:'fit-preview:displayed',progress:Boolean(payload.progress),parts:payload.parts.length,accessories:accessoryGroup.children.length,resources:{geometries:meshes.size,textures:textures.size,activeParts:activeParts.size},assets:payload.parts.map(part=>part.asset),reused,displayMs:Math.round(performance.now()-started)},'*');
@@ -253,6 +295,24 @@ canvas.addEventListener('pointermove',event=>{if(!drag)return;yaw=drag.yaw-(even
 canvas.addEventListener('pointerup',()=>{drag=null;});
 canvas.addEventListener('wheel',event=>{event.preventDefault();distance*=Math.exp(event.deltaY*0.001);distance=THREE.MathUtils.clamp(distance,0.1,100000);draw();},{passive:false});
 window.addEventListener('error',event=>{errorBox.textContent='The 3D renderer could not start: '+event.message;errorBox.classList.add('visible');});
+// Appended to the retained viewer scope; uses the existing camera and draw().
+function chooseView(view) {
+ stopPan();drag=null;
+ if(view==='reset'){yaw=0.45;pitch=0.1;fit();}
+ else {yaw=view==='back'?Math.PI:0;pitch=0;draw();}
+}
+document.querySelectorAll('.studio-controls [data-view]').forEach(button=>{
+ button.addEventListener('click',()=>chooseView(button.dataset.view));
+});
+document.querySelectorAll('.studio-controls [data-backdrop]').forEach(button=>{
+ button.addEventListener('click',()=>{
+  document.body.dataset.backdrop=button.dataset.backdrop;
+  document.querySelectorAll('.studio-controls [data-backdrop]').forEach(choice=>choice.setAttribute('aria-pressed',String(choice===button)));
+ });
+});
+canvas.addEventListener('dblclick',event=>{event.preventDefault();stopPan();drag=null;fit();});
+canvas.setAttribute('aria-label','3D clothing mannequin. Drag to orbit, scroll to zoom, double-click to fit, hold W or S to pan vertically.');
+
 parent.postMessage({type:'fit-preview:ready'},'*');draw();
 
-window.addEventListener('pagehide',()=>{for(const part of activeParts.values())dropPart(part);activeParts.clear();for(const object of bodyGroup.children)for(const material of Array.isArray(object.material)?object.material:[object.material])material.dispose();bodyGroup.clear();for(const items of meshes.values())for(const item of items)item.shape.dispose();meshes.clear();for(const item of textures.values())item.texture.dispose();textures.clear();renderer.dispose();});
+window.addEventListener('pagehide',()=>{for(const part of activeParts.values())dropPart(part);activeParts.clear();for(const object of bodyGroup.children)for(const material of Array.isArray(object.material)?object.material:[object.material])material.dispose();bodyGroup.clear();for(const items of meshes.values())for(const item of items)item.shape.dispose();meshes.clear();for(const item of textures.values())item.texture.dispose();textures.clear();contactShadow.geometry.dispose();contactShadow.material.dispose();renderer.dispose();});

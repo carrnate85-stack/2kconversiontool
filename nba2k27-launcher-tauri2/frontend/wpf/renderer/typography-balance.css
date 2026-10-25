@@ -1,14 +1,14 @@
 /* All launcher tabs share Jukebox's geometry and Play's artwork; Blacktop keeps its court image. */
-:root:not(.roster-workspace) .app-shell > main:has(> :is(#page-play.active,#page-profiles.active,#page-mods.active,#page-jukebox.active,#page-presentation.active,#page-blacktop.active,#page-cameras.active,#page-unlocks.active,#page-scaler.active,#page-settings.active)) > header {
-  min-height:112px; padding:10px 16px 22px; margin:-4px -2px 0; border:0; align-items:center;
+:root:not(.roster-workspace) .app-shell > main:has(> :is(#page-play.active,#page-profiles.active,#page-mods.active,#page-jukebox.active,#page-presentation.active,#page-blacktop.active,#page-cameras.active,#page-unlocks.active,#page-scaler.active,#page-settings.active,#page-downloads.active)) > header {
+  height:auto; min-height:88px; flex:0 0 auto; padding:8px 16px 14px; margin:-4px -2px 0; border:0; align-items:center;
 }
-:root:not(.roster-workspace) .app-shell > main:has(> :is(#page-play.active,#page-profiles.active,#page-mods.active,#page-jukebox.active,#page-presentation.active,#page-cameras.active,#page-unlocks.active,#page-scaler.active,#page-settings.active)) > header {
+:root:not(.roster-workspace) .app-shell > main:has(> :is(#page-play.active,#page-profiles.active,#page-mods.active,#page-jukebox.active,#page-presentation.active,#page-cameras.active,#page-unlocks.active,#page-scaler.active,#page-settings.active,#page-downloads.active)) > header {
   background:linear-gradient(90deg,var(--bg) 29%,color-mix(in srgb,var(--bg) 68%,transparent)),url('../assets/courtside-backdrop-v1.png') right 34% / cover no-repeat;
 }
-:root:not(.roster-workspace) .app-shell > main:has(> :is(#page-play.active,#page-profiles.active,#page-mods.active,#page-jukebox.active,#page-presentation.active,#page-blacktop.active,#page-cameras.active,#page-unlocks.active,#page-scaler.active,#page-settings.active)) > header h1 {
-  font-size:clamp(26.5px,2.185vw,30.5px); font-weight:620; letter-spacing:-.015em; line-height:1.2;
+:root:not(.roster-workspace) .app-shell > main:has(> :is(#page-play.active,#page-profiles.active,#page-mods.active,#page-jukebox.active,#page-presentation.active,#page-blacktop.active,#page-cameras.active,#page-unlocks.active,#page-scaler.active,#page-settings.active,#page-downloads.active)) > header h1 {
+  font-size:clamp(24px,2vw,28px); font-weight:620; letter-spacing:-.015em; line-height:1.2;
 }
-:root:not(.roster-workspace) .app-shell > main:has(> :is(#page-play.active,#page-profiles.active,#page-mods.active,#page-jukebox.active,#page-presentation.active,#page-blacktop.active,#page-cameras.active,#page-unlocks.active,#page-scaler.active,#page-settings.active)) > header > .version {
+:root:not(.roster-workspace) .app-shell > main:has(> :is(#page-play.active,#page-profiles.active,#page-mods.active,#page-jukebox.active,#page-presentation.active,#page-blacktop.active,#page-cameras.active,#page-unlocks.active,#page-scaler.active,#page-settings.active,#page-downloads.active)) > header > .version {
   align-self:center; margin-left:auto; position:static;
 }
 :root:not(.roster-workspace) main:has(#page-play.active) .home-intro {
@@ -23,7 +23,7 @@
 :root:not(.roster-workspace) main:has(#page-unlocks.active) > header h1::before,
 :root:not(.roster-workspace) main:has(#page-presentation.active) > header h1::before,
 :root:not(.roster-workspace) main:has(#page-scaler.active) > header h1::before,
-:root:not(.roster-workspace) main:has(#page-settings.active) > header h1::before {
+:root:not(.roster-workspace) main:has(#page-settings.active,#page-downloads.active) > header h1::before {
   content:''; display:inline-block; width:30px; height:30px; margin-right:13px; vertical-align:-4px;
   background:var(--court); mask-repeat:no-repeat; mask-position:center; mask-size:contain;
 }
@@ -42,7 +42,7 @@
 :root:not(.roster-workspace) main:has(#page-scaler.active) > header h1::before {
   mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.7' stroke-linejoin='round'%3E%3Cpath d='M4 8V4h4M16 4h4v4M20 16v4h-4M8 20H4v-4M8 16l8-8M11 8h5v5'/%3E%3C/svg%3E");
 }
-:root:not(.roster-workspace) main:has(#page-settings.active) > header h1::before {
+:root:not(.roster-workspace) main:has(#page-settings.active,#page-downloads.active) > header h1::before {
   mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.7' stroke-linejoin='round'%3E%3Cpath d='M4 6h16M4 12h16M4 18h16M8 3v6M16 9v6M10 15v6'/%3E%3C/svg%3E");
 }
 :root:not(.roster-workspace) #page-play .hero-card h2 { font-size:20px; font-weight:620; }
@@ -61,3 +61,9 @@
 #page-unlocks .unlock-guide-card h2 { font-size:13px; font-weight:610; }
 #page-unlocks .settings-switch-row strong { font-size:13px; font-weight:620; }
 #page-unlocks .unlock-category-strip > span { font-weight:600; }
+
+.downloads-intro, .scaler-intro, .settings-intro { display:none; }
+:root:not(.roster-workspace) main:has(#page-downloads.active) .downloads-intro,
+:root:not(.roster-workspace) main:has(#page-scaler.active) .scaler-intro,
+:root:not(.roster-workspace) main:has(#page-settings.active) .settings-intro {display:block;margin:8px 0 0;font-size:13px;line-height:1.5;color:var(--muted);}
+:root:not(.roster-workspace) main:has(#page-downloads.active) > header h1::before {mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3v12M7 10l5 5 5-5M4 15v6h16v-6'/%3E%3C/svg%3E") center/contain no-repeat;}

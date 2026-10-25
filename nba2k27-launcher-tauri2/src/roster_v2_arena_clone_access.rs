@@ -370,44 +370,44 @@ fn protected_extents(header: &[u8]) -> Result<Vec<(u64, usize)>> {
     }
     Ok(extents)
 }
-fn protected_proof(access: &Access) -> Result<()> {
+pub(super) fn protected_proof(access: &impl Memory) -> Result<()> {
     services::verify_profile(access)?;
     for (rva, n, hash) in [
         // Existing readonly origin and name services prove the optional pools.
         (
-            48107120,
+            0x2de0f20,
             83,
-            "6e367717cee6608cea195c8c55ac7bc18f875dfc15d351f88712e4f9f1d62e10",
+            "848714bafbbe2b9ba09d6d990839e84949789f65072c52fe89ecf0476bf57193",
         ),
         (
-            48107264,
+            0x2de0fb0,
             214,
-            "31454249e561831d510e9d2f7264292faac6009922484c2ef094a16c00d6132a",
+            "f9c2d79f1f1e86d729cd682ba73c6cd4a1aa2fe37e825a491e109a5dbeba6942",
         ),
         (
-            0x2d398d0,
+            0x2d39980,
             691,
-            "80b070e3a2d6433a7d29ea157d3d375e1d4d9ebd6b1381e5683117d8863994da",
+            "e78286b15fc41a433c8894e2100cd68df23b1d960096e4f82604d41f70e89ae8",
         ),
         (
-            0x2d3a3c0,
+            0x2d3a470,
             624,
-            "39212171afba42d7ad5927cd1954b34e3fdbe673c7da37ff7d72b41e1c669a1d",
+            "f33808d81c2b47c5b5285f85e18f03504569bc6d34d94856aaaac12afa0b44ec",
         ),
         (
-            0x2eddb00,
+            0x2eddbb0,
             180,
-            "ab970e1b3ac8eedaacf380421b299f34e79cecf3d36b0718dd8ca5b19c461f49",
+            "6617084f97b5cb3ce9f6d6162f8824e570362ab0ba4c597c7a4cb81783fb4119",
         ),
         (
-            0x2ca82d0,
+            0x2ca8380,
             1775,
-            "a38c4a0d4fda75ddb9e26ab36973c2a1a58c03221a82f1f2e3b75d3f9f04cf08",
+            "93484610c79cd7015ee6e4b636036c62f8e2eecbeef36f425771dde3dbc3d6a9",
         ),
         (
-            0x2e58120,
+            0x2e581d0,
             180,
-            "3151b876511aeded1369b806f3fab51e396f0b21b50b4f8bdae6836497b07b11",
+            "041b010cdb3fe1d006a2608b92875246f041a0ceebdcc7cf34ea37c3cf26ba91",
         ),
     ] {
         ensure!(
@@ -1074,7 +1074,7 @@ pub(super) fn reapply_profile(
     binding: &Binding,
     profile: &crate::custom_arena_profiles::Profile,
     mods_root: &Path,
-    gate: &std::sync::MutexGuard<'static, ()>,
+    gate: &crate::session_safety::WriteGuard,
 ) -> Result<Value> {
     let (_key, needs_write) = profile_admission(binding, profile, mods_root)?;
     if !needs_write {

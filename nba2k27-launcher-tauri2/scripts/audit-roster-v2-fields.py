@@ -25,6 +25,7 @@ IMAGE_SHA = "29A96471C55909FC2BCEA6C699C59238656A501C19B50C74ED64B0D842E576A1"
 START, END = 0x6AE330, 0x6BA7CB
 GET_PROPERTY = 0x4BEC9A0
 VALUE_WRITERS = {0x4BED070: "signed", 0x4BED170: "unsigned", 0x4BED210: "boolean", 0x4BED300: "enum"}
+FORMATTER = 0x4B8E7E0
 
 @dataclass(frozen=True)
 class Bits:
@@ -111,7 +112,7 @@ def extract(pe, md, instructions):
         ops = ins.operands
         if ins.mnemonic == "call":
             target = ops[0].imm if len(ops) == 1 and ops[0].type == X86_OP_IMM else None
-            if target == 0x4B8E7E0:
+            if target == FORMATTER:
                 output, count, pattern = state.get("rcx"), state.get("r9"), state.get("r8")
                 if isinstance(output, StackRef):
                     formatted.pop(output.offset, None)
@@ -334,22 +335,32 @@ def self_test():
     print(json.dumps({"pass": True, "checks": 21, "gameProcessAccess": False, "gameFilesChanged": False}))
 
 def main():
+    global IMAGE_SHA, END, GET_PROPERTY, VALUE_WRITERS, FORMATTER
     p = argparse.ArgumentParser()
     p.add_argument("image", type=Path, nargs="?")
     p.add_argument("--output", type=Path)
     p.add_argument("--asset", type=Path, help="Optional compact read-only runtime proof; no game files are modified")
     p.add_argument("--self-test", action="store_true")
+    p.add_argument("--current-build", action="store_true", help="Audit the B673EB04 installed image using its named player-field span")
     args = p.parse_args()
     if args.self_test:
         self_test()
         return 0
     assert args.image is not None and args.output is not None
+    if args.current_build:
+        IMAGE_SHA = "B673EB04593D6D5A4DFB9E270178E04C017BD9F277514D256EA98FFB792ED27B"
+        # Named player fields end before RDI is reused for the trailing map.
+        END = 0x6BB820
+        GET_PROPERTY = 0x4BECC20
+        VALUE_WRITERS = {0x4BED2F0: "signed", 0x4BED3F0: "unsigned", 0x4BED490: "boolean", 0x4BED580: "enum"}
+        FORMATTER = 0x4B8EA60
     # Read the file as a PE analysis input; never load its code or DLLs.
     with args.image.open("rb") as file:
         digest = hashlib.file_digest(file, "sha256").hexdigest().upper()
     assert digest == IMAGE_SHA, "Exact Version 2 disk image required"
     pe = pefile.PE(str(args.image), fast_load=True)
-    assert pe.FILE_HEADER.TimeDateStamp == 0x6AC53765 and pe.OPTIONAL_HEADER.SizeOfImage == 0x35BDE000
+    stamp, size = (0x6AD2E48C, 0x36532000) if args.current_build else (0x6AC53765, 0x35BDE000)
+    assert pe.FILE_HEADER.TimeDateStamp == stamp and pe.OPTIONAL_HEADER.SizeOfImage == size
     md = Cs(CS_ARCH_X86, CS_MODE_64)
     md.detail = True
     data = pe.get_data(START, END - START)
@@ -378,7 +389,7 @@ def main():
     report = {"schema": "nba2k27-v2-player-bitfield-proof-v1", "imageSha256": IMAGE_SHA, "gameProcessAccess": False, "gameFilesChanged": False,
               "serializerRva": START, "serializerBytes": END - START, "serializerSha256": hashlib.sha256(data).hexdigest(),
               "expectedFields": len(expected), "matchedFields": sum(r["matches"] for r in rows), "missing": missing, "mismatches": mismatches, "rows": rows,
-              "metadata":metadata, "uniformGetterCallers":direct_callers(pe,md,0x2EDCB20),
+              "metadata":metadata, "uniformGetterCallers":direct_callers(pe,md,0x2EDCBD0 if args.current_build else 0x2EDCB20),
               "teamNamedReferences":named_references(pe,["TeamData","UnlocalizedName","TeamName","Name","CityName","CityNameShort","StateNameShort","UniqueId","RosterType","Arena"]),
               "candidateOnly": True, "writesSupported": False}
     args.output.write_text(json.dumps(report, indent=2) + "\n", encoding="utf8")

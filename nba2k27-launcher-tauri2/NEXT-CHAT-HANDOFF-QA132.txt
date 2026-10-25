@@ -1,0 +1,29 @@
+QA132 — Blacktop preview Downloads + compact headers — 2026-10-24
+DEV ONLY. Version0.53.36. No installation, promotion, activation, GitHub writes, game interaction, or computer use.
+
+Changes:
+- Downloads now has Startup videos, Playlists, and Blacktop Previews tabs.
+- The pinned Blacktop preview ZIP is a native catalog entry. Its URL,size,SHA256 come from the existing preview_download constants; editorial GitHub metadata cannot change them.
+- Download & Import delegates to the existing preview service (including its integrity validation, temporary staging, cancellation and import serialization). Progress reaches the shared Downloads UI. Installed state uses the currently loaded exact pinned manifest, not a speculative receipt or the presence of some unrelated pack. Open Blacktop follows successful import.
+- Same dev Curator controls: title,description,cover upload,display order,hidden,local preview and explicit GitHub publication. Added preview-pack cover SVG. A published older catalog can omit the new item: native defaults keep it available, and Curator merges it for editing after Refresh.
+- Existing preview import controls remain usable; the same importer mutex prevents conflicting preview imports.
+- Downloads uses full available width instead of a centered1300px cap; card grid retains responsive minimum widths.
+- Added Downloads to WPF page IDs/title/icon/header backdrop/subtitle rules. It now matches the other page headers.
+- Shared launcher page header min-height112->88px, padding10px16px22px->8px16px14px, title26.5–30.5px->24–28px. Specialized editor workspace typography unchanged.
+
+Validation:
+- TypeScript,252frontend tests/48files,Vite passed.
+- 21isolated native tests passed;3opt-in/live tests ignored. New cases cover preview delegation,cancellation ownership,progress phases,metadata editing/hiding without altering pinned URL/hash/size.
+- Release build with dev-wnba-categories,dev-debug-menus,dev-curator passed.
+- No1GB preview download repeated and no live installed-library import claimed. Existing pinned transport/importer reused; user QA remains pending.
+- Main/Share freshly hashed: both QA129 SHA2561D1BBAD3843001D5A08581FBBC05FBA10E8571215D8A82966A0A8FAEA1123E60. Current dev launcher left running.
+- Prior QA073 natural Rust test AV,QA078 Clang fixture crash,QA106 Season History assertion remain unresolved and unchanged.
+
+Candidate:C:\Users\carrn\CodexProjects\2kconversiontool\nba2k27-launcher-tauri2\Dev\Pending\QA132\launcher.exe
+SHA256:569F8D4D171E1046E80C85FAF220A6A7F50CB7AD8D88D233AE42615E600F3A40
+Bytes:48953344
+PDB SHA256:3790C26EBF750A074DF68A28FC2F91AC536FA5AB6E939C0AE0C659A22871C9D8
+Starter:Open QA132 Dev.lnk / Start QA132 Dev.ps1. Exact-hash idle guard and backup/durable dev-only copy retained. Close current dev launcher normally before running it.
+DO NOT promote this curator EXE. Future Main/Share builds must omit dev-curator unless the user specifically requests owner tooling there.
+Backups:Backups/qa132-preview-downloads-20261024. Reports:artifacts/qa132-preview-downloads.
+Test:Downloads>Refresh library>Blacktop Previews. Check installed/download status,Curator controls,width and matching header. Check other launcher headers for the slightly smaller type and reduced vertical space.

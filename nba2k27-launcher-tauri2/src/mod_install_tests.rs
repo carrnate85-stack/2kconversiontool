@@ -2,6 +2,97 @@ use super::*;
 use std::io::Write;
 use zip::write::SimpleFileOptions;
 
+#[test]
+fn retained_recovery_survives_restart_refuses_drift_and_cannot_replay() {
+    let f = Fixture::new();
+    let destination = f.mods.join("char/sig/png1234.iff");
+    fs::create_dir_all(destination.parent().unwrap()).unwrap();
+    fs::write(&destination, b"original").unwrap();
+    let input = f.file("png1234.iff", b"new-content");
+    let installer = f.installer();
+    let plan = installer
+        .plan(
+            &f.game,
+            &f.mods,
+            &[input],
+            Mode::Files,
+            &tar_executable(),
+            &Limits::default(),
+        )
+        .unwrap();
+    let logical = plan["items"][0]["logicalPath"].as_str().unwrap();
+    let result = installer
+        .commit(
+            &f.mods,
+            &json!({"planId":plan["planId"],"replace":[logical],"keep":[]}),
+        )
+        .unwrap();
+    let id = result["recoveryId"].as_str().unwrap();
+    drop(installer);
+    let restarted = f.installer();
+    assert_eq!(
+        restarted
+            .history(&f.mods)
+            .unwrap()
+            .as_array()
+            .unwrap()
+            .len(),
+        1
+    );
+    fs::write(&destination, b"user-edited").unwrap();
+    assert!(
+        restarted
+            .restore(&f.mods, id)
+            .unwrap_err()
+            .to_string()
+            .contains("changed since")
+    );
+    assert_eq!(fs::read(&destination).unwrap(), b"user-edited");
+    fs::write(&destination, b"new-content").unwrap();
+    restarted.restore(&f.mods, id).unwrap();
+    assert_eq!(fs::read(&destination).unwrap(), b"original");
+    assert!(restarted.restore(&f.mods, id).is_err());
+}
+
+#[test]
+fn recovery_refuses_wrong_profile_and_corrupt_backup() {
+    let f = Fixture::new();
+    let destination = f.mods.join("char/sig/png1234.iff");
+    fs::create_dir_all(destination.parent().unwrap()).unwrap();
+    fs::write(&destination, b"original").unwrap();
+    let input = f.file("png1234.iff", b"new-content");
+    let installer = f.installer();
+    let plan = installer
+        .plan(
+            &f.game,
+            &f.mods,
+            &[input],
+            Mode::Files,
+            &tar_executable(),
+            &Limits::default(),
+        )
+        .unwrap();
+    let logical = plan["items"][0]["logicalPath"].as_str().unwrap();
+    let result = installer
+        .commit(
+            &f.mods,
+            &json!({"planId":plan["planId"],"replace":[logical],"keep":[]}),
+        )
+        .unwrap();
+    let id = result["recoveryId"].as_str().unwrap();
+    assert!(installer.restore(&f.input, id).is_err());
+    let receipt: Value =
+        serde_json::from_slice(&fs::read(installer.recovery.join(format!("{id}.json"))).unwrap())
+            .unwrap();
+    let backup = destination
+        .parent()
+        .unwrap()
+        .join(receipt["items"][0]["backup"].as_str().unwrap());
+    fs::write(backup, b"corrupt").unwrap();
+    assert!(installer.restore(&f.mods, id).is_err());
+    assert_eq!(fs::read(destination).unwrap(), b"new-content");
+}
+
 struct Fixture {
     dir: PathBuf,
     game: PathBuf,
@@ -629,7 +720,24 @@ fn conflicts_need_a_decision_and_keep_or_replace_per_file() {
         .flatten()
         .filter(|e| e.file_name().to_string_lossy().starts_with(".mod-install-"))
         .count();
-    assert_eq!(backups, 0);
+    assert_eq!(backups, 1);
+    assert_eq!(
+        installer
+            .history(&f.mods)
+            .unwrap()
+            .as_array()
+            .unwrap()
+            .len(),
+        1
+    );
+    let catalog = crate::backend::scan_mods(&f.mods).unwrap();
+    assert!(
+        catalog["items"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .all(|r| !r["name"].as_str().unwrap().starts_with(".mod-install-"))
+    );
 }
 
 #[test]
@@ -900,4 +1008,75 @@ fn zips_with_other_compression_go_to_windows_tar_like_wpf() {
         );
     }
     no_escape(&f);
+}
+
+#[test]
+fn superscript_and_console_devices_are_rejected() {
+    for name in [
+        "COM¹.iff",
+        "COM².iff",
+        "COM³",
+        "LPT¹",
+        "LPT².txt",
+        "LPT³",
+        "CONIN$",
+        "CONOUT$.iff",
+    ] {
+        assert!(safe_entry(name).is_none(), "Accepted Windows device {name}");
+    }
+    assert!(safe_entry("COM12.iff").is_some());
+}
+#[test]
+fn owned_atomic_replace_never_removes_destination_before_replacement() {
+    let f = Fixture::new();
+    let target = f.mods.join("atomic.iff");
+    fs::write(&target, b"old").unwrap();
+    let stage = f.mods.join(".mod-install-atomic.tmp");
+    let mut owned = create_owned(&stage).unwrap();
+    owned.write_all(b"new").unwrap();
+    owned.sync_all().unwrap();
+    assert!(
+        fs::remove_file(&stage).is_err(),
+        "Retained stage can be removed by another handle"
+    );
+    rename_owned(&owned, &target, true).unwrap();
+    assert_eq!(fs::read(&target).unwrap(), b"new");
+    assert!(!stage.exists());
+    crate::loader_files::unlink(&owned).unwrap();
+    drop(owned);
+    assert!(!target.exists());
+}
+#[test]
+fn new_destination_has_no_replacement_authority() {
+    let f = Fixture::new();
+    let target = f.mods.join("atomic-foreign.iff");
+    fs::write(&target, b"foreign").unwrap();
+    let stage = f.mods.join(".mod-install-new.tmp");
+    let owned = create_owned(&stage).unwrap();
+    assert!(rename_owned(&owned, &target, false).is_err());
+    assert_eq!(fs::read(&target).unwrap(), b"foreign");
+    crate::loader_files::unlink(&owned).unwrap();
+}
+
+#[test]
+fn atomic_replace_retains_original_read_handle_and_write_exclusion() {
+    let f = Fixture::new();
+    let target = f.mods.join("retained-original.iff");
+    fs::write(&target, b"original").unwrap();
+    let original = fs::OpenOptions::new()
+        .read(true)
+        .share_mode(5)
+        .open(&target)
+        .unwrap();
+    let stage = f.mods.join(".mod-install-retained.tmp");
+    let mut file = create_owned(&stage).unwrap();
+    file.write_all(b"replacement").unwrap();
+    file.sync_all().unwrap();
+    assert!(fs::OpenOptions::new().write(true).open(&target).is_err());
+    rename_owned(&file, &target, true).unwrap();
+    assert_eq!(fs::read(&target).unwrap(), b"replacement");
+    let mut bytes = Vec::new();
+    (&original).read_to_end(&mut bytes).unwrap();
+    assert_eq!(bytes, b"original");
+    crate::loader_files::unlink(&file).unwrap();
 }

@@ -530,16 +530,20 @@ fn hotkey_view(running: bool, registered: bool, error: Option<u32>) -> (&'static
 }
 /// Current registration state for the Settings page.
 pub(crate) fn hotkey_status() -> Value {
-    let state = HOTKEY.lock().ok().and_then(|s| s.clone()).unwrap_or(HotkeyState {
-        phase: "off",
-        message: "Ctrl+Shift+F12 is not active in this launcher window.".into(),
-        registered: false,
-        error_code: None,
-        polling: false,
-        presses: 0,
-        last_press_ms: None,
-        last_source: None,
-    });
+    let state = HOTKEY
+        .lock()
+        .ok()
+        .and_then(|s| s.clone())
+        .unwrap_or(HotkeyState {
+            phase: "off",
+            message: "Ctrl+Shift+F12 is not active in this launcher window.".into(),
+            registered: false,
+            error_code: None,
+            polling: false,
+            presses: 0,
+            last_press_ms: None,
+            last_source: None,
+        });
     json!(state)
 }
 fn publish(update: impl FnOnce(&mut HotkeyState)) {
@@ -609,7 +613,9 @@ fn game_foreground(pids: &[u32]) -> bool {
     pid != 0 && pids.contains(&pid)
 }
 fn chord_down() -> bool {
-    use windows::Win32::UI::Input::KeyboardAndMouse::{GetAsyncKeyState, VK_CONTROL, VK_F12, VK_SHIFT};
+    use windows::Win32::UI::Input::KeyboardAndMouse::{
+        GetAsyncKeyState, VK_CONTROL, VK_F12, VK_SHIFT,
+    };
     let down = |vk: u16| unsafe { GetAsyncKeyState(vk as i32) } as u16 & 0x8000 != 0;
     down(VK_CONTROL.0) && down(VK_SHIFT.0) && down(VK_F12.0)
 }
@@ -712,13 +718,19 @@ mod tests {
     fn one_press_fires_once_across_hotkey_and_key_polling() {
         let mut p = Presses::default();
         assert!(p.fire(10_000), "WM_HOTKEY fires");
-        assert!(!p.sample(true, 10_020), "polling the same press is de-duplicated");
+        assert!(
+            !p.sample(true, 10_020),
+            "polling the same press is de-duplicated"
+        );
         assert!(!p.sample(true, 10_040), "held keys do not repeat");
         assert!(!p.sample(false, 12_000));
         assert!(p.sample(true, 12_020), "a new press after release fires");
         assert!(!p.fire(12_030), "its WM_HOTKEY is de-duplicated");
         let mut q = Presses::default();
-        assert!(q.sample(true, 1), "polling alone works when RegisterHotKey is unavailable");
+        assert!(
+            q.sample(true, 1),
+            "polling alone works when RegisterHotKey is unavailable"
+        );
     }
     #[test]
     fn hotkey_states_explain_why_the_chord_may_not_fire() {

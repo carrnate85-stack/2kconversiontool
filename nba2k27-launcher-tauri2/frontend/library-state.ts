@@ -90,6 +90,10 @@ export function classifyMod(path: string): ModCategory {
   if (/\.(wav|mp3|flac|ogg)$/.test(name)) return "Audio";
   return "Other";
 }
+export function isModelPreviewCandidate(mod: Mod) {
+  const name = mod.name.toLowerCase();
+  return name.endsWith(".iff") || name.endsWith(".iff.bin");
+}
 export function parseModTags(value: string | undefined) {
   const seen = new Set<string>(),
     tags: string[] = [];

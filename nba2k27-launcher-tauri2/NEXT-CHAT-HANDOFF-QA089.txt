@@ -1,0 +1,47 @@
+QA089 DEV CHECKPOINT - 2026-10-21
+
+Scope
+- Corrects the QA088 optimized-build capability mismatch that left WNBA Blacktop showing "not available in this build" even though the current-game native remap was present.
+- Dev build only. Nothing was installed or promoted, and the game was not launched.
+
+Root cause and correction
+- The frontend correctly requires runtime.capabilities.wnbaBlacktop before enabling the WNBA Blacktop control.
+- The Rust bootstrap and both WNBA feature-plan routes were still gated by cfg!(debug_assertions). QA088 was an optimized release binary, so it advertised the capability as false and disabled both category routes.
+- Added the explicit, non-default Cargo feature dev-wnba-categories.
+- The bootstrap capability and both Freestyle/Blacktop feature-plan gates now use dev_wnba_categories(), which is true for debug builds or a build explicitly compiled with that feature.
+- QA089 was compiled with --release --features dev-wnba-categories. Ordinary release/install builds without the feature remain fail-closed.
+
+Inherited current-game mapping
+- Steam build: 26004539
+- PE timestamp/image: 6AD2E48C / 36532000
+- Game bytes: 880329496
+- Game SHA-256: B673EB04593D6D5A4DFB9E270178E04C017BD9F277514D256EA98FFB792ED27B
+- Native payload SHA-256: 1A6DAD61915869BF2E56636A910563D27BFE967052DC5BD3E2D243505F7BBB00 (1966080 bytes), unchanged from QA088.
+
+QA089 candidate
+- Launcher SHA-256: 02F1801CE71A92AE407D14CCB61B435364BA594BE1385F3C6E7A950E4ED21C30
+- Launcher bytes: 46665728
+- Staged executable: Dev/Pending/QA089/launcher.exe
+- Starter: Start QA089 Dev.vbs
+
+Validation
+- cargo fmt completed.
+- cargo test feature_plan --features dev-wnba-categories: 12 passed, 0 failed. This covers independent Freestyle and Blacktop toggle planning under the explicit feature.
+- cargo build --release --features dev-wnba-categories completed successfully.
+- The staged executable was durably flushed and its exact size/SHA-256 were verified.
+- Start QA089 Dev.ps1 -CheckOnly passed: exact staged hash verified, game/launcher closed, and no activation performed.
+- A redundant post-build compatibility-test invocation was unable to scan an existing access-restricted tools/python-packages dependency directory. That directory was restored after the build. QA088's unchanged native mapping/payload had already passed the exact current-game compatibility and disk-profile checks; this scan failure is not counted as a pass.
+
+Live acceptance still required
+- Start QA089, confirm WNBA Blacktop is selectable, turn it ON, use Play normally, and enter Blacktop player selection.
+- Confirm the WNBA category appears and no unsupported-build message appears.
+- Freestyle uses the same corrected explicit dev feature, but Blacktop is the reported failure and first acceptance target.
+
+Preserved qualifications
+- QA073's natural native pre-initialization fixture still exits -1073740791 and remains unresolved; a passing debugger run does not supersede it.
+- QA078's Clang outfit fixture exits -1073740791 (0xC0000409) and remains explicitly unresolved.
+- The general roster/team editor serializer still needs post-patch mapping. It does not block this WNBA category correction.
+
+Safety
+- Start QA089 Dev.ps1 verifies the exact staged hash and size, requires the game and launcher to be closed, backs up the current active dev executable, replaces only the dev copy, flushes it, and verifies it before launch.
+- The starter does not install or promote a release.

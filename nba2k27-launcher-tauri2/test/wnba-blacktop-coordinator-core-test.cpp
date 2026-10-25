@@ -109,6 +109,9 @@ struct CategoryHost {
  bool journal_applied(const c::Binding& b,const c::Change&) {
   assert(b==binding && pending);if(journal && !journal->take())return false;++applied;if(applied==fail_applied)return false;pending=false;return true;
  }
+ bool journal_not_applied(const c::Binding& b,const c::Change&) {
+  assert(b==binding && pending);if(journal && !journal->take())return false;pending=false;return true;
+ }
 };
 struct Fixture {
  std::vector<std::string> trace;RosterHost rh{trace};CategoryHost ch{trace};Coordinator coordinator;

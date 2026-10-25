@@ -20,7 +20,8 @@ export function NativeOverlayControls({
   const [status, setStatus] = useState<OverlayStatus | null>(null),
     [ack, setAck] = useState(false),
     [busy, setBusy] = useState(false),
-    [error, setError] = useState("");
+    [error, setError] = useState(""),
+    [pollError, setPollError] = useState("");
   const pending = useRef(false);
   useEffect(() => {
     let alive = true,
@@ -30,9 +31,9 @@ export function NativeOverlayControls({
       polling = true;
       try {
         const s = await call<OverlayStatus>("native-overlay-status");
-        if (alive) setStatus(s);
+        if (alive) { setStatus(s); setPollError(""); }
       } catch (e) {
-        if (alive) setError(String(e));
+        if (alive) setPollError(String(e));
       } finally {
         polling = false;
       }
@@ -109,7 +110,7 @@ export function NativeOverlayControls({
         </button>
       </div>
       <p role="status" className="muted">
-        {error || status?.message}{" "}
+        {error || pollError || status?.message}{" "}
         {status?.enabled ? `· ${status.boundary}` : ""}
       </p>
     </div>

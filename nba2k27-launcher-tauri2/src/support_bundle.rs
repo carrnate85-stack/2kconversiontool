@@ -368,10 +368,19 @@ PID=1
 STATE=FAILED
 REASON=Build or anti-cheat guard
 ";
-        assert!(legacy_outfit_guard_note(legacy).unwrap().contains("expected on Version 2"));
+        assert!(
+            legacy_outfit_guard_note(legacy)
+                .unwrap()
+                .contains("expected on Version 2")
+        );
         assert!(legacy_outfit_guard_note(&legacy.replace("FAILED", "ARMED")).is_none());
-        assert!(legacy_outfit_guard_note("STATE=FAILED
-REASON=V2 worker").is_none());
+        assert!(
+            legacy_outfit_guard_note(
+                "STATE=FAILED
+REASON=V2 worker"
+            )
+            .is_none()
+        );
     }
 
     #[test]

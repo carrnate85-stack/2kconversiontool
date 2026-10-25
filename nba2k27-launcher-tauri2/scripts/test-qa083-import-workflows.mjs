@@ -7,6 +7,12 @@ const ratings=load('remote-ratings-v2.js'),seasons=load('dna-season-selection.js
 const schema=[{key:'ShotThreeAbilityRaw',label:'Three',group:'attributes',bits:8},{key:'ShotTendencyRaw',label:'Shot',group:'tendencies',bits:7},{key:'TestBadge',label:'Badge',group:'badges',bits:3},{key:'UnderBasketHotZone',label:'Zone',group:'hotzones',bits:2},{key:'PotentialRaw',label:'Potential',group:'attributes',bits:8}];
 const url='https://2kdb.net/player/123';const player={relationId:123,name:'Jane Player',version:27,shot_3pt:99,shoot_t:0,test:5,hz_under_basket:2,potential:90,height:201,weight:190};
 const read=p=>ratings.read(JSON.stringify({player:p}),url,schema);
+test('Auction decimal height and wingspan survive source mapping',()=>{
+ const url='https://2kauction.com/mynba/2k17/players/tayshaun-prince';
+ const selected={person_slug:'tayshaun-prince',display_name:'Tayshaun Prince',height_cm:205.74,wingspan_cm:205.74,weight_lb:215};
+ const result=ratings.read(JSON.stringify({game:'2k17',page:{person_slug:selected.person_slug,selected}}),url,schema);
+ assert.equal(result.data.info.heightCm,205.74);assert.equal(result.data.info.wingspanCm,205.74);
+});
 test('saved source converts actual WPF display ratings and preserves zero',()=>{const r=read(player);assert.deepEqual(JSON.parse(JSON.stringify(r.data.fields)),{ShotThreeAbilityRaw:222,ShotTendencyRaw:0,TestBadge:5,UnderBasketHotZone:2});assert.equal(r.data.info.potential,90);assert.equal(r.data.info.firstName,'Jane');assert.equal(r.source,'2KDB');assert.match(r.warnings[0],/authenticity/);});
 test('missing, null, wrong type and out of range do not reset fields',()=>{const p={...player,shot_3pt:null,shoot_t:'50',test:6,hz_under_basket:-1,secondary_position:null};const r=read(p);assert.equal(Object.keys(r.data.fields).length,0);assert.equal(Object.hasOwn(r.data.info,'secondaryPositionId'),false);assert.equal(read({...player,shot_3pt:25}).data.fields.ShotThreeAbilityRaw,0);});
 test('source match is exact; conflicting duplicate cards refuse',()=>{assert.throws(()=>read({...player,relationId:124}),/unique/);assert.throws(()=>ratings.read(JSON.stringify({a:player,b:{...player,weight:200}}),url,schema),/unique/);assert.equal(ratings.read(JSON.stringify({a:player,b:player}),url,schema).name,'Jane Player');});

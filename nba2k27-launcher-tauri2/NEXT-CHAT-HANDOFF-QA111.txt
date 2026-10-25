@@ -1,0 +1,27 @@
+QA111 - MANNEQUIN INITIAL LOAD / UNAVAILABLE VARIANT - DEV ONLY
+2026-10-22, version 0.53.15.
+
+User reports mannequin only appears after changing clothes, and missing top variants block it. No Computer Use allowed. Implemented and staged, not activated/installed/promoted.
+
+Verified causes and fixes:
+1. fit-preview-host.ensure() posted worker initialization only after an asynchronous originals IPC, while warm/render/prefetch posted immediately. The generated worker explicitly drops messages before initialization. Host now queues sends until initialization is posted, discards cancelled/superseded work, rejects/retries failed initialization and ignores late host replies from replaced workers. Regression tests reproduce first render racing initialization and cancelling/reopening before init.
+2. previews:fit-items required a successful game-ready Catalog::selection. Default draft lacks streetId and has a legacy bottom display label; stale IDs similarly rejected the entire preview. Valid outfits still use original strict composition. Invalid/unbound drafts now preview the explicit selected pieces with a warning; old space-separated IDs are normalized for preview only. Missing resources retain worker warnings. Bounded names/piece counts retained. Empty visual drafts render only the body. No saved draft rebinding and no change to Catalog::selection/compose, export or live outfit guards. An unnamed draft can also be viewed.
+3. Dialog merges composition warnings, invalidates asynchronous results on selection cleanup, clears stale results and hides loading badge as soon as body progress arrives.
+
+WPF retained source: nba2k27-launcher-wpf/release/quality-pass-qa-20261010/App/Reference/src.
+Runtime rebuilt by tools/build-fit-preview-runtime.mjs. Existing WPF source hash pins preserved. One explicit documented adaptation permits an empty visual asset array while retaining max-seven and safe-name checks. PROVENANCE.json records original hashes and generated runtime hash. Viewer/vendor copies unchanged in hash.
+
+Checks: TypeScript passed; 46 frontend files / 243 tests passed including 3 new worker lifecycle regressions. Native preview service: 5 passed, 2 explicit live/installed-game tests ignored. Outfit composition/import/export regression tests: 13 passed. Vite and final native release build passed with existing warnings. No desktop/app/game launch, live memory, installation or promotion. Visual confirmation still pending; offline checks do not establish appearance acceptance. QA073 natural Rust test AV, QA078 Clang crash and QA106 Season History smoke issue remain unresolved by these focused checks.
+
+Candidate: Dev/Pending/QA111/launcher.exe
+SHA256: A49B7780AB0C9B30989B4B32DCF01C00137071A1C1CED1899FECA5D0E26A4862
+Bytes: 45536768
+PDB: Dev/Pending/QA111/launcher.pdb
+Starter: Open QA111 Dev.lnk -> Start QA111 Dev.ps1. Verifies staged hash/size, refuses while game/launcher is running, backs up and replaces only Dev/Portable executable on user's click. Main and sharing unchanged.
+Evidence/source hashes: artifacts/qa111-mannequin
+Source backup: Backups/qa111-mannequin-20261022-093046
+Retains QA110 one-click hosted preview pack and preceding dev UX improvements.
+
+User check: after closing current launcher, open QA111. Open mannequin before changing any clothes, then try a draft that previously showed Top variant is not available. Selected pieces should render; unverified fit combinations remain a preview warning and must be resolved separately before saving/applying. Also close/reopen the dialog during initial loading. No need to run the game for this preview check.
+Starter CheckOnly exit=0. Candidate size/hash verified before the idle guard. QA111 staged hash verified; game/launcher closed; no activation performed.
+

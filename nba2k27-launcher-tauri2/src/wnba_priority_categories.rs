@@ -404,7 +404,7 @@ fn source_snapshot(
         "Invalid WNBA resource manager"
     );
     ensure!(
-        q(m, manager)? == base + 0x812C7C8,
+        q(m, manager)? == base + 0x812C8C8,
         "WNBA resource manager type differs"
     );
     let priority = q(m, manager + 0x48)?;
@@ -413,7 +413,7 @@ fn source_snapshot(
         "Invalid WNBA priority object"
     );
     ensure!(
-        priority != 0 && q(m, priority)? == base + 0x812D868 && q(m, priority + 8)? == manager,
+        priority != 0 && q(m, priority)? == base + 0x812D968 && q(m, priority + 8)? == manager,
         "WNBA native priority ownership differs"
     );
     ensure!(

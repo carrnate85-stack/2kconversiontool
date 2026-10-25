@@ -67,44 +67,48 @@ impl Fake {
         h[60..64].copy_from_slice(&0x80u32.to_le_bytes());
         h[0x80..0x84].copy_from_slice(b"PE\0\0");
         h[0x84..0x86].copy_from_slice(&0x8664u16.to_le_bytes());
-        h[0x88..0x8C].copy_from_slice(&0x6AC53765u32.to_le_bytes());
+        h[0x88..0x8C].copy_from_slice(&0x6AD2E48Cu32.to_le_bytes());
         h[0x98..0x9A].copy_from_slice(&0x20Bu16.to_le_bytes());
-        h[0xD0..0xD4].copy_from_slice(&0x35BDE000u32.to_le_bytes());
+        h[0xD0..0xD4].copy_from_slice(&0x36532000u32.to_le_bytes());
         f.put(BASE, &h);
         let getters: serde_json::Value =
             serde_json::from_str(include_str!("../assets/rules-v2-getters.json")).unwrap();
         for g in getters["fields"].as_array().unwrap() {
-            let b = g["hex"]
+            let mut b = g["hex"]
                 .as_str()
                 .unwrap()
                 .as_bytes()
                 .chunks_exact(2)
                 .map(|p| u8::from_str_radix(std::str::from_utf8(p).unwrap(), 16).unwrap())
                 .collect::<Vec<_>>();
-            f.put(BASE + g["rva"].as_u64().unwrap(), &b);
+            let old = g["rva"].as_u64().unwrap();
+            let at = crate::rules_v2::updated_getter(g["id"].as_str().unwrap(), old);
+            let disp = (crate::rules_v2::OWNER as i64 - at as i64 - 7) as i32;
+            b[3..7].copy_from_slice(&disp.to_le_bytes());
+            f.put(BASE + at, &b);
         }
         for (r, p, t) in [
-            (0x3457D80, &[0x48, 0x8D, 0x05][..], 0x791E158),
-            (0x3457D87, &[0x48, 0x89, 0x05], v2::ROOT),
-            (0x25AA3D0, &[0x48, 0x8B, 0x05], 0xAB5CE20),
-            (0x308C649, &[0x48, 0x8D, 0x05], 0xAD07408),
-            (0x308C650, &[0x48, 0x63, 0x0D], 0xAD07BCC),
-            (0x300D703, &[0x48, 0x63, 0x05], 0xAD07BD0),
-            (0x32F799A, &[0x89, 0x05], v2::LINEUP + 4),
-            (0x32F79A0, &[0x89, 0x05], v2::LINEUP + 8),
+            (0x3457F00, &[0x48, 0x8D, 0x05][..], 0x791E158),
+            (0x3457F07, &[0x48, 0x89, 0x05], v2::ROOT),
+            (0x25AA480, &[0x48, 0x8B, 0x05], 0xAB5CE20),
+            (0x308C6F9, &[0x48, 0x8D, 0x05], 0xAD07408),
+            (0x308C700, &[0x48, 0x63, 0x0D], 0xAD07BCC),
+            (0x300D7B3, &[0x48, 0x63, 0x05], 0xAD07BD0),
+            (0x32F7B1A, &[0x89, 0x05], v2::LINEUP + 4),
+            (0x32F7B20, &[0x89, 0x05], v2::LINEUP + 8),
         ] {
             f.rip(r, p, t);
         }
-        f.put(BASE + 0x32FB9B6, &[0x8B, 0x81, 0xA8, 0x0E, 0, 0]);
-        f.put(BASE + 0x24F7EC5, &[0x80, 0x3D, 0xC4, 0x58, 0x66, 8, 0]);
+        f.put(BASE + 0x32FBB36, &[0x8B, 0x81, 0xA8, 0x0E, 0, 0]);
+        f.put(BASE + 0x24F7F75, &[0x80, 0x3D, 0x14, 0x58, 0x66, 8, 0]);
         f.put(
-            BASE + 0x24F5450,
+            BASE + 0x24F5500,
             &[
-                0x48, 0x8B, 0x05, 0xC9, 0x79, 0x66, 8, 0x8B, 0x80, 4, 0x0A, 0, 0, 0xC3,
+                0x48, 0x8B, 0x05, 0x19, 0x79, 0x66, 8, 0x8B, 0x80, 4, 0x0A, 0, 0, 0xC3,
             ],
         );
         f.q(BASE + 0x791E158, BASE + 0x23120);
-        f.q(BASE + 0x791E160, BASE + 0x346B350);
+        f.q(BASE + 0x791E160, BASE + 0x346B4D0);
         for &(at, b) in v2::FIELD_ANCHORS {
             f.put(BASE + at, b);
         }
@@ -542,7 +546,7 @@ pub(crate) fn disk_profile(path: &std::path::Path) -> Result<()> {
     }
     ensure!(
         format!("{:X}", hash.finalize())
-            == "29A96471C55909FC2BCEA6C699C59238656A501C19B50C74ED64B0D842E576A1",
+            == "B673EB04593D6D5A4DFB9E270178E04C017BD9F277514D256EA98FFB792ED27B",
         "Installed Version 2 file SHA differs"
     );
     file.seek(SeekFrom::Start(0))?;

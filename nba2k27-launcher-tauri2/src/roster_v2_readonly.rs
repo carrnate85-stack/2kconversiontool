@@ -13,32 +13,34 @@ use sha2::{Digest, Sha256};
 use std::collections::HashSet;
 
 const START: u64 = 0x006a_e330;
-const LENGTH: usize = 50331;
-const BODY_HASH: &str = "d758e79dffe8494bc2ceeb3b6eca353c551e8ecbe320080c30be359d3e1fe570";
-const IMAGE_HASH: &str = "29A96471C55909FC2BCEA6C699C59238656A501C19B50C74ED64B0D842E576A1";
+// B673EB04 image: independently re-extracted 455/455 fields. Fingerprint ends
+// before the trailing map loop reuses RDI, after all named player fields.
+const LENGTH: usize = 54512;
+const BODY_HASH: &str = "bea589403432ea7a3de52024502554fda1e3ca842c75e6e01abe8f667d56feb0";
+const IMAGE_HASH: &str = "B673EB04593D6D5A4DFB9E270178E04C017BD9F277514D256EA98FFB792ED27B";
 const TEAM_ANCHORS: &[(u64, &[u8])] = &[
-    // PLAYERDATA::GetCachedDescription (0x2E20580): archetype key cached at
+    // PLAYERDATA::GetCachedDescription (0x2E20630): archetype key cached at
     // +0xE8, valid iff +0x418 bit 7 (Description_Internal in the field proof).
-    (0x02e2_0593, &[0xf6, 0x81, 0x18, 0x04, 0, 0, 0x80]),
-    (0x02e2_063f, &[0x48, 0x8b, 0x87, 0xe8, 0, 0, 0]),
+    (0x02e2_0643, &[0xf6, 0x81, 0x18, 0x04, 0, 0, 0x80]),
+    (0x02e2_06ef, &[0x48, 0x8b, 0x87, 0xe8, 0, 0, 0]),
     // Independent getters and the paired ID/name use from Freestyle preparation.
-    (0x02f8_6b90, &[0x0f, 0xb7, 0x81, 0x20, 0x0f, 0, 0, 0xc3]),
-    (0x02f8_7c20, &[0x48, 0x8d, 0x81, 0xfa, 0x02, 0, 0, 0xc3]),
+    (0x02f8_6c40, &[0x0f, 0xb7, 0x81, 0x20, 0x0f, 0, 0, 0xc3]),
+    (0x02f8_7cd0, &[0x48, 0x8d, 0x81, 0xfa, 0x02, 0, 0, 0xc3]),
     (
-        0x02dd_a683,
+        0x02dd_a733,
         &[
             0x0f, 0xb7, 0x81, 0x20, 0x0f, 0, 0, 0x89, 0x44, 0x24, 0x5c, 0x48, 0x8d, 0x81, 0xfa,
             0x02, 0, 0,
         ],
     ),
     (
-        0x027e_7950,
+        0x027e_7a00,
         &[0x41, 0x8b, 0x86, 0x3c, 0x12, 0, 0, 0xc1, 0xe8, 0x1a],
     ),
-    // Caller passes the active owner returned by 211A070 directly to the
+    // Caller passes the active owner returned by 211A120 directly to the
     // uniform getter. Therefore +290/+298 are owner-, not allocation-relative.
     (
-        0x01cd_d3c3,
+        0x01cd_d473,
         &[
             0xe8, 0xa8, 0xcc, 0x43, 0, 0x48, 0x89, 0xc1, 0x89, 0xea, 0xe8, 0x4e, 0xf7, 0x1f, 0x01,
         ],

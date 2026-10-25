@@ -6,39 +6,118 @@ import React, { useEffect, useRef } from "react";
 export const wpfIconShapes: Record<string, string[]> = {
   play: ["M8 5l11 7-11 7z"],
   mods: ["M3 7l9-4 9 4-9 4z", "M3 12l9 4 9-4", "M3 17l9 4 9-4"],
-  jukebox: ["M9 18V6l11-2v12", "M9 6l11-2v4L9 10", "M9 18c0 2-6 3-6 0s6-3 6 0", "M20 16c0 2-6 3-6 0s6-3 6 0"],
+  jukebox: [
+    "M9 18V6l11-2v12",
+    "M9 6l11-2v4L9 10",
+    "M9 18c0 2-6 3-6 0s6-3 6 0",
+    "M20 16c0 2-6 3-6 0s6-3 6 0",
+  ],
   presentation: ["M3 4h18v14H3z", "M10 8l5 3-5 3z", "M12 18v3", "M8 21h8"],
   profiles: ["M3 7V5h7l2 3h9v12H3z"],
-  players: ["M15.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0", "M5 21v-3a7 7 0 0 1 14 0v3"],
-  teams: ["M11 8a3 3 0 1 1-6 0 3 3 0 0 1 6 0", "M2 20v-3a6 6 0 0 1 12 0v3", "M16 5a3 3 0 0 1 0 6", "M17 14a5 5 0 0 1 5 5v1"],
-  blacktop: ["M3 4h18v16H3z", "M12 4v16", "M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0", "M3 9h3v6H3", "M21 9h-3v6h3"],
+  players: [
+    "M15.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0",
+    "M5 21v-3a7 7 0 0 1 14 0v3",
+  ],
+  teams: [
+    "M11 8a3 3 0 1 1-6 0 3 3 0 0 1 6 0",
+    "M2 20v-3a6 6 0 0 1 12 0v3",
+    "M16 5a3 3 0 0 1 0 6",
+    "M17 14a5 5 0 0 1 5 5v1",
+  ],
+  blacktop: [
+    "M3 4h18v16H3z",
+    "M12 4v16",
+    "M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0",
+    "M3 9h3v6H3",
+    "M21 9h-3v6h3",
+  ],
   crown: ["M2 7l5 5 5-8 5 8 5-5-2 13H4z", "M4 20h16", "M7 4v2", "M17 4v2"],
   cameras: ["M3 7h12v12H3z", "M15 11l6-4v12l-6-4z", "M6 4h6"],
-  scaler: ["M4 8V4h4", "M16 4h4v4", "M20 16v4h-4", "M8 20H4v-4", "M8 16l8-8", "M11 8h5v5"],
+  scaler: [
+    "M4 8V4h4",
+    "M16 4h4v4",
+    "M20 16v4h-4",
+    "M8 20H4v-4",
+    "M8 16l8-8",
+    "M11 8h5v5",
+  ],
   unlocks: ["M7 11V7a5 5 0 0 1 9-3", "M4 11h16v10H4z", "M12 15v3"],
-  settings: ["M4 6h16", "M4 12h16", "M4 18h16", "M8 3v6", "M16 9v6", "M10 15v6"],
+  settings: [
+    "M4 6h16",
+    "M4 12h16",
+    "M4 18h16",
+    "M8 3v6",
+    "M16 9v6",
+    "M10 15v6",
+  ],
   developer: ["M8 6l-6 6 6 6", "M16 6l6 6-6 6", "M14 3l-4 18"],
-  book: ["M12 5v16", "M12 5C8 2 4 3 2 4v15c3-1 6-1 10 2", "M12 5c4-3 8-2 10-1v15c-3-1-6-1-10 2"],
+  book: [
+    "M12 5v16",
+    "M12 5C8 2 4 3 2 4v15c3-1 6-1 10 2",
+    "M12 5c4-3 8-2 10-1v15c-3-1-6-1-10 2",
+  ],
   tag: ["M3 3h8l10 10-8 8L3 11z", "M7 7h.01"],
   plus: ["M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18", "M12 8v8", "M8 12h8"],
   pencil: ["M15 4l5 5", "M3 21l1-6L16 3a2 2 0 0 1 5 5L9 20z", "M4 15l5 5"],
   clock: ["M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18", "M12 7v5l3 2"],
   file: ["M5 3h9l5 5v13H5z", "M14 3v6h5", "M8 13h8", "M8 17h6"],
+  trash: ["M4 7h16", "M9 3h6l1 4H8z", "M6 7l1 14h10l1-14", "M10 11v6", "M14 11v6"],
   download: ["M12 3v12", "M7 10l5 5 5-5", "M4 15v6h16v-6"],
+  downloads: ["M12 3v12", "M7 10l5 5 5-5", "M4 15v6h16v-6"],
   refresh: ["M20 7a9 9 0 1 0 1 8", "M20 2v5h-5"],
   search: ["M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0", "M15 15l6 6"],
+  "arrow-up": ["M12 20V4", "M5 11l7-7 7 7"],
+  "arrow-down": ["M12 4v16", "M5 13l7 7 7-7"],
   uniform: ["M8 3l4 2 4-2 6 5-4 4-2-2v11H8V10l-2 2-4-4z"],
-  ball: ["M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18", "M3 12h18", "M12 3v18", "M5 6c7 2 7 10 0 12", "M19 6c-7 2-7 10 0 12"],
+  ball: [
+    "M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18",
+    "M3 12h18",
+    "M12 3v18",
+    "M5 6c7 2 7 10 0 12",
+    "M19 6c-7 2-7 10 0 12",
+  ],
   monitor: ["M3 4h18v14H3z", "M12 18v3", "M8 21h8"],
-  drone: ["M8 9h8v6H8z", "M4 5l5 4", "M20 5l-5 4", "M4 19l5-4", "M20 19l-5-4", "M2 5h4", "M18 5h4", "M2 19h4", "M18 19h4"],
-  microphone: ["M9 4a3 3 0 0 1 6 0v8a3 3 0 0 1-6 0z", "M6 10v2a6 6 0 0 0 12 0v-2", "M12 18v4", "M8 22h8"],
-  shuffle: ["M3 7h3c5 0 7 10 12 10h3", "M17 14l4 3-4 3", "M3 17h3c2 0 3-1 4-3", "M17 4l4 3-4 3", "M15 7h6"],
+  drone: [
+    "M8 9h8v6H8z",
+    "M4 5l5 4",
+    "M20 5l-5 4",
+    "M4 19l5-4",
+    "M20 19l-5-4",
+    "M2 5h4",
+    "M18 5h4",
+    "M2 19h4",
+    "M18 19h4",
+  ],
+  microphone: [
+    "M9 4a3 3 0 0 1 6 0v8a3 3 0 0 1-6 0z",
+    "M6 10v2a6 6 0 0 0 12 0v-2",
+    "M12 18v4",
+    "M8 22h8",
+  ],
+  shuffle: [
+    "M3 7h3c5 0 7 10 12 10h3",
+    "M17 14l4 3-4 3",
+    "M3 17h3c2 0 3-1 4-3",
+    "M17 4l4 3-4 3",
+    "M15 7h6",
+  ],
   check: ["M3 12l6 6L21 5"],
-  hide: ["M3 3l18 18", "M10.6 5.1A10 10 0 0 1 12 5c5.5 0 9 7 9 7a17 17 0 0 1-3.2 3.5", "M6.2 6.2A17 17 0 0 0 3 12s3.5 7 9 7c1 0 2-.2 2.9-.6", "M10 10a3 3 0 0 0 4 4"],
+  hide: [
+    "M3 3l18 18",
+    "M10.6 5.1A10 10 0 0 1 12 5c5.5 0 9 7 9 7a17 17 0 0 1-3.2 3.5",
+    "M6.2 6.2A17 17 0 0 0 3 12s3.5 7 9 7c1 0 2-.2 2.9-.6",
+    "M10 10a3 3 0 0 0 4 4",
+  ],
 };
 
 /** createLauncherIcon(name): `<svg class="nav-icon">`. */
-export function UiIcon({ name, className }: { name: string; className?: string }) {
+export function UiIcon({
+  name,
+  className,
+}: {
+  name: string;
+  className?: string;
+}) {
   return (
     <svg
       className={className ? `nav-icon ${className}` : "nav-icon"}
@@ -60,6 +139,7 @@ export const wpfPageIds: Record<string, string> = {
   "Mod library": "mods",
   Jukebox: "jukebox",
   Presentation: "presentation",
+  Downloads: "downloads",
   "Roster Editor": "players",
   "Team Editor": "teams",
   Blacktop: "blacktop",
@@ -77,6 +157,7 @@ const wpfTitles: Record<string, string> = {
   mods: "Mod library",
   jukebox: "Jukebox",
   presentation: "Presentation",
+  downloads: "Downloads",
   profiles: "Profiles",
   players: "Player Editor",
   teams: "Team Editor",
@@ -117,7 +198,9 @@ export function WpfSidebar({
       <nav>
         {pages.map((p) => (
           <React.Fragment key={p}>
-            {p === "Roster Editor" && <hr className="nav-divider" aria-hidden="true" />}
+            {p === "Roster Editor" && (
+              <hr className="nav-divider" aria-hidden="true" />
+            )}
             <button
               className={page === p ? "nav-item active" : "nav-item"}
               data-page={wpfPageIds[p]}
@@ -139,9 +222,12 @@ export function WpfSidebar({
         >
           Help
         </button>
-        <span className={providerReady ? "status-dot ready" : "status-dot"} id="providerDot" />
+        <span
+          className={providerReady ? "status-dot ready" : "status-dot"}
+          id="providerDot"
+        />
         <div>
-          <small>ASSET PROVIDER</small>
+          <small>GAME LOCATION</small>
           <strong id="providerLabel">{providerLabel}</strong>
         </div>
       </div>
@@ -176,7 +262,13 @@ export function WpfSidebar({
   );
 }
 
-export function WpfHeader({ page, version }: { page: string; version: string }) {
+export function WpfHeader({
+  page,
+  version,
+}: {
+  page: string;
+  version: string;
+}) {
   const id = wpfPageIds[page];
   return (
     <header>
@@ -186,13 +278,30 @@ export function WpfHeader({ page, version }: { page: string; version: string }) 
           {id === "play" && <UiIcon name="play" />}
           {wpfTitles[id] ?? page}
         </h1>
-        <p className="home-intro">Configure your session, load your content, and jump into NBA 2K27.</p>
-        <p className="profiles-intro">Keep separate mod collections and choose one for Play.</p>
-        <p className="mods-intro">Search, tag, and organize the files in your mod profile.</p>
-        <p className="jukebox-intro">Build, manage, and preview your custom NBA 2K27 soundtrack.</p>
-        <p className="presentation-intro">Manage cameras and startup videos for your next session.</p>
-        <p className="blacktop-intro">Customize your streetball setup, presentation, and outfits.</p>
-        <p className="unlocks-intro">Enable the supported team options and session-only debug menus.</p>
+        <p className="home-intro">
+          Configure your session, load your content, and jump into NBA 2K27.
+        </p>
+        <p className="profiles-intro">
+          Keep separate mod collections and choose one for Play.
+        </p>
+        <p className="mods-intro">
+          Search, tag, and organize the files in your mod profile.
+        </p>
+        <p className="jukebox-intro">
+          Build, manage, and preview your custom NBA 2K27 soundtrack.
+        </p>
+        <p className="presentation-intro">
+          Manage cameras and startup videos for your next session.
+        </p>
+        <p className="downloads-intro">Browse startup videos, playlists, and Blacktop previews for your launcher.</p>
+        <p className="scaler-intro">Adjust player and arena character sizes for your next session.</p>
+        <p className="settings-intro">Manage your game location and launcher preferences.</p>
+        <p className="blacktop-intro">
+          Customize your streetball setup, presentation, and outfits.
+        </p>
+        <p className="unlocks-intro">
+          Enable the supported team options and session-only debug menus.
+        </p>
       </div>
       <span className="version" id="version">
         v{version}
@@ -228,16 +337,33 @@ export function WpfHelpDialog({
     >
       <div className="launcher-help-header">
         <h2 id="launcherHelpTitle">What Play does</h2>
-        <button type="button" className="secondary small" autoFocus onClick={onClose}>
+        <button
+          type="button"
+          className="secondary small"
+          autoFocus
+          onClick={onClose}
+        >
           Close
         </button>
       </div>
       <div className="boundary">
         {[
-          ["Loads your selected mod profile", "The profile checked under Profiles becomes the game's mods folder for this session."],
-          ["Loads unique assets", "Local players and arenas that are missing from the stock manifest can load automatically."],
-          ["Starts your saved cameras", "Your selected camera unlocks and settings activate after the game starts."],
-          ["Cleans up when you quit", "The temporary loader and profile redirect are removed after NBA 2K27 closes."],
+          [
+            "Loads your selected mod profile",
+            "The profile checked under Profiles becomes the game's mods folder for this session.",
+          ],
+          [
+            "Loads unique assets",
+            "Local players and arenas that are missing from the stock manifest can load automatically.",
+          ],
+          [
+            "Starts your saved cameras",
+            "Your selected camera unlocks and settings activate after the game starts.",
+          ],
+          [
+            "Cleans up when you quit",
+            "The temporary loader and profile redirect are removed after NBA 2K27 closes.",
+          ],
         ].map(([title, text]) => (
           <div key={title}>
             <span className="check">✓</span>
@@ -249,7 +375,10 @@ export function WpfHelpDialog({
         ))}
       </div>
       <div className="launcher-help-footer">
-        <p>For current loader, game and camera progress, open Session diagnostics.</p>
+        <p>
+          For current loader, game and camera progress, open Session
+          diagnostics.
+        </p>
         <button type="button" className="secondary" onClick={onDiagnostics}>
           Session diagnostics
         </button>
@@ -259,7 +388,13 @@ export function WpfHelpDialog({
 }
 
 /** index.html #toast: app.js toast() shows a message for 5 s. */
-export function WpfToast({ text, error = false }: { text: string; error?: boolean }) {
+export function WpfToast({
+  text,
+  error = false,
+}: {
+  text: string;
+  error?: boolean;
+}) {
   const [shown, setShown] = React.useState(false);
   const first = useRef(true);
   useEffect(() => {
@@ -267,7 +402,7 @@ export function WpfToast({ text, error = false }: { text: string; error?: boolea
       first.current = false;
       return;
     }
-    if (!text) return;
+    if (!text || text === "Saved" || text === "Ready") return;
     setShown(true);
     const t = setTimeout(() => setShown(false), 5000);
     return () => clearTimeout(t);
@@ -320,7 +455,10 @@ export function ModalDialog({
         const r = e.currentTarget.getBoundingClientRect();
         if (
           e.target === e.currentTarget &&
-          (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom)
+          (e.clientX < r.left ||
+            e.clientX > r.right ||
+            e.clientY < r.top ||
+            e.clientY > r.bottom)
         )
           onCancel();
       }}

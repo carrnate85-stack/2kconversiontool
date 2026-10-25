@@ -1,7 +1,7 @@
 {
   "schema": "nba2k27-v2-relocation-catalog-v1",
-  "timestamp": "6AC53765",
-  "imageSize": "35BDE000",
+  "timestamp": "6AD2E48C",
+  "imageSize": "36532000",
   "features": [
     {
       "key": "mods",
@@ -10,8 +10,8 @@
       "blockers": [],
       "anchors": [
         {
-          "label": "provider-abi-0x4B9D205",
-          "rva": 79286789,
+          "label": "provider-abi-0x4B9D485",
+          "rva": 79287429,
           "section": ".text",
           "hex": "8B93E00100004889D94883C4205B5D5F5E415EE923FCFFFF",
           "mask": "xxxxxxxxxxxxxxxxxxxx????",
@@ -20,14 +20,14 @@
               "off": 20,
               "end": 24,
               "kind": "rel",
-              "target": 79285824
+              "target": 79286464
             }
           ],
           "referenceMatches": 1
         },
         {
-          "label": "provider-abi-0x4B9839B",
-          "rva": 79266715,
+          "label": "provider-abi-0x4B9861B",
+          "rva": 79267355,
           "section": ".text",
           "hex": "4C897738B03EC4E2F8F5C348BA00000000000000C0482357",
           "mask": "xxxxxxxxxxxxxxxxxxxxxxxx",
@@ -35,8 +35,8 @@
           "referenceMatches": 1
         },
         {
-          "label": "provider-abi-0x4B97A8B",
-          "rva": 79264395,
+          "label": "provider-abi-0x4B97D0B",
+          "rva": 79265035,
           "section": ".text",
           "hex": "48C781B0000000FFFFFFFF488949104889491831C9C5F877",
           "mask": "xxxxxxxxxxxxxxxxxxxxxxxx",
@@ -44,8 +44,8 @@
           "referenceMatches": 1
         },
         {
-          "label": "provider-abi-0x4CA0B5B",
-          "rva": 80350043,
+          "label": "provider-abi-0x4CA0DDB",
+          "rva": 80350683,
           "section": ".text",
           "hex": "C746400000000048897608488976104889F04883C4205EC3",
           "mask": "xxxxxxxxxxxxxxxxxxxxxxxx",
@@ -53,8 +53,8 @@
           "referenceMatches": 1
         },
         {
-          "label": "provider-abi-0x4CA10B0",
-          "rva": 80351408,
+          "label": "provider-abi-0x4CA1330",
+          "rva": 80352048,
           "section": ".text",
           "hex": "4889D04585C0740C44894140B9A82145508908C3B9703D92",
           "mask": "xxxxxxxxxxxxxxxxxxxxxxxx",
@@ -62,8 +62,8 @@
           "referenceMatches": 1
         },
         {
-          "label": "provider-abi-0x4CA0D45",
-          "rva": 80350533,
+          "label": "provider-abi-0x4CA0FC5",
+          "rva": 80351173,
           "section": ".text",
           "hex": "FF9008010000817C242CA82145500F94C04881C460010000",
           "mask": "xxxxxxxxxxxxxxxxxxxxxxxx",
@@ -71,8 +71,8 @@
           "referenceMatches": 1
         },
         {
-          "label": "provider-abi-0x4BA156E",
-          "rva": 79304046,
+          "label": "provider-abi-0x4BA17EE",
+          "rva": 79304686,
           "section": ".text",
           "hex": "488B801801000044896C24308B8D60020000894C24288B8D",
           "mask": "xxxxxxxxxxxxxxxxxxxxxxxx",
@@ -80,8 +80,8 @@
           "referenceMatches": 1
         },
         {
-          "label": "provider-abi-0x4CA11A0",
-          "rva": 80351648,
+          "label": "provider-abi-0x4CA1420",
+          "rva": 80352288,
           "section": ".text",
           "hex": "48C70100000000C5F857C0C5FC114118C5FC114138C5FC11",
           "mask": "xxxxxxxxxxxxxxxxxxxxxxxx",
@@ -95,15 +95,13 @@
       "key": "observer",
       "label": "Blacktop session reader (shared)",
       "depends": [],
-      "blockers": [
-        "Three RTTI vtable pairs are still compared at fixed addresses."
-      ],
+      "blockers": [],
       "anchors": [
         {
-          "label": "observer-rip-0x3457D80",
-          "rva": 54885760,
+          "label": "observer-rip-0x3457F00",
+          "rva": 54886144,
           "section": ".text",
-          "hex": "488D05D1634C04488905E2EAAE07488D05636A4C04488905ECEAAE07488D05056B4C0448890506EB",
+          "hex": "488D0551624C0448890562E9AE07488D05E3684C044889056CE9AE07488D0585694C0448890586E9",
           "mask": "xxx????xxx????xxx????xxx????xxx????xxxxx",
           "fields": [
             {
@@ -140,10 +138,10 @@
           "referenceMatches": 1
         },
         {
-          "label": "observer-rip-0x3457D87",
-          "rva": 54885767,
+          "label": "observer-rip-0x3457F07",
+          "rva": 54886151,
           "section": ".text",
-          "hex": "488905E2EAAE07488D05636A4C04488905ECEAAE07488D05056B4C0448890506EBAE07488D05B76B",
+          "hex": "48890562E9AE07488D05E3684C044889056CE9AE07488D0585694C0448890586E9AE07488D05376A",
           "mask": "xxx????xxx????xxx????xxx????xxx????xxxxx",
           "fields": [
             {
@@ -180,10 +178,10 @@
           "referenceMatches": 1
         },
         {
-          "label": "observer-rip-0x25AA3D0",
-          "rva": 39494608,
+          "label": "observer-rip-0x25AA480",
+          "rva": 39494784,
           "section": ".text",
-          "hex": "488B05492A5B088B80980A0000C36690488B05392A5B088B",
+          "hex": "488B0599295B088B80980A0000C36690488B0589295B088B",
           "mask": "xxx????xxxxxxxxxxxx????x",
           "fields": [
             {
@@ -202,10 +200,10 @@
           "referenceMatches": 1
         },
         {
-          "label": "observer-rip-0x308C649",
-          "rva": 50906697,
+          "label": "observer-rip-0x308C6F9",
+          "rva": 50906873,
           "section": ".text",
-          "hex": "488D05B8ADC70748630D75B5C7074889CA48C1E2064801C231C04885C9480F49C24889442440488D4C24204489C24589",
+          "hex": "488D0508ADC70748630DC5B4C7074889CA48C1E2064801C231C04885C9480F49C24889442440488D4C24204489C24589",
           "mask": "xxx????xxx????xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
           "fields": [
             {
@@ -224,10 +222,10 @@
           "referenceMatches": 1
         },
         {
-          "label": "observer-rip-0x308C650",
-          "rva": 50906704,
+          "label": "observer-rip-0x308C700",
+          "rva": 50906880,
           "section": ".text",
-          "hex": "48630D75B5C7074889CA48C1E2064801C231C04885C9480F49C24889442440488D4C24204489C245",
+          "hex": "48630DC5B4C7074889CA48C1E2064801C231C04885C9480F49C24889442440488D4C24204489C245",
           "mask": "xxx????xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
           "fields": [
             {
@@ -240,10 +238,10 @@
           "referenceMatches": 1
         },
         {
-          "label": "observer-rip-0x300D703",
-          "rva": 50386691,
+          "label": "observer-rip-0x300D7B3",
+          "rva": 50386867,
           "section": ".text",
-          "hex": "486305C6A4CF074885C0781948C1E006488D0DEE9CCF078B440820F7D0A8110F84510E0000B92B00",
+          "hex": "48630516A4CF074885C0781948C1E006488D0D3E9CCF078B440820F7D0A8110F84510E0000B92B00",
           "mask": "xxx????xxxxxxxxxxxx????xxxxxxxxxx????xxx",
           "fields": [
             {
@@ -262,16 +260,16 @@
               "off": 33,
               "end": 37,
               "kind": "rel",
-              "target": 50390393
+              "target": 50390569
             }
           ],
           "referenceMatches": 1
         },
         {
-          "label": "observer-rip-0x32F799A",
-          "rva": 53442970,
+          "label": "observer-rip-0x32F7B1A",
+          "rva": 53443354,
           "section": ".text",
-          "hex": "8905241D95068905221D95064883C428C30F1F4400004883EC28488D0D35B87E",
+          "hex": "8905A41B95068905A21B95064883C428C30F1F4400004883EC28488D0DB5B67E",
           "mask": "xx????xx????xxxxxxxxxxxxxxxxxxxx",
           "fields": [
             {
@@ -290,10 +288,10 @@
           "referenceMatches": 1
         },
         {
-          "label": "observer-rip-0x32F79A0",
-          "rva": 53442976,
+          "label": "observer-rip-0x32F7B20",
+          "rva": 53443360,
           "section": ".text",
-          "hex": "8905221D95064883C428C30F1F4400004883EC28488D0D35",
+          "hex": "8905A21B95064883C428C30F1F4400004883EC28488D0DB5",
           "mask": "xx????xxxxxxxxxxxxxxxxxx",
           "fields": [
             {
@@ -315,26 +313,26 @@
           "referenceMatches": 1
         },
         {
-          "label": "observer-field-0x32FB9B6",
-          "rva": 53459382,
+          "label": "observer-field-0x32FBB36",
+          "rva": 53459766,
           "section": ".text",
-          "hex": "8B81A80E000083C0FD83F8010F878B0000004889CE833DA6",
+          "hex": "8B81A80E000083C0FD83F8010F878B0000004889CE833D26",
           "mask": "xxxxxxxxxxxxxx????xxxxxx",
           "fields": [
             {
               "off": 14,
               "end": 18,
               "kind": "rel",
-              "target": 53459539
+              "target": 53459923
             }
           ],
           "referenceMatches": 1
         },
         {
-          "label": "observer-field-0x32FB9E0",
-          "rva": 53459424,
+          "label": "observer-field-0x32FBB60",
+          "rva": 53459808,
           "section": ".text",
-          "hex": "488B8E8010000089FAE862710BFDFFC73B3D82DD94067CE8",
+          "hex": "488B8E8010000089FAE8E26F0BFDFFC73B3D02DC94067CE8",
           "mask": "xxxxxxxxxx????xxxx????xx",
           "fields": [
             {
@@ -353,10 +351,10 @@
           "referenceMatches": 1
         },
         {
-          "label": "observer-field-0x24F7EC5",
-          "rva": 38764229,
+          "label": "observer-field-0x24F7F75",
+          "rva": 38764405,
           "section": ".text",
-          "hex": "803DC4586608000F8595000000488B05F7B45E088038010F85FD030000E859BD",
+          "hex": "803D14586608000F8595000000488B0547B45E088038010F85FD030000E829BF",
           "mask": "xx????xxx????xxx????xxxxx????xxx",
           "fields": [
             {
@@ -369,7 +367,7 @@
               "off": 9,
               "end": 13,
               "kind": "rel",
-              "target": 38764391
+              "target": 38764567
             },
             {
               "off": 16,
@@ -381,7 +379,7 @@
               "off": 25,
               "end": 29,
               "kind": "rel",
-              "target": 38765279
+              "target": 38765455
             }
           ],
           "referenceMatches": 1
@@ -428,15 +426,13 @@
       "depends": [
         "observer"
       ],
-      "blockers": [
-        "The root-tag vtable is compared at a fixed address."
-      ],
+      "blockers": [],
       "anchors": [
         {
-          "label": "rules-rip-0x3457D80",
-          "rva": 54885760,
+          "label": "rules-rip-0x3457F00",
+          "rva": 54886144,
           "section": ".text",
-          "hex": "488D05D1634C04488905E2EAAE07488D05636A4C04488905ECEAAE07488D05056B4C0448890506EB",
+          "hex": "488D0551624C0448890562E9AE07488D05E3684C044889056CE9AE07488D0585694C0448890586E9",
           "mask": "xxx????xxx????xxx????xxx????xxx????xxxxx",
           "fields": [
             {
@@ -473,10 +469,10 @@
           "referenceMatches": 1
         },
         {
-          "label": "rules-rip-0x3457D87",
-          "rva": 54885767,
+          "label": "rules-rip-0x3457F07",
+          "rva": 54886151,
           "section": ".text",
-          "hex": "488905E2EAAE07488D05636A4C04488905ECEAAE07488D05056B4C0448890506EBAE07488D05B76B",
+          "hex": "48890562E9AE07488D05E3684C044889056CE9AE07488D0585694C0448890586E9AE07488D05376A",
           "mask": "xxx????xxx????xxx????xxx????xxx????xxxxx",
           "fields": [
             {
@@ -513,10 +509,10 @@
           "referenceMatches": 1
         },
         {
-          "label": "rules-rip-0x25AA3D0",
-          "rva": 39494608,
+          "label": "rules-rip-0x25AA480",
+          "rva": 39494784,
           "section": ".text",
-          "hex": "488B05492A5B088B80980A0000C36690488B05392A5B088B",
+          "hex": "488B0599295B088B80980A0000C36690488B0589295B088B",
           "mask": "xxx????xxxxxxxxxxxx????x",
           "fields": [
             {
@@ -535,10 +531,10 @@
           "referenceMatches": 1
         },
         {
-          "label": "rules-rip-0x308C649",
-          "rva": 50906697,
+          "label": "rules-rip-0x308C6F9",
+          "rva": 50906873,
           "section": ".text",
-          "hex": "488D05B8ADC70748630D75B5C7074889CA48C1E2064801C231C04885C9480F49C24889442440488D4C24204489C24589",
+          "hex": "488D0508ADC70748630DC5B4C7074889CA48C1E2064801C231C04885C9480F49C24889442440488D4C24204489C24589",
           "mask": "xxx????xxx????xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
           "fields": [
             {
@@ -557,10 +553,10 @@
           "referenceMatches": 1
         },
         {
-          "label": "rules-rip-0x308C650",
-          "rva": 50906704,
+          "label": "rules-rip-0x308C700",
+          "rva": 50906880,
           "section": ".text",
-          "hex": "48630D75B5C7074889CA48C1E2064801C231C04885C9480F49C24889442440488D4C24204489C245",
+          "hex": "48630DC5B4C7074889CA48C1E2064801C231C04885C9480F49C24889442440488D4C24204489C245",
           "mask": "xxx????xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
           "fields": [
             {
@@ -573,10 +569,10 @@
           "referenceMatches": 1
         },
         {
-          "label": "rules-rip-0x300D703",
-          "rva": 50386691,
+          "label": "rules-rip-0x300D7B3",
+          "rva": 50386867,
           "section": ".text",
-          "hex": "486305C6A4CF074885C0781948C1E006488D0DEE9CCF078B440820F7D0A8110F84510E0000B92B00",
+          "hex": "48630516A4CF074885C0781948C1E006488D0D3E9CCF078B440820F7D0A8110F84510E0000B92B00",
           "mask": "xxx????xxxxxxxxxxxx????xxxxxxxxxx????xxx",
           "fields": [
             {
@@ -595,32 +591,32 @@
               "off": 33,
               "end": 37,
               "kind": "rel",
-              "target": 50390393
+              "target": 50390569
             }
           ],
           "referenceMatches": 1
         },
         {
-          "label": "rules-field-0x32FB9B6",
-          "rva": 53459382,
+          "label": "rules-field-0x32FBB36",
+          "rva": 53459766,
           "section": ".text",
-          "hex": "8B81A80E000083C0FD83F8010F878B0000004889CE833DA6",
+          "hex": "8B81A80E000083C0FD83F8010F878B0000004889CE833D26",
           "mask": "xxxxxxxxxxxxxx????xxxxxx",
           "fields": [
             {
               "off": 14,
               "end": 18,
               "kind": "rel",
-              "target": 53459539
+              "target": 53459923
             }
           ],
           "referenceMatches": 1
         },
         {
-          "label": "rules-field-0x24F7EC5",
-          "rva": 38764229,
+          "label": "rules-field-0x24F7F75",
+          "rva": 38764405,
           "section": ".text",
-          "hex": "803DC4586608000F8595000000488B05F7B45E088038010F85FD030000E859BD",
+          "hex": "803D14586608000F8595000000488B0547B45E088038010F85FD030000E829BF",
           "mask": "xx????xxx????xxx????xxxxx????xxx",
           "fields": [
             {
@@ -633,7 +629,7 @@
               "off": 9,
               "end": 13,
               "kind": "rel",
-              "target": 38764391
+              "target": 38764567
             },
             {
               "off": 16,
@@ -645,16 +641,16 @@
               "off": 25,
               "end": 29,
               "kind": "rel",
-              "target": 38765279
+              "target": 38765455
             }
           ],
           "referenceMatches": 1
         },
         {
-          "label": "rules-field-0x24F5450",
-          "rva": 38753360,
+          "label": "rules-field-0x24F5500",
+          "rva": 38753536,
           "section": ".text",
-          "hex": "488B05C97966088B80040A0000C3669056574883EC284889",
+          "hex": "488B05197966088B80040A0000C3669056574883EC284889",
           "mask": "xxx????xxxxxxxxxxxxxxxxx",
           "fields": [
             {
@@ -668,9 +664,9 @@
         },
         {
           "label": "ShotClock",
-          "rva": 39493520,
+          "rva": 39493696,
           "section": ".text",
-          "hex": "488B05892E5B080FB68016080000C390488B05792E5B080F",
+          "hex": "488B05D92D5B080FB68016080000C390488B05C92D5B080F",
           "mask": "xxx????xxxxxxxxxxxx????x",
           "fields": [
             {
@@ -690,9 +686,9 @@
         },
         {
           "label": "OutOfBounds",
-          "rva": 39492592,
+          "rva": 39492768,
           "section": ".text",
-          "hex": "488B0529325B080FB68024080000C390488B0519325B080F",
+          "hex": "488B0579315B080FB68024080000C390488B0569315B080F",
           "mask": "xxx????xxxxxxxxxxxx????x",
           "fields": [
             {
@@ -712,9 +708,9 @@
         },
         {
           "label": "BackcourtViolation",
-          "rva": 39487024,
+          "rva": 39487200,
           "section": ".text",
-          "hex": "488B05E9475B080FB68025080000C390488B05D9475B080FB68025080000C390488B05C9475B080FB68043080000C390",
+          "hex": "488B0539475B080FB68025080000C390488B0529475B080FB68025080000C390488B0519475B080FB68043080000C390",
           "mask": "xxx????xxxx????xxxx????xxxx????xxxx????xxxxxxxxx",
           "fields": [
             {
@@ -727,7 +723,7 @@
               "off": 11,
               "end": 16,
               "kind": "rip",
-              "target": 3311044168
+              "target": 3311044344
             },
             {
               "off": 19,
@@ -739,7 +735,7 @@
               "off": 27,
               "end": 32,
               "kind": "rip",
-              "target": 3311044184
+              "target": 3311044360
             },
             {
               "off": 35,
@@ -752,9 +748,9 @@
         },
         {
           "label": "EightSecondsHalfCourt",
-          "rva": 39489376,
+          "rva": 39489552,
           "section": ".text",
-          "hex": "488B05B93E5B080FB68026080000C390488B05A93E5B080F",
+          "hex": "488B05093E5B080FB68026080000C390488B05F93D5B080F",
           "mask": "xxx????xxxxxxxxxxxx????x",
           "fields": [
             {
@@ -774,9 +770,9 @@
         },
         {
           "label": "FiveSecondsInbounding",
-          "rva": 39489664,
+          "rva": 39489840,
           "section": ".text",
-          "hex": "488B05993D5B080FB680750A0000C390488B05893D5B080F",
+          "hex": "488B05E93C5B080FB680750A0000C390488B05D93C5B080F",
           "mask": "xxx????xxxxxxxxxxxx????x",
           "fields": [
             {
@@ -796,9 +792,9 @@
         },
         {
           "label": "OffensiveViolationInKey",
-          "rva": 39494624,
+          "rva": 39494800,
           "section": ".text",
-          "hex": "488B05392A5B088B8008090000C36690488B05292A5B088B",
+          "hex": "488B0589295B088B8008090000C36690488B0579295B088B",
           "mask": "xxx????xxxxxxxxxxxx????x",
           "fields": [
             {
@@ -818,9 +814,9 @@
         },
         {
           "label": "DefensiveViolationInKey",
-          "rva": 39488928,
+          "rva": 39489104,
           "section": ".text",
-          "hex": "488B0579405B088B800C090000C36690488B0569405B088B",
+          "hex": "488B05C93F5B088B800C090000C36690488B05B93F5B088B",
           "mask": "xxx????xxxxxxxxxxxx????x",
           "fields": [
             {
@@ -840,9 +836,9 @@
         },
         {
           "label": "FiveSecondsBackToBasket",
-          "rva": 39489632,
+          "rva": 39489808,
           "section": ".text",
-          "hex": "488B05B93D5B080FB68027080000C390488B05A93D5B080F",
+          "hex": "488B05093D5B080FB68027080000C390488B05F93C5B080F",
           "mask": "xxx????xxxxxxxxxxxx????x",
           "fields": [
             {
@@ -862,9 +858,9 @@
         },
         {
           "label": "CloselyGuarded",
-          "rva": 39488112,
+          "rva": 39488288,
           "section": ".text",
-          "hex": "488B05A9435B080FB6804E0A0000C390488B0599435B080F",
+          "hex": "488B05F9425B080FB6804E0A0000C390488B05E9425B080F",
           "mask": "xxx????xxxxxxxxxxxx????x",
           "fields": [
             {
@@ -884,9 +880,9 @@
         },
         {
           "label": "OverTheBackRule",
-          "rva": 39521008,
+          "rva": 39521184,
           "section": ".text",
-          "hex": "488B0529C35A080FB68030080000C3904883EC28E82701B9",
+          "hex": "488B0579C25A080FB68030080000C3904883EC28E8F702B9",
           "mask": "xxx????xxxxxxxxxxxxxxxxx",
           "fields": [
             {
@@ -900,9 +896,9 @@
         },
         {
           "label": "GenericPersonalFoulRule",
-          "rva": 39520144,
+          "rva": 39520320,
           "section": ".text",
-          "hex": "488B0589C65A080FB68031080000C3904883EC28E88704B9",
+          "hex": "488B05D9C55A080FB68031080000C3904883EC28E85706B9",
           "mask": "xxx????xxxxxxxxxxxxxxxxx",
           "fields": [
             {
@@ -916,9 +912,9 @@
         },
         {
           "label": "ChargingRule",
-          "rva": 39520624,
+          "rva": 39520800,
           "section": ".text",
-          "hex": "488B05A9C45A080FB68032080000C3904883EC28E8A702B9",
+          "hex": "488B05F9C35A080FB68032080000C3904883EC28E87704B9",
           "mask": "xxx????xxxxxxxxxxxxxxxxx",
           "fields": [
             {
@@ -932,9 +928,9 @@
         },
         {
           "label": "OffensiveOffballFoulRule",
-          "rva": 39520720,
+          "rva": 39520896,
           "section": ".text",
-          "hex": "488B0549C45A080FB68033080000C3904883EC28E84702B9",
+          "hex": "488B0599C35A080FB68033080000C3904883EC28E81704B9",
           "mask": "xxx????xxxxxxxxxxxxxxxxx",
           "fields": [
             {
@@ -948,9 +944,9 @@
         },
         {
           "label": "DefensiveOffballFoulRule",
-          "rva": 39520816,
+          "rva": 39520992,
           "section": ".text",
-          "hex": "488B05E9C35A080FB68034080000C3904883EC28E8E701B9",
+          "hex": "488B0539C35A080FB68034080000C3904883EC28E8B703B9",
           "mask": "xxx????xxxxxxxxxxxxxxxxx",
           "fields": [
             {
@@ -964,9 +960,9 @@
         },
         {
           "label": "BlockingRule",
-          "rva": 39520528,
+          "rva": 39520704,
           "section": ".text",
-          "hex": "488B0509C55A080FB68035080000C3904883EC28E80703B9",
+          "hex": "488B0559C45A080FB68035080000C3904883EC28E8D704B9",
           "mask": "xxx????xxxx????xxxxxxxxx",
           "fields": [
             {
@@ -979,16 +975,16 @@
               "off": 11,
               "end": 16,
               "kind": "rip",
-              "target": 3311077672
+              "target": 3311077848
             }
           ],
           "referenceMatches": 1
         },
         {
           "label": "ReachingFoulRule",
-          "rva": 39520240,
+          "rva": 39520416,
           "section": ".text",
-          "hex": "488B0529C65A080FB68036080000C3904883EC28E82704B9",
+          "hex": "488B0579C55A080FB68036080000C3904883EC28E8F705B9",
           "mask": "xxx????xxxxxxxxxxxxxxxxx",
           "fields": [
             {
@@ -1002,9 +998,9 @@
         },
         {
           "label": "LooseBallRule",
-          "rva": 39521104,
+          "rva": 39521280,
           "section": ".text",
-          "hex": "488B05C9C25A080FB68038080000C3904883EC28E8C700B9",
+          "hex": "488B0519C25A080FB68038080000C3904883EC28E89702B9",
           "mask": "xxx????xxxxxxxxxxxxxxxxx",
           "fields": [
             {
@@ -1018,9 +1014,9 @@
         },
         {
           "label": "ShootingFoulRule",
-          "rva": 39520336,
+          "rva": 39520512,
           "section": ".text",
-          "hex": "488B05C9C55A080FB68037080000C3904883EC28E8C703B9",
+          "hex": "488B0519C55A080FB68037080000C3904883EC28E89705B9",
           "mask": "xxx????xxxxxxxxxxxxxxxxx",
           "fields": [
             {
@@ -1034,9 +1030,9 @@
         },
         {
           "label": "IntentionalFoul",
-          "rva": 39521200,
+          "rva": 39521376,
           "section": ".text",
-          "hex": "488B0569C25A080FB68039080000C3904883EC28E86700B9",
+          "hex": "488B05B9C15A080FB68039080000C3904883EC28E83702B9",
           "mask": "xxx????xxxxxxxxxxxxxxxxx",
           "fields": [
             {
@@ -1050,9 +1046,9 @@
         },
         {
           "label": "ClearPathRule",
-          "rva": 39488080,
+          "rva": 39488256,
           "section": ".text",
-          "hex": "488B05C9435B080FB68040080000C390488B05B9435B080F",
+          "hex": "488B0519435B080FB68040080000C390488B0509435B080F",
           "mask": "xxx????xxxxxxxxxxxx????x",
           "fields": [
             {
@@ -1072,9 +1068,9 @@
         },
         {
           "label": "TransitionTakeFoulRule",
-          "rva": 39496032,
+          "rva": 39496208,
           "section": ".text",
-          "hex": "488B05B9245B080FB68041080000C390488B05A9245B080F",
+          "hex": "488B0509245B080FB68041080000C390488B05F9235B080F",
           "mask": "xxx????xxxxxxxxxxxx????x",
           "fields": [
             {
@@ -1094,9 +1090,9 @@
         },
         {
           "label": "KickBall",
-          "rva": 39491456,
+          "rva": 39491632,
           "section": ".text",
-          "hex": "488B0599365B080FB6803A080000C390488B0589365B080F",
+          "hex": "488B05E9355B080FB6803A080000C390488B05D9355B080F",
           "mask": "xxx????xxxxxxxxxxxx????x",
           "fields": [
             {
@@ -1116,9 +1112,9 @@
         },
         {
           "label": "Goaltending",
-          "rva": 39490048,
+          "rva": 39490224,
           "section": ".text",
-          "hex": "488B05193C5B080FB68028080000C390488B05093C5B080F",
+          "hex": "488B05693B5B080FB68028080000C390488B05593B5B080F",
           "mask": "xxx????xxxxxxxxxxxx????x",
           "fields": [
             {
@@ -1138,9 +1134,9 @@
         },
         {
           "label": "IllegalPick",
-          "rva": 39520912,
+          "rva": 39521088,
           "section": ".text",
-          "hex": "488B0589C35A080FB6802B080000C3904883EC28E88701B9",
+          "hex": "488B05D9C25A080FB6802B080000C3904883EC28E85703B9",
           "mask": "xxx????xxxxxxxxxxxxxxxxx",
           "fields": [
             {
@@ -1154,9 +1150,9 @@
         },
         {
           "label": "Traveling",
-          "rva": 39496064,
+          "rva": 39496240,
           "section": ".text",
-          "hex": "488B0599245B080FB68029080000C390488B0589245B080F",
+          "hex": "488B05E9235B080FB68029080000C390488B05D9235B080F",
           "mask": "xxx????xxxxxxxxxxxx????x",
           "fields": [
             {
@@ -1176,9 +1172,9 @@
         },
         {
           "label": "DoubleDribble",
-          "rva": 39489312,
+          "rva": 39489488,
           "section": ".text",
-          "hex": "488B05F93E5B080FB6802A080000C390488B05E93E5B080F",
+          "hex": "488B05493E5B080FB6802A080000C390488B05393E5B080F",
           "mask": "xxx????xxxxxxxxxxxx????x",
           "fields": [
             {
@@ -1198,9 +1194,9 @@
         },
         {
           "label": "FoulOut",
-          "rva": 39482640,
+          "rva": 39482816,
           "section": ".text",
-          "hex": "488B0509595B088B802C080000C36690488B05F9585B088B",
+          "hex": "488B0559585B088B802C080000C36690488B0549585B088B",
           "mask": "xxx????xxxxxxxxxxxx????x",
           "fields": [
             {
@@ -1220,9 +1216,9 @@
         },
         {
           "label": "ThreePointShotRestriction",
-          "rva": 39494608,
+          "rva": 39494784,
           "section": ".text",
-          "hex": "488B05492A5B088B80980A0000C36690488B05392A5B088B",
+          "hex": "488B0599295B088B80980A0000C36690488B0589295B088B",
           "mask": "xxx????xxxxxxxxxxxx????x",
           "fields": [
             {
@@ -1242,9 +1238,9 @@
         },
         {
           "label": "ZoneDefenseAllowed",
-          "rva": 39497120,
+          "rva": 39497296,
           "section": ".text",
-          "hex": "488B0579205B080FB680D4080000C390488B0569205B080F",
+          "hex": "488B05C91F5B080FB680D4080000C390488B05B91F5B080F",
           "mask": "xxx????xxxxxxxxxxxx????x",
           "fields": [
             {
@@ -1264,9 +1260,9 @@
         },
         {
           "label": "NoChargeZone",
-          "rva": 39491872,
+          "rva": 39492048,
           "section": ".text",
-          "hex": "488B05F9345B080FB680500A0000C390488B05E9345B080F",
+          "hex": "488B0549345B080FB680500A0000C390488B0539345B080F",
           "mask": "xxx????xxxxxxxxxxxx????x",
           "fields": [
             {
@@ -1286,9 +1282,9 @@
         },
         {
           "label": "BuzzerBeaterReview",
-          "rva": 39487440,
+          "rva": 39487616,
           "section": ".text",
-          "hex": "488B0549465B080FB68049080000C390488B0539465B080F",
+          "hex": "488B0599455B080FB68049080000C390488B0589455B080F",
           "mask": "xxx????xxxxxxxxxxxx????x",
           "fields": [
             {
@@ -1308,9 +1304,9 @@
         },
         {
           "label": "ClearBallRequired",
-          "rva": 39488016,
+          "rva": 39488192,
           "section": ".text",
-          "hex": "488B0509445B080FB680510A0000C390488B05F9435B080F",
+          "hex": "488B0559435B080FB680510A0000C390488B0549435B080F",
           "mask": "xxx????xxxxxxxxxxxx????x",
           "fields": [
             {
@@ -1330,9 +1326,9 @@
         },
         {
           "label": "Timeouts",
-          "rva": 39494656,
+          "rva": 39494832,
           "section": ".text",
-          "hex": "488B05192A5B080FB6805D0A0000C390488B05092A5B080F",
+          "hex": "488B0569295B080FB6805D0A0000C390488B0559295B080F",
           "mask": "xxx????xxxxxxxxxxxx????x",
           "fields": [
             {
@@ -1352,9 +1348,9 @@
         },
         {
           "label": "ScreenOutOfBoundsViolation",
-          "rva": 39510224,
+          "rva": 39510400,
           "section": ".text",
-          "hex": "488B0549ED5A080FB68044080000C390488B0539ED5A080F",
+          "hex": "488B0599EC5A080FB68044080000C390488B0589EC5A080F",
           "mask": "xxx????xxxxxxxxxxxx????x",
           "fields": [
             {
@@ -1374,9 +1370,9 @@
         },
         {
           "label": "PlayerOutOfBoundsViolationRule",
-          "rva": 39510128,
+          "rva": 39510304,
           "section": ".text",
-          "hex": "488B05A9ED5A080FB68046080000C390488B0599ED5A080F",
+          "hex": "488B05F9EC5A080FB68046080000C390488B05E9EC5A080F",
           "mask": "xxx????xxxxxxxxxxxx????x",
           "fields": [
             {
@@ -1396,9 +1392,9 @@
         },
         {
           "label": "BallEnteredBasketFromBelow",
-          "rva": 39487152,
+          "rva": 39487328,
           "section": ".text",
-          "hex": "488B0569475B080FB680740A0000C390488B0559475B080F",
+          "hex": "488B05B9465B080FB680740A0000C390488B05A9465B080F",
           "mask": "xxx????xxxxxxxxxxxx????x",
           "fields": [
             {
@@ -1418,9 +1414,9 @@
         },
         {
           "label": "TechnicalFoulRule",
-          "rva": 39520432,
+          "rva": 39520608,
           "section": ".text",
-          "hex": "488B0569C55A080FB6803B080000C3904883EC28E86703B9",
+          "hex": "488B05B9C45A080FB6803B080000C3904883EC28E83705B9",
           "mask": "xxx????xxxxxxxxxxxxxxxxx",
           "fields": [
             {
@@ -1434,9 +1430,9 @@
         },
         {
           "label": "FlagrantFoulRule",
-          "rva": 39520048,
+          "rva": 39520224,
           "section": ".text",
-          "hex": "488B05E9C65A080FB6803C080000C3904883EC28E8E704B9",
+          "hex": "488B0539C65A080FB6803C080000C3904883EC28E8B706B9",
           "mask": "xxx????xxxxxxxxxxxxxxxxx",
           "fields": [
             {
@@ -1450,9 +1446,9 @@
         },
         {
           "label": "TechnicalFoulEjectionRule",
-          "rva": 39494544,
+          "rva": 39494720,
           "section": ".text",
-          "hex": "488B05892A5B080FB6803D080000C390488B05792A5B080FB6803D080000C390488B05692A5B080F",
+          "hex": "488B05D9295B080FB6803D080000C390488B05C9295B080FB6803D080000C390488B05B9295B080F",
           "mask": "xxx????xxxx????xxxx????xxxx????xxxx????x",
           "fields": [
             {
@@ -1465,7 +1461,7 @@
               "off": 11,
               "end": 16,
               "kind": "rip",
-              "target": 3311051688
+              "target": 3311051864
             },
             {
               "off": 19,
@@ -1477,7 +1473,7 @@
               "off": 27,
               "end": 32,
               "kind": "rip",
-              "target": 3311051704
+              "target": 3311051880
             },
             {
               "off": 35,
@@ -1522,15 +1518,13 @@
       "depends": [
         "observer"
       ],
-      "blockers": [
-        "Two roster vtable methods are compared at fixed addresses."
-      ],
+      "blockers": [],
       "anchors": [
         {
-          "label": "roster-id-rip-0x211A0FB",
-          "rva": 34709755,
+          "label": "roster-id-rip-0x211A1AB",
+          "rva": 34709931,
           "section": ".text",
-          "hex": "488B0536429B07488B80A80000004883C478C5F877C36666",
+          "hex": "488B0586419B07488B80A80000004883C478C5F877C36666",
           "mask": "xxx????xxxxxxxxxxxxxxxxx",
           "fields": [
             {
@@ -1543,10 +1537,10 @@
           "referenceMatches": 1
         },
         {
-          "label": "roster-id-rip-0x211A120",
-          "rva": 34709792,
+          "label": "roster-id-rip-0x211A1D0",
+          "rva": 34709968,
           "section": ".text",
-          "hex": "488B0511429B07C30F1F840000000000564883EC204889CE488B0DF9419B07488D9688060000E8F5",
+          "hex": "488B0561419B07C30F1F840000000000564883EC204889CE488B0D49419B07488D9688060000E8F5",
           "mask": "xxx????xxxxxxxxxxxxxxxxxxxx????xxxxxxxxx",
           "fields": [
             {
@@ -1565,10 +1559,10 @@
           "referenceMatches": 1
         },
         {
-          "label": "roster-id-rip-0x2406BF9",
-          "rva": 37776377,
+          "label": "roster-id-rip-0x2406CA9",
+          "rva": 37776553,
           "section": ".text",
-          "hex": "488D3D98520E05488939488D81380F00004C8D89B8040000",
+          "hex": "488D3DE8510E05488939488D81380F00004C8D89B8040000",
           "mask": "xxx????xxxxxxxxxxxxxxxxx",
           "fields": [
             {
@@ -1581,8 +1575,8 @@
           "referenceMatches": 1
         },
         {
-          "label": "roster-id-field-0x211A102",
-          "rva": 34709762,
+          "label": "roster-id-field-0x211A1B2",
+          "rva": 34709938,
           "section": ".text",
           "hex": "488B80A80000004883C478C5F877C36666666666662E0F1F",
           "mask": "xxxxxxxxxxxxxxxxxxxxxxxx",
@@ -1590,8 +1584,8 @@
           "referenceMatches": 1
         },
         {
-          "label": "roster-id-field-0x2CC96F1",
-          "rva": 46962417,
+          "label": "roster-id-field-0x2CC97A1",
+          "rva": 46962593,
           "section": ".text",
           "hex": "3B5110731289D04869C0F8040000480341184883C478C3C5",
           "mask": "xxxxxxxxxxxxxxxxxxxxxxxx",
@@ -1599,8 +1593,8 @@
           "referenceMatches": 1
         },
         {
-          "label": "roster-id-field-0x2DDD3B1",
-          "rva": 48092081,
+          "label": "roster-id-field-0x2DDD461",
+          "rva": 48092257,
           "section": ".text",
           "hex": "3B9180000000731589D04869C05015000048038188000000",
           "mask": "xxxxxxxxxxxxxxxxxxxxxxxx",
@@ -1608,8 +1602,8 @@
           "referenceMatches": 1
         },
         {
-          "label": "roster-id-field-0x2ED9BD1",
-          "rva": 49126353,
+          "label": "roster-id-field-0x2ED9C81",
+          "rva": 49126529,
           "section": ".text",
           "hex": "3B5160731289D04869C078120000480341684883C478C3C5",
           "mask": "xxxxxxxxxxxxxxxxxxxxxxxx",
@@ -1617,8 +1611,8 @@
           "referenceMatches": 1
         },
         {
-          "label": "roster-id-field-0x2EDCB31",
-          "rva": 49138481,
+          "label": "roster-id-field-0x2EDCBE1",
+          "rva": 49138657,
           "section": ".text",
           "hex": "3B9190020000731589D04869C07001000048038198020000",
           "mask": "xxxxxxxxxxxxxxxxxxxxxxxx",
@@ -1643,9 +1637,7 @@
       "depends": [
         "observer"
       ],
-      "blockers": [
-        "The stock camera table stores absolute game addresses (camera-v2-stock.json)."
-      ],
+      "blockers": [],
       "anchors": [
         {
           "label": "camera-0xC2DA40",
@@ -1854,15 +1846,13 @@
       "depends": [
         "observer"
       ],
-      "blockers": [
-        "Seven vtable pairs and slot checks are compared at fixed addresses."
-      ],
+      "blockers": [],
       "anchors": [
         {
           "label": "scaler-rip-0x60023B",
           "rva": 6292027,
           "section": ".text",
-          "hex": "C5FA110539CEE1094889F1BA4D6D28F44531C0E86DE15E04",
+          "hex": "C5FA110539CEE1094889F1BA4D6D28F44531C0E8EDE35E04",
           "mask": "xxxx????xxxxxxxxxxxx????",
           "fields": [
             {
@@ -1875,7 +1865,7 @@
               "off": 20,
               "end": 24,
               "kind": "rel",
-              "target": 79619008
+              "target": 79619648
             }
           ],
           "referenceMatches": 1
@@ -1983,10 +1973,10 @@
           "referenceMatches": 1
         },
         {
-          "label": "scaler-rip-0x24F5450",
-          "rva": 38753360,
+          "label": "scaler-rip-0x24F5500",
+          "rva": 38753536,
           "section": ".text",
-          "hex": "488B05C97966088B80040A0000C3669056574883EC284889",
+          "hex": "488B05197966088B80040A0000C3669056574883EC284889",
           "mask": "xxx????xxxxxxxxxxxxxxxxx",
           "fields": [
             {
@@ -1999,10 +1989,10 @@
           "referenceMatches": 1
         },
         {
-          "label": "scaler-rip-0x24F546C",
-          "rva": 38753388,
+          "label": "scaler-rip-0x24F551C",
+          "rva": 38753564,
           "section": ".text",
-          "hex": "488D05BD7966084829C148C1E9044469C1CDCCCCCC488D15",
+          "hex": "488D050D7966084829C148C1E9044469C1CDCCCCCC488D15",
           "mask": "xxx????xxxxxx????xxxxxxx",
           "fields": [
             {
@@ -2015,16 +2005,16 @@
               "off": 13,
               "end": 17,
               "kind": "rel",
-              "target": 3283654785
+              "target": 3283654961
             }
           ],
           "referenceMatches": 1
         },
         {
-          "label": "scaler-rip-0x24F8B00",
-          "rva": 38767360,
+          "label": "scaler-rip-0x24F8BB0",
+          "rva": 38767536,
           "section": ".text",
-          "hex": "4C8D35294366084531FFEB110F1F40004983C7504981FF60",
+          "hex": "4C8D35794266084531FFEB110F1F40004983C7504981FF60",
           "mask": "xxx????xxxxxxxxxxxxxxxxx",
           "fields": [
             {
@@ -2037,10 +2027,10 @@
           "referenceMatches": 1
         },
         {
-          "label": "scaler-rip-0x24F9955",
-          "rva": 38771029,
+          "label": "scaler-rip-0x24F9A05",
+          "rva": 38771205,
           "section": ".text",
-          "hex": "488D051C391305488945D0488D4500C5F81130C5F811700C488D1CBF48C1E304",
+          "hex": "488D056C381305488945D0488D4500C5F81130C5F811700C488D1CBF48C1E304",
           "mask": "xxx????xxxxxxxxxxxxxxxxxxxxxxxxx",
           "fields": [
             {
@@ -2147,8 +2137,8 @@
           "referenceMatches": 1
         },
         {
-          "label": "scaler-field-0x24F5457",
-          "rva": 38753367,
+          "label": "scaler-field-0x24F5507",
+          "rva": 38753543,
           "section": ".text",
           "hex": "8B80040A0000C3669056574883EC284889D74889CE488D05",
           "mask": "xxxxxxxxxxxxxxxxxxxxxxxx",
@@ -2156,8 +2146,8 @@
           "referenceMatches": 1
         },
         {
-          "label": "scaler-field-0x24F8B10",
-          "rva": 38767376,
+          "label": "scaler-field-0x24F8BC0",
+          "rva": 38767552,
           "section": ".text",
           "hex": "4983C7504981FF6009000074334B837C37100074EB4B837C372800",
           "mask": "xxxxxxxxxxxxxxxxxxxxxxxxxxx",
@@ -2208,10 +2198,10 @@
           "referenceMatches": 1
         },
         {
-          "label": "scaler-field-0x24F54AE",
-          "rva": 38753454,
+          "label": "scaler-field-0x24F555E",
+          "rva": 38753630,
           "section": ".text",
-          "hex": "804F7D02E8899611FE4C8B10C7442420710300004889C148",
+          "hex": "804F7D02E8D99511FE4C8B10C7442420710300004889C148",
           "mask": "xxxxx????xxxxxxxxxxxxxxx",
           "fields": [
             {
@@ -2292,16 +2282,13 @@
       "depends": [
         "rules"
       ],
-      "blockers": [
-        "Category mask page contents are compared at a fixed address.",
-        "Picker vtable slot values are compared at fixed addresses."
-      ],
+      "blockers": [],
       "anchors": [
         {
-          "label": "freestyle-rip-0x36342A4",
-          "rva": 56836772,
+          "label": "freestyle-rip-0x3634424",
+          "rva": 56837156,
           "section": ".text",
-          "hex": "488D0565B84604468B0480448905FA58BB07488B15EB58BB",
+          "hex": "488D05E5B64604468B04804489057A57BB07488B156B57BB",
           "mask": "xxx????xxxxxxx????xxxxxx",
           "fields": [
             {
@@ -2320,10 +2307,10 @@
           "referenceMatches": 1
         },
         {
-          "label": "freestyle-rip-0x3634591",
-          "rva": 56837521,
+          "label": "freestyle-rip-0x3634711",
+          "rva": 56837905,
           "section": ".text",
-          "hex": "488D0598B54604468B0480448905655BBB07488B15565BBB",
+          "hex": "488D0518B44604468B0480448905E559BB07488B15D659BB",
           "mask": "xxx????xxxxxxx????xxxxxx",
           "fields": [
             {
@@ -2342,10 +2329,10 @@
           "referenceMatches": 1
         },
         {
-          "label": "freestyle-rip-0x363584A",
-          "rva": 56842314,
+          "label": "freestyle-rip-0x36359CA",
+          "rva": 56842698,
           "section": ".text",
-          "hex": "8B056043BB074883F805488D0D4D404904488D04C1488D0DDA4EBB07480F42C8488B3984D274344889F9E837251BFF89C3488D0D9E8C0308E8A966540131D283FB027C0431D2F7F34889F9E856251BFF483B050743BB077514EB07488B05FC42",
+          "hex": "8B05E041BB074883F805488D0DCD3E4904488D04C1488D0D5A4DBB07480F42C8488B3984D274344889F9E867241BFF89C3488D0D1E8B0308E8A967540131D283FB027C0431D2F7F34889F9E886241BFF483B058741BB077514EB07488B057C41",
           "mask": "xx????xxxxxxx????xxxxxxx????xxxxxxxxxxxxxxx????xxxxx????x????xxxxxxxxxxxxxxx????xxx????xxxxxxxxx",
           "fields": [
             {
@@ -2370,7 +2357,7 @@
               "off": 43,
               "end": 47,
               "kind": "rel",
-              "target": 41844144
+              "target": 41844320
             },
             {
               "off": 52,
@@ -2382,13 +2369,13 @@
               "off": 57,
               "end": 61,
               "kind": "rel",
-              "target": 79150896
+              "target": 79151536
             },
             {
               "off": 76,
               "end": 80,
               "kind": "rel",
-              "target": 41844208
+              "target": 41844384
             },
             {
               "off": 83,
@@ -2400,11 +2387,11 @@
           "referenceMatches": 1
         },
         {
-          "label": "freestyle-rip-0x3635854",
-          "rva": 56842324,
+          "label": "freestyle-rip-0x3635965",
+          "rva": 56842597,
           "section": ".text",
-          "hex": "488D0D4D404904488D04C1488D0DDA4EBB07480F42C8488B3984D274344889F9E837251BFF89C3488D0D9E8C0308E8A9",
-          "mask": "xxx????xxxxxxx????xxxxxxxxxxxxxxx????xxxxx????xx",
+          "hex": "488D0D3C3F4904488D04C1488D0DC94DBB07480F42C8488B01C390C681940E00",
+          "mask": "xxx????xxxxxxx????xxxxxxxxxxxxxx",
           "fields": [
             {
               "off": 3,
@@ -2417,27 +2404,15 @@
               "end": 18,
               "kind": "rip",
               "target": 186558272
-            },
-            {
-              "off": 33,
-              "end": 37,
-              "kind": "rel",
-              "target": 41844144
-            },
-            {
-              "off": 42,
-              "end": 46,
-              "kind": "rip",
-              "target": 191292704
             }
           ],
           "referenceMatches": 1
         },
         {
-          "label": "freestyle-rip-0x363585F",
-          "rva": 56842335,
+          "label": "freestyle-rip-0x3635970",
+          "rva": 56842608,
           "section": ".text",
-          "hex": "488D0DDA4EBB07480F42C8488B3984D274344889F9E83725",
+          "hex": "488D0DC94DBB07480F42C8488B01C390C681940E00000048",
           "mask": "xxx????xxxxxxxxxxxxxxxxx",
           "fields": [
             {
@@ -2450,10 +2425,10 @@
           "referenceMatches": 1
         },
         {
-          "label": "freestyle-rip-0x363589A",
-          "rva": 56842394,
+          "label": "freestyle-rip-0x3635A1A",
+          "rva": 56842778,
           "section": ".text",
-          "hex": "483B050743BB077514EB07488B05FC42BB074889C14889FAE859221BFF4889F14889C241B00141B101E898B6FFFFC7442420D3150000B926",
+          "hex": "483B058741BB077514EB07488B057C41BB074889C14889FAE889211BFF4889F14889C241B00141B101E898B6FFFFC7442420D3150000B926",
           "mask": "xxx????xxxxxxx????xxxxxxx????xxxxxxxxxxxxx????xxxxxxxxxx",
           "fields": [
             {
@@ -2472,22 +2447,22 @@
               "off": 25,
               "end": 29,
               "kind": "rel",
-              "target": 41843472
+              "target": 41843648
             },
             {
               "off": 42,
               "end": 46,
               "kind": "rel",
-              "target": 56823648
+              "target": 56824032
             }
           ],
           "referenceMatches": 1
         },
         {
-          "label": "freestyle-rip-0x363590A",
-          "rva": 56842506,
+          "label": "freestyle-rip-0x3635A8A",
+          "rva": 56842890,
           "section": ".text",
-          "hex": "8B05F847BB074883F805488D0D8D3F4904488D04C1488D0D1A4EBB07480F42C8488B3984D274344889F9E877241BFF89C3488D0DDE8B0308E8E965540131D283FB027C0431D2F7F34889F9E896241BFF483B059F47BB077514EB07488B059447",
+          "hex": "8B057846BB074883F805488D0D0D3E4904488D04C1488D0D9A4CBB07480F42C8488B3984D274344889F9E8A7231BFF89C3488D0D5E8A0308E8E966540131D283FB027C0431D2F7F34889F9E8C6231BFF483B051F46BB077514EB07488B051446",
           "mask": "xx????xxxxxxx????xxxxxxx????xxxxxxxxxxxxxxx????xxxxx????x????xxxxxxxxxxxxxxx????xxx????xxxxxxxxx",
           "fields": [
             {
@@ -2512,7 +2487,7 @@
               "off": 43,
               "end": 47,
               "kind": "rel",
-              "target": 41844144
+              "target": 41844320
             },
             {
               "off": 52,
@@ -2524,13 +2499,13 @@
               "off": 57,
               "end": 61,
               "kind": "rel",
-              "target": 79150896
+              "target": 79151536
             },
             {
               "off": 76,
               "end": 80,
               "kind": "rel",
-              "target": 41844208
+              "target": 41844384
             },
             {
               "off": 83,
@@ -2542,10 +2517,10 @@
           "referenceMatches": 1
         },
         {
-          "label": "freestyle-rip-0x3635965",
-          "rva": 56842597,
+          "label": "freestyle-rip-0x3635AE5",
+          "rva": 56842981,
           "section": ".text",
-          "hex": "488B059447BB074889C14889FAE899211BFF4889F14889C241B00141B101E8A8",
+          "hex": "488B051446BB074889C14889FAE8C9201BFF4889F14889C241B00141B101E8A8",
           "mask": "xxx????xxxxxxx????xxxxxxxxxxxxxx",
           "fields": [
             {
@@ -2558,16 +2533,16 @@
               "off": 14,
               "end": 18,
               "kind": "rel",
-              "target": 41843472
+              "target": 41843648
             }
           ],
           "referenceMatches": 1
         },
         {
-          "label": "freestyle-rip-0x37CAC51",
-          "rva": 58502225,
+          "label": "freestyle-rip-0x37CAED1",
+          "rva": 58502865,
           "section": ".text",
-          "hex": "488D05100B3A04488905F1E3A207488D05A2113A04488905FBE3A207488D0544123A0448890515E4",
+          "hex": "488D0590083A0448890571E1A207488D05220F3A044889057BE1A207488D05C40F3A0448890595E1",
           "mask": "xxx????xxx????xxx????xxx????xxx????xxxxx",
           "fields": [
             {
@@ -2604,10 +2579,10 @@
           "referenceMatches": 1
         },
         {
-          "label": "freestyle-rip-0x37CAC58",
-          "rva": 58502232,
+          "label": "freestyle-rip-0x37CAED8",
+          "rva": 58502872,
           "section": ".text",
-          "hex": "488905F1E3A207488D05A2113A04488905FBE3A207488D0544123A0448890515E4A207488D05F612",
+          "hex": "48890571E1A207488D05220F3A044889057BE1A207488D05C40F3A0448890595E1A207488D057610",
           "mask": "xxx????xxx????xxx????xxx????xxx????xxxxx",
           "fields": [
             {
@@ -2644,10 +2619,10 @@
           "referenceMatches": 1
         },
         {
-          "label": "freestyle-rip-0x3622600",
-          "rva": 56763904,
+          "label": "freestyle-rip-0x3622780",
+          "rva": 56764288,
           "section": ".text",
-          "hex": "488D05496ABD07C30F1F8400000000004883EC28488D0DFD",
+          "hex": "488D05C968BD07C30F1F8400000000004883EC28488D0D7D",
           "mask": "xxx????xxxxxxxxxxxxxxxxx",
           "fields": [
             {
@@ -2660,10 +2635,10 @@
           "referenceMatches": 1
         },
         {
-          "label": "freestyle-rip-0x211A0FB",
-          "rva": 34709755,
+          "label": "freestyle-rip-0x211A1AB",
+          "rva": 34709931,
           "section": ".text",
-          "hex": "488B0536429B07488B80A80000004883C478C5F877C36666",
+          "hex": "488B0586419B07488B80A80000004883C478C5F877C36666",
           "mask": "xxx????xxxxxxxxxxxxxxxxx",
           "fields": [
             {
@@ -2676,10 +2651,10 @@
           "referenceMatches": 1
         },
         {
-          "label": "freestyle-rip-0x211A120",
-          "rva": 34709792,
+          "label": "freestyle-rip-0x211A1D0",
+          "rva": 34709968,
           "section": ".text",
-          "hex": "488B0511429B07C30F1F840000000000564883EC204889CE488B0DF9419B07488D9688060000E8F5",
+          "hex": "488B0561419B07C30F1F840000000000564883EC204889CE488B0D49419B07488D9688060000E8F5",
           "mask": "xxx????xxxxxxxxxxxxxxxxxxxx????xxxxxxxxx",
           "fields": [
             {
@@ -2698,10 +2673,10 @@
           "referenceMatches": 1
         },
         {
-          "label": "freestyle-rip-0x363330C",
-          "rva": 56832780,
+          "label": "freestyle-rip-0x363348C",
+          "rva": 56833164,
           "section": ".text",
-          "hex": "892D5674BB0748B84550212E040000004889054974BB0789",
+          "hex": "892DD672BB0748B84550212E04000000488905C972BB0789",
           "mask": "xx????xxxxxxxxxxxxx????x",
           "fields": [
             {
@@ -2720,10 +2695,10 @@
           "referenceMatches": 1
         },
         {
-          "label": "freestyle-rip-0x3633323",
-          "rva": 56832803,
+          "label": "freestyle-rip-0x36334A3",
+          "rva": 56833187,
           "section": ".text",
-          "hex": "893D4B74BB07891D4D74BB078B054374BB07FFC883F80377",
+          "hex": "893DCB72BB07891DCD72BB078B05C372BB07FFC883F80377",
           "mask": "xx????xx????xx????xxxxxx",
           "fields": [
             {
@@ -2748,10 +2723,10 @@
           "referenceMatches": 1
         },
         {
-          "label": "freestyle-rip-0x3633329",
-          "rva": 56832809,
+          "label": "freestyle-rip-0x36334A9",
+          "rva": 56833193,
           "section": ".text",
-          "hex": "891D4D74BB078B054374BB07FFC883F8037768488D15F572",
+          "hex": "891DCD72BB078B05C372BB07FFC883F8037768488D157571",
           "mask": "xx????xx????xxxxxxxxxxxx",
           "fields": [
             {
@@ -2770,10 +2745,10 @@
           "referenceMatches": 1
         },
         {
-          "label": "freestyle-rip-0x308C649",
-          "rva": 50906697,
+          "label": "freestyle-rip-0x308C6F9",
+          "rva": 50906873,
           "section": ".text",
-          "hex": "488D05B8ADC70748630D75B5C7074889CA48C1E2064801C231C04885C9480F49C24889442440488D4C24204489C24589",
+          "hex": "488D0508ADC70748630DC5B4C7074889CA48C1E2064801C231C04885C9480F49C24889442440488D4C24204489C24589",
           "mask": "xxx????xxx????xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
           "fields": [
             {
@@ -2792,10 +2767,10 @@
           "referenceMatches": 1
         },
         {
-          "label": "freestyle-rip-0x308C650",
-          "rva": 50906704,
+          "label": "freestyle-rip-0x308C700",
+          "rva": 50906880,
           "section": ".text",
-          "hex": "48630D75B5C7074889CA48C1E2064801C231C04885C9480F49C24889442440488D4C24204489C245",
+          "hex": "48630DC5B4C7074889CA48C1E2064801C231C04885C9480F49C24889442440488D4C24204489C245",
           "mask": "xxx????xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
           "fields": [
             {
@@ -2808,10 +2783,10 @@
           "referenceMatches": 1
         },
         {
-          "label": "freestyle-rip-0x300D703",
-          "rva": 50386691,
+          "label": "freestyle-rip-0x300D7B3",
+          "rva": 50386867,
           "section": ".text",
-          "hex": "486305C6A4CF074885C0781948C1E006488D0DEE9CCF078B440820F7D0A8110F84510E0000B92B00",
+          "hex": "48630516A4CF074885C0781948C1E006488D0D3E9CCF078B440820F7D0A8110F84510E0000B92B00",
           "mask": "xxx????xxxxxxxxxxxx????xxxxxxxxxx????xxx",
           "fields": [
             {
@@ -2830,14 +2805,14 @@
               "off": 33,
               "end": 37,
               "kind": "rel",
-              "target": 50390393
+              "target": 50390569
             }
           ],
           "referenceMatches": 1
         },
         {
-          "label": "freestyle-field-0x211A102",
-          "rva": 34709762,
+          "label": "freestyle-field-0x211A1B2",
+          "rva": 34709938,
           "section": ".text",
           "hex": "488B80A80000004883C478C5F877C36666666666662E0F1F",
           "mask": "xxxxxxxxxxxxxxxxxxxxxxxx",
@@ -2845,8 +2820,8 @@
           "referenceMatches": 1
         },
         {
-          "label": "freestyle-field-0x2DDD3B1",
-          "rva": 48092081,
+          "label": "freestyle-field-0x2DDD461",
+          "rva": 48092257,
           "section": ".text",
           "hex": "3B9180000000731589D04869C05015000048038188000000",
           "mask": "xxxxxxxxxxxxxxxxxxxxxxxx",
@@ -2854,17 +2829,17 @@
           "referenceMatches": 1
         },
         {
-          "label": "freestyle-field-0x2DDD3BB",
-          "rva": 48092091,
+          "label": "freestyle-field-0x2DDD46B",
+          "rva": 48092267,
           "section": ".text",
-          "hex": "4869C050150000480381880000004883C478C3C5FC1005EA",
+          "hex": "4869C050150000480381880000004883C478C3C5FC10053A",
           "mask": "xxxxxxxxxxxxxxxxxxxxxxxx",
           "fields": [],
           "referenceMatches": 1
         },
         {
-          "label": "freestyle-field-0x27E7950",
-          "rva": 41843024,
+          "label": "freestyle-field-0x27E7A00",
+          "rva": 41843200,
           "section": ".text",
           "hex": "418B863C120000C1E81AC4C2F9F7EC83C0FE83F80B770C49",
           "mask": "xxxxxxxxx????xxxxxxxxxxx",
@@ -2873,14 +2848,14 @@
               "off": 9,
               "end": 13,
               "kind": "rel",
-              "target": 4232134007
+              "target": 4232134183
             }
           ],
           "referenceMatches": 1
         },
         {
-          "label": "freestyle-field-0x2DDA683",
-          "rva": 48080515,
+          "label": "freestyle-field-0x2DDA733",
+          "rva": 48080691,
           "section": ".text",
           "hex": "0FB781200F00008944245C488D81FA020000488944244848",
           "mask": "xxxxxxxxxxxxxxxxxxxxxxxx",
@@ -2888,8 +2863,8 @@
           "referenceMatches": 1
         },
         {
-          "label": "freestyle-field-0x2DDA68E",
-          "rva": 48080526,
+          "label": "freestyle-field-0x2DDA73E",
+          "rva": 48080702,
           "section": ".text",
           "hex": "488D81FA0200004889442448488D44247048898424B00000",
           "mask": "xxxxxxxxxxxxxxxxxxxxxxxx",
@@ -2897,8 +2872,8 @@
           "referenceMatches": 1
         },
         {
-          "label": "freestyle-field-0x3629D0A",
-          "rva": 56794378,
+          "label": "freestyle-field-0x3629E8A",
+          "rva": 56794762,
           "section": ".text",
           "hex": "C644242001BA0600000041B80100000041B904000000E8CB",
           "mask": "xxxxxxxxxxxxxxxxxxxxxxxx",
@@ -2906,8 +2881,8 @@
           "referenceMatches": 1
         },
         {
-          "label": "freestyle-field-0x363334C",
-          "rva": 56832844,
+          "label": "freestyle-field-0x36334CC",
+          "rva": 56833228,
           "section": ".text",
           "hex": "B833104000EB2CB201B905000000B800800000EB0CB201B9",
           "mask": "xxxxxxxxxxxxxxxxxxxxxxxx",
@@ -2997,16 +2972,16 @@
       "anchors": [
         {
           "label": "blacktop-arena-load-a",
-          "rva": 53443739,
+          "rva": 53444123,
           "section": ".text",
-          "hex": "E8003201FF8D48FE31D283F9030F43D04863C2488D0D7B295F048B3481488D0D31B57E07E8AC23E2FE4889C189F2E8D270C2FF488905CB1B95064889C1BA023CD83041B833020000E8E8FA",
+          "hex": "E8303101FF8D48FE31D283F9030F43D04863C2488D0DFB275F048B3481488D0DB1B37E07E8DC22E2FE4889C189F2E80270C2FF4889054B1A95064889C1BA023CD83041B833020000E818FA",
           "mask": "x????xxxxxxxxxxxxxxxxx????xxxxxx????x????xxxxxx????xxx????xxxxxxxxxxxxxxxxx",
           "fields": [
             {
               "off": 1,
               "end": 5,
               "kind": "rel",
-              "target": 36744864
+              "target": 36745040
             },
             {
               "off": 22,
@@ -3024,13 +2999,13 @@
               "off": 37,
               "end": 41,
               "kind": "rel",
-              "target": 34709616
+              "target": 34709792
             },
             {
               "off": 47,
               "end": 51,
               "kind": "rel",
-              "target": 49409440
+              "target": 49409616
             },
             {
               "off": 54,
@@ -3043,16 +3018,16 @@
         },
         {
           "label": "blacktop-arena-load-b",
-          "rva": 53446420,
+          "rva": 53446804,
           "section": ".text",
-          "hex": "E8872701FF8D48FE31D283F9030F43D04863C2488D0D021F5F048B1C81488D0DB8AA7E07E83319E2FE4889C189DAE85966C2FF",
+          "hex": "E8B72601FF8D48FE31D283F9030F43D04863C2488D0D821D5F048B1C81488D0D38A97E07E86318E2FE4889C189DAE88965C2FF",
           "mask": "x????xxxxxxxxxxxxxxxxx????xxxxxx????x????xxxxxx????",
           "fields": [
             {
               "off": 1,
               "end": 5,
               "kind": "rel",
-              "target": 36744864
+              "target": 36745040
             },
             {
               "off": 22,
@@ -3070,29 +3045,29 @@
               "off": 37,
               "end": 41,
               "kind": "rel",
-              "target": 34709616
+              "target": 34709792
             },
             {
               "off": 47,
               "end": 51,
               "kind": "rel",
-              "target": 49409440
+              "target": 49409616
             }
           ],
           "referenceMatches": 1
         },
         {
           "label": "blacktop-arena-load-c",
-          "rva": 53450694,
+          "rva": 53451078,
           "section": ".text",
-          "hex": "E8D51601FF8D48FE31D283F9030F43D04863C2488D0D500E5F04448B3481488D0D059A7E07E88008E2FE4889C14489F2E8A555C2FF",
+          "hex": "E8051601FF8D48FE31D283F9030F43D04863C2488D0DD00C5F04448B3481488D0D85987E07E8B007E2FE4889C14489F2E8D554C2FF",
           "mask": "x????xxxxxxxxxxxxxxxxx????xxxxxxx????x????xxxxxxx????",
           "fields": [
             {
               "off": 1,
               "end": 5,
               "kind": "rel",
-              "target": 36744864
+              "target": 36745040
             },
             {
               "off": 22,
@@ -3110,29 +3085,29 @@
               "off": 38,
               "end": 42,
               "kind": "rel",
-              "target": 34709616
+              "target": 34709792
             },
             {
               "off": 49,
               "end": 53,
               "kind": "rel",
-              "target": 49409440
+              "target": 49409616
             }
           ],
           "referenceMatches": 1
         },
         {
           "label": "blacktop-arena-load-d",
-          "rva": 53451643,
+          "rva": 53452027,
           "section": ".text",
-          "hex": "E8201301FF8D48FE31D283F9030F43D04863C2488D0D9B0A5F048B3481488D0D51967E07E8CC04E2FE4889C189F2E8F251C2FF488905EBFC94064889C1BA023CD83041B833020000E808DC",
+          "hex": "E8501201FF8D48FE31D283F9030F43D04863C2488D0D1B095F048B3481488D0DD1947E07E8FC03E2FE4889C189F2E82251C2FF4889056BFB94064889C1BA023CD83041B833020000E838DB",
           "mask": "x????xxxxxxxxxxxxxxxxx????xxxxxx????x????xxxxxx????xxx????xxxxxxxxxxxxxxxxx",
           "fields": [
             {
               "off": 1,
               "end": 5,
               "kind": "rel",
-              "target": 36744864
+              "target": 36745040
             },
             {
               "off": 22,
@@ -3150,13 +3125,13 @@
               "off": 37,
               "end": 41,
               "kind": "rel",
-              "target": 34709616
+              "target": 34709792
             },
             {
               "off": 47,
               "end": 51,
               "kind": "rel",
-              "target": 49409440
+              "target": 49409616
             },
             {
               "off": 54,
@@ -3169,7 +3144,7 @@
         },
         {
           "label": "same-arena-ID-preserved-around-constructor",
-          "rva": 30189940,
+          "rva": 30190116,
           "section": ".text",
           "hex": "0FB7BE920700004889F1E8DD3726016689BE92070000EB03",
           "mask": "xxxxxxxxxxx????xxxxxxxxx",
@@ -3178,16 +3153,16 @@
               "off": 11,
               "end": 15,
               "kind": "rel",
-              "target": 49471840
+              "target": 49472016
             }
           ],
           "referenceMatches": 1
         },
         {
           "label": "typed-arena-and-floor-native-literals",
-          "rva": 30189977,
+          "rva": 30190153,
           "section": ".text",
-          "hex": "488D4E7E488DBEA40000003DFFFF7F01771E488D1572E8690541B8260000004531C9E8309F7200488D1579E86905EB1C488D1598E8690541B8260000004531C9E8129F7200488D15BDE869054889F941B8280000004531C9E8FA9E7200",
+          "hex": "488D4E7E488DBEA40000003DFFFF7F01771E488D15C2E7690541B8260000004531C9E8309F7200488D15C9E76905EB1C488D15E8E7690541B8260000004531C9E8129F7200488D150DE869054889F941B8280000004531C9E8FA9E7200",
           "mask": "xxxxxxxxxxxxxxxxxxxxx????????xxxxxx????xxx????????x????????xxxxxx????xxx????????xxxxxxxxx????",
           "fields": [
             {
@@ -3200,13 +3175,13 @@
               "off": 25,
               "end": 33,
               "kind": "rip",
-              "target": 32727547
+              "target": 32727723
             },
             {
               "off": 35,
               "end": 39,
               "kind": "rel",
-              "target": 37701872
+              "target": 37702048
             },
             {
               "off": 42,
@@ -3218,7 +3193,7 @@
               "off": 46,
               "end": 54,
               "kind": "rip",
-              "target": 2400503482
+              "target": 2400503658
             },
             {
               "off": 51,
@@ -3230,13 +3205,13 @@
               "off": 55,
               "end": 63,
               "kind": "rip",
-              "target": 32727577
+              "target": 32727753
             },
             {
               "off": 65,
               "end": 69,
               "kind": "rel",
-              "target": 37701872
+              "target": 37702048
             },
             {
               "off": 72,
@@ -3248,20 +3223,20 @@
               "off": 76,
               "end": 84,
               "kind": "rip",
-              "target": 1137062709
+              "target": 1137062885
             },
             {
               "off": 89,
               "end": 93,
               "kind": "rel",
-              "target": 37701872
+              "target": 37702048
             }
           ],
           "referenceMatches": 1
         },
         {
           "label": "directory-backed-arena-name-copy-38-floor-40",
-          "rva": 49534616,
+          "rva": 49534792,
           "section": ".text",
           "hex": "488D142F4883C27E498D4D7E41B8260000004531C9E83EDB32FF488D142F4881C2A4000000498D8DA400000041B8280000004531C9E81EDB32FF",
           "mask": "xxxxxxxxxxxxxxxxxxxxxx????xxxxxxxxxxxxxxxxxxxxxxxxxxxx????",
@@ -3270,20 +3245,20 @@
               "off": 22,
               "end": 26,
               "kind": "rel",
-              "target": 36090352
+              "target": 36090528
             },
             {
               "off": 54,
               "end": 58,
               "kind": "rel",
-              "target": 36090352
+              "target": 36090528
             }
           ],
           "referenceMatches": 1
         },
         {
           "label": "same-copy-arena-directory-stride",
-          "rva": 49534884,
+          "rva": 49535060,
           "section": ".text",
           "hex": "8B48604939CC73244D69EC781200004C0368684181BD100F",
           "mask": "xxxxxxxxxxxxxxxxxxxxxxxx",
@@ -3292,7 +3267,7 @@
         },
         {
           "label": "arena-ID-getter-word-792",
-          "rva": 49719856,
+          "rva": 49720032,
           "section": ".text",
           "hex": "0FB78192070000C30F1F8400000000000FB68194070000C5",
           "mask": "xxxxxxxxxxxxxxxxxxxxxxxx",
@@ -3317,9 +3292,9 @@
       "anchors": [
         {
           "label": "record-holder",
-          "rva": 34616837,
+          "rva": 34617013,
           "section": ".text",
-          "hex": "488B35DCFD9D08C5FC10058C7F2B05C5FC11442450807E10007574488D05C949",
+          "hex": "488B352CFD9D08C5FC1005DC7E2B05C5FC11442450807E10007574488D051949",
           "mask": "xxx????xxxx????????xxxxxxxxxxxxx",
           "fields": [
             {
@@ -3338,14 +3313,14 @@
               "off": 15,
               "end": 19,
               "kind": "rip",
-              "target": 1176646365
+              "target": 1176646541
             }
           ],
           "referenceMatches": 1
         },
         {
           "label": "record-offset-and-holder-data",
-          "rva": 34616980,
+          "rva": 34617156,
           "section": ".text",
           "hex": "B8284D0F00480346184883C4705EC5F877C3662E0F1F8400",
           "mask": "xxxxxxxxxxxxxxxxxxxxxxxx",
@@ -3354,18 +3329,18 @@
         },
         {
           "label": "default-to-normal",
-          "rva": 35554676,
+          "rva": 35554852,
           "section": ".text",
-          "hex": "85FF740881FFC5FE1BDC7508C7442448BE9156CB8B15FAA2",
+          "hex": "85FF740881FFC5FE1BDC7508C7442448BE9156CB8B154AA2",
           "mask": "xxxxxxxxxxxxxxxxxxxxxxxx",
           "fields": [],
           "referenceMatches": 1
         },
         {
           "label": "registry-model-search",
-          "rva": 35554696,
+          "rva": 35554872,
           "section": ".text",
-          "hex": "8B15FAA29208488B0DEBA29208488D7C244848897C24204C8D0D4A1D000041B808000000E83FEDCF01",
+          "hex": "8B154AA29208488B0D3BA29208488D7C244848897C24204C8D0D4A1D000041B808000000E80FEFCF01",
           "mask": "xx????xxx????xxxxxxxxxxxxx????xxxxxxx????",
           "fields": [
             {
@@ -3384,22 +3359,22 @@
               "off": 26,
               "end": 30,
               "kind": "rip",
-              "target": 35562224
+              "target": 35562400
             },
             {
               "off": 37,
               "end": 41,
               "kind": "rel",
-              "target": 65958640
+              "target": 65959280
             }
           ],
           "referenceMatches": 1
         },
         {
           "label": "registry-index-and-1A0-row",
-          "rva": 35554741,
+          "rva": 35554917,
           "section": ".text",
-          "hex": "488B0DC4A2920889C08B44C1048944244C483DF40100000F83840000004869C8A00100004889F04801C84883C4785F5E",
+          "hex": "488B0D14A2920889C08B44C1048944244C483DF40100000F83840000004869C8A00100004889F04801C84883C4785F5E",
           "mask": "xxx????xxxxxxxxxxxxxxxxxx????xxxxxxxxxxxxxxxxxxx",
           "fields": [
             {
@@ -3412,14 +3387,14 @@
               "off": 25,
               "end": 29,
               "kind": "rel",
-              "target": 35554902
+              "target": 35555078
             }
           ],
           "referenceMatches": 1
         },
         {
           "label": "filename-plus-9C",
-          "rva": 35562168,
+          "rva": 35562344,
           "section": ".text",
           "hex": "4881C79C00000048897C2470488D44245048894424204C8D",
           "mask": "xxxxxxxxxxxxxxxxxxxxxxxx",
@@ -3428,9 +3403,9 @@
         },
         {
           "label": "native-ball-identity",
-          "rva": 39483952,
+          "rva": 39484128,
           "section": ".text",
-          "hex": "488B05E9535B088B80A40D0000C36690488B05D9535B088B",
+          "hex": "488B0539535B088B80A40D0000C36690488B0529535B088B",
           "mask": "xxx????xxxxxxxxxxxx????x",
           "fields": [
             {
@@ -3450,9 +3425,9 @@
         },
         {
           "label": "reference-index",
-          "rva": 50845790,
+          "rva": 50845966,
           "section": ".text",
-          "hex": "488D358390C8078B54861885D27516488D942400010000E8",
+          "hex": "488D35D38FC8078B54861885D27516488D942400010000E8",
           "mask": "xxx????xxxxxxxxxxxxxxxxx",
           "fields": [
             {
@@ -3466,7 +3441,7 @@
         },
         {
           "label": "reference-increment",
-          "rva": 50845827,
+          "rva": 50846003,
           "section": ".text",
           "hex": "FFC289548618EBC30F1F4400004881EC48020000894C2454",
           "mask": "xxxxxxxxxxxxxxxxxxxxxxxx",
@@ -3475,9 +3450,9 @@
         },
         {
           "label": "reference-decrement",
-          "rva": 50847185,
+          "rva": 50847361,
           "section": ".text",
-          "hex": "488D3D108BC8078B448F1889C2FFCA89548F180F84D40000",
+          "hex": "488D3D608AC8078B448F1889C2FFCA89548F180F84D40000",
           "mask": "xxx????xxxxxxxxxxxxxxxxx",
           "fields": [
             {
@@ -3491,9 +3466,9 @@
         },
         {
           "label": "renderer-global",
-          "rva": 35549210,
+          "rva": 35549386,
           "section": ".text",
-          "hex": "488D0DD7549208C5F828DAE806000000904883C438C35657",
+          "hex": "488D0D27549208C5F828DAE806000000904883C438C35657",
           "mask": "xxx????xxxxx????xxxxxxxx",
           "fields": [
             {
@@ -3506,14 +3481,14 @@
               "off": 12,
               "end": 16,
               "kind": "rel",
-              "target": 35549232
+              "target": 35549408
             }
           ],
           "referenceMatches": 1
         },
         {
           "label": "resource-array-plus-28",
-          "rva": 35549386,
+          "rva": 35549562,
           "section": ".text",
           "hex": "4889C7488D5E28E82AC5F1FF4829C748C1FF0548B9C54EEC",
           "mask": "xxxxxxxx????xxxxxxx????x",
@@ -3522,20 +3497,20 @@
               "off": 8,
               "end": 12,
               "kind": "rel",
-              "target": 34616832
+              "target": 34617008
             },
             {
               "off": 19,
               "end": 23,
               "kind": "rip",
-              "target": 1357130281
+              "target": 1357130457
             }
           ],
           "referenceMatches": 1
         },
         {
           "label": "resource-stride-48",
-          "rva": 35549514,
+          "rva": 35549690,
           "section": ".text",
           "hex": "4863C1488D044048C1E00448634E08488D0C8948C1E1054801C3",
           "mask": "xxxxxxxxxxxxxxxxxxxxxxxxxx",
@@ -3544,7 +3519,7 @@
         },
         {
           "label": "native-load-entry",
-          "rva": 50844768,
+          "rva": 50844944,
           "section": ".text",
           "hex": "5657534881EC10020000894C24608954246C85C90F84D40300004489C6E8DEB016FF",
           "mask": "xxxxxxxxxxxxxxxxxxxxxx????xxxx????",
@@ -3553,20 +3528,20 @@
               "off": 22,
               "end": 26,
               "kind": "rel",
-              "target": 50845774
+              "target": 50845950
             },
             {
               "off": 30,
               "end": 34,
               "kind": "rel",
-              "target": 35554656
+              "target": 35554832
             }
           ],
           "referenceMatches": 1
         },
         {
           "label": "native-release-entry",
-          "rva": 50846400,
+          "rva": 50846576,
           "section": ".text",
           "hex": "5657534881ECF0000000894C24548954246C85C90F84E70200004489C7E87EAA16FF",
           "mask": "xxxxxxxxxxxxxxxxxxxxxx????xxxx????",
@@ -3575,35 +3550,35 @@
               "off": 22,
               "end": 26,
               "kind": "rel",
-              "target": 50847169
+              "target": 50847345
             },
             {
               "off": 30,
               "end": 34,
               "kind": "rel",
-              "target": 35554656
+              "target": 35554832
             }
           ],
           "referenceMatches": 1
         },
         {
           "label": "native-render-call",
-          "rva": 68660297,
+          "rva": 68660937,
           "section": ".text",
-          "hex": "418B8E4C0300004C894424284889442420C5E857D241B101E89AC306FE",
+          "hex": "418B8E4C0300004C894424284889442420C5E857D241B101E8CAC106FE",
           "mask": "xxxxxxxxxxxxxxxxxxx????xx????",
           "fields": [
             {
               "off": 19,
               "end": 23,
               "kind": "rel",
-              "target": 3042541239
+              "target": 3042541879
             },
             {
               "off": 25,
               "end": 29,
               "kind": "rel",
-              "target": 35549184
+              "target": 35549360
             }
           ],
           "referenceMatches": 1
@@ -3634,15 +3609,13 @@
       "depends": [
         "rules"
       ],
-      "blockers": [
-        "The resource vtable and locator are compared at fixed addresses."
-      ],
+      "blockers": [],
       "anchors": [
         {
           "label": "package-table-lea",
-          "rva": 18436173,
+          "rva": 18436301,
           "section": ".text",
-          "hex": "488D3DE47B7F09EB17662E0F1F8400000000004883C61848",
+          "hex": "488D3D647B7F09EB17662E0F1F8400000000004883C61848",
           "mask": "xxx????xxxxxxxxxxxxxxxxx",
           "fields": [
             {
@@ -3656,31 +3629,31 @@
         },
         {
           "label": "package-stride-count-entry",
-          "rva": 18436192,
+          "rva": 18436320,
           "section": ".text",
-          "hex": "4883C6184881FE000C0000741E837C3E080074EC48837C3E100075E4488D0C3E4883C108E8E7840100EBD5E880ADEE03488D05F1",
+          "hex": "4883C6184881FE000C0000741E837C3E080074EC48837C3E100075E4488D0C3E4883C108E8E7840100EBD5E880AFEE03488D0571",
           "mask": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx????xxx????xxxx",
           "fields": [
             {
               "off": 37,
               "end": 41,
               "kind": "rel",
-              "target": 18535792
+              "target": 18535920
             },
             {
               "off": 44,
               "end": 48,
               "kind": "rel",
-              "target": 84409872
+              "target": 84410512
             }
           ],
           "referenceMatches": 1
         },
         {
           "label": "package-table-native-zero-init",
-          "rva": 18436444,
+          "rva": 18436572,
           "section": ".text",
-          "hex": "488D0DDD7A7F0941B8000C000031D2E866672D0448893DC1",
+          "hex": "488D0D5D7A7F0941B8000C000031D2E8E66A2D0448893D41",
           "mask": "xxx????xxxxxxxxx????xxxx",
           "fields": [
             {
@@ -3693,14 +3666,14 @@
               "off": 16,
               "end": 20,
               "kind": "rel",
-              "target": 88520918
+              "target": 88521942
             }
           ],
           "referenceMatches": 1
         },
         {
           "label": "package-tree-root-and-children",
-          "rva": 18433290,
+          "rva": 18433418,
           "section": ".text",
           "hex": "488B19EB0590488B1C034885DB7422B8800000003B2B77EEB87800000072E7",
           "mask": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
@@ -3709,7 +3682,7 @@
         },
         {
           "label": "package-storage-used-capacity-stride136-sentinel",
-          "rva": 18434263,
+          "rva": 18434391,
           "section": ".text",
           "hex": "486341103B41147D5A4889CE488B79084889C148C1E107488D04C1488D1C074883C3084801C7",
           "mask": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
@@ -3718,7 +3691,7 @@
         },
         {
           "label": "package-property-list-and-tree-initialization",
-          "rva": 18434321,
+          "rva": 18434449,
           "section": ".text",
           "hex": "48C747680000000048895F6048895F58C5F857C0C5F811477048C7878000000000000000FF4610EB0231FF4889F848",
           "mask": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
@@ -3727,7 +3700,7 @@
         },
         {
           "label": "property-next-key-value",
-          "rva": 16994544,
+          "rva": 16994672,
           "section": ".text",
           "hex": "4D8B49504939C9740E45390175F24D85C97404418B51088910C3660F1F",
           "mask": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
@@ -3736,7 +3709,7 @@
         },
         {
           "label": "scorebug-cached-resource-consumer",
-          "rva": 18396729,
+          "rva": 18396857,
           "section": ".text",
           "hex": "8138F01035C675EF4885C074068B40088941204889D09048",
           "mask": "xxxxxxxxxxxxxxxxxxxxxxxx",
@@ -3745,7 +3718,7 @@
         },
         {
           "label": "scorebug-instance-resource-copy",
-          "rva": 17112843,
+          "rva": 17112971,
           "section": ".text",
           "hex": "8B57208993E80200004C8983F00200004C8945E04C8983F8",
           "mask": "xxxxxx????xxxxxxxxxxxxxx",
@@ -3754,16 +3727,16 @@
               "off": 6,
               "end": 10,
               "kind": "rel",
-              "target": 1292181271
+              "target": 1292181399
             }
           ],
           "referenceMatches": 1
         },
         {
           "label": "main-active-scorebug-store",
-          "rva": 18040047,
+          "rva": 18040175,
           "section": ".text",
-          "hex": "4889355A73860966C786E023000000004889F1C5F877E896",
+          "hex": "488935DA72860966C786E023000000004889F1C5F877E896",
           "mask": "xxx????xxxxxxxxxxxxxxxxx",
           "fields": [
             {
@@ -3777,9 +3750,9 @@
         },
         {
           "label": "secondary-active-scorebug-load",
-          "rva": 17126532,
+          "rva": 17126660,
           "section": ".text",
-          "hex": "488B0D751492094885C9756A4C89AD3002000048895C2440",
+          "hex": "488B0DF51392094885C9756A4C89AD3002000048895C2440",
           "mask": "xxx????xxxxxxxxxxxxxxxxx",
           "fields": [
             {
@@ -3793,9 +3766,9 @@
         },
         {
           "label": "native-resource-root-load",
-          "rva": 84409891,
+          "rva": 84410531,
           "section": ".text",
-          "hex": "488B050E54E1064885C074074883C4485E5DC3E8C599B7FF4883C010488945F84889C1E81596B1FFE8B099B7FF4C8B084889C1BA90A40974",
+          "hex": "488B058E51E1064885C074074883C4485E5DC3E8C599B7FF4883C010488945F84889C1E81596B1FFE8B099B7FF4C8B084889C1BA90A40974",
           "mask": "xxx????xxxxxxxxxxxxx????xxxxxxxxxxxx????x????xxxxxxxxxxx",
           "fields": [
             {
@@ -3808,42 +3781,42 @@
               "off": 20,
               "end": 24,
               "kind": "rel",
-              "target": 79665152
+              "target": 79665792
             },
             {
               "off": 36,
               "end": 40,
               "kind": "rel",
-              "target": 79271008
+              "target": 79271648
             },
             {
               "off": 41,
               "end": 45,
               "kind": "rel",
-              "target": 79665152
+              "target": 79665792
             }
           ],
           "referenceMatches": 1
         },
         {
           "label": "scoreboard-registry-four-type-keys",
-          "rva": 17119297,
+          "rva": 17119425,
           "section": ".text",
-          "hex": "C744242018F7E57D4889C1BAC1A905BB41B83B27E5DC41B9C4628E98E81EE107044885C0742C4863084885C9",
+          "hex": "C744242018F7E57D4889C1BAC1A905BB41B83B27E5DC41B9C4628E98E81EE307044885C0742C4863084885C9",
           "mask": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxx????xxxxxxxxxxx",
           "fields": [
             {
               "off": 29,
               "end": 33,
               "kind": "rel",
-              "target": 84744576
+              "target": 84745216
             }
           ],
           "referenceMatches": 1
         },
         {
           "label": "registry-count-rows-stride260",
-          "rva": 17119335,
+          "rva": 17119463,
           "section": ".text",
           "hex": "4863084885C97E244883C004666666662E0F1F8400000000003B300F84A5010000480504010000",
           "mask": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxx????xxxxxx",
@@ -3852,14 +3825,14 @@
               "off": 29,
               "end": 33,
               "kind": "rel",
-              "target": 17119789
+              "target": 17119917
             }
           ],
           "referenceMatches": 1
         },
         {
           "label": "registry-bucket-count-and-pointer",
-          "rva": 84742179,
+          "rva": 84742819,
           "section": ".text",
           "hex": "486386A000000048FFC84C63EF4921C5488B86A80000004E8B24E8",
           "mask": "xxxxxxxxxxxxxxxxxxxxxxxxxxx",
@@ -3868,7 +3841,7 @@
         },
         {
           "label": "registry-row-owner-type-checks",
-          "rva": 84742256,
+          "rva": 84742896,
           "section": ".text",
           "hex": "41F6442423020F8534010000418B04243B45280F85270100008B452C85C0740B41394424040F8515010000498B4424284885C00F84070100008B48543B4D24",
           "mask": "xxxxxxxx????xxxxxxxxx????xxxxxxxxxxxxxx????xxxxxxxxxx????xxxxxx",
@@ -3877,32 +3850,32 @@
               "off": 8,
               "end": 12,
               "kind": "rel",
-              "target": 84742576
+              "target": 84743216
             },
             {
               "off": 21,
               "end": 25,
               "kind": "rel",
-              "target": 84742576
+              "target": 84743216
             },
             {
               "off": 39,
               "end": 43,
               "kind": "rel",
-              "target": 84742576
+              "target": 84743216
             },
             {
               "off": 53,
               "end": 57,
               "kind": "rel",
-              "target": 84742576
+              "target": 84743216
             }
           ],
           "referenceMatches": 1
         },
         {
           "label": "registry-vtable-C8-dispatch",
-          "rva": 84744626,
+          "rva": 84745266,
           "section": ".text",
           "hex": "488B48284C8B1148895424204889C24189F041FF92C8000000904883C4305EC331C04883C4305EC366",
           "mask": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
@@ -3911,7 +3884,7 @@
         },
         {
           "label": "typed-resource-data-getter",
-          "rva": 84696432,
+          "rva": 84697072,
           "section": ".text",
           "hex": "564883EC304883B9800000000074184181F8C1A905BB74174181F82A5F4FC87506488D4218EB0C31C04883C4305EC3488B421848",
           "mask": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
@@ -3948,16 +3921,16 @@
       "anchors": [
         {
           "label": "stand-crowd-selector",
-          "rva": 40790368,
+          "rva": 40790544,
           "section": ".text",
-          "hex": "4883EC28E82700E1FF837808007F1E803D1A6E4708007515488B0551CA3F08803801751C4883C428E973E43F01488B058C6447080FB680F90C00004883C428C30FB680492C00004883C428C3",
+          "hex": "4883EC28E82700E1FF837808007F1E803D6A6D4708007515488B05A1C93F08803801751C4883C428E943E63F01488B05DC6347080FB680F90C00004883C428C30FB680492C00004883C428C3",
           "mask": "xxxxx????xxxxxxxx????xxxxxx????xxxxxxxxxx????xxx????xxxxxxxxxxxxxxxxxxxxxxxx",
           "fields": [
             {
               "off": 5,
               "end": 9,
               "kind": "rel",
-              "target": 38758800
+              "target": 38758976
             },
             {
               "off": 17,
@@ -3975,7 +3948,7 @@
               "off": 41,
               "end": 45,
               "kind": "rel",
-              "target": 61754880
+              "target": 61755520
             },
             {
               "off": 48,
@@ -3988,16 +3961,16 @@
         },
         {
           "label": "drone-selector",
-          "rva": 40795648,
+          "rva": 40795824,
           "section": ".text",
-          "hex": "4883EC28E887EBE0FF837808007F1E803D7A594708007515488B05B1B53F08803801751C4883C428E903D73F01488B05EC4F47080FB680FE0C00004883C428C30FB6804E2C00004883C428C3",
+          "hex": "4883EC28E887EBE0FF837808007F1E803DCA584708007515488B0501B53F08803801751C4883C428E9D3D83F01488B053C4F47080FB680FE0C00004883C428C30FB6804E2C00004883C428C3",
           "mask": "xxxxx????xxxxxxxx????xxxxxx????xxxxxxxxxx????xxx????xxxxxxxxxxxxxxxxxxxxxxxx",
           "fields": [
             {
               "off": 5,
               "end": 9,
               "kind": "rel",
-              "target": 38758800
+              "target": 38758976
             },
             {
               "off": 17,
@@ -4015,7 +3988,7 @@
               "off": 41,
               "end": 45,
               "kind": "rel",
-              "target": 61756720
+              "target": 61757360
             },
             {
               "off": 48,
@@ -4028,16 +4001,16 @@
         },
         {
           "label": "dj-selector",
-          "rva": 40796704,
+          "rva": 40796880,
           "section": ".text",
-          "hex": "4883EC28E867E7E0FF837808007F1E803D5A554708007515488B0591B13F08803801751C4883C428E903D33F01488B05CC4B47080FB680FF0C00004883C428C30FB6804F2C00004883C428C3",
+          "hex": "4883EC28E867E7E0FF837808007F1E803DAA544708007515488B05E1B03F08803801751C4883C428E9D3D43F01488B051C4B47080FB680FF0C00004883C428C30FB6804F2C00004883C428C3",
           "mask": "xxxxx????xxxxxxxx????xxxxxx????xxxxxxxxxx????xxx????xxxxxxxxxxxxxxxxxxxxxxxx",
           "fields": [
             {
               "off": 5,
               "end": 9,
               "kind": "rel",
-              "target": 38758800
+              "target": 38758976
             },
             {
               "off": 17,
@@ -4055,7 +4028,7 @@
               "off": 41,
               "end": 45,
               "kind": "rel",
-              "target": 61756752
+              "target": 61757392
             },
             {
               "off": 48,
@@ -4068,16 +4041,16 @@
         },
         {
           "label": "mc-selector",
-          "rva": 40797744,
+          "rva": 40797920,
           "section": ".text",
-          "hex": "4883EC28E857E3E0FF837808007F1E803D4A514708007515488B0581AD3F08803801751C4883C428E913CF3F01488B05BC4747080FB680000D00004883C428C30FB680502C00004883C428C3",
+          "hex": "4883EC28E857E3E0FF837808007F1E803D9A504708007515488B05D1AC3F08803801751C4883C428E9E3D03F01488B050C4747080FB680000D00004883C428C30FB680502C00004883C428C3",
           "mask": "xxxxx????xxxxxxxx????xxxxxx????xxxxxxxxxx????xxx????xxxxxxxxxxxxxxxxxxxxxxxx",
           "fields": [
             {
               "off": 5,
               "end": 9,
               "kind": "rel",
-              "target": 38758800
+              "target": 38758976
             },
             {
               "off": 17,
@@ -4095,7 +4068,7 @@
               "off": 41,
               "end": 45,
               "kind": "rel",
-              "target": 61756784
+              "target": 61757424
             },
             {
               "off": 48,
@@ -4108,16 +4081,16 @@
         },
         {
           "label": "mc-coupled-selector",
-          "rva": 40800864,
+          "rva": 40801040,
           "section": ".text",
-          "hex": "4883EC28E827D7E0FF837808007F1E803D1A454708007515488B0551A13F08803801751C4883C428E943C33F01488B058C3B47080FB680030D00004883C428C30FB680532C00004883C428C3",
+          "hex": "4883EC28E827D7E0FF837808007F1E803D6A444708007515488B05A1A03F08803801751C4883C428E913C53F01488B05DC3A47080FB680030D00004883C428C30FB680532C00004883C428C3",
           "mask": "xxxxx????xxxxxxxx????xxxxxx????xxxxxxxxxx????xxx????xxxxx????xxxxxxxxxxxxxxx",
           "fields": [
             {
               "off": 5,
               "end": 9,
               "kind": "rel",
-              "target": 38758800
+              "target": 38758976
             },
             {
               "off": 17,
@@ -4135,7 +4108,7 @@
               "off": 41,
               "end": 45,
               "kind": "rel",
-              "target": 61756880
+              "target": 61757520
             },
             {
               "off": 48,
@@ -4147,16 +4120,16 @@
               "off": 57,
               "end": 61,
               "kind": "rip",
-              "target": 2243334813
+              "target": 2243334989
             }
           ],
           "referenceMatches": 1
         },
         {
           "label": "preload-manager-publish",
-          "rva": 38748992,
+          "rva": 38749168,
           "section": ".text",
-          "hex": "4989D04889CA488D0D1B816608E98EFD400066666666662E0F1F8400000000004157415641554154565755534881ECB8",
+          "hex": "4989D04889CA488D0D6B806608E98EFD400066666666662E0F1F8400000000004157415641554154565755534881ECB8",
           "mask": "xxxxxxxxx????x????xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
           "fields": [
             {
@@ -4169,30 +4142,30 @@
               "off": 14,
               "end": 18,
               "kind": "rel",
-              "target": 43008224
+              "target": 43008400
             }
           ],
           "referenceMatches": 1
         },
         {
           "label": "preload-clone-size",
-          "rva": 43008734,
+          "rva": 43008910,
           "section": ".text",
-          "hex": "488B55004883C2084883C10841B86043F200E8DB75B602E9",
+          "hex": "488B55004883C2084883C10841B86043F200E82B79B602E9",
           "mask": "xxxxxxxxxxxxxxxxxxx????x",
           "fields": [
             {
               "off": 19,
               "end": 23,
               "kind": "rel",
-              "target": 88520912
+              "target": 88521936
             }
           ],
           "referenceMatches": 1
         },
         {
           "label": "preload-row-arithmetic",
-          "rva": 43009170,
+          "rva": 43009346,
           "section": ".text",
           "hex": "4863CF4869C910C80000837C0808000F84BA000000488D14084883C2084885D20F843C01000048895608896E10897E14",
           "mask": "xxxxxxxxxxxxxxxxx????xxxxxxxxxxxxx????xxxxxxxxxx",
@@ -4201,64 +4174,64 @@
               "off": 17,
               "end": 21,
               "kind": "rel",
-              "target": 43009377
+              "target": 43009553
             },
             {
               "off": 34,
               "end": 38,
               "kind": "rel",
-              "target": 43009524
+              "target": 43009700
             }
           ],
           "referenceMatches": 1
         },
         {
           "label": "blacktop-size-bounds",
-          "rva": 53450824,
+          "rva": 53451208,
           "section": ".text",
-          "hex": "83FE040F871C010000E85A50960084C0750789F1E81FFAFF",
+          "hex": "83FE040F871C010000E85A51960084C0750789F1E81FFAFF",
           "mask": "xxxxx????x????xxxxxxxxxx",
           "fields": [
             {
               "off": 5,
               "end": 9,
               "kind": "rel",
-              "target": 53451117
+              "target": 53451501
             },
             {
               "off": 10,
               "end": 14,
               "kind": "rel",
-              "target": 63301808
+              "target": 63302448
             }
           ],
           "referenceMatches": 1
         },
         {
           "label": "blacktop-preset-175-plus-index",
-          "rva": 53451049,
+          "rva": 53451433,
           "section": ".text",
-          "hex": "8D8EAF000000E8FC8C23FFE8774F960084C07530E82EDBF5",
+          "hex": "8D8EAF000000E82C8C23FFE87750960084C07530E85EDAF5",
           "mask": "xxxxxxx????x????xxxxxxxx",
           "fields": [
             {
               "off": 7,
               "end": 11,
               "kind": "rel",
-              "target": 39003696
+              "target": 39003872
             },
             {
               "off": 12,
               "end": 16,
               "kind": "rel",
-              "target": 63301808
+              "target": 63302448
             }
           ],
           "referenceMatches": 1
         },
         {
           "label": "standing-source-tag",
-          "rva": 62723554,
+          "rva": 62724194,
           "section": ".text",
           "hex": "0FB68729740000A8047557A802757885F60F85BB000000E8",
           "mask": "xxxxxxxxxxxxxxxxxxx????x",
@@ -4267,23 +4240,23 @@
               "off": 19,
               "end": 23,
               "kind": "rel",
-              "target": 62723764
+              "target": 62724404
             }
           ],
           "referenceMatches": 1
         },
         {
           "label": "standing-source-flag",
-          "rva": 62723729,
+          "rva": 62724369,
           "section": ".text",
-          "hex": "0FB68F30740000BABE0D9B5341B8AA4C0000E83862B1FEF6",
+          "hex": "0FB68F30740000BABE0D9B5341B8AA4C0000E86860B1FEF6",
           "mask": "xxxxxxxxxxxxxxxxxxx????x",
           "fields": [
             {
               "off": 19,
               "end": 23,
               "kind": "rel",
-              "target": 40794336
+              "target": 40794512
             }
           ],
           "referenceMatches": 1
@@ -4314,11 +4287,7 @@
       "key": "outfits",
       "label": "Outfit editing and carry-over",
       "depends": [],
-      "blockers": [
-        "Admission needs the full game-file SHA-256.",
-        "25 method bodies are proven by hashes.",
-        "The native outfit worker is compiled for this exact build."
-      ],
+      "blockers": [],
       "anchors": [],
       "constants": []
     },
@@ -4326,10 +4295,7 @@
       "key": "jukebox",
       "label": "Jukebox and Freestyle playlist",
       "depends": [],
-      "blockers": [
-        "Audio codec anchors need the full game-file SHA-256.",
-        "The Freestyle playlist profile is compiled into the native proxy."
-      ],
+      "blockers": [],
       "anchors": [],
       "constants": []
     }

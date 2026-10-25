@@ -274,7 +274,10 @@ fn selection_world_state_is_irrelevant_but_the_court_record_must_be_private_rw()
             3 => f.q(MANAGER + 0x18, WORLD + 16),
             _ => f.q(MANAGER + 0x70, MANAGER + 0x200),
         };
-        assert!(capture(&f, &chosen()).unwrap().ready(), "world fault {fault}");
+        assert!(
+            capture(&f, &chosen()).unwrap().ready(),
+            "world fault {fault}"
+        );
     }
     let mut f = fixture();
     f.protection = 0x40;
@@ -323,7 +326,10 @@ fn court_record_follows_the_games_own_setting_like_native_normalization() {
     assert_eq!(court_model(ball::NORMAL).unwrap(), ball::NORMAL);
     assert!(court_model(0xD1C5F442).is_err());
     let f = fixture();
-    assert_eq!(capture(&f, &chosen()).unwrap().original.model, COURT_DEFAULT);
+    assert_eq!(
+        capture(&f, &chosen()).unwrap().original.model,
+        COURT_DEFAULT
+    );
     let mut f = fixture();
     f.d(OWNER + MODEL, 0xD1C5F442);
     assert!(capture(&f, &chosen()).is_err());
@@ -536,7 +542,7 @@ fn installed_v2_gameplay_ball_profile_is_independently_verified() {
     .unwrap();
     assert_eq!(
         format!("{:X}", Sha256::digest(&bytes)),
-        "29A96471C55909FC2BCEA6C699C59238656A501C19B50C74ED64B0D842E576A1"
+        "B673EB04593D6D5A4DFB9E270178E04C017BD9F277514D256EA98FFB792ED27B"
     );
     let u16at = |at| u16::from_le_bytes(bytes[at..at + 2].try_into().unwrap()) as usize;
     let u32at = |at| u32::from_le_bytes(bytes[at..at + 4].try_into().unwrap()) as usize;

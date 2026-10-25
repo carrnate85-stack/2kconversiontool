@@ -1,0 +1,47 @@
+2K LAUNCHER — NEXT CHAT HANDOFF QA103
+Written 2026-10-21 after the startup-video save-barrier fix.
+
+CANONICAL PROJECT
+C:\Users\carrn\CodexProjects\2kconversiontool\nba2k27-launcher-tauri2
+
+CURRENT MAIN / SHARE / DEV
+- Version: 0.53.7, candidate QA103.
+- Main: C:\Program Files (x86)\Steam\steamapps\common\NBA 2K27\2k Launcher\App\2k Launcher Rust.exe
+- Share: Builds\0.53.7\Share-QA103-Startup-Video\NBA 2K27 Launcher 0.53.7.exe
+- Dev: Dev\Pending\QA103\launcher.exe
+- bytes: 34494976
+- SHA-256: B63901E73FF5AC99643DB0C93290807E85993B6E8BAB0332AF078E358FFD091F
+
+QA103 FIX
+- The failed observation was consistent with a settings race: the game started
+  at 7:10:00 PM and Data\Rust\settings.json saved the enabled NBA 2K14 intro
+  at 7:11:22 PM. The MP4 itself was present and matched its catalog hash.
+- Play now drains the serialized settings stream before dispatching native
+  launch. A setting save failure prevents launch.
+- Startup-video UI says it applies to the next Play session.
+- Active Play shows startup-video phase/error outside Advanced.
+- Focused regression proves launch waits and is refused after barrier failure.
+
+VALIDATION
+- 44 frontend files / 236 tests passed.
+- TypeScript, Vite production build, Rust fmt, locked offline release check and
+  optimized locked release build passed with dev-wnba-categories and
+  dev-debug-menus.
+- Isolated GUI smoke timed out without producing its report. The exact owned
+  test process was closed; no NBA2K27 process started. Do not count it as pass.
+- Live startup-video playback remains to be confirmed on the next normal Play.
+- QA073 natural Rust access violation and QA078 Clang fixture crash remain
+  unresolved qualifications.
+
+PROMOTION
+- Main installed hash matches Share and Dev.
+- All 175 Data files and 482 Library files were hash-verified unchanged.
+- Recovery: C:\Program Files (x86)\Steam\steamapps\common\NBA 2K27\2k Launcher\Recovery\App-before-QA103-20261021-193649-9225
+- Receipt: artifacts\qa103-main-promotion-20261021-193649-9225.json
+
+NEXT LIVE CHECK
+1. Open Main normally.
+2. Enable Startup video and select a clip.
+3. Click Play immediately after the selection to exercise the fixed race.
+4. Confirm the clip appears; if not, capture the visible Startup video status
+   on Play and Data\Rust\Logs without changing or replaying the session.

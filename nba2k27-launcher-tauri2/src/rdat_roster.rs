@@ -214,7 +214,8 @@ impl Table {
     fn crcs_ok(&self, salt: &[u8]) -> bool {
         let content = [self.data.as_slice(), &self.aux].concat();
         let (off, len) = (self.h(5) as usize, self.h(6) as usize);
-        (len == 0 || (off + len <= content.len() && crc(&content[off..off + len], salt) == self.h(7)))
+        (len == 0
+            || (off + len <= content.len() && crc(&content[off..off + len], salt) == self.h(7)))
             && (self.h(2) == 0 || crc(&self.aux, salt) == self.h(4))
     }
     fn chunk(&self, salt: &[u8]) -> Vec<u8> {
@@ -367,7 +368,10 @@ impl Roster {
             "Roster zip must hold one stored roster.RDAT member"
         );
         let rdat = &iff[data_at..data_at + csize];
-        ensure!(crc32fast::hash(rdat) == crc32, "Roster zip member CRC differs");
+        ensure!(
+            crc32fast::hash(rdat) == crc32,
+            "Roster zip member CRC differs"
+        );
         let central = &iff[data_at + csize..];
         let eocd = central
             .windows(4)
@@ -394,11 +398,17 @@ impl Roster {
                 "Roster bundle header missing at {p:#x}"
             );
             let size = le(rdat, p + 4) as usize;
-            ensure!(p + 8 + HEADER + size <= rdat.len(), "Roster bundle truncated");
+            ensure!(
+                p + 8 + HEADER + size <= rdat.len(),
+                "Roster bundle truncated"
+            );
             chunks.push(&rdat[p + 8..p + 8 + HEADER + size]);
             p += 8 + HEADER + size;
         }
-        ensure!(p == rdat.len() && chunks.len() >= 2, "Roster bundle stream is malformed");
+        ensure!(
+            p == rdat.len() && chunks.len() >= 2,
+            "Roster bundle stream is malformed"
+        );
         let dir = chunks[0];
         let dh = |i: usize| le(dir, 4 * i);
         ensure!(
@@ -428,7 +438,9 @@ impl Roster {
             let id = be(body, q + 8 * k);
             ids.push(id);
             ensure!(
-                counts.insert(id, be(body, q + 8 * k + 4) as usize).is_none(),
+                counts
+                    .insert(id, be(body, q + 8 * k + 4) as usize)
+                    .is_none(),
                 "Roster directory repeats a table"
             );
         }
@@ -436,11 +448,16 @@ impl Roster {
         let mut tables = BTreeMap::new();
         for c in &chunks[1..] {
             let id = le(c, 0);
-            let rows = *counts.get(&id).context("Roster table missing from directory")?;
+            let rows = *counts
+                .get(&id)
+                .context("Roster table missing from directory")?;
             order.push(id);
             tables.insert(id, Table::parse(c, rows)?);
         }
-        ensure!(order == ids, "Roster directory order differs from its tables");
+        ensure!(
+            order == ids,
+            "Roster directory order differs from its tables"
+        );
         Ok(Self {
             zip_local: iff[..data_at].to_vec(),
             zip_central: central.to_vec(),
@@ -501,7 +518,9 @@ impl Roster {
         dir.extend_from_slice(&body);
         dir.resize(HEADER + padded(body.len()), 0);
         let mut out = self.rdat_prefix.clone();
-        for chunk in std::iter::once(dir).chain(self.order.iter().map(|id| self.tables[id].chunk(salt))) {
+        for chunk in
+            std::iter::once(dir).chain(self.order.iter().map(|id| self.tables[id].chunk(salt)))
+        {
             out.extend_from_slice(b"BNDL");
             out.extend_from_slice(&((chunk.len() - HEADER) as u32).to_le_bytes());
             out.extend_from_slice(&chunk);
@@ -564,7 +583,16 @@ mod tests {
     }
     #[test]
     fn chunk_padding_rule_matches_stock_rosters() {
-        for (content, extra) in [(0, 4), (4, 0), (1, 3), (5, 7), (2, 2), (6, 6), (3, 1), (7, 5)] {
+        for (content, extra) in [
+            (0, 4),
+            (4, 0),
+            (1, 3),
+            (5, 7),
+            (2, 2),
+            (6, 6),
+            (3, 1),
+            (7, 5),
+        ] {
             assert_eq!(padded(800 + content) - (800 + content), extra);
         }
     }

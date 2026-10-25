@@ -555,6 +555,9 @@ describe("native Jukebox screen", () => {
     expect(html).toContain('class="card jukebox-controls"');
     expect(html).not.toContain('aria-label="Music catalog"');
     expect(html).toContain('aria-label="Selected playlist songs"');
+    expect(html).toContain(
+      'class="jukebox-table-body" role="list" tabindex="0" aria-label="Playlist song list"',
+    );
     expect(html).toContain('aria-label="Search music"');
     expect(html).toContain("New Version 2 song");
     expect(html).toContain('class="jukebox-art-placeholder"');
@@ -563,6 +566,9 @@ describe("native Jukebox screen", () => {
     expect(html).toContain("Find missing artwork");
     expect(html).toContain(">Edit</button>");
     expect(html).toContain(">Remove</button>");
+    expect(html).toMatch(/aria-label="Move song 1 up"[^>]*disabled[^>]*><svg[^>]*>[\s\S]*?<\/svg><\/button>/);
+    expect(html).toMatch(/aria-label="Move song 1 down"[^>]*><svg[^>]*>[\s\S]*?<\/svg><\/button>/);
+    expect(html).toContain('class="nav-icon"');
     expect(html).toContain(">Reorder</button>");
     expect(html).toContain(">Folder</button>");
     expect(html).toContain("Import a .2kplaylist share file");

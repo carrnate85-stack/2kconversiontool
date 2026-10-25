@@ -74,6 +74,18 @@ fn decoded_dir() -> Option<PathBuf> {
     std::env::var_os("C27_WNBA_ROSTER_DECODED").map(PathBuf::from)
 }
 
+#[test]
+#[ignore = "explicit installed archive and executable audit; read-only and requires C27_GAME_EXE"]
+fn updated_installed_game_keeps_pinned_wnba_inputs_and_salt() {
+    let exe = PathBuf::from(std::env::var_os("C27_GAME_EXE").expect("C27_GAME_EXE"));
+    assert_eq!(exe.file_name().unwrap(), "NBA2K27.exe");
+    assert_eq!(read_salt(&exe).unwrap().len(), SALT_LEN);
+    let game = exe.parent().unwrap();
+    let [nba, wnba] = read_indexed(game, [PATH, WNBA_PATH], &|| Ok(())).unwrap();
+    assert_eq!(sha256_hex(&nba), STOCK_NBA_SHA256);
+    assert_eq!(sha256_hex(&wnba), STOCK_WNBA_SHA256);
+}
+
 /// Rust merge reproduces tools/roster_merge_wnba.py byte for byte.
 /// C27_WNBA_ROSTER_DECODED = folder with learn2k_roster.decoded.iff and
 /// learn2k_wnba_roster.decoded.iff; C27_GAME_EXE = installed NBA2K27.exe.
@@ -109,10 +121,12 @@ fn decoded_stock_merge_matches_offline_hashes_for_every_variant() {
 #[test]
 #[ignore]
 fn installed_game_build_decrypts_merges_and_caches() {
-    let key = fs::read(std::env::var_os("C27_WNBA_ROSTER_KEY").expect("C27_WNBA_ROSTER_KEY")).unwrap();
+    let key =
+        fs::read(std::env::var_os("C27_WNBA_ROSTER_KEY").expect("C27_WNBA_ROSTER_KEY")).unwrap();
     let exe = PathBuf::from(std::env::var_os("C27_GAME_EXE").expect("C27_GAME_EXE"));
     let game = exe.parent().unwrap();
-    let root = std::env::temp_dir().join(format!("rust-wnba-build-{}", crate::backend::unique_id()));
+    let root =
+        std::env::temp_dir().join(format!("rust-wnba-build-{}", crate::backend::unique_id()));
     fs::create_dir_all(root.join("Data")).unwrap();
     let prepared = build(&root, game, Variant::WpfEra, &key, || Ok(())).unwrap();
     assert_eq!(prepared.summary.teams, 403);

@@ -1,0 +1,13 @@
+QA121 - remaining unsupported accessories, dev only - 2026-10-22
+
+Read artifacts/qa121-accessory-remaining/REPORT.txt and comparison.json first. User requested remaining 57 fixes, DEV ONLY, no installation/promotion. No computer use. No app/game activation or live memory performed.
+
+45 hats now supported; 12 WNBA sleeves remain guarded. Exact null/full-range texture evidence and per-source material guards added. Full-range RGB correction scoped to verified new base palettes; artwork cache keys distinguish range state. No extra texture reads/render passes. Source backup Backups\qa121-accessory-remaining-20261022-160637.
+
+Full 3,731-candidate sweep plus final 45-hat scope recheck recorded in comparison.json; final baseline is final-baseline.json. All 45 warm-cache checks passed. 10 helper tests, 245 frontend tests, TypeScript, Vite, syntax checks and native release passed. 90 native warnings. Offline status does not establish GPU or visual acceptance.
+
+Sleeve UV/alpha analysis found visible UV overlap with zero/partial alpha. Historical acc_nologo shader definitions were found, but current discard/cutout semantics remain unverified. Research-only sleeve-probe-runtime.js exists only under artifacts; never ship its support bypass. Preserve the production guard. Exact source/reference hashes retained.
+
+Staged QA121 v0.53.25, 46966272 bytes; EXE C641D2C894769372AB4F02D6A49DAE86A91E324A2ACE6057DDF78C517C0AB611; PDB B989EF549435758035380ED9FB58461916B3944D8120978B63DC1C2E6280FEE5. User starter Open QA121 Dev.lnk. CheckOnly passed without activation. Dev/Portable, installed/sharing builds, user Data/Library preserved. Do not install/promote without permission.
+
+Unresolved qualifications: QA073 natural Rust AV/exact EXE-PDB; QA078 Clang fixture crash; QA106 Season History smoke persistence. Visual verification for QA121 remains pending.

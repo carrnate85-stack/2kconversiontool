@@ -61,16 +61,46 @@ pub(crate) fn known_build(key: &str) -> Option<&'static str> {
 const HELPERS: [(&str, &str, &[&str]); 13] = [
     ("session", "Game session", &[""]),
     ("loader", "Session loader", &["/nativeProvider"]),
-    ("camera", "Cameras", &["/nativeProvider/v2Features/features/cameras"]),
-    ("scaler", "Scaler", &["/nativeProvider/v2Features/features/scaler"]),
+    (
+        "camera",
+        "Cameras",
+        &["/nativeProvider/v2Features/features/cameras"],
+    ),
+    (
+        "scaler",
+        "Scaler",
+        &["/nativeProvider/v2Features/features/scaler"],
+    ),
     ("arena", "Arena", &["/nativeProvider/arena"]),
     ("ball", "Ball", &["/nativeProvider/ball"]),
     ("scoreboard", "Scoreboard", &["/nativeProvider/scoreboard"]),
     ("carry", "Outfit carry-over", &["/nativeProvider/outfits"]),
-    ("crowd", "Crowd removal", &["/nativeProvider/v2Features/features/crowd", "/nativeProvider/presentation/crowd"]),
-    ("presentation", "Drone / DJ / MC", &["/nativeProvider/v2Features/features/presentation", "/nativeProvider/presentation"]),
-    ("freestyle", "Freestyle unlock", &["/nativeProvider/v2Features/features/wnba-freestyle"]),
-    ("blacktop", "Blacktop teams", &["/nativeProvider/v2Features/features/wnba-blacktop"]),
+    (
+        "crowd",
+        "Crowd removal",
+        &[
+            "/nativeProvider/v2Features/features/crowd",
+            "/nativeProvider/presentation/crowd",
+        ],
+    ),
+    (
+        "presentation",
+        "Drone / DJ / MC",
+        &[
+            "/nativeProvider/v2Features/features/presentation",
+            "/nativeProvider/presentation",
+        ],
+    ),
+    (
+        "freestyle",
+        "Freestyle unlock",
+        &["/nativeProvider/v2Features/features/wnba-freestyle"],
+    ),
+    (
+        "blacktop",
+        "Blacktop teams",
+        &["/nativeProvider/v2Features/features/wnba-blacktop"],
+    ),
     ("debug", "Debug menus", &[]),
 ];
 
@@ -193,8 +223,13 @@ fn samples(root: &Path) -> Vec<Value> {
 static PERF_LOCK: Mutex<()> = Mutex::new(());
 pub(crate) fn record(root: &Path, name: &str, ms: f64, smoke: bool) -> Result<()> {
     ensure!(METRICS.contains(&name), "Unsupported timing event.");
-    ensure!(ms.is_finite() && (0.0..=600000.0).contains(&ms), "Unsupported timing event.");
-    let _g = PERF_LOCK.lock().map_err(|_| anyhow::anyhow!("Timing unavailable"))?;
+    ensure!(
+        ms.is_finite() && (0.0..=600000.0).contains(&ms),
+        "Unsupported timing event."
+    );
+    let _g = PERF_LOCK
+        .lock()
+        .map_err(|_| anyhow::anyhow!("Timing unavailable"))?;
     let mut all = samples(root);
     all.push(json!({"name":name,"ms":(ms*10.).round()/10.,"version":crate::backend::VERSION,"lane":if smoke {"qa"} else {"normal"},"at":now_iso()}));
     let skip = all.len().saturating_sub(300);
@@ -208,7 +243,11 @@ fn median(mut v: Vec<f64>) -> Option<f64> {
     }
     v.sort_by(|a, b| a.total_cmp(b));
     let m = v.len() / 2;
-    Some(if v.len() % 2 == 1 { v[m] } else { (v[m - 1] + v[m]) / 2. })
+    Some(if v.len() % 2 == 1 {
+        v[m]
+    } else {
+        (v[m - 1] + v[m]) / 2.
+    })
 }
 /// `summarize` (launcher-health.js:8-12): per metric and lane, last 20 of
 /// this version; baseline = last 20 of the newest prior version.
@@ -290,14 +329,30 @@ fn features(build: &Value) -> Vec<(&'static str, &'static str, bool)> {
     let writes = build["nativeWritesMapped"] == true;
     let flag = |k: &str| build[k] == true;
     vec![
-        ("session", "Game session", build["modProviderMapped"] == true),
+        (
+            "session",
+            "Game session",
+            build["modProviderMapped"] == true,
+        ),
         ("roster", "Roster / Team editor", v2),
         ("seasons", "Season history", false),
         ("camera", "Cameras", v2 || writes),
         ("arena", "Arena", flag("version2ArenaBallMapped") || writes),
-        ("scoreboard", "Scoreboard", flag("version2ScoreboardMapped") || writes),
-        ("outfits", "Outfits", flag("version2OutfitCarryMapped") || writes),
-        ("ball", "Ball selection", flag("version2GameplayBallMapped") || writes),
+        (
+            "scoreboard",
+            "Scoreboard",
+            flag("version2ScoreboardMapped") || writes,
+        ),
+        (
+            "outfits",
+            "Outfits",
+            flag("version2OutfitCarryMapped") || writes,
+        ),
+        (
+            "ball",
+            "Ball selection",
+            flag("version2GameplayBallMapped") || writes,
+        ),
         ("rules", "Game rules", v2 || writes),
         ("crowd", "Crowd removal", flag("observerMapped")),
         ("debug", "Debug menus", false),
@@ -381,8 +436,10 @@ fn redact_text(text: &str, known: &[String]) -> String {
 fn redact(value: &Value, key: &str, known: &[String]) -> Value {
     static SECRET: OnceLock<Regex> = OnceLock::new();
     static PATHKEY: OnceLock<Regex> = OnceLock::new();
-    let secret = SECRET.get_or_init(|| re(r"(?i)(token|secret|password|credential|authorization|cookie)$"));
-    let pathkey = PATHKEY.get_or_init(|| re(r"(?i)(path|root|directory|folder|file|target|executable)$"));
+    let secret =
+        SECRET.get_or_init(|| re(r"(?i)(token|secret|password|credential|authorization|cookie)$"));
+    let pathkey =
+        PATHKEY.get_or_init(|| re(r"(?i)(path|root|directory|folder|file|target|executable)$"));
     match value {
         Value::Object(m) => Value::Object(
             m.iter()
@@ -422,7 +479,9 @@ pub(crate) fn provider_test(root: &Path, mods_root: &Path, logical: &str) -> Val
         ensure!(
             !logical.is_empty()
                 && logical.len() <= 260
-                && !logical.split('/').any(|p| p.is_empty() || p == "." || p == "..")
+                && !logical
+                    .split('/')
+                    .any(|p| p.is_empty() || p == "." || p == "..")
                 && !logical.contains(':'),
             "Enter a relative asset path inside the mods folder"
         );
@@ -430,15 +489,21 @@ pub(crate) fn provider_test(root: &Path, mods_root: &Path, logical: &str) -> Val
         let fixture = root.join("Cache/ProviderTest");
         fs::create_dir_all(&fixture)?;
         let started = std::time::Instant::now();
-        let mut worker =
-            crate::provider_worker::Worker::start(&fixture.join("NBA2K27.exe"), mods_root, &[], &[])?;
+        let mut worker = crate::provider_worker::Worker::start(
+            &fixture.join("NBA2K27.exe"),
+            mods_root,
+            &[],
+            &[],
+        )?;
         let result = (|| -> Result<Value> {
             let status = worker.control(json!({"operation":"status"}))?;
             let query = worker.control(json!({"operation":"query","logicalPath":logical}));
             let mut foreign = worker.identity.clone();
             foreign.started = "1".into();
             let denied = worker.bind_game(&foreign).is_err();
-            Ok(json!({"status":status,"query":query.map_err(|e| format!("{e:#}")),"foreignDenied":denied}))
+            Ok(
+                json!({"status":status,"query":query.map_err(|e| format!("{e:#}")),"foreignDenied":denied}),
+            )
         })();
         worker.stop()?;
         let exited = worker.exited()?;
@@ -458,7 +523,9 @@ pub(crate) fn provider_test(root: &Path, mods_root: &Path, logical: &str) -> Val
             },
         }))
     })();
-    outcome.unwrap_or_else(|e| json!({"passed":false,"path":logical,"message":format!("FAIL · {e:#}")}))
+    outcome.unwrap_or_else(
+        |e| json!({"passed":false,"path":logical,"message":format!("FAIL · {e:#}")}),
+    )
 }
 
 fn sha256_file(path: &Path) -> Result<String> {
@@ -479,7 +546,12 @@ fn sha256_file(path: &Path) -> Result<String> {
 /// exact build identity, stock manifest listing, loose asset presence and the
 /// resolver outcome. It never launches the game, attaches, or writes the
 /// game folder.
-pub(crate) fn bridge_audit(root: &Path, game_root: &Path, mods_root: &Path, logical: &str) -> Result<Value> {
+pub(crate) fn bridge_audit(
+    root: &Path,
+    game_root: &Path,
+    mods_root: &Path,
+    logical: &str,
+) -> Result<Value> {
     let exe = game_root.join("NBA2K27.exe");
     ensure!(exe.is_file(), "Choose the installed NBA 2K27 folder.");
     let logical = logical.trim().replace('\\', "/");
@@ -490,7 +562,11 @@ pub(crate) fn bridge_audit(root: &Path, game_root: &Path, mods_root: &Path, logi
     let identity = pe_identity(&exe)?;
     let sha = sha256_file(&exe)?;
     let label = known_build(&identity);
-    let leaf = logical.rsplit('/').next().unwrap_or(&logical).to_ascii_lowercase();
+    let leaf = logical
+        .rsplit('/')
+        .next()
+        .unwrap_or(&logical)
+        .to_ascii_lowercase();
     let manifest = game_root.join("manifest");
     let listed = if manifest.is_file() {
         let mut text = String::new();
@@ -508,9 +584,20 @@ pub(crate) fn bridge_audit(root: &Path, game_root: &Path, mods_root: &Path, logi
     let line = format!(
         "READ-ONLY RESULT · exact build {} · stock manifest {} · loose asset {} · provider layout {} · live registration result PENDING.",
         if label.is_some() { "YES" } else { "NO" },
-        match listed { Some(true) => "LISTED", Some(false) => "ABSENT", None => "NOT FOUND" },
-        if loose.is_file() { "PRESENT" } else { "MISSING" },
-        resolver["status"].as_str().unwrap_or("unknown").to_ascii_uppercase(),
+        match listed {
+            Some(true) => "LISTED",
+            Some(false) => "ABSENT",
+            None => "NOT FOUND",
+        },
+        if loose.is_file() {
+            "PRESENT"
+        } else {
+            "MISSING"
+        },
+        resolver["status"]
+            .as_str()
+            .unwrap_or("unknown")
+            .to_ascii_uppercase(),
     );
     Ok(json!({
         "mode": "offline-read-only",
@@ -558,11 +645,17 @@ mod tests {
         let mk = |ver: &str, ms: f64| json!({"name":"catalog.ball","ms":ms,"version":ver,"lane":"normal"});
         let mut all: Vec<Value> = (0..3).map(|_| mk("0.0.1", 100.)).collect();
         all.extend((0..3).map(|_| mk(v, 250.)));
-        let row = summarize(&all).into_iter().find(|r| r["name"] == "catalog.ball").unwrap();
+        let row = summarize(&all)
+            .into_iter()
+            .find(|r| r["name"] == "catalog.ball")
+            .unwrap();
         assert_eq!(row["regression"], true);
         assert_eq!(row["baselineMs"], 100.);
         all.truncate(5);
-        let row = summarize(&all).into_iter().find(|r| r["name"] == "catalog.ball").unwrap();
+        let row = summarize(&all)
+            .into_iter()
+            .find(|r| r["name"] == "catalog.ball")
+            .unwrap();
         assert_eq!(row["regression"], false);
     }
     #[test]

@@ -1,0 +1,13 @@
+QA122 - WNBA sleeve alpha handling - 2026-10-22
+
+Latest request: fix remaining 12 WNBA sleeves, DEV ONLY; no installation/promotion. No computer use. No app/game activation or live memory performed.
+Read artifacts/qa122-sleeve-alpha/REPORT.txt, comparison.json and shader-evidence.json first.
+
+All twelve exact-source full/slouch left/right WNBA outfit02/05/10 sleeves are mapped. Retained acc_nologo DXIL reads ColorTexture RGB only, writes opaque color alpha and has no discard in 14 pixel shaders. Current source bindings/defaults checked. Source texture alpha overlaps UVs but is not opacity in the verified reference shader path. Do not claim current shader bytecode was decoded.
+
+Production changes: separate opaqueSleeves map with exact records/shader/DDS/format/dimensions/range guards; viewer opaqueColor shader flag, set alpha to 1 before multiply, cache identity includes alpha policy. Other alpha/mappings unchanged. Generated assets rebuilt normally. Backup Backups\qa122-sleeve-alpha-20261022-162829.
+
+All 12 worker samples and 57 cold/warm checks pass. Twelve helper tests, 245 frontend tests, TypeScript/Vite/syntax/native build pass. Full audit: 3,731 checked, 12 improvements, zero regressions, zero unsupported in this original audit set (not the entire catalog); results in comparison.json/final-baseline.json; no visual/GPU/gameplay acceptance implied. Current localbuildglobal decoding remains unresolved. Preserve QA073 natural Rust AV/exact EXE-PDB, QA078 Clang fixture crash and QA106 Season History persistence qualification.
+
+QA122 v0.53.26, 46966784 bytes staged only. EXE SHA256 B15511320A4CDF373B04AF9A51F801A0CC4926AA350252BEC648AE629042B20D; PDB SHA256 20101951D912B831AC462F7750AC84588E61291FDBDB3669D96D8875140313C0.
+Open QA122 Dev.lnk / Start QA122 Dev.ps1. CheckOnly passed without activation. User click backs up/updates Dev/Portable only. Installed/sharing builds and Data/Library untouched. No install/promotion without permission.

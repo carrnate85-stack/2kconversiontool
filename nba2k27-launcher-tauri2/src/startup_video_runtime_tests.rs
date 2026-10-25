@@ -3,6 +3,7 @@ use crate::startup_video_native::Bounds;
 #[derive(Default)]
 struct Fake {
     log: Vec<String>,
+    diagnostics: Vec<String>,
     window: Option<OwnedWindow>,
     audio: VecDeque<Notice>,
     fail_create: bool,
@@ -25,6 +26,15 @@ impl Port for Fake {
     fn create_hidden(&mut self, _: OwnedWindow, _: Volume) -> Result<()> {
         self.log.push("hidden".into());
         ensure!(!self.fail_create, "fixture create failure");
+        Ok(())
+    }
+    fn create_owner(&mut self, _owner: u64, _volume: Volume) -> Result<()> {
+        self.log.push("owner-hidden".into());
+        ensure!(!self.fail_create, "fixture create failure");
+        Ok(())
+    }
+    fn bind_game(&mut self, _game: crate::startup_video_native::ExpectedGame) -> Result<()> {
+        self.log.push("bind-game".into());
         Ok(())
     }
     fn start_audio(&mut self) -> Result<()> {
@@ -73,7 +83,9 @@ impl Port for Fake {
         self.log.push("conditional-focus".into());
         Ok(())
     }
-    fn diagnostic(&mut self, _: &str) {}
+    fn diagnostic(&mut self, message: &str) {
+        self.diagnostics.push(message.into());
+    }
 }
 fn key() -> GameKey {
     GameKey { pid: 10, birth: 20 }
@@ -336,4 +348,129 @@ fn a_post_ready_zero_mutation_claim_cannot_release_audio_ownership() {
     assert!(!e.finished());
     assert_eq!(e.phase(), Phase::RestorationPending);
     assert!(e.audio_started);
+}
+#[test]
+fn prepare_timeout_identifies_media_vs_audio_without_playing_or_losing_restore_ownership() {
+    let mut media = preparing();
+    media.step(15_300).unwrap();
+    assert!(media.finished());
+    assert!(
+        media
+            .port
+            .diagnostics
+            .iter()
+            .any(|d| d.contains("decodable media"))
+    );
+    assert!(
+        !media
+            .port
+            .log
+            .iter()
+            .any(|d| d == "audio-start" || d == "play")
+    );
+    let mut audio = preparing();
+    audio.event(1, Event::VideoPrepared, 310).unwrap();
+    audio.step(15_300).unwrap();
+    assert!(!audio.finished());
+    assert!(
+        audio
+            .port
+            .diagnostics
+            .iter()
+            .any(|d| d.contains("audio guardian did not become ready"))
+    );
+    assert!(!audio.port.log.iter().any(|d| d == "play"));
+    audio.port.audio.push_back(Notice::Restored);
+    audio.step(15_400).unwrap();
+    assert!(audio.finished());
+}
+
+fn launched_game() -> crate::startup_video_native::ExpectedGame {
+    crate::startup_video_native::ExpectedGame::new(
+        key(),
+        std::path::Path::new(r"C:\Game\NBA2K27.exe"),
+    )
+    .unwrap()
+}
+#[test]
+fn play_click_starts_without_game_or_audio_then_binds_without_replaying() {
+    let mut e = Engine::launch(1, 50, Fake::default(), 0).unwrap();
+    assert_eq!(e.phase(), Phase::Preparing);
+    e.event(1, Event::VideoPrepared, 10).unwrap();
+    assert_eq!(e.phase(), Phase::Playing);
+    assert!(e.port.log.contains(&"play".into()));
+    assert!(!e.port.log.contains(&"audio-start".into()));
+    e.bind_launched_game(launched_game(), 100).unwrap();
+    e.port.audio.push_back(Notice::Watching(Some(Volume {
+        level: 0.4,
+        muted: false,
+    })));
+    e.step(116).unwrap();
+    assert_eq!(e.phase(), Phase::Playing);
+    assert_eq!(e.port.log.iter().filter(|v| *v == "play").count(), 1);
+    assert_eq!(e.port.log.iter().filter(|v| *v == "audio-start").count(), 1);
+    assert!(e.bind_launched_game(launched_game(), 120).is_err());
+}
+#[test]
+fn early_skip_cannot_start_late_game_audio_or_replay() {
+    let mut e = Engine::launch(1, 50, Fake::default(), 0).unwrap();
+    e.event(1, Event::VideoPrepared, 10).unwrap();
+    e.event(1, Event::PointerReleased, 800).unwrap();
+    assert!(e.finished());
+    e.bind_launched_game(launched_game(), 900).unwrap();
+    assert!(!e.port.log.contains(&"bind-game".into()));
+    assert!(!e.port.log.contains(&"audio-start".into()));
+}
+#[test]
+fn failed_launch_closes_pre_game_video_without_audio_mutation() {
+    let mut e = Engine::launch(1, 50, Fake::default(), 0).unwrap();
+    e.event(1, Event::VideoPrepared, 10).unwrap();
+    e.event(1, Event::Finish(Reason::LaunchFailed), 100)
+        .unwrap();
+    assert!(e.finished());
+    assert!(e.port.log.contains(&"silence".into()));
+    assert!(e.port.log.contains(&"destroy".into()));
+    assert!(!e.port.log.contains(&"audio-start".into()));
+}
+#[test]
+fn binding_before_canplay_still_waits_for_decodable_media_before_ducking() {
+    let mut e = Engine::launch(1, 50, Fake::default(), 0).unwrap();
+    e.bind_launched_game(launched_game(), 5).unwrap();
+    assert!(!e.port.log.contains(&"audio-start".into()));
+    e.event(1, Event::VideoPrepared, 10).unwrap();
+    assert!(e.port.log.contains(&"audio-start".into()));
+    assert_eq!(e.phase(), Phase::Preparing);
+    e.port.audio.push_back(Notice::Watching(None));
+    e.step(20).unwrap();
+    assert_eq!(e.phase(), Phase::Playing);
+}
+#[test]
+fn pre_game_alt_tab_closes_video_without_stealing_focus() {
+    let mut e = Engine::launch(1, 50, Fake::default(), 0).unwrap();
+    e.event(1, Event::VideoPrepared, 10).unwrap();
+    e.port.foreign = true;
+    e.step(20).unwrap();
+    assert!(e.finished());
+    assert!(!e.port.log.contains(&"conditional-focus".into()));
+}
+
+#[test]
+fn late_audio_still_restores_only_after_native_silence_ack() {
+    let mut e = Engine::launch(1, 50, Fake::default(), 0).unwrap();
+    e.event(1, Event::VideoPrepared, 10).unwrap();
+    e.bind_launched_game(launched_game(), 30).unwrap();
+    e.port.audio.push_back(Notice::Watching(None));
+    e.step(40).unwrap();
+    e.port.fail_silence = true;
+    e.event(1, Event::Finish(Reason::LaunchFailed), 100)
+        .unwrap();
+    assert!(!e.port.log.contains(&"audio-stop".into()));
+    assert!(!e.finished());
+    e.port.fail_silence = false;
+    e.step(200).unwrap();
+    assert!(e.port.log.contains(&"audio-stop".into()));
+    assert!(!e.finished());
+    e.port.audio.push_back(Notice::Restored);
+    e.step(220).unwrap();
+    assert!(e.finished());
 }

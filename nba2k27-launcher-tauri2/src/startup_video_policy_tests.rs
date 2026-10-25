@@ -1,4 +1,13 @@
 use super::*;
+#[test]
+fn launch_can_return_from_its_own_launcher_but_never_from_another_app() {
+    for hwnd in [100, 200, 300, 400] {
+        assert!(launch_foreground_owned(hwnd, 100, 200, 300, 400));
+    }
+    assert!(!launch_foreground_owned(500, 100, 200, 300, 400));
+    assert!(!launch_foreground_owned(0, 100, 200, 0, 0));
+    assert!(!launch_foreground_owned(300, 100, 200, 0, 0));
+}
 const TOKEN: u64 = 10;
 fn game() -> GameKey {
     GameKey {

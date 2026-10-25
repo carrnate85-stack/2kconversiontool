@@ -10,12 +10,28 @@ use std::path::Path;
 use crate::backend::Backend;
 
 pub(crate) fn dispatch(b: &Backend, channel: &str, args: Value) -> Result<Value> {
+    if matches!(
+        channel,
+        "launcher-tools-resolver"
+            | "launcher-tools-resolver-copy"
+            | "launcher-tools-provider-test"
+            | "launcher-tools-bridge-audit"
+    ) {
+        ensure!(
+            cfg!(feature = "dev-curator"),
+            "Developer diagnostics require the developer build"
+        );
+    }
     let settings = b.current_settings()?;
     let game = Path::new(&settings.game_root);
     match channel {
         "launcher-tools-health" => {
             let session = b.dispatch("native-session-status", Value::Null).ok();
-            Ok(crate::launcher_health::report(&b.root, game, session.as_ref()))
+            Ok(crate::launcher_health::report(
+                &b.root,
+                game,
+                session.as_ref(),
+            ))
         }
         "launcher-tools-health-copy" => {
             let session = b.dispatch("native-session-status", Value::Null).ok();
@@ -42,11 +58,20 @@ pub(crate) fn dispatch(b: &Backend, channel: &str, args: Value) -> Result<Value>
         }
         "launcher-tools-provider-test" => {
             let path = crate::launcher_health::require_text(&args, "path", "png10000.iff")?;
-            Ok(crate::launcher_health::provider_test(&b.root, Path::new(&settings.mods_root), &path))
+            Ok(crate::launcher_health::provider_test(
+                &b.root,
+                Path::new(&settings.mods_root),
+                &path,
+            ))
         }
         "launcher-tools-bridge-audit" => {
             let path = crate::launcher_health::require_text(&args, "path", "png10000.iff")?;
-            crate::launcher_health::bridge_audit(&b.root, game, Path::new(&settings.mods_root), &path)
+            crate::launcher_health::bridge_audit(
+                &b.root,
+                game,
+                Path::new(&settings.mods_root),
+                &path,
+            )
         }
         "launcher-tools-migration-scan" => crate::wpf_migration::scan(b),
         "launcher-tools-migration-apply" => crate::wpf_migration::apply(b, &args),

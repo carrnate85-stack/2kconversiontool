@@ -1,0 +1,22 @@
+QA116 - CONSISTENT MANNEQUIN ACCESSORY CARDS - DEV ONLY
+2026-10-22. Version 0.53.20.
+
+User screenshot showed tall text-only accessory buttons. Reuses the clothing Photo component in a two-column accessory grid, with matching image wells, backgrounds, dimensions, two-line labels and full-name titles/accessibility labels. Reuses existing game thumbnail cache lookup and category icons/names from outfitAccessorySlots; an unavailable image falls back to an icon rather than a blank tile. Selected pieces alone request thumbnails, not the full catalog. This does not add 3D support for unsupported accessories.
+
+Compact separate remove button remains keyboard accessible. 3D shown/unavailable/checking status and reason remain visible beneath each card. Browsing uses existing garment category, or the worker-reported slot if available; unknown slots stay disabled. Does not change outfit saving, game operations or the 3D viewer. Retains all QA115 shadow/layout changes and QA114 controls/quiet updates.
+
+Validation: TypeScript passed; full existing frontend suite passed; Vite and native release build passed with existing native warnings. No browser/desktop control, visual acceptance or game check claimed. User visual review pending. No installation, activation, main/share promotion or user Data/Library changes.
+
+Candidate: Dev/Pending/QA116/launcher.exe
+SHA256: 5958D2CC497DFA14E6D7581DB26F46D100994EFB689DDE7016E9098298F921FE
+Bytes: 46865408
+PDB: Dev/Pending/QA116/launcher.pdb
+Starter: Open QA116 Dev.lnk -> Start QA116 Dev.ps1
+Starter verifies hash and size, refuses while game/launcher active, and backs up/replaces Dev/Portable only on user click.
+Backup: Backups/qa116-accessory-cards-20261022-104618
+Evidence: artifacts/qa116-accessory-cards
+Sources: frontend/FitPreview.tsx, frontend/wpf/renderer/fit-preview.css, version metadata.
+QA073 natural Rust AV, QA078 fixture crash and QA106 Season History smoke persistence remain unresolved.
+
+User check: close current dev launcher, open QA116 mannequin with accessories. Check thumbnail/icon, consistent card layout, browse/remove controls and readable 3D badges. No game session needed.
+Frontend: 47 files / 245 tests passed. Starter CheckOnly exit=1. No activation performed. Close the game and launcher normally first. Nothing was replaced. Still running: 2k Launcher Rust Prototype (PID 20508)

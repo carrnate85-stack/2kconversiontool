@@ -1,1 +1,721 @@
-{"schema":"nba2k27-v2-roster-write-proof-v1","imageSha256":"29A96471C55909FC2BCEA6C699C59238656A501C19B50C74ED64B0D842E576A1","gameProcessAccess":false,"gameFilesChanged":false,"uniform":{"displayFields":["Id","TeamId","BaseFilename","SponsorLogoName","LocalizedNameToken","LocalizedTeamNameToken","Name","TeamName","UniqueSignatureId","SockClothingItemName","SockClothingItemNameAway","MyTeamTheme","BenchPlayerShirt","SockOption1","SockOption2","SockOption3","SockOption4","SockOption5","Type","OriginalType","LogoType","LogoBrand","DominantColor","ShouldScorebugUseUniformColor","UseTeamLogoOnUniform","CustomCasualShirtColor","CustomJerseyColorRed","CustomJerseyColorGreen","CustomJerseyColorBlue","CustomNameColorRed","CustomNameColorGreen","CustomNameColorBlue","CustomShoeTrimColor1","CustomShoeTrimColor2","CustomShoeDominantColor","DisablePhoto","Side","Designation","IsAlternate","HomePriority","AwayPriority","TopNamePlateStyle","BottomNamePlateStyle","OverrideNbaPatch","HasNumberOnShorts","PrimaryLogoSockColor","SecondaryLogoSockColor","TertiaryLogoSockColor","QuaternaryLogoSockColor","QuintaryLogoSockColor","RightAlignFrontNumber","UniformPrimaryColor","UniformSecondaryColor","PrimaryColor","SecondaryColor","TertiaryColor","QuaternaryColor","QuintaryColor","SextaryColor","PrimaryAccessoryColor","SecondaryAccessoryColor","TertiaryAccessoryColor","QuaternaryAccessoryColor","QuintaryAccessoryColor","UnderShirtColorHome","UnderShirtColorAway","ShoePrimaryColorAway","PrimarySockColor","SecondarySockColor","TertiarySockColor","QuaternarySockColor","QuintarySockColor","HeadbandColorHome","HeadbandColorAway","HeadbandLogoType","LegAccessoryColorHome","LegAccessoryColorAway","ArmItemColorHome","ArmItemColorAway","SockColorHome","SockColorAway"],"serializerRva":6845840,"recordBytes":6411,"recordSha256":"75791253a7b7c018db57b73bdce0ed3b15f95e1a4e160b1d814aba3745e82460","controls":[{"request":"uniformPrimaryColor","property":"UniformPrimaryColor","serializerKey":"UniformPrimaryColor","offset":268,"shift":0,"mask":4294967295,"nameRva":6847699,"matches":true},{"request":"uniformSecondaryColor","property":"UniformSecondaryColor","serializerKey":"UniformSecondaryColor","offset":272,"shift":0,"mask":4294967295,"nameRva":6847752,"matches":true},{"request":"primaryColor","property":"PrimaryColor","serializerKey":"PrimaryColor","offset":276,"shift":0,"mask":4294967295,"nameRva":6847805,"matches":true},{"request":"secondaryColor","property":"SecondaryColor","serializerKey":"SecondaryColor","offset":280,"shift":0,"mask":4294967295,"nameRva":6847858,"matches":true},{"request":"tertiaryColor","property":"TertiaryColor","serializerKey":"TertiaryColor","offset":284,"shift":0,"mask":4294967295,"nameRva":6847911,"matches":true},{"request":"quaternaryColor","property":"QuaternaryColor","serializerKey":"QuaternaryColor","offset":288,"shift":0,"mask":4294967295,"nameRva":6847964,"matches":true},{"request":"quintaryColor","property":"QuintaryColor","serializerKey":"QuintaryColor","offset":292,"shift":0,"mask":4294967295,"nameRva":6848017,"matches":true},{"request":"sextaryColor","property":"SextaryColor","serializerKey":"SextaryColor","offset":296,"shift":0,"mask":4294967295,"nameRva":6848070,"matches":true},{"request":"primaryAccessoryColor","property":"PrimaryAccessoryColor","serializerKey":"PrimaryAccessoryColor","offset":300,"shift":0,"mask":4294967295,"nameRva":6848123,"matches":true},{"request":"secondaryAccessoryColor","property":"SecondaryAccessoryColor","serializerKey":"SecondaryAccessoryColor","offset":304,"shift":0,"mask":4294967295,"nameRva":6848176,"matches":true},{"request":"tertiaryAccessoryColor","property":"TertiaryAccessoryColor","serializerKey":"TertiaryAccessoryColor","offset":308,"shift":0,"mask":4294967295,"nameRva":6848229,"matches":true},{"request":"quaternaryAccessoryColor","property":"QuaternaryAccessoryColor","serializerKey":"QuaternaryAccessoryColor","offset":312,"shift":0,"mask":4294967295,"nameRva":6848282,"matches":true},{"request":"quintaryAccessoryColor","property":"QuintaryAccessoryColor","serializerKey":"QuintaryAccessoryColor","offset":316,"shift":0,"mask":4294967295,"nameRva":6848335,"matches":true},{"request":"underShirtColorHome","property":"UnderShirtColorHome","serializerKey":"UnderShirtColorHome","offset":320,"shift":0,"mask":4294967295,"nameRva":6848388,"matches":true},{"request":"underShirtColorAway","property":"UnderShirtColorAway","serializerKey":"UnderShirtColorAway","offset":324,"shift":0,"mask":4294967295,"nameRva":6848441,"matches":true},{"request":"shoePrimaryColorAway","property":"ShoePrimaryColorAway","serializerKey":"ShoePrimaryColorAway","offset":328,"shift":0,"mask":4294967295,"nameRva":6848494,"matches":true},{"request":"primarySockColor","property":"PrimarySockColor","serializerKey":"PrimarySockColor","offset":332,"shift":0,"mask":4294967295,"nameRva":6848547,"matches":true},{"request":"secondarySockColor","property":"SecondarySockColor","serializerKey":"SecondarySockColor","offset":336,"shift":0,"mask":4294967295,"nameRva":6848600,"matches":true},{"request":"tertiarySockColor","property":"TertiarySockColor","serializerKey":"TertiarySockColor","offset":340,"shift":0,"mask":4294967295,"nameRva":6848653,"matches":true},{"request":"quaternarySockColor","property":"QuaternarySockColor","serializerKey":"QuaternarySockColor","offset":344,"shift":0,"mask":4294967295,"nameRva":6848706,"matches":true},{"request":"quintarySockColor","property":"QuintarySockColor","serializerKey":"QuintarySockColor","offset":348,"shift":0,"mask":4294967295,"nameRva":6848759,"matches":true},{"request":"typeId","property":"Type","serializerKey":"Type","offset":352,"shift":0,"mask":255,"nameRva":6848825,"matches":true},{"request":"logoTypeId","property":"LogoType","serializerKey":"LogoType","offset":352,"shift":16,"mask":15,"nameRva":6848992,"matches":true},{"request":"logoBrandId","property":"LogoBrand","serializerKey":"LogoBrand","offset":352,"shift":20,"mask":15,"nameRva":6849082,"matches":true},{"request":"dominantColorId","property":"DominantColor","serializerKey":"DominantColor","offset":352,"shift":24,"mask":31,"nameRva":6849168,"matches":true},{"request":"scorebugUsesUniformColor","property":"ShouldScorebugUseUniformColor","serializerKey":"ShouldScorebugUseUniformColor","offset":352,"shift":29,"mask":1,"nameRva":6849239,"matches":true},{"request":"disablePhoto","property":"DisablePhoto","serializerKey":"DisablePhoto","offset":356,"shift":30,"mask":1,"nameRva":6850105,"matches":true},{"request":"usesTeamLogo","property":"UseTeamLogoOnUniform","serializerKey":"UseTeamLogoOnUniform","offset":356,"shift":31,"mask":1,"nameRva":6850164,"matches":true},{"request":"homePriority","property":"HomePriority","serializerKey":"HomeSelectionPriorityRank","offset":360,"shift":5,"mask":15,"nameRva":6850305,"matches":true},{"request":"awayPriority","property":"AwayPriority","serializerKey":"AwaySelectionPriorityRank","offset":360,"shift":9,"mask":15,"nameRva":6850364,"matches":true},{"request":"topNamePlateStyleId","property":"TopNamePlateStyle","serializerKey":"TopNamePlateStyle","offset":360,"shift":13,"mask":3,"nameRva":6850440,"matches":true},{"request":"bottomNamePlateStyleId","property":"BottomNamePlateStyle","serializerKey":"BottomNamePlateStyle","offset":360,"shift":15,"mask":3,"nameRva":6850521,"matches":true},{"request":"sideId","property":"Side","serializerKey":"Side","offset":360,"shift":17,"mask":1,"nameRva":6850609,"matches":true},{"request":"overrideNbaPatch","property":"OverrideNbaPatch","serializerKey":"OverrideNBAPatch","offset":360,"shift":19,"mask":1,"nameRva":6850739,"matches":true},{"request":"hasNumberOnShorts","property":"HasNumberOnShorts","serializerKey":"HasNumberOnShorts","offset":360,"shift":21,"mask":1,"nameRva":6850857,"matches":true},{"request":"isAlternate","property":"IsAlternate","serializerKey":"IsAlternate","offset":360,"shift":22,"mask":1,"nameRva":6850916,"matches":true},{"request":"primaryLogoSockColor","property":"PrimaryLogoSockColor","serializerKey":"PrimaryLogoSockColor","offset":360,"shift":23,"mask":1,"nameRva":6850992,"matches":true},{"request":"secondaryLogoSockColor","property":"SecondaryLogoSockColor","serializerKey":"SecondaryLogoSockColor","offset":360,"shift":24,"mask":1,"nameRva":6851071,"matches":true},{"request":"tertiaryLogoSockColor","property":"TertiaryLogoSockColor","serializerKey":"TertiaryLogoSockColor","offset":360,"shift":25,"mask":1,"nameRva":6851152,"matches":true},{"request":"quaternaryLogoSockColor","property":"QuaternaryLogoSockColor","serializerKey":"QuaternaryLogoSockColor","offset":360,"shift":26,"mask":1,"nameRva":6851233,"matches":true},{"request":"quintaryLogoSockColor","property":"QuintaryLogoSockColor","serializerKey":"QuintaryLogoSockColor","offset":360,"shift":27,"mask":1,"nameRva":6851314,"matches":true},{"request":"rightAlignFrontNumber","property":"RightAlignFrontNumber","serializerKey":"RightAlignFrontNumber","offset":360,"shift":28,"mask":1,"nameRva":6851385,"matches":true},{"request":"legAccessoryColorHome","property":"LegAccessoryColorHome","serializerKey":"LegAccessoryColorHome","offset":364,"shift":0,"mask":7,"nameRva":6851562,"matches":true},{"request":"legAccessoryColorAway","property":"LegAccessoryColorAway","serializerKey":"LegAccessoryColorAway","offset":364,"shift":3,"mask":7,"nameRva":6851618,"matches":true},{"request":"armItemColorHome","property":"ArmItemColorHome","serializerKey":"ArmItemColorHome","offset":364,"shift":6,"mask":7,"nameRva":6851677,"matches":true},{"request":"armItemColorAway","property":"ArmItemColorAway","serializerKey":"ArmItemColorAway","offset":364,"shift":9,"mask":7,"nameRva":6851736,"matches":true},{"request":"sockColorHome","property":"SockColorHome","serializerKey":"SockColorHome","offset":364,"shift":21,"mask":7,"nameRva":6852003,"matches":true},{"request":"sockColorAway","property":"SockColorAway","serializerKey":"SockColorAway","offset":364,"shift":24,"mask":7,"nameRva":6852062,"matches":true},{"request":"designationId","property":"Designation","serializerKey":"Designation","offset":364,"shift":28,"mask":15,"nameRva":6852194,"matches":true},{"request":"home","property":"HeadbandColorHome","serializerKey":"HeadbandColorHome","offset":364,"shift":12,"mask":7,"nameRva":6851795,"matches":true},{"request":"away","property":"HeadbandColorAway","serializerKey":"HeadbandColorAway","offset":364,"shift":15,"mask":7,"nameRva":6851854,"matches":true},{"request":"logo","property":"HeadbandLogoType","serializerKey":"HeadbandLogoType","offset":364,"shift":18,"mask":7,"nameRva":6851932,"matches":true}],"identity":[{"key":"uniformId","property":"ID","offset":80,"bytes":2,"nameRva":6846078},{"key":"teamId","property":"TeamID","offset":82,"bytes":2,"nameRva":6846129},{"key":"baseFilename","property":"BaseFilename","offset":8,"bytes":64,"nameRva":6845942}],"mismatches":[]},"teamText":[{"key":"name","offset":762,"capacityUnits":25},{"key":"cityName","offset":812,"capacityUnits":18},{"key":"cityShort","offset":848,"capacityUnits":7},{"key":"stateShort","offset":862,"capacityUnits":10},{"key":"mainLogo","offset":430,"capacityUnits":38}],"uniformSlots":{"offset":3552,"count":32,"stride":8,"uniformTable":664,"uniformStride":368},"anchors":[{"rva":31122621,"hex":"498d9424fa020000498d8dfa02000041b8190000004531c9e8f6686400498d94242c030000498d8d2c03000041b8120000004531c9e8d9686400498d942450030000498d8d5003000041b8070000004531c9e8bc686400498d94245e030000498d8d5e03000041b80a0000004531c9e89f686400"},{"rva":31123032,"hex":"498d942470010000498d8d7001000041b81f0000004531c9e85b676400498d9424ae010000498d8dae01000041b8260000004531c9e83e676400"},{"rva":49531381,"hex":"69c9700100004803889802000049898cdde00d000048ffc34883fb1e75c4"},{"rva":49845330,"hex":"488b84c1e00d00004881c488000000c383fa1f741483fa1e751e488b81d00e00004881c488000000c3"},{"rva":49839136,"hex":"488d81fa020000c3"},{"rva":49834896,"hex":"0fb781200f0000c3"},{"rva":49834912,"hex":"488d8150030000c3"}],"refused":{"team":["rosterTypeId (V2 consumes six bits, legacy wrote five)","historicYearId","arena/floor"],"player":["weight","height/wingspan (appearance pointer)","audio","From/college"],"uniform":["linking an empty slot"]},"generatorSha256":"7276b431e824806c204060b6d9eb512cd3499928da794735ccdab61236067a1d"}
+{
+  "schema": "nba2k27-v2-roster-write-proof-v1",
+  "imageSha256": "B673EB04593D6D5A4DFB9E270178E04C017BD9F277514D256EA98FFB792ED27B",
+  "gameProcessAccess": false,
+  "gameFilesChanged": false,
+  "uniform": {
+    "displayFields": [
+      "Id",
+      "TeamId",
+      "BaseFilename",
+      "SponsorLogoName",
+      "LocalizedNameToken",
+      "LocalizedTeamNameToken",
+      "Name",
+      "TeamName",
+      "UniqueSignatureId",
+      "SockClothingItemName",
+      "SockClothingItemNameAway",
+      "MyTeamTheme",
+      "BenchPlayerShirt",
+      "SockOption1",
+      "SockOption2",
+      "SockOption3",
+      "SockOption4",
+      "SockOption5",
+      "Type",
+      "OriginalType",
+      "LogoType",
+      "LogoBrand",
+      "DominantColor",
+      "ShouldScorebugUseUniformColor",
+      "UseTeamLogoOnUniform",
+      "CustomCasualShirtColor",
+      "CustomJerseyColorRed",
+      "CustomJerseyColorGreen",
+      "CustomJerseyColorBlue",
+      "CustomNameColorRed",
+      "CustomNameColorGreen",
+      "CustomNameColorBlue",
+      "CustomShoeTrimColor1",
+      "CustomShoeTrimColor2",
+      "CustomShoeDominantColor",
+      "DisablePhoto",
+      "Side",
+      "Designation",
+      "IsAlternate",
+      "HomePriority",
+      "AwayPriority",
+      "TopNamePlateStyle",
+      "BottomNamePlateStyle",
+      "OverrideNbaPatch",
+      "HasNumberOnShorts",
+      "PrimaryLogoSockColor",
+      "SecondaryLogoSockColor",
+      "TertiaryLogoSockColor",
+      "QuaternaryLogoSockColor",
+      "QuintaryLogoSockColor",
+      "RightAlignFrontNumber",
+      "UniformPrimaryColor",
+      "UniformSecondaryColor",
+      "PrimaryColor",
+      "SecondaryColor",
+      "TertiaryColor",
+      "QuaternaryColor",
+      "QuintaryColor",
+      "SextaryColor",
+      "PrimaryAccessoryColor",
+      "SecondaryAccessoryColor",
+      "TertiaryAccessoryColor",
+      "QuaternaryAccessoryColor",
+      "QuintaryAccessoryColor",
+      "UnderShirtColorHome",
+      "UnderShirtColorAway",
+      "ShoePrimaryColorAway",
+      "PrimarySockColor",
+      "SecondarySockColor",
+      "TertiarySockColor",
+      "QuaternarySockColor",
+      "QuintarySockColor",
+      "HeadbandColorHome",
+      "HeadbandColorAway",
+      "HeadbandLogoType",
+      "LegAccessoryColorHome",
+      "LegAccessoryColorAway",
+      "ArmItemColorHome",
+      "ArmItemColorAway",
+      "SockColorHome",
+      "SockColorAway"
+    ],
+    "serializerRva": 6845840,
+    "recordBytes": 6411,
+    "recordSha256": "2de2d62b1db43a8c84abf317b1a04ebddb555bcfe02c7deedef6ae77b7683568",
+    "controls": [
+      {
+        "request": "uniformPrimaryColor",
+        "property": "UniformPrimaryColor",
+        "serializerKey": "UniformPrimaryColor",
+        "offset": 268,
+        "shift": 0,
+        "mask": 4294967295,
+        "nameRva": 6847699,
+        "matches": true
+      },
+      {
+        "request": "uniformSecondaryColor",
+        "property": "UniformSecondaryColor",
+        "serializerKey": "UniformSecondaryColor",
+        "offset": 272,
+        "shift": 0,
+        "mask": 4294967295,
+        "nameRva": 6847752,
+        "matches": true
+      },
+      {
+        "request": "primaryColor",
+        "property": "PrimaryColor",
+        "serializerKey": "PrimaryColor",
+        "offset": 276,
+        "shift": 0,
+        "mask": 4294967295,
+        "nameRva": 6847805,
+        "matches": true
+      },
+      {
+        "request": "secondaryColor",
+        "property": "SecondaryColor",
+        "serializerKey": "SecondaryColor",
+        "offset": 280,
+        "shift": 0,
+        "mask": 4294967295,
+        "nameRva": 6847858,
+        "matches": true
+      },
+      {
+        "request": "tertiaryColor",
+        "property": "TertiaryColor",
+        "serializerKey": "TertiaryColor",
+        "offset": 284,
+        "shift": 0,
+        "mask": 4294967295,
+        "nameRva": 6847911,
+        "matches": true
+      },
+      {
+        "request": "quaternaryColor",
+        "property": "QuaternaryColor",
+        "serializerKey": "QuaternaryColor",
+        "offset": 288,
+        "shift": 0,
+        "mask": 4294967295,
+        "nameRva": 6847964,
+        "matches": true
+      },
+      {
+        "request": "quintaryColor",
+        "property": "QuintaryColor",
+        "serializerKey": "QuintaryColor",
+        "offset": 292,
+        "shift": 0,
+        "mask": 4294967295,
+        "nameRva": 6848017,
+        "matches": true
+      },
+      {
+        "request": "sextaryColor",
+        "property": "SextaryColor",
+        "serializerKey": "SextaryColor",
+        "offset": 296,
+        "shift": 0,
+        "mask": 4294967295,
+        "nameRva": 6848070,
+        "matches": true
+      },
+      {
+        "request": "primaryAccessoryColor",
+        "property": "PrimaryAccessoryColor",
+        "serializerKey": "PrimaryAccessoryColor",
+        "offset": 300,
+        "shift": 0,
+        "mask": 4294967295,
+        "nameRva": 6848123,
+        "matches": true
+      },
+      {
+        "request": "secondaryAccessoryColor",
+        "property": "SecondaryAccessoryColor",
+        "serializerKey": "SecondaryAccessoryColor",
+        "offset": 304,
+        "shift": 0,
+        "mask": 4294967295,
+        "nameRva": 6848176,
+        "matches": true
+      },
+      {
+        "request": "tertiaryAccessoryColor",
+        "property": "TertiaryAccessoryColor",
+        "serializerKey": "TertiaryAccessoryColor",
+        "offset": 308,
+        "shift": 0,
+        "mask": 4294967295,
+        "nameRva": 6848229,
+        "matches": true
+      },
+      {
+        "request": "quaternaryAccessoryColor",
+        "property": "QuaternaryAccessoryColor",
+        "serializerKey": "QuaternaryAccessoryColor",
+        "offset": 312,
+        "shift": 0,
+        "mask": 4294967295,
+        "nameRva": 6848282,
+        "matches": true
+      },
+      {
+        "request": "quintaryAccessoryColor",
+        "property": "QuintaryAccessoryColor",
+        "serializerKey": "QuintaryAccessoryColor",
+        "offset": 316,
+        "shift": 0,
+        "mask": 4294967295,
+        "nameRva": 6848335,
+        "matches": true
+      },
+      {
+        "request": "underShirtColorHome",
+        "property": "UnderShirtColorHome",
+        "serializerKey": "UnderShirtColorHome",
+        "offset": 320,
+        "shift": 0,
+        "mask": 4294967295,
+        "nameRva": 6848388,
+        "matches": true
+      },
+      {
+        "request": "underShirtColorAway",
+        "property": "UnderShirtColorAway",
+        "serializerKey": "UnderShirtColorAway",
+        "offset": 324,
+        "shift": 0,
+        "mask": 4294967295,
+        "nameRva": 6848441,
+        "matches": true
+      },
+      {
+        "request": "shoePrimaryColorAway",
+        "property": "ShoePrimaryColorAway",
+        "serializerKey": "ShoePrimaryColorAway",
+        "offset": 328,
+        "shift": 0,
+        "mask": 4294967295,
+        "nameRva": 6848494,
+        "matches": true
+      },
+      {
+        "request": "primarySockColor",
+        "property": "PrimarySockColor",
+        "serializerKey": "PrimarySockColor",
+        "offset": 332,
+        "shift": 0,
+        "mask": 4294967295,
+        "nameRva": 6848547,
+        "matches": true
+      },
+      {
+        "request": "secondarySockColor",
+        "property": "SecondarySockColor",
+        "serializerKey": "SecondarySockColor",
+        "offset": 336,
+        "shift": 0,
+        "mask": 4294967295,
+        "nameRva": 6848600,
+        "matches": true
+      },
+      {
+        "request": "tertiarySockColor",
+        "property": "TertiarySockColor",
+        "serializerKey": "TertiarySockColor",
+        "offset": 340,
+        "shift": 0,
+        "mask": 4294967295,
+        "nameRva": 6848653,
+        "matches": true
+      },
+      {
+        "request": "quaternarySockColor",
+        "property": "QuaternarySockColor",
+        "serializerKey": "QuaternarySockColor",
+        "offset": 344,
+        "shift": 0,
+        "mask": 4294967295,
+        "nameRva": 6848706,
+        "matches": true
+      },
+      {
+        "request": "quintarySockColor",
+        "property": "QuintarySockColor",
+        "serializerKey": "QuintarySockColor",
+        "offset": 348,
+        "shift": 0,
+        "mask": 4294967295,
+        "nameRva": 6848759,
+        "matches": true
+      },
+      {
+        "request": "typeId",
+        "property": "Type",
+        "serializerKey": "Type",
+        "offset": 352,
+        "shift": 0,
+        "mask": 255,
+        "nameRva": 6848825,
+        "matches": true
+      },
+      {
+        "request": "logoTypeId",
+        "property": "LogoType",
+        "serializerKey": "LogoType",
+        "offset": 352,
+        "shift": 16,
+        "mask": 15,
+        "nameRva": 6848992,
+        "matches": true
+      },
+      {
+        "request": "logoBrandId",
+        "property": "LogoBrand",
+        "serializerKey": "LogoBrand",
+        "offset": 352,
+        "shift": 20,
+        "mask": 15,
+        "nameRva": 6849082,
+        "matches": true
+      },
+      {
+        "request": "dominantColorId",
+        "property": "DominantColor",
+        "serializerKey": "DominantColor",
+        "offset": 352,
+        "shift": 24,
+        "mask": 31,
+        "nameRva": 6849168,
+        "matches": true
+      },
+      {
+        "request": "scorebugUsesUniformColor",
+        "property": "ShouldScorebugUseUniformColor",
+        "serializerKey": "ShouldScorebugUseUniformColor",
+        "offset": 352,
+        "shift": 29,
+        "mask": 1,
+        "nameRva": 6849239,
+        "matches": true
+      },
+      {
+        "request": "disablePhoto",
+        "property": "DisablePhoto",
+        "serializerKey": "DisablePhoto",
+        "offset": 356,
+        "shift": 30,
+        "mask": 1,
+        "nameRva": 6850105,
+        "matches": true
+      },
+      {
+        "request": "usesTeamLogo",
+        "property": "UseTeamLogoOnUniform",
+        "serializerKey": "UseTeamLogoOnUniform",
+        "offset": 356,
+        "shift": 31,
+        "mask": 1,
+        "nameRva": 6850164,
+        "matches": true
+      },
+      {
+        "request": "homePriority",
+        "property": "HomePriority",
+        "serializerKey": "HomeSelectionPriorityRank",
+        "offset": 360,
+        "shift": 5,
+        "mask": 15,
+        "nameRva": 6850305,
+        "matches": true
+      },
+      {
+        "request": "awayPriority",
+        "property": "AwayPriority",
+        "serializerKey": "AwaySelectionPriorityRank",
+        "offset": 360,
+        "shift": 9,
+        "mask": 15,
+        "nameRva": 6850364,
+        "matches": true
+      },
+      {
+        "request": "topNamePlateStyleId",
+        "property": "TopNamePlateStyle",
+        "serializerKey": "TopNamePlateStyle",
+        "offset": 360,
+        "shift": 13,
+        "mask": 3,
+        "nameRva": 6850440,
+        "matches": true
+      },
+      {
+        "request": "bottomNamePlateStyleId",
+        "property": "BottomNamePlateStyle",
+        "serializerKey": "BottomNamePlateStyle",
+        "offset": 360,
+        "shift": 15,
+        "mask": 3,
+        "nameRva": 6850521,
+        "matches": true
+      },
+      {
+        "request": "sideId",
+        "property": "Side",
+        "serializerKey": "Side",
+        "offset": 360,
+        "shift": 17,
+        "mask": 1,
+        "nameRva": 6850609,
+        "matches": true
+      },
+      {
+        "request": "overrideNbaPatch",
+        "property": "OverrideNbaPatch",
+        "serializerKey": "OverrideNBAPatch",
+        "offset": 360,
+        "shift": 19,
+        "mask": 1,
+        "nameRva": 6850739,
+        "matches": true
+      },
+      {
+        "request": "hasNumberOnShorts",
+        "property": "HasNumberOnShorts",
+        "serializerKey": "HasNumberOnShorts",
+        "offset": 360,
+        "shift": 21,
+        "mask": 1,
+        "nameRva": 6850857,
+        "matches": true
+      },
+      {
+        "request": "isAlternate",
+        "property": "IsAlternate",
+        "serializerKey": "IsAlternate",
+        "offset": 360,
+        "shift": 22,
+        "mask": 1,
+        "nameRva": 6850916,
+        "matches": true
+      },
+      {
+        "request": "primaryLogoSockColor",
+        "property": "PrimaryLogoSockColor",
+        "serializerKey": "PrimaryLogoSockColor",
+        "offset": 360,
+        "shift": 23,
+        "mask": 1,
+        "nameRva": 6850992,
+        "matches": true
+      },
+      {
+        "request": "secondaryLogoSockColor",
+        "property": "SecondaryLogoSockColor",
+        "serializerKey": "SecondaryLogoSockColor",
+        "offset": 360,
+        "shift": 24,
+        "mask": 1,
+        "nameRva": 6851071,
+        "matches": true
+      },
+      {
+        "request": "tertiaryLogoSockColor",
+        "property": "TertiaryLogoSockColor",
+        "serializerKey": "TertiaryLogoSockColor",
+        "offset": 360,
+        "shift": 25,
+        "mask": 1,
+        "nameRva": 6851152,
+        "matches": true
+      },
+      {
+        "request": "quaternaryLogoSockColor",
+        "property": "QuaternaryLogoSockColor",
+        "serializerKey": "QuaternaryLogoSockColor",
+        "offset": 360,
+        "shift": 26,
+        "mask": 1,
+        "nameRva": 6851233,
+        "matches": true
+      },
+      {
+        "request": "quintaryLogoSockColor",
+        "property": "QuintaryLogoSockColor",
+        "serializerKey": "QuintaryLogoSockColor",
+        "offset": 360,
+        "shift": 27,
+        "mask": 1,
+        "nameRva": 6851314,
+        "matches": true
+      },
+      {
+        "request": "rightAlignFrontNumber",
+        "property": "RightAlignFrontNumber",
+        "serializerKey": "RightAlignFrontNumber",
+        "offset": 360,
+        "shift": 28,
+        "mask": 1,
+        "nameRva": 6851385,
+        "matches": true
+      },
+      {
+        "request": "legAccessoryColorHome",
+        "property": "LegAccessoryColorHome",
+        "serializerKey": "LegAccessoryColorHome",
+        "offset": 364,
+        "shift": 0,
+        "mask": 7,
+        "nameRva": 6851562,
+        "matches": true
+      },
+      {
+        "request": "legAccessoryColorAway",
+        "property": "LegAccessoryColorAway",
+        "serializerKey": "LegAccessoryColorAway",
+        "offset": 364,
+        "shift": 3,
+        "mask": 7,
+        "nameRva": 6851618,
+        "matches": true
+      },
+      {
+        "request": "armItemColorHome",
+        "property": "ArmItemColorHome",
+        "serializerKey": "ArmItemColorHome",
+        "offset": 364,
+        "shift": 6,
+        "mask": 7,
+        "nameRva": 6851677,
+        "matches": true
+      },
+      {
+        "request": "armItemColorAway",
+        "property": "ArmItemColorAway",
+        "serializerKey": "ArmItemColorAway",
+        "offset": 364,
+        "shift": 9,
+        "mask": 7,
+        "nameRva": 6851736,
+        "matches": true
+      },
+      {
+        "request": "sockColorHome",
+        "property": "SockColorHome",
+        "serializerKey": "SockColorHome",
+        "offset": 364,
+        "shift": 21,
+        "mask": 7,
+        "nameRva": 6852003,
+        "matches": true
+      },
+      {
+        "request": "sockColorAway",
+        "property": "SockColorAway",
+        "serializerKey": "SockColorAway",
+        "offset": 364,
+        "shift": 24,
+        "mask": 7,
+        "nameRva": 6852062,
+        "matches": true
+      },
+      {
+        "request": "designationId",
+        "property": "Designation",
+        "serializerKey": "Designation",
+        "offset": 364,
+        "shift": 28,
+        "mask": 15,
+        "nameRva": 6852194,
+        "matches": true
+      },
+      {
+        "request": "home",
+        "property": "HeadbandColorHome",
+        "serializerKey": "HeadbandColorHome",
+        "offset": 364,
+        "shift": 12,
+        "mask": 7,
+        "nameRva": 6851795,
+        "matches": true
+      },
+      {
+        "request": "away",
+        "property": "HeadbandColorAway",
+        "serializerKey": "HeadbandColorAway",
+        "offset": 364,
+        "shift": 15,
+        "mask": 7,
+        "nameRva": 6851854,
+        "matches": true
+      },
+      {
+        "request": "logo",
+        "property": "HeadbandLogoType",
+        "serializerKey": "HeadbandLogoType",
+        "offset": 364,
+        "shift": 18,
+        "mask": 7,
+        "nameRva": 6851932,
+        "matches": true
+      }
+    ],
+    "identity": [
+      {
+        "key": "uniformId",
+        "property": "ID",
+        "offset": 80,
+        "bytes": 2,
+        "nameRva": 6846078
+      },
+      {
+        "key": "teamId",
+        "property": "TeamID",
+        "offset": 82,
+        "bytes": 2,
+        "nameRva": 6846129
+      },
+      {
+        "key": "baseFilename",
+        "property": "BaseFilename",
+        "offset": 8,
+        "bytes": 64,
+        "nameRva": 6845942
+      }
+    ],
+    "mismatches": []
+  },
+  "teamText": [
+    {
+      "key": "name",
+      "offset": 762,
+      "capacityUnits": 25
+    },
+    {
+      "key": "cityName",
+      "offset": 812,
+      "capacityUnits": 18
+    },
+    {
+      "key": "cityShort",
+      "offset": 848,
+      "capacityUnits": 7
+    },
+    {
+      "key": "stateShort",
+      "offset": 862,
+      "capacityUnits": 10
+    },
+    {
+      "key": "mainLogo",
+      "offset": 430,
+      "capacityUnits": 38
+    }
+  ],
+  "uniformSlots": {
+    "offset": 3552,
+    "count": 32,
+    "stride": 8,
+    "uniformTable": 664,
+    "uniformStride": 368
+  },
+  "anchors": [
+    {
+      "rva": 31122797,
+      "hex": "498d9424fa020000498d8dfa02000041b8190000004531c9e8f6686400498d94242c030000498d8d2c03000041b8120000004531c9e8d9686400498d942450030000498d8d5003000041b8070000004531c9e8bc686400498d94245e030000498d8d5e03000041b80a0000004531c9e89f686400"
+    },
+    {
+      "rva": 31123208,
+      "hex": "498d942470010000498d8d7001000041b81f0000004531c9e85b676400498d9424ae010000498d8dae01000041b8260000004531c9e83e676400"
+    },
+    {
+      "rva": 49531557,
+      "hex": "69c9700100004803889802000049898cdde00d000048ffc34883fb1e75c4"
+    },
+    {
+      "rva": 49845506,
+      "hex": "488b84c1e00d00004881c488000000c383fa1f741483fa1e751e488b81d00e00004881c488000000c3"
+    },
+    {
+      "rva": 49839312,
+      "hex": "488d81fa020000c3"
+    },
+    {
+      "rva": 49835072,
+      "hex": "0fb781200f0000c3"
+    },
+    {
+      "rva": 49835088,
+      "hex": "488d8150030000c3"
+    }
+  ],
+  "refused": {
+    "team": [
+      "rosterTypeId (V2 consumes six bits, legacy wrote five)",
+      "historicYearId",
+      "arena/floor"
+    ],
+    "player": [
+      "weight",
+      "height/wingspan (appearance pointer)",
+      "audio",
+      "From/college"
+    ],
+    "uniform": [
+      "linking an empty slot"
+    ]
+  },
+  "generatorSha256": "245ee64a92d6f90c242826a28de632aa323812a279561837eeed8d48bcd3224f"
+}

@@ -1,0 +1,23 @@
+QA113 - LIGHTWEIGHT MANNEQUIN POLISH / SHOE ORDER - DEV ONLY
+2026-10-22. Version 0.53.17.
+
+Changes:
+- src/backend.rs wardrobe shoes All: stable sort moves Unidentified group to the end before pagination. Search, pools, brand tabs and relative order within both partitions are preserved.
+- tools/build-fit-preview-runtime.mjs now reproducibly adapts the retained WPF viewer using exact unique replacement guards and records source/output hashes in PROVENANCE.json.
+- Replaces flat ambient light with soft hemisphere lighting; brightens the existing two directional lights. Same geometry, textures, color bindings, pixel-ratio cap and on-demand rendering. No shadow maps, new render passes or animations.
+- Transparent canvas exposes a static slate studio gradient. Compact readable navigation hint pill. New local tools/fit-preview/studio.css is 624 bytes; copied into the bundled viewer. No remote resources. Existing worker output hash verified unchanged against QA112.
+
+Validation: TypeScript, 5 frontend preview/label regression tests, native existing shoe catalog regression, JavaScript syntax, Vite and native release build passed. Static performance scope saved separately. No visual or end-to-end load-time measurement; user dev check pending. No computer use, game launch, memory access or user Data/Library changes.
+
+Candidate: Dev/Pending/QA113/launcher.exe
+SHA256: 33452C522A645A15BD1A357499D39FA739C2D4BAF5B511F4866E940D18255514
+Bytes: 46863872
+PDB: Dev/Pending/QA113/launcher.pdb
+Starter: Open QA113 Dev.lnk -> Start QA113 Dev.ps1
+Starter verifies hash/size and refuses activation while game/launcher is open. On user click only it backs up and replaces Dev/Portable. No installation, main/share promotion or automatic activation.
+Backup: Backups/qa113-preview-polish-20261022-101358
+Evidence: artifacts/qa113-preview-polish
+Retains QA112 shoe names/brands and preview recovery, QA111 first-open fix, QA110 hosted preview download. Legacy QA073 natural Rust AV, QA078 Clang fixture crash and QA106 Season History smoke persistence remain unresolved; this UI change does not address them.
+
+User check: close old launcher, use QA113 starter, open mannequin and judge brightness, outfit colors and initial load time. Check unidentified shoes appear at the end of Shoes > All.
+Starter CheckOnly exit=0. No activation performed.

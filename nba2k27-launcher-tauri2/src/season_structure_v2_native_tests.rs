@@ -556,3 +556,73 @@ fn new_scoped_review_revokes_old_token_even_when_new_pure_mapping_fails() {
     assert!(import_choices(&json!({"seasons":[]}), &json!([])).is_err());
     assert!(cache.is_none());
 }
+
+#[test]
+fn only_current_private_completion_archives_exact_intent_and_releases_capacity() {
+    let (b, _, mut m) = fixture();
+    let root = std::env::temp_dir().join(format!(
+        "C27-season-archive-{}-{}",
+        std::process::id(),
+        SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .unwrap()
+            .as_nanos()
+    ));
+    let dir = directory(&root).unwrap();
+    let forgotten = std::cell::Cell::new(0);
+    for n in 0..140 {
+        m.transaction = format!("{n:064x}");
+        let path = dir.join(format!("{}.pending", m.transaction));
+        let raw = encode(&m, &b).unwrap();
+        let mut file = ordinary_new(&path).unwrap();
+        file.write_all(&raw).unwrap();
+        file.sync_all().unwrap();
+        drop(file);
+        let receipt = json!({"schema":"nba2k27-season-structure-verified-v1","game":m.game,"session":m.session,"intentSha256":digest(&raw),"status":"after","transaction":m.transaction});
+        fs::write(
+            path.with_extension("verified"),
+            serde_json::to_vec(&receipt).unwrap(),
+        )
+        .unwrap();
+        archive_current_verified_with(&root, &m.game, &m.session, &|_, _, _| false, &|_, _, _| {
+            panic!("disk alone cannot forget")
+        })
+        .unwrap();
+        assert!(path.exists());
+        archive_current_verified_with(
+            &root,
+            &m.game,
+            &m.session,
+            &|g, s, h| g == &m.game && s == m.session && h == digest(&raw),
+            &|_, _, _| {
+                forgotten.set(forgotten.get() + 1);
+                Ok(())
+            },
+        )
+        .unwrap();
+        assert!(!path.exists());
+        assert_eq!(fs::read(path.with_extension("completed")).unwrap(), raw);
+        assert!(!pending(&root).unwrap());
+    }
+    assert_eq!(forgotten.get(), 140);
+    m.transaction = "f".repeat(64);
+    let path = dir.join(format!("{}.pending", m.transaction));
+    let raw = encode(&m, &b).unwrap();
+    let mut f = ordinary_new(&path).unwrap();
+    f.write_all(&raw).unwrap();
+    f.sync_all().unwrap();
+    drop(f);
+    fs::write(path.with_extension("verified"), b"{}").unwrap();
+    assert!(
+        archive_current_verified_with(
+            &root,
+            &m.game,
+            &m.session,
+            &|_, _, _| true,
+            &|_, _, _| panic!("invalid receipt")
+        )
+        .is_err()
+    );
+    assert!(path.exists());
+    fs::remove_dir_all(&root).unwrap();
+}

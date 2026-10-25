@@ -351,7 +351,7 @@ fn publish_token(
 impl Prepared {
     pub(crate) fn open(root: &Path, freestyle: bool, blacktop: bool) -> Result<Self> {
         ensure!(
-            cfg!(debug_assertions),
+            crate::feature_plan::dev_wnba_categories(),
             "WNBA toggle setup is currently dev-only"
         );
         ensure!(

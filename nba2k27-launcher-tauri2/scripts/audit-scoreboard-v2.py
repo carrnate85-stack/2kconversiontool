@@ -8,6 +8,7 @@ import argparse,bisect,hashlib,json,mmap,re,runpy,struct
 
 ROOT=Path(__file__).resolve().parents[1]
 A=runpy.run_path(str(ROOT/"scripts/audit-roster-v2-fields.py"))
+IMAGE_SHA="B673EB04593D6D5A4DFB9E270178E04C017BD9F277514D256EA98FFB792ED27B"
 PATTERNS={
  "package-table-stride24-limit128":"4883c6184881fe000c0000",
  "descriptor-property-sentinel":"4c8d6e18448b4e18",
@@ -23,9 +24,9 @@ PATTERNS={
 }
 def main():
  p=argparse.ArgumentParser();p.add_argument("image",type=Path);p.add_argument("--output",type=Path,required=True);p.add_argument("--anchors",type=Path);args=p.parse_args()
- with args.image.open("rb") as f: assert hashlib.file_digest(f,"sha256").hexdigest().upper()==A["IMAGE_SHA"],"Exact Version 2 image required"
+ with args.image.open("rb") as f: assert hashlib.file_digest(f,"sha256").hexdigest().upper()==IMAGE_SHA,"Exact Version 2 image required"
  pe=A["pefile"].PE(str(args.image),fast_load=True)
- assert pe.FILE_HEADER.TimeDateStamp==0x6AC53765 and pe.OPTIONAL_HEADER.SizeOfImage==0x35BDE000
+ assert pe.FILE_HEADER.TimeDateStamp==0x6AD2E48C and pe.OPTIONAL_HEADER.SizeOfImage==0x36532000
  pdata=next(s for s in pe.sections if s.Name.rstrip(b"\0")==b".pdata")
  functions=[]
  for start,end,_ in struct.iter_unpack("<III",pdata.get_data()[:pdata.SizeOfRawData//12*12]):
@@ -50,9 +51,13 @@ def main():
     at=found+1
     assert len(hits)<=256,"Ambiguous signature budget"
    rows.append({"name":name,"pattern":value,"hits":hits})
-  for name,rva,length in [("native-resource-root-getter",0x507FE10,0x180),("blacktop-controller-constructor",0x18E7C70,0x80),("blacktop-base-constructor",0x18E5610,0x200),("scorebug-base-constructor",0x11338B0,0x4000),("resource-table-lookup",0x50D1980,0x230),("native-resource-bucket-lookup",0x50D0C70,0x500),("secondary-active-user",0x1055490,0x200),("native-resource-data-getter",0x50C5D70,0x80),("native-package-node-constructor",0x11944F0,0x510)]:
-   data=pe.get_data(rva,length)
-   rows.append({"name":name,"pattern":"","hits":[{"rva":f"{rva:08X}","functionStart":f"{rva:08X}","functionEnd":f"{rva+length:08X}","instructions":[f"{i.address:08X} {i.bytes.hex()} {i.mnemonic} {i.op_str}" for i in md.disasm(data,rva)]}]})
+  # These current proof sites are mapped back to their exact .pdata function
+  # boundaries instead of carrying guessed pre-patch function starts forward.
+  for name,rva in [("native-resource-root-getter",0x50800A3),("blacktop-package-table-owner",0x11950CD),("scorebug-cached-resource-consumer",0x118B6B9),("main-active-scorebug-owner",0x113456F),("secondary-active-user",0x1055504),("resource-bucket-lookup",0x50D12A3),("resource-table-lookup",0x50D1C32),("native-resource-data-getter",0x50C5FF0)]:
+   index=bisect.bisect_right(starts,rva)-1
+   assert index>=0 and rva<functions[index][1],f"Missing function boundary for {name}"
+   start,end=functions[index];data=pe.get_data(start,end-start)
+   rows.append({"name":name,"pattern":"","hits":[{"rva":f"{rva:08X}","functionStart":f"{start:08X}","functionEnd":f"{end:08X}","instructions":[f"{i.address:08X} {i.bytes.hex()} {i.mnemonic} {i.op_str}" for i in md.disasm(data,start)]}]})
   table_refs=[]
   for match in re.finditer(rb'[\x48\x4c][\x8d\x8b\x89][\x05\x0d\x15\x1d\x25\x2d\x35\x3d]....',image[lo:hi],re.DOTALL):
    rva=pe.get_rva_from_offset(lo+match.start());target=rva+7+struct.unpack('<i',match.group()[3:7])[0]
@@ -61,7 +66,7 @@ def main():
    table_refs.append({"rva":f"{rva:08X}","targetRva":f"{target:08X}","functionStart":f"{start:08X}","functionEnd":f"{end:08X}","instructions":[f"{i.address:08X} {i.bytes.hex()} {i.mnemonic} {i.op_str}" for i in md.disasm(pe.get_data(start,end-start),start)]})
   rows.append({"name":"package-table-native-references","pattern":"RIP references within the independently identified 128-slot package table","hits":table_refs})
   rdata=next(s for s in pe.sections if s.Name.rstrip(b"\0")==b".rdata")
-  needle=struct.pack("<Q",pe.OPTIONAL_HEADER.ImageBase+0x50C5D70);at=rdata.PointerToRawData;end=at+rdata.SizeOfRawData;vtables=[]
+  needle=struct.pack("<Q",pe.OPTIONAL_HEADER.ImageBase+0x50C5FF0);at=rdata.PointerToRawData;end=at+rdata.SizeOfRawData;vtables=[]
   while True:
    found=image.find(needle,at,end)
    if found<0:break
@@ -71,19 +76,19 @@ def main():
     signature,offset,ctor,type_rva,hierarchy,self_rva=struct.unpack("<6I",pe.get_data(locator,24))
     if signature==1 and self_rva==locator:
      typename=pe.get_data(type_rva+16,512).split(b"\0",1)[0].decode("ascii",errors="replace")
-     vtables.append({"vtableRva":f"{vt:08X}","slotRva":f"{slot:08X}","methodRva":"050C5D70","locatorRva":f"{locator:08X}","objectOffset":offset,"type":typename})
+     vtables.append({"vtableRva":f"{vt:08X}","slotRva":f"{slot:08X}","methodRva":"050C5FF0","locatorRva":f"{locator:08X}","objectOffset":offset,"type":typename})
    at=found+8
- report={"schema":"nba2k27-v2-scoreboard-native-discovery-v1","imageSha256":A["IMAGE_SHA"],"gameProcessAccess":False,"gameFilesChanged":False,"candidateOnly":True,"rows":rows,"resourceVtables":vtables}
+ report={"schema":"nba2k27-v2-scoreboard-native-discovery-v1","imageSha256":IMAGE_SHA,"gameProcessAccess":False,"gameFilesChanged":False,"candidateOnly":True,"rows":rows,"resourceVtables":vtables}
  args.output.write_text(json.dumps(report,indent=2)+"\n",encoding="utf-8")
  if args.anchors:
   expected={"package-table-stride24-limit128":2,"descriptor-property-sentinel":1,"cached-scorebug-scalar-consumer":1,"instance-resource-copy":1,"property-search":1}
   assert all(len(next(r for r in rows if r['name']==key)['hits'])==count for key,count in expected.items()),'Independent native consumers changed'
   generic=[v for v in vtables if v['type']=='.?AVVCRESOURCECONTEXT@@' and v['objectOffset']==0]
   assert len(generic)==1 and generic[0]['vtableRva']=='08101C38' and generic[0]['locatorRva']=='08101E00'
-  proof=[(0x119504D,7,'package-table-lea'),(0x1195060,36,'package-stride-count-entry'),(0x119515C,19,'package-table-native-zero-init'),(0x119450A,31,'package-tree-root-and-children'),(0x11948D7,38,'package-storage-used-capacity-stride136-sentinel'),(0x1194911,47,'package-property-list-and-tree-initialization'),(0x10350F0,29,'property-next-key-value'),(0x118B639,19,'scorebug-cached-resource-consumer'),(0x1051F0B,9,'scorebug-instance-resource-copy'),(0x11344EF,7,'main-active-scorebug-store'),(0x1055484,7,'secondary-active-scorebug-load'),(0x507FE23,7,'native-resource-root-load'),(0x1053841,28,'scoreboard-registry-four-type-keys'),(0x1053867,39,'registry-count-rows-stride260'),(0x50D1023,27,'registry-bucket-count-and-pointer'),(0x50D1070,63,'registry-row-owner-type-checks'),(0x50D19B2,25,'registry-vtable-C8-dispatch'),(0x50C5D70,52,'typed-resource-data-getter')]
-  rip=[(0x119504D,0xA98CC38),(0x119515C,0xA98CC40),(0x11344EF,0xA99B850),(0x1055484,0xA976900),(0x507FE23,0xBE95238)]
+  proof=[(0x11950CD,7,'package-table-lea'),(0x11950E0,36,'package-stride-count-entry'),(0x11951DC,19,'package-table-native-zero-init'),(0x119458A,31,'package-tree-root-and-children'),(0x1194957,38,'package-storage-used-capacity-stride136-sentinel'),(0x1194991,47,'package-property-list-and-tree-initialization'),(0x1035170,29,'property-next-key-value'),(0x118B6B9,19,'scorebug-cached-resource-consumer'),(0x1051F8B,9,'scorebug-instance-resource-copy'),(0x113456F,7,'main-active-scorebug-store'),(0x1055504,7,'secondary-active-scorebug-load'),(0x50800A3,7,'native-resource-root-load'),(0x10538C1,28,'scoreboard-registry-four-type-keys'),(0x10538E7,39,'registry-count-rows-stride260'),(0x50D12A3,27,'registry-bucket-count-and-pointer'),(0x50D12F0,63,'registry-row-owner-type-checks'),(0x50D1C32,25,'registry-vtable-C8-dispatch'),(0x50C5FF0,52,'typed-resource-data-getter')]
+  rip=[(0x11950CD,0xA98CC38),(0x11951DC,0xA98CC40),(0x113456F,0xA99B850),(0x1055504,0xA976900),(0x50800A3,0xBE95238)]
   assert all(rva+7+struct.unpack('<i',pe.get_data(rva+3,4))[0]==target for rva,target in rip),'Native globals do not resolve independently'
-  anchors={"schema":"nba2k27-v2-scoreboard-anchors-v1","sha256":A['IMAGE_SHA'],"peTimestamp":0x6AC53765,"imageSize":0x35BDE000,"gameProcessAccess":False,"packageTableRva":0xA98CC40,"activeRva":0xA99B850,"secondaryActiveRva":0xA976900,"resourcesRva":0xBE95238,"resourceVtableRva":0x8101C38,"resourceMethodRva":0x50C5D70,"resourceLocatorRva":0x8101E00,"anchors":[{"rva":rva,"hex":pe.get_data(rva,size).hex(),"label":label} for rva,size,label in proof]}
+  anchors={"schema":"nba2k27-v2-scoreboard-anchors-v1","sha256":IMAGE_SHA,"peTimestamp":0x6AD2E48C,"imageSize":0x36532000,"gameProcessAccess":False,"packageTableRva":0xA98CC40,"activeRva":0xA99B850,"secondaryActiveRva":0xA976900,"resourcesRva":0xBE95238,"resourceVtableRva":0x8101C38,"resourceMethodRva":0x50C5FF0,"resourceLocatorRva":0x8101E00,"anchors":[{"rva":rva,"hex":pe.get_data(rva,size).hex(),"label":label} for rva,size,label in proof]}
   args.anchors.write_text(json.dumps(anchors,indent=2)+'\n',encoding='utf-8')
  print(json.dumps({"output":str(args.output),"counts":{r["name"]:len(r["hits"]) for r in rows},"gameProcessAccess":False,"gameFilesChanged":False}))
 if __name__=="__main__":main()

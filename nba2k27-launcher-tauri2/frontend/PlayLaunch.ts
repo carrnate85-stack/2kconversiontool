@@ -56,6 +56,7 @@ export function launchRequest(
   modded: boolean,
   gameRoot: string,
   modsRoot: string,
+  debugMenus = false,
 ) {
   return {
     channel: modded ? "native-launch-modded" : "native-launch-steam-only",
@@ -64,9 +65,16 @@ export function launchRequest(
         ? "native-modded-qa-explicit-blacktop"
         : "steam-only-no-features",
       gameRoot,
-      ...(modded ? { modsRoot } : {}),
+      ...(modded ? { modsRoot, debugMenus } : {}),
     },
   };
+}
+export async function launchAfterSettingsSaved<T>(
+  waitForSettings: (() => Promise<void>) | undefined,
+  launch: () => Promise<T>,
+) {
+  if (waitForSettings) await waitForSettings();
+  return launch();
 }
 export function playSummary(
   session: {
@@ -156,4 +164,22 @@ export function sessionPollInterval(
     ["waiting-for-game", "game-running", "needs-review"].includes(phase ?? "")
     ? 1000
     : 5000;
+}
+
+export function terminalLaunchFailure(
+  session: {
+    phase?: string;
+    message?: string;
+    error?: string | null;
+    nativeProvider?: { error?: string | null } | null;
+  },
+  elapsedMs: number,
+) {
+  if (session.phase !== "closed" || elapsedMs < 1000) return null;
+  return (
+    session.error ||
+    session.nativeProvider?.error ||
+    session.message ||
+    "The game session closed before Steam launch. Try Play again after reviewing the launcher details."
+  );
 }

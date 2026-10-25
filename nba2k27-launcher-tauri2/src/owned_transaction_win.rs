@@ -71,6 +71,7 @@ unsafe extern "system" {
     fn OpenProcess(access: u32, inherit: i32, pid: u32) -> Raw;
     fn GetCurrentProcessId() -> u32;
     fn GetProcessId(h: Raw) -> u32;
+    fn GetProcessIdOfThread(h: Raw) -> u32;
     fn GetProcessTimes(h: Raw, a: *mut Ft, b: *mut Ft, c: *mut Ft, d: *mut Ft) -> i32;
     fn QueryFullProcessImageNameW(h: Raw, flags: u32, buffer: *mut u16, size: *mut u32) -> i32;
     fn WaitForSingleObject(h: Raw, ms: u32) -> u32;
@@ -185,6 +186,58 @@ pub(super) fn helper_stopped_on_identity_error(
         }
     }
 }
+fn bootstrap_remaining(start: u64, now: u64) -> Result<u32> {
+    ensure!(
+        now >= start && now - start < BOOTSTRAP_MS,
+        "Transaction bootstrap deadline expired"
+    );
+    Ok((BOOTSTRAP_MS - (now - start)) as u32)
+}
+/// Shutdown only: callers own a retained handle authenticated by check_game /
+/// private bootstrap before their Context can be constructed. No PID reopening,
+/// target adoption or memory-write permission is supplied by this routine.
+pub(super) fn bounded_retained_shutdown(
+    mut terminate: impl FnMut() -> bool,
+    mut wait: impl FnMut(u32) -> u32,
+) -> Result<()> {
+    if wait(0) == 0 {
+        return Ok(());
+    }
+    for _ in 0..3 {
+        let _ = terminate();
+        if wait(1000) == 0 {
+            return Ok(());
+        }
+    }
+    anyhow::bail!("Authenticated retained process did not close after three bounded attempts")
+}
+fn close_authenticated(h: Raw, status: u32) -> Result<()> {
+    bounded_retained_shutdown(
+        || unsafe { TerminateProcess(h, status) } != 0,
+        |ms| unsafe { WaitForSingleObject(h, ms) },
+    )
+}
+fn safety_hold(h: Raw) {
+    eprintln!(
+        "Native shutdown could not be confirmed. The original freeze object is retained; close the exact game manually. No more effects will be attempted."
+    );
+    // There is no safe timeout release of an unknown partial graph. Kernel refusal
+    // leaves an explicit passive safety keeper, never an identity/retry spin.
+    loop {
+        if unsafe { WaitForSingleObject(h, u32::MAX) } == 0 {
+            return;
+        }
+        std::thread::park();
+    }
+}
+pub(super) fn bounded_thread_snapshot(mut snapshot: impl FnMut() -> Result<bool>) -> Result<()> {
+    for _ in 0..2 {
+        if snapshot()? {
+            return Ok(());
+        }
+    }
+    anyhow::bail!("Target threads changed during both admission snapshots; no game was paused")
+}
 fn tick() -> u64 {
     unsafe { GetTickCount64() }
 }
@@ -236,9 +289,12 @@ impl Api {
                 n > 0 && (n as usize) < path.len(),
                 "ntdll image path unavailable"
             );
+            let actual_ntdll = hash(Path::new(&String::from_utf16(&path[..n as usize])?))?;
             ensure!(
-                hash(Path::new(&String::from_utf16(&path[..n as usize])?))? == NTDLL_SHA,
-                "Owned freeze is unsupported on this ntdll build"
+                actual_ntdll == NTDLL_SHA,
+                "Structural edits are unavailable on this unvalidated Windows kernel profile (ntdll SHA256 {}). The tested profile is Windows11 build26200 / ntdll {}. No game was paused; update launcher support before using structural edits.",
+                actual_ntdll,
+                &NTDLL_SHA[..12]
             );
             macro_rules! symbol {
                 ($name:literal,$ty:ty) => {{
@@ -300,6 +356,14 @@ impl Api {
             !self.frozen(game)?,
             "Target already frozen by another owner"
         );
+        bounded_thread_snapshot(|| self.thread_snapshot(pid))?;
+        ensure!(
+            !self.frozen(game)? && unsafe { GetProcessId(game) } == pid,
+            "Target thread state changed"
+        );
+        Ok(())
+    }
+    fn thread_snapshot(&self, pid: u32) -> Result<bool> {
         let snap = Handle::new(unsafe { CreateToolhelp32Snapshot(4, 0) })?;
         let mut row = ThreadRow::default();
         row.size = size_of::<ThreadRow>() as u32;
@@ -307,17 +371,27 @@ impl Api {
             unsafe { Thread32First(snap.0, &mut row) } != 0,
             "Thread ownership snapshot unavailable"
         );
-        let mut seen = 0usize;
+        let mut seen = 0;
         loop {
             if row.pid == pid {
                 seen += 1;
                 ensure!(seen <= 8192, "Thread snapshot exceeds bound");
-                let t = Handle::new(unsafe { OpenThread(0x40, 0, row.tid) })?;
+                let raw = unsafe { OpenThread(0x40, 0, row.tid) };
+                if raw == 0 {
+                    if unsafe { GetLastError() } == 87 {
+                        return Ok(false);
+                    }
+                    return Err(os_error("Thread ownership query unavailable"));
+                }
+                let thread = Handle::new(raw)?;
+                if unsafe { GetProcessIdOfThread(thread.0) } != pid {
+                    return Ok(false);
+                }
                 let mut count = 0u32;
                 ensure!(
                     unsafe {
                         (self.thread)(
-                            t.0,
+                            thread.0,
                             35,
                             (&mut count as *mut u32).cast(),
                             4,
@@ -337,11 +411,8 @@ impl Api {
                 break;
             }
         }
-        ensure!(
-            seen > 0 && !self.frozen(game)?,
-            "Target thread state changed"
-        );
-        Ok(())
+        ensure!(seen > 0, "Target has no proven threads");
+        Ok(true)
     }
 }
 
@@ -634,14 +705,11 @@ impl Drop for Context {
         {
             return;
         }
-        while live(self.game.0) {
-            if same(self.game.0, &self.request.game).is_ok() {
-                let _ = unsafe { TerminateProcess(self.game.0, 0xe087) };
-            }
-            if unsafe { WaitForSingleObject(self.game.0, 1000) } == 0 {
-                break;
-            }
-            std::thread::sleep(Duration::from_millis(250));
+        // check_game authenticated THIS retained process object before Context
+        // construction. A failed fresh image query cannot turn it into another
+        // process or justify leaving a partially edited game frozen forever.
+        if close_authenticated(self.game.0, 0xe087).is_err() {
+            safety_hold(self.game.0);
         }
     }
 }
@@ -842,8 +910,10 @@ pub(super) fn execute(
     drop(child.stdin.take());
     drop(control);
     ensure!(
-        unsafe { WaitForSingleObject(ready.0, 5000) } == 0
-            && unsafe { WaitForSingleObject(helper_ready.0, 5000) } == 0
+        unsafe { WaitForSingleObject(ready.0, bootstrap_remaining(watch.started, tick())?) } == 0
+            && unsafe {
+                WaitForSingleObject(helper_ready.0, bootstrap_remaining(watch.started, tick())?)
+            } == 0
             && live(child.as_raw_handle() as Raw)
             && live(watcher.as_raw_handle() as Raw),
         "Independent transaction children failed to become ready"
@@ -907,7 +977,7 @@ fn helper(execute_inside: ExecuteInside) -> Result<i32> {
         "Helper ready signal failed"
     );
     ensure!(
-        unsafe { WaitForSingleObject(start.0, 10000) } == 0
+        unsafe { WaitForSingleObject(start.0, BOOTSTRAP_MS as u32) } == 0
             && unsafe { WaitForSingleObject(watch_ready.0, 0) } == 0
             && live(parent.0)
             && live(watchdog.0),
@@ -963,21 +1033,15 @@ impl Drop for ReadContext {
         if self.release_verified {
             return;
         }
-        while live(self.helper.0) {
-            let _ = unsafe { TerminateProcess(self.helper.0, 0xe086) };
-            if unsafe { WaitForSingleObject(self.helper.0, 1000) } == 0 {
-                break;
-            }
-            std::thread::sleep(Duration::from_millis(100));
-        }
+        let stopped = close_authenticated(self.helper.0, 0xe086).is_ok();
         if !live(self.game.0) {
             return;
         }
-        if matches!(self.api.frozen(self.game.0), Ok(false)) {
+        if stopped && matches!(self.api.frozen(self.game.0), Ok(false)) {
             return;
         }
-        while emergency_close(self).is_err() {
-            std::thread::sleep(Duration::from_millis(250));
+        if emergency_close(self).is_err() {
+            safety_hold(self.game.0);
         }
     }
 }
@@ -986,20 +1050,11 @@ fn emergency_close(cx: &ReadContext) -> Result<()> {
         cx.request.emergency_close_consent,
         "Emergency-close consent missing"
     );
-    if !live(cx.game.0) {
-        return Ok(());
-    }
-    same(cx.game.0, &cx.request.game)?;
-    ensure!(
-        unsafe { TerminateProcess(cx.game.0, 0xe084) } != 0,
-        "Exact game emergency close failed"
-    );
-    ensure!(
-        unsafe { WaitForSingleObject(cx.game.0, 5000) } == 0,
-        "Exact game exit was not confirmed"
-    );
-    Ok(())
+    // Both Context types are private and constructed only after check_game proved
+    // PID+birth+image on this original handle. Terminate this object, never a PID.
+    close_authenticated(cx.game.0, 0xe084)
 }
+
 fn watchdog(verify: VerifyInside) -> Result<i32> {
     let wr: WatchRequest = unframe(&mut std::io::stdin(), MAX_REQUEST)?;
     wr.request.validate()?;
@@ -1014,7 +1069,7 @@ fn watchdog(verify: VerifyInside) -> Result<i32> {
     check_game(game.0, &wr.request.game, &wr.request.parent)?;
     same(parent.0, &wr.request.parent)?;
     ensure!(
-        wr.started <= tick() && tick() - wr.started < 2000,
+        wr.started <= tick() && tick() - wr.started < BOOTSTRAP_MS,
         "Watchdog bootstrap expired"
     );
     let mut cx = ReadContext {
@@ -1039,6 +1094,7 @@ fn watchdog(verify: VerifyInside) -> Result<i32> {
     let mut pipe_failed = false;
     let mut completion: Option<Finished> = None;
     let mut freeze_attempted = false;
+    let mut deadline = WatchdogDeadline::new(wr.started);
     while live(cx.helper.0) {
         // Never block on partial frames: drain only the bytes PeekNamedPipe reports.
         let mut available = 0u32;
@@ -1093,6 +1149,7 @@ fn watchdog(verify: VerifyInside) -> Result<i32> {
                 Ok(WatchMessage::FreezeAttempt { ack })
                     if cx.intent.is_some() && !freeze_attempted && completion.is_none() =>
                 {
+                    deadline.freeze_ack(tick())?;
                     freeze_attempted = true;
                     let ready = Handle::new(ack as Raw)?;
                     ensure!(
@@ -1129,8 +1186,7 @@ fn watchdog(verify: VerifyInside) -> Result<i32> {
             }
         }
         let now = tick();
-        if pipe_failed || now < wr.started || now - wr.started >= WATCHDOG_MS || !live(cx.parent.0)
-        {
+        if pipe_failed || deadline.check(now).is_err() || !live(cx.parent.0) {
             let already_stopped = helper_stopped_on_identity_error(
                 same(cx.helper.0, &cx.helper_identity),
                 |ms| unsafe { WaitForSingleObject(cx.helper.0, ms) },
@@ -1239,8 +1295,8 @@ fn watchdog(verify: VerifyInside) -> Result<i32> {
         parsed.unwrap_or(Finished {
             result: None,
             error: Some(
-                "Transaction ended before completion; full consistent state independently verified"
-                    .into(),
+                if no_effect {"Transaction ended before any effect; no memory changes were attempted"}
+                else {"Transaction ended before completion; full consistent state independently verified"}.into(),
             ),
             effect_attempted: true,
             verified_intent: None,
@@ -1248,8 +1304,8 @@ fn watchdog(verify: VerifyInside) -> Result<i32> {
     } else {
         // Keep this state reference alive if closure cannot be confirmed. Never
         // unwind/drop it onto an unverified graph merely to let the UI continue.
-        while emergency_close(&cx).is_err() {
-            std::thread::sleep(Duration::from_millis(250));
+        if emergency_close(&cx).is_err() {
+            safety_hold(cx.game.0);
         }
         Finished{result:None,error:Some("Structural transaction could not be verified. The owned game was closed without saving to protect the roster.".into()),effect_attempted:true,verified_intent:None}
     };
@@ -1312,6 +1368,14 @@ pub(super) fn verified_intent(game: &Identity, session: &str, sha: &str) -> bool
     })
 }
 
+pub(super) fn forget_verified(game: &Identity, session: &str, sha: &str) -> Result<()> {
+    let mut values = VERIFIED
+        .lock()
+        .map_err(|_| anyhow::anyhow!("Completion witness store is held"))?;
+    values.retain(|(g, s, h)| !(g == game && s == session && h == &sha.to_ascii_lowercase()));
+    Ok(())
+}
+
 pub(super) fn archive_intent(file: &fs::File, target: &Path) -> Result<()> {
     use windows::Win32::{
         Foundation::HANDLE,
@@ -1327,7 +1391,10 @@ pub(super) fn archive_intent(file: &fs::File, target: &Path) -> Result<()> {
         "Archive path exceeds bound"
     );
     let count = name.len().checked_mul(2).context("Archive name overflow")?;
-    let size = 20 + count;
+    // Win32 path normalization consumes FileName as a NUL-terminated string.
+    // Keep FileNameLength in bytes excluding NUL, but always supply the NUL;
+    // allocation-rounding padding is not a terminator at every name length.
+    let size = 20 + count + 2;
     let mut words = vec![0u64; (size + 7) / 8];
     let buffer =
         unsafe { std::slice::from_raw_parts_mut(words.as_mut_ptr().cast::<u8>(), words.len() * 8) };
@@ -1343,5 +1410,9 @@ pub(super) fn archive_intent(file: &fs::File, target: &Path) -> Result<()> {
             size as u32,
         )
     }?;
+    ensure!(
+        target.try_exists()?,
+        "Exact structural archive destination was not created"
+    );
     Ok(())
 }

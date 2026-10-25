@@ -12,14 +12,10 @@
     },
   });
 })();
-// Version 2 live players leave height and wingspan unmapped (null); older
-// documents may also leave weight null. The unchanged WPF form cannot submit
-// blank measurements, so each unmapped one is shown as not saved: blank,
-// disabled, and read back as null. The native backend refuses real values.
+// Only measurements admitted by the selected player's native read are editable.
+// Keep unavailable/shared appearance values out of the ordinary save payload.
 (() => {
   if (typeof window.addEventListener !== 'function' || !window.document) return;
-  // Each measurement is unmapped on its own: Version 2 proves weight but not
-  // the appearance pointer that holds height and wingspan.
   const fields = { playerEditHeight: 'heightCm', playerEditHeightInches: 'heightCm', playerEditWingspan: 'wingspanCm', playerEditWeight: 'weightLbs' };
   const unmapped = input => input?.dataset?.rustUnmapped === '1';
   let wrapped = false;
@@ -42,7 +38,7 @@
         input.disabled = true;
         input.dataset.rustUnmapped = '1';
         input.placeholder = 'Not mapped';
-        input.title = 'Not mapped for this game version; this value is not saved.';
+        input.title = player.measurementStatus || 'This measurement is unavailable for this player; it is not saved.';
       } else if (unmapped(input)) {
         delete input.dataset.rustUnmapped;
         input.placeholder = '';
@@ -63,4 +59,40 @@
   };
   window.addEventListener('player-editor:open', event => update(event.detail));
   window.addEventListener('player-editor:committed', event => update(event.detail?.player));
+})();
+
+// Read the selected player's native appearance before the editor creates its
+// draft/baseline. Do not asynchronously overwrite fields after editing begins.
+(() => {
+  let visit = 0;
+  window.addEventListener('player-editor:closed', () => { visit++; });
+  window.addEventListener('keydown', event => { if (event.key === 'Escape') visit++; });
+  window.addEventListener('DOMContentLoaded', () => {
+    const original = window.openPlayerEditor;
+    if (typeof original !== 'function') return;
+    window.openPlayerEditor = async function(player) {
+      const token = ++visit;
+      if (player?.source !== 'live-roster' || !player.editCapabilities)
+        return original.call(this, player);
+      const identity = {recordIndex:player.recordIndex, firstName:player.firstName, lastName:player.lastName, cyberfaceId:player.cyberfaceId};
+      let result;
+      try {
+        const detail = await window.modLauncher.playerMeasurements(identity);
+        if (token !== visit) return;
+        if (!detail || Object.entries(identity).some(([key,value]) => detail[key] !== value))
+          throw Error('Player identity changed; refresh the roster.');
+        result = {...player, editCapabilities:{...player.editCapabilities}, measurementStatus:detail.measurementStatus};
+        for (const [key,max] of [['heightCm',260],['wingspanCm',320]]) {
+          const available = detail.editCapabilities?.[key] === true && Number.isFinite(detail[key]) && detail[key] >= 120 && detail[key] <= max;
+          result[key] = available ? detail[key] : null;
+          result.editCapabilities[key] = available;
+        }
+      } catch (error) {
+        result = {...player, heightCm:null, wingspanCm:null,
+          editCapabilities:{...player.editCapabilities,heightCm:false,wingspanCm:false},
+          measurementStatus:error.message || String(error)};
+      }
+      if (token === visit) return original.call(this, result);
+    };
+  });
 })();

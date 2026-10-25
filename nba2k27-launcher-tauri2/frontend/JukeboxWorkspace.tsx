@@ -397,6 +397,7 @@ export function JukeboxNative({
   initialView,
   freestylePlaylist = true,
   onFreestylePlaylist,
+  onDownloadPlaylists,
 }: {
   status?: (message: string) => void;
   onBusyChange?: (busy: boolean) => void;
@@ -405,6 +406,7 @@ export function JukeboxNative({
   /** WPF usePlaylistInFreestyle (default on), saved in launcher settings. */
   freestylePlaylist?: boolean;
   onFreestylePlaylist?: (on: boolean) => void;
+  onDownloadPlaylists?: () => void;
 }) {
   const client = useMemo(
     () => new JukeboxNativeClient(request, initialView),
@@ -447,6 +449,8 @@ export function JukeboxNative({
     [localError, setLocalError] = useState(""),
     [notice, setNotice] = useState("");
   const [excluded, setExcluded] = useState<Set<string>>(new Set());
+  const [undoRemoval, setUndoRemoval] = useState<{ playlist: string; before: string[]; after: string[] } | null>(null);
+  const [moveSong, setMoveSong] = useState<{ key: string; playlist: string; before: string[]; position: number } | null>(null);
   const [batch, setBatch] = useState<{
       done: number;
       total: number;
@@ -562,6 +566,11 @@ export function JukeboxNative({
         "Saving selected songs",
       )
     );
+  }
+  async function removeSong(key: string) {
+    const before = [...keys], after = keys.filter(k => k !== key), playlistId = selected;
+    if (await action("jukebox:set-order", { playlistId, trackKeys: after }, "Removing song from playlist"))
+      setUndoRemoval({ playlist: playlistId, before, after });
   }
   async function exportPlaylist() {
     if (await saveChoices())
@@ -1020,6 +1029,17 @@ export function JukeboxNative({
         </div>
       )}
       <div className="jukebox-table-search">
+        {undoRemoval && undoRemoval.playlist === selected && JSON.stringify(keys) === JSON.stringify(undoRemoval.after) && <div className="draft-notice" role="status">Song removed from this playlist. <button className="secondary" disabled={busy} onClick={() => {
+          void action("jukebox:set-order", { playlistId: selected, trackKeys: undoRemoval.before }, "Restoring song to playlist").then(ok => { if (ok) setUndoRemoval(null); });
+        }}>Undo</button></div>}
+        {moveSong && <Modal title="Move song to position" locked={busy} close={() => setMoveSong(null)}>
+          <label>Playlist position <input type="number" min={1} max={keys.length} value={moveSong.position} onChange={e => setMoveSong({ ...moveSong, position: Number(e.target.value) })} /></label>
+          <button className="primary" disabled={busy || moveSong.playlist !== selected || JSON.stringify(keys) !== JSON.stringify(moveSong.before) || !Number.isInteger(moveSong.position) || moveSong.position < 1 || moveSong.position > keys.length} onClick={() => {
+            const next = keys.filter(k => k !== moveSong.key); next.splice(moveSong.position - 1, 0, moveSong.key);
+            void action("jukebox:set-order", { playlistId: selected, trackKeys: next }, "Saving song position").then(ok => { if (ok) setMoveSong(null); });
+          }}>Move song</button>
+          <button className="secondary" disabled={busy} onClick={() => setMoveSong(null)}>Cancel</button>
+        </Modal>}
         <div className="jukebox-song-tools">
           <button
             className="primary small"
@@ -1080,6 +1100,8 @@ export function JukeboxNative({
           >
             Add from library
           </button>
+          <button className="secondary small" disabled={busy || !!excluded.size || !onDownloadPlaylists}
+            onClick={onDownloadPlaylists}>Download playlists</button>
         </div>
         <label className="jukebox-search-field">
           <span data-ui-icon="search" aria-hidden="true">
@@ -1114,6 +1136,7 @@ export function JukeboxNative({
           id="jukeboxRows"
           className="jukebox-table-body"
           role="list"
+          tabIndex={0}
           aria-label="Playlist song list"
         >
           {rows.map((track) => {
@@ -1181,22 +1204,14 @@ export function JukeboxNative({
                     className="jukebox-remove-button"
                     data-jukebox-remove
                     title="Remove from this playlist; keep the audio in your library"
-                    onClick={() =>
-                      void action(
-                        "jukebox:set-order",
-                        {
-                          playlistId: selected,
-                          trackKeys: keys.filter((k) => k !== key),
-                        },
-                        "Removing song from playlist",
-                      )
-                    }
+                    onClick={() => void removeSong(key)}
                   >
                     Remove
                   </button>
                   <button
                     className="jukebox-order-button"
                     aria-label={`Move song ${index + 1} up`}
+                    title="Move up"
                     disabled={busy || !playlist || !index || !!excluded.size}
                     onClick={() =>
                       void action(
@@ -1209,11 +1224,12 @@ export function JukeboxNative({
                       )
                     }
                   >
-                    ↑
+                    <UiIcon name="arrow-up" />
                   </button>
                   <button
                     className="jukebox-order-button"
                     aria-label={`Move song ${index + 1} down`}
+                    title="Move down"
                     disabled={
                       busy ||
                       !playlist ||
@@ -1231,8 +1247,9 @@ export function JukeboxNative({
                       )
                     }
                   >
-                    ↓
+                    <UiIcon name="arrow-down" />
                   </button>
+                  <button className="jukebox-position-button" title="Move to position…" disabled={busy || !playlist || !!excluded.size} aria-label={`Move ${jukeboxTitle(track)} to position`} onClick={() => setMoveSong({ key, playlist: selected, before: [...keys], position: index + 1 })}><span aria-hidden="true">···</span></button>
                 </div>
               </div>
             );
@@ -1403,9 +1420,7 @@ export function JukeboxNative({
       {modal === "repair" && (
         <Modal title="Repair missing tracks" close={modalClose} locked={busy}>
           <p>
-            {missing.length === 1
-              ? "1 song's"
-              : `${missing.length} songs'`}{" "}
+            {missing.length === 1 ? "1 song's" : `${missing.length} songs'`}{" "}
             saved audio is missing from Library/Jukebox/Audio. Remove{" "}
             {missing.length === 1 ? "it" : "them"} from the library and every
             playlist? Nothing else is deleted.
@@ -1446,20 +1461,26 @@ export function JukeboxNative({
                 <strong>
                   {state?.playlists.find((p) => p.id === id)?.name}
                 </strong>
-                <button
-                  aria-label={`Move playlist ${index + 1} up`}
-                  disabled={!index || busy}
-                  onClick={() => setOrder(moveJukeboxTrack(order, index, -1))}
-                >
-                  ↑
-                </button>
-                <button
-                  aria-label={`Move playlist ${index + 1} down`}
-                  disabled={index === order.length - 1 || busy}
-                  onClick={() => setOrder(moveJukeboxTrack(order, index, 1))}
-                >
-                  ↓
-                </button>
+                <div className="juke-order-actions">
+                  <button
+                    className="secondary small juke-order-button"
+                    aria-label={`Move playlist ${index + 1} up`}
+                    disabled={!index || busy}
+                    onClick={() => setOrder(moveJukeboxTrack(order, index, -1))}
+                  >
+                    <UiIcon name="arrow-up" />
+                    <span>Up</span>
+                  </button>
+                  <button
+                    className="secondary small juke-order-button"
+                    aria-label={`Move playlist ${index + 1} down`}
+                    disabled={index === order.length - 1 || busy}
+                    onClick={() => setOrder(moveJukeboxTrack(order, index, 1))}
+                  >
+                    <UiIcon name="arrow-down" />
+                    <span>Down</span>
+                  </button>
+                </div>
               </div>
             ))}
           </div>
@@ -1506,8 +1527,8 @@ export function JukeboxNative({
             </label>
             <p className="muted">
               Choose an audio file to add to {playlist?.name}. Then use Edit to
-              find or choose artwork. Leave the title or artist blank to use
-              the filename (“Artist - Title”; otherwise the artist is Custom).
+              find or choose artwork. Leave the title or artist blank to use the
+              filename (“Artist - Title”; otherwise the artist is Custom).
             </p>
             <div className="juke-modal-actions">
               <button onClick={modalClose}>Cancel</button>

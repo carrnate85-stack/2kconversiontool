@@ -1,0 +1,15 @@
+QA135 — Disabled Cameras Downloads tab — 2026-10-24
+DEV ONLY 0.53.39. No installation, promotion, activation, GitHub writes, game access or computer use.
+
+Added Cameras after Blacktop Previews. Native disabled button uses existing grey disabled styling, has no selection handler, and exposes No camera downloads available yet through tooltip/accessibility text. Shared Curator collection name/filter recognizes the future cameras category. Per user request there are no entries and the category cannot be opened, including Curator. No camera pack format/importer or hosted catalog was invented or enabled; those remain future work when camera downloads exist. Other Curator tabs and controls unchanged.
+
+User follow-ups: tab order is Playlists, Startup videos, Blacktop Previews, Cameras. Default tab changed to Playlists. Removed Selected for the next Play session below the selected enabled startup video; no empty small status element remains. Disabled/no-selection hints retained.
+
+Validation: TypeScript,252frontend tests/48files,Vite build and native dev release passed. Visual acceptance pending. No backend logic changed. Main/Share freshly hash-verified unchanged at QA129. QA133 complete-preview upload remains pending; original complete pack default retained. QA073 natural Rust AV,QA078 Clang crash,QA106 Season History assertion remain unresolved.
+
+Candidate:C:\Users\carrn\CodexProjects\2kconversiontool\nba2k27-launcher-tauri2\Dev\Pending\QA135\launcher.exe
+SHA256:2AD4CF8162F75B951C4D869D36603D41F1AAF207ACF596FC4CB0948DCD23E6D8
+Bytes:48974336
+PDB SHA256:BF001D812E8DE3A7B28DA07BCE373FC3967D9930A3E50FDDB4A26F7145259425
+Starter:Open QA135 Dev.lnk / Start QA135 Dev.ps1. Exact hash/idle guards retained. Close current dev normally first. DO NOT promote curator build; omit dev-curator from future Main/Share.
+Backups:Backups/qa135-cameras-tab-20261024. Reports:artifacts/qa135-cameras-tab.

@@ -1,0 +1,21 @@
+QA126 DEV HANDOFF - 2026-10-24
+Read artifacts/qa126-startup-path/REPORT.txt first.
+
+QA125 user live test failed: video Bootstrap/Metadata/Canplay succeeded, then "Audio guardian executable differs". No Playing/Frame. Preserved raw session trace and latest status in this artifact directory.
+Reproduced using actual extracted embedded helper process waiting on private stdin (no bootstrap or game/audio access): cached PathBuf contains Cache/Runtime, QueryFullProcessImageNameW returns Cache\Runtime. Both path test and actual process regression fail before correction and pass after.
+Fix normalizes Windows separators plus extended drive/UNC path forms in the startup audio identity comparison. All identity/hash/root/session/nonce checks stay in place; no audio restoration guard bypass. Guardian rebuilt.
+
+Dev only: version 0.53.30
+Candidate Dev/Pending/QA126/launcher.exe
+Bytes 59569152
+SHA256 47DD5C3EA912B62295706217998CCAE7915AD9ABDBC456FD3B90C0F418A4C9CA
+PDB SHA256 37DF52639B70E328C0970360CB59F5A83B61E8ADCD78297DFB04E771B8CC7B4C
+Guardian SHA256 9F738AF9AD229C23EBD1D8D0883C32FB311F50E4486931BEE78605B9F6E325FE
+Starter: Open QA126 Dev.lnk / Start QA126 Dev.ps1
+
+Validation: 79 native startup tests passed, 1 ignored. Includes real helper identity before bootstrap, with owned child exiting on stdin EOF. TypeScript/Vite/release build passed. Exact staged EXE's actual intro-page probe passed with decoded 1920x1080 frame at 526 ms and exited 0. This muted fixture does not prove gameplay audio/fullscreen; user needs normal Play.
+Starter CheckOnly verified staged hash/size and held because QA125 dev PID 27260 remained open. No activation or process closure performed. Close current launcher normally, open QA126, use existing chosen startup video and Play.
+Existing dev settings/video/library preserved. Main/Share remain QA124 0.53.28 with SHA256 236166C70F014ED835A533BE27CF52DA5DA9A612C62331CE88288D30D44F8CFD, verified unchanged. No installation or promotion.
+
+Live diagnostics: Dev/Portable/Logs/startup-video-last.json and startup-video-<session>.jsonl. Actual acceptance still pending; preserve any new failure trace before another Play.
+Unresolved QA073 natural test AV/exact EXE-PDB, QA078 Clang fixture crash, QA106 season persistence unchanged.

@@ -61,7 +61,7 @@ fn profile() -> &'static Profile {
         assert_eq!(p.schema, "nba2k27-v2-outfit-match-method-profile-v1");
         assert_eq!(
             p.sha256,
-            "29A96471C55909FC2BCEA6C699C59238656A501C19B50C74ED64B0D842E576A1"
+            "B673EB04593D6D5A4DFB9E270178E04C017BD9F277514D256EA98FFB792ED27B"
         );
         assert!(!p.write_authority && p.methods.len() == 25 && p.virtual_tables.len() == 10);
         p

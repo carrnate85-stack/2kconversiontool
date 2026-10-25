@@ -9,7 +9,10 @@ use std::{
     fs::{self, File},
     io::{Read, Seek, SeekFrom, Write},
     path::{Path, PathBuf},
-    sync::Mutex,
+    sync::{
+        Mutex,
+        atomic::{AtomicBool, Ordering},
+    },
 };
 use zip::ZipArchive;
 
@@ -30,6 +33,9 @@ pub struct Previews {
     active: Mutex<Option<Active>>,
     problem: Mutex<Option<String>>,
     importing: Mutex<()>,
+    download_cancel: AtomicBool,
+    download_state: Mutex<Value>,
+    closing: AtomicBool,
 }
 fn valid_key(key: &str) -> bool {
     let parts: Vec<_> = key.split('/').collect();
@@ -146,6 +152,13 @@ fn digest_file(path: &Path) -> Result<String> {
     Ok(format!("{:x}", hash.finalize()))
 }
 pub fn validate(source: &Path, progress: impl Fn(usize, usize, &str)) -> Result<Value> {
+    validate_checked(source, progress, || Ok(()))
+}
+fn validate_checked(
+    source: &Path,
+    progress: impl Fn(usize, usize, &str),
+    check: impl Fn() -> Result<()>,
+) -> Result<Value> {
     let mut zip = open_zip(source)?;
     ensure!(
         zip.len() > 0 && zip.len() <= 40000,
@@ -156,6 +169,7 @@ pub fn validate(source: &Path, progress: impl Fn(usize, usize, &str)) -> Result<
     let mut count = 0;
     let mut expanded = 0u64;
     for index in 0..total {
+        check()?;
         let entry = zip.by_index(index)?;
         let key = entry.name().to_string();
         if entry.is_dir() {
@@ -189,6 +203,7 @@ impl Previews {
     pub fn new(root: &Path) -> Result<Self> {
         fs::create_dir_all(root.join("Library/Previews"))?;
         fs::create_dir_all(root.join("Cache/PreviewImages"))?;
+        fs::create_dir_all(root.join("Cache/Imports"))?;
         let p = root.join("Data/preview-pack.json");
         let loaded = (|| -> Result<Option<Active>> {
             Ok(if p.exists() {
@@ -223,7 +238,109 @@ impl Previews {
             active: Mutex::new(active),
             problem: Mutex::new(problem),
             importing: Mutex::new(()),
+            download_cancel: AtomicBool::new(false),
+            download_state: Mutex::new(
+                json!({"active":false,"done":0,"total":1,"phase":"","error":null}),
+            ),
+            closing: AtomicBool::new(false),
         })
+    }
+    pub fn download_status(&self) -> Result<Value> {
+        Ok(self
+            .download_state
+            .lock()
+            .map_err(|_| anyhow::anyhow!("Preview download status unavailable"))?
+            .clone())
+    }
+    pub fn hosted_pack_installed(&self) -> Result<bool> {
+        self.pack_installed(
+            crate::preview_download::SHA256,
+            crate::preview_download::BYTES,
+        )
+    }
+    pub fn pack_installed(&self, sha: &str, bytes: u64) -> Result<bool> {
+        let active = self
+            .active
+            .lock()
+            .map_err(|_| anyhow::anyhow!("Preview pack unavailable"))?;
+        Ok(active.as_ref().is_some_and(|a| {
+            a.manifest.id == sha && a.manifest.bytes == bytes && a.manifest.count > 0
+        }))
+    }
+    pub fn cancel_download(&self) {
+        self.download_cancel.store(true, Ordering::Release);
+    }
+    pub fn shutdown(&self) {
+        self.closing.store(true, Ordering::Release);
+        self.cancel_download();
+    }
+    pub fn download(&self, progress: impl Fn(usize, usize, &str)) -> Result<Value> {
+        self.download_entry(&crate::curated_catalog::preview_pack(), progress)
+    }
+    pub fn download_entry(
+        &self,
+        entry: &crate::curated_catalog::Entry,
+        progress: impl Fn(usize, usize, &str),
+    ) -> Result<Value> {
+        crate::curated_catalog::validate_download(
+            crate::curated_catalog::PREVIEW_ID,
+            &crate::curated_catalog::Download {
+                url: entry.url.clone(),
+                filename: entry.filename.clone(),
+                bytes: entry.bytes,
+                sha256: entry.sha256.clone(),
+            },
+        )?;
+        let _guard = self
+            .importing
+            .try_lock()
+            .map_err(|_| anyhow::anyhow!("A preview import or download is already running"))?;
+        ensure!(!self.closing.load(Ordering::Acquire), "Launcher is closing");
+        self.download_cancel.store(false, Ordering::Release);
+        ensure!(!self.closing.load(Ordering::Acquire), "Launcher is closing");
+        let report = |done: usize, total: usize, phase: &str| {
+            if let Ok(mut state) = self.download_state.lock() {
+                *state =
+                    json!({"active":true,"done":done,"total":total,"phase":phase,"error":null});
+            }
+            progress(done, total, phase);
+        };
+        report(0, entry.bytes as usize, "Connecting to preview download…");
+        let folder = self
+            .root
+            .join("Cache/Imports")
+            .join(format!("preview-download-{}", crate::backend::unique_id()));
+        let source = folder.join("Blacktop previews.zip");
+        let result = (|| {
+            fs::create_dir(&folder)?;
+            crate::preview_download::download_from(
+                &source,
+                &entry.url,
+                entry.bytes,
+                &entry.sha256,
+                &self.download_cancel,
+                |done, total| report(done as usize, total as usize, "Downloading previews…"),
+            )?;
+            self.import_checked_hash(
+                &source,
+                &report,
+                Some(&self.download_cancel),
+                Some(&entry.sha256),
+            )
+        })();
+        let _ = fs::remove_file(&source);
+        let _ = fs::remove_dir(&folder);
+        if let Ok(mut state) = self.download_state.lock() {
+            *state = match &result {
+                Ok(_) => {
+                    json!({"active":false,"done":1,"total":1,"phase":"Preview pack ready","error":null})
+                }
+                Err(e) => {
+                    json!({"active":false,"done":0,"total":1,"phase":if self.download_cancel.load(Ordering::Acquire) {"Download cancelled"} else {"Download failed"},"error":if self.download_cancel.load(Ordering::Acquire) {None} else {Some(format!("{e:#}"))}})
+                }
+            };
+        }
+        result
     }
     pub fn status(&self) -> Result<Value> {
         let active = self
@@ -245,6 +362,36 @@ impl Previews {
             .importing
             .try_lock()
             .map_err(|_| anyhow::anyhow!("A preview import is already running"))?;
+        self.import_checked(source, progress, None)
+    }
+    fn import_checked(
+        &self,
+        source: &Path,
+        progress: impl Fn(usize, usize, &str),
+        cancel: Option<&AtomicBool>,
+    ) -> Result<Value> {
+        self.import_checked_hash(
+            source,
+            progress,
+            cancel,
+            cancel.map(|_| crate::preview_download::SHA256),
+        )
+    }
+    fn import_checked_hash(
+        &self,
+        source: &Path,
+        progress: impl Fn(usize, usize, &str),
+        cancel: Option<&AtomicBool>,
+        expected_hash: Option<&str>,
+    ) -> Result<Value> {
+        let check = || -> Result<()> {
+            ensure!(!self.closing.load(Ordering::Acquire), "Launcher is closing");
+            if let Some(cancel) = cancel {
+                crate::preview_download::check(cancel)?;
+            }
+            Ok(())
+        };
+        check()?;
         ensure!(
             source
                 .extension()
@@ -272,6 +419,7 @@ impl Previews {
             let mut hash = Sha256::new();
             let mut buffer = vec![0u8; 1024 * 1024];
             loop {
+                check()?;
                 let n = input.read(&mut buffer)?;
                 if n == 0 {
                     break;
@@ -292,10 +440,17 @@ impl Previews {
             out.sync_all()?;
             drop(out);
             drop(input);
-            let verified = validate(&temp, &progress)?;
+            let verified = validate_checked(&temp, &progress, &check)?;
+            check()?;
             let count = verified["count"].as_u64().unwrap() as usize;
             let total = verified["entries"].as_u64().unwrap() as usize;
             let mut id = format!("{:x}", hash.finalize());
+            if let Some(expected_hash) = expected_hash {
+                ensure!(
+                    id == expected_hash,
+                    "Downloaded previews changed before import; existing previews were kept."
+                );
+            }
             let mut destination = self.root.join("Library/Previews").join(format!("{id}.zip"));
             let reused = destination.is_file() && digest_file(&destination)? == id;
             if reused {
@@ -322,6 +477,7 @@ impl Previews {
                 .active
                 .lock()
                 .map_err(|_| anyhow::anyhow!("Preview pack unavailable"))?;
+            check()?;
             atomic_json(&self.root.join("Data/preview-pack.json"), &manifest)?;
             *active = Some(Active { manifest, zip });
             *self
@@ -451,6 +607,26 @@ mod tests {
         writer.write_all(&bytes).unwrap();
         writer.finish().unwrap();
         let previews = Previews::new(&root).unwrap();
+        let pin = digest_file(&source).unwrap();
+        let cancel = AtomicBool::new(false);
+        previews
+            .import_checked_hash(&source, |_, _, _| {}, Some(&cancel), Some(&pin))
+            .unwrap();
+        assert!(
+            previews
+                .pack_installed(&pin, fs::metadata(&source).unwrap().len())
+                .unwrap()
+        );
+        let before = fs::read(root.join("Data/preview-pack.json")).unwrap();
+        assert!(
+            previews
+                .import_checked_hash(&source, |_, _, _| {}, Some(&cancel), Some(&"a".repeat(64)))
+                .is_err()
+        );
+        assert_eq!(
+            fs::read(root.join("Data/preview-pack.json")).unwrap(),
+            before
+        );
         previews.import(&source, |_, _, _| {}).unwrap();
         assert_eq!(
             previews.import(&source, |_, _, _| {}).unwrap()["reused"],
@@ -481,7 +657,85 @@ mod tests {
             fs::read(root.join("Data/preview-pack.json")).unwrap(),
             manifest
         );
+        // Cancellation during validation must leave the existing manifest and cache intact.
+        let cancelled = AtomicBool::new(false);
+        assert!(
+            previews
+                .import_checked(
+                    &source,
+                    |_, _, phase| {
+                        if phase == "Checking 256 px thumbnails" {
+                            cancelled.store(true, Ordering::Release);
+                        }
+                    },
+                    Some(&cancelled)
+                )
+                .is_err()
+        );
+        assert_eq!(
+            fs::read(root.join("Data/preview-pack.json")).unwrap(),
+            manifest
+        );
+        assert_eq!(fs::read_dir(root.join("Cache/Imports")).unwrap().count(), 0);
+        // Cancel before connecting: exercises normal worker cleanup without network access.
+        let result = previews.download(|_, _, _| {
+            assert!(previews.import(&source, |_, _, _| {}).is_err());
+            previews.cancel_download();
+        });
+        assert!(result.unwrap_err().to_string().contains("cancelled"));
+        assert_eq!(previews.download_status().unwrap()["active"], false);
+        assert!(previews.download_status().unwrap()["error"].is_null());
+        assert_eq!(
+            fs::read(root.join("Data/preview-pack.json")).unwrap(),
+            manifest
+        );
+        assert_eq!(fs::read_dir(root.join("Cache/Imports")).unwrap().count(), 0);
+        previews.shutdown();
+        assert!(previews.import(&source, |_, _, _| {}).is_err());
+        assert!(previews.download(|_, _, _| {}).is_err());
         drop(previews);
         fs::remove_dir_all(root).unwrap();
+    }
+
+    #[test]
+    #[ignore = "Downloads the full 1 GB hosted pack into isolated temporary data; run explicitly"]
+    fn hosted_pack_download_and_import() {
+        let root = std::env::temp_dir().join(format!(
+            "qa110-hosted-preview-{}",
+            crate::backend::unique_id()
+        ));
+        fs::create_dir_all(root.join("Data")).unwrap();
+        let previews = Previews::new(&root).unwrap();
+        let last = Mutex::new((String::new(), 0usize));
+        let result = previews.download(|done, total, phase| {
+            let mut last = last.lock().unwrap();
+            let bucket = done.saturating_mul(5) / total.max(1);
+            if last.0 != phase || last.1 != bucket {
+                eprintln!("{phase}: {done}/{total}");
+                *last = (phase.into(), bucket);
+            }
+        });
+        let validation = result.map(|value| {
+            assert_eq!(value["count"], 38576);
+            assert_eq!(value["bytes"], crate::preview_download::BYTES);
+            assert_eq!(previews.download_status().unwrap()["active"], false);
+            assert_eq!(fs::read_dir(root.join("Cache/Imports")).unwrap().count(), 0);
+            let manifest: Manifest =
+                serde_json::from_slice(&fs::read(root.join("Data/preview-pack.json")).unwrap())
+                    .unwrap();
+            assert_eq!(manifest.id, crate::preview_download::SHA256);
+            assert_eq!(
+                digest_file(
+                    &root
+                        .join("Library/Previews")
+                        .join(format!("{}.zip", manifest.id))
+                )
+                .unwrap(),
+                crate::preview_download::SHA256
+            );
+        });
+        drop(previews);
+        fs::remove_dir_all(&root).unwrap();
+        validation.unwrap();
     }
 }

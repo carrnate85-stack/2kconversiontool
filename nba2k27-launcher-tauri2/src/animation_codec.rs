@@ -18,43 +18,100 @@ pub type Quat = [f64; 4];
 pub type Vec3 = [f64; 3];
 
 /// Native human sampler table at RVA 0x7c0f080: (track type, normal, mirrored).
-const HUMAN_MIRROR: [usize; 22] = [0, 1, 2, 3, 4, 5, 10, 11, 12, 13, 6, 7, 8, 9, 18, 19, 20, 21, 14, 15, 16, 17];
-const HUMAN_PARENTS: [i64; 22] = [-1, 0, 1, 2, 3, 4, 3, 6, 7, 8, 3, 10, 11, 12, 0, 14, 15, 16, 0, 18, 19, 20];
-const CROWD_PARENTS: [i64; 24] = [-1, 0, 1, 2, 3, 4, 3, 6, 7, 8, 9, 3, 11, 12, 13, 14, 0, 16, 17, 18, 0, 20, 21, 22];
-const CROWD_MIRROR: [usize; 24] = [0, 1, 2, 3, 4, 5, 11, 12, 13, 14, 15, 6, 7, 8, 9, 10, 20, 21, 22, 23, 16, 17, 18, 19];
+const HUMAN_MIRROR: [usize; 22] = [
+    0, 1, 2, 3, 4, 5, 10, 11, 12, 13, 6, 7, 8, 9, 18, 19, 20, 21, 14, 15, 16, 17,
+];
+const HUMAN_PARENTS: [i64; 22] = [
+    -1, 0, 1, 2, 3, 4, 3, 6, 7, 8, 3, 10, 11, 12, 0, 14, 15, 16, 0, 18, 19, 20,
+];
+const CROWD_PARENTS: [i64; 24] = [
+    -1, 0, 1, 2, 3, 4, 3, 6, 7, 8, 9, 3, 11, 12, 13, 14, 0, 16, 17, 18, 0, 20, 21, 22,
+];
+const CROWD_MIRROR: [usize; 24] = [
+    0, 1, 2, 3, 4, 5, 11, 12, 13, 14, 15, 6, 7, 8, 9, 10, 20, 21, 22, 23, 16, 17, 18, 19,
+];
 const BONE_NAMES: [&str; 22] = [
-    "pelvis", "spine_1", "spine_2", "spine_3", "neck", "head", "clavicle_R", "upperarm_R", "forearm_R", "hand_R",
-    "clavicle_L", "upperarm_L", "forearm_L", "hand_L", "thigh_R", "shin_R", "foot_R", "toe_R", "thigh_L", "shin_L",
-    "foot_L", "toe_L",
+    "pelvis",
+    "spine_1",
+    "spine_2",
+    "spine_3",
+    "neck",
+    "head",
+    "clavicle_R",
+    "upperarm_R",
+    "forearm_R",
+    "hand_R",
+    "clavicle_L",
+    "upperarm_L",
+    "forearm_L",
+    "hand_L",
+    "thigh_R",
+    "shin_R",
+    "foot_R",
+    "toe_R",
+    "thigh_L",
+    "shin_L",
+    "foot_L",
+    "toe_L",
 ];
 
 fn f32r(v: f64) -> f64 {
     v as f32 as f64
 }
 fn u16_at(b: &[u8], p: usize) -> Result<u16> {
-    Ok(u16::from_le_bytes(b.get(p..p + 2).context("Truncated motion data")?.try_into()?))
+    Ok(u16::from_le_bytes(
+        b.get(p..p + 2)
+            .context("Truncated motion data")?
+            .try_into()?,
+    ))
 }
 fn i16_at(b: &[u8], p: usize) -> Result<i16> {
-    Ok(i16::from_le_bytes(b.get(p..p + 2).context("Truncated motion data")?.try_into()?))
+    Ok(i16::from_le_bytes(
+        b.get(p..p + 2)
+            .context("Truncated motion data")?
+            .try_into()?,
+    ))
 }
 fn u32_at(b: &[u8], p: usize) -> Result<u32> {
-    Ok(u32::from_le_bytes(b.get(p..p + 4).context("Truncated motion data")?.try_into()?))
+    Ok(u32::from_le_bytes(
+        b.get(p..p + 4)
+            .context("Truncated motion data")?
+            .try_into()?,
+    ))
 }
 fn i32_at(b: &[u8], p: usize) -> Result<i32> {
-    Ok(i32::from_le_bytes(b.get(p..p + 4).context("Truncated motion data")?.try_into()?))
+    Ok(i32::from_le_bytes(
+        b.get(p..p + 4)
+            .context("Truncated motion data")?
+            .try_into()?,
+    ))
 }
 fn u64_at(b: &[u8], p: usize) -> Result<u64> {
-    Ok(u64::from_le_bytes(b.get(p..p + 8).context("Truncated motion data")?.try_into()?))
+    Ok(u64::from_le_bytes(
+        b.get(p..p + 8)
+            .context("Truncated motion data")?
+            .try_into()?,
+    ))
 }
 fn f32_at(b: &[u8], p: usize) -> Result<f64> {
-    Ok(f32::from_le_bytes(b.get(p..p + 4).context("Truncated motion data")?.try_into()?) as f64)
+    Ok(f32::from_le_bytes(
+        b.get(p..p + 4)
+            .context("Truncated motion data")?
+            .try_into()?,
+    ) as f64)
 }
 fn at(base: usize, delta: i64) -> Result<usize> {
-    usize::try_from(base as i64 + delta).ok().context("Motion offset is out of range")
+    usize::try_from(base as i64 + delta)
+        .ok()
+        .context("Motion offset is out of range")
 }
 fn signed(value: u64, bits: u32) -> i64 {
     let v = value & ((1u64 << bits) - 1);
-    if v & (1 << (bits - 1)) != 0 { v as i64 - (1i64 << bits) } else { v as i64 }
+    if v & (1 << (bits - 1)) != 0 {
+        v as i64 - (1i64 << bits)
+    } else {
+        v as i64
+    }
 }
 fn hex(bytes: &[u8]) -> String {
     bytes.iter().map(|b| format!("{b:02x}")).collect()
@@ -72,8 +129,10 @@ fn mirror_translation(t: Vec3) -> Vec3 {
 /// Hopf quaternion, native RVA 0x3c15d10; not smallest-three encoding.
 pub fn decode_rotation(word: u32) -> Quat {
     let w = word as u128;
-    let phase_a = ((((w * 4192101509 + 0x5a827999fcef3242) >> 32) + w * 3037000499) & 0xffffffff) as f64;
-    let phase_b = ((((w * 2444892694 + 0x53749ce6c8dd0d0b) >> 32) + w * 2800302541) & 0xffffffff) as f64;
+    let phase_a =
+        ((((w * 4192101509 + 0x5a827999fcef3242) >> 32) + w * 3037000499) & 0xffffffff) as f64;
+    let phase_b =
+        ((((w * 2444892694 + 0x53749ce6c8dd0d0b) >> 32) + w * 2800302541) & 0xffffffff) as f64;
     let scale = std::f64::consts::PI / 2147483648.0;
     let a = phase_a * scale;
     let b = phase_b * scale;
@@ -88,7 +147,11 @@ pub fn decode_rotation(word: u32) -> Quat {
 fn decode_translation(word: u32, exponent: i32) -> Vec3 {
     let s = 2f64.powi(-exponent);
     let w = word as u64;
-    [signed(w, 10) as f64 * s, signed(w >> 10, 12) as f64 * s, signed(w >> 22, 10) as f64 * s]
+    [
+        signed(w, 10) as f64 * s,
+        signed(w >> 10, 12) as f64 * s,
+        signed(w >> 22, 10) as f64 * s,
+    ]
 }
 fn sum_sq(v: &[f64]) -> f64 {
     v.iter().fold(0.0, |s, x| s + x * x)
@@ -108,7 +171,11 @@ fn bisect_left_f(values: &[f64], target: f64, lo: usize) -> usize {
     let (mut lo, mut hi) = (lo, values.len());
     while lo < hi {
         let mid = (lo + hi) / 2;
-        if values[mid] < target { lo = mid + 1 } else { hi = mid }
+        if values[mid] < target {
+            lo = mid + 1
+        } else {
+            hi = mid
+        }
     }
     lo
 }
@@ -121,7 +188,10 @@ fn bind_parents(bind: &[(f64, f64, f64, u32)]) -> Result<Vec<i64>> {
         if parent == i as i64 {
             parent = -1;
         }
-        ensure!(relative % 4 == 0 && parent < i as i64 && parent >= -1, "Unsupported serialized joint hierarchy");
+        ensure!(
+            relative % 4 == 0 && parent < i as i64 && parent >= -1,
+            "Unsupported serialized joint hierarchy"
+        );
         parents.push(parent);
     }
     Ok(parents)
@@ -186,7 +256,10 @@ impl SingleClip {
         let bone_count = ((flags >> 7) & 63) as usize;
         let rotation_count = ((flags >> 13) & 63) as usize;
         let translation_count = ((flags >> 19) & 63) as usize;
-        ensure!(reference == 0, "Reference clip must be resolved through its archive before decoding");
+        ensure!(
+            reference == 0,
+            "Reference clip must be resolved through its archive before decoding"
+        );
         ensure!(data.len() >= 72, "Missing motion payload");
         let rel = u64_at(&data, 32)?;
         ensure!(rel & 1 != 0, "Unsupported motion payload pointer");
@@ -203,8 +276,12 @@ impl SingleClip {
         let times_offset = payload + ((layout >> 11) & 0x3ffe) as usize;
         let frames_offset = payload + 2 * (layout >> 41) as usize;
         let stride = 4 * (rotation_count + translation_count);
-        let rotation_bones: Vec<usize> = (0..bone_count).filter(|i| rotation_mask >> i & 1 != 0).collect();
-        let translation_bones: Vec<usize> = (0..bone_count).filter(|i| translation_mask >> i & 1 != 0).collect();
+        let rotation_bones: Vec<usize> = (0..bone_count)
+            .filter(|i| rotation_mask >> i & 1 != 0)
+            .collect();
+        let translation_bones: Vec<usize> = (0..bone_count)
+            .filter(|i| translation_mask >> i & 1 != 0)
+            .collect();
         ensure!(
             rotation_bones.len() == rotation_count && translation_bones.len() == translation_count,
             "Channel masks and counts disagree"
@@ -213,8 +290,14 @@ impl SingleClip {
             frames_offset >= stride && frames_offset + key_count * stride + stride <= data.len(),
             "Truncated packed control frames"
         );
-        ensure!(times_offset + key_count <= data.len(), "Truncated key times");
-        ensure!(key_count >= 1 && times_offset >= 1, "Motion has no key times");
+        ensure!(
+            times_offset + key_count <= data.len(),
+            "Truncated key times"
+        );
+        ensure!(
+            key_count >= 1 && times_offset >= 1,
+            "Motion has no key times"
+        );
         let deltas = data[times_offset..times_offset + key_count].to_vec();
         let mut ticks = vec![0.0];
         for d in &deltas[..deltas.len() - 1] {
@@ -226,23 +309,41 @@ impl SingleClip {
         let mut bind = Vec::with_capacity(bone_count);
         for i in 0..bone_count {
             let p = bind_offset + i * 16;
-            bind.push((f32_at(&data, p)?, f32_at(&data, p + 4)?, f32_at(&data, p + 8)?, u32_at(&data, p + 12)?));
+            bind.push((
+                f32_at(&data, p)?,
+                f32_at(&data, p + 4)?,
+                f32_at(&data, p + 8)?,
+                u32_at(&data, p + 12)?,
+            ));
         }
         let mut parents = bind_parents(&bind)?;
-        let (skeleton_kind, mirror_map): (&'static str, Vec<usize>) = if bone_count == 22 && parents == HUMAN_PARENTS {
-            ("human", HUMAN_MIRROR.to_vec())
-        } else if bone_count == 24 && parents == CROWD_PARENTS {
-            ("crowd", CROWD_MIRROR.to_vec())
-        } else {
-            ("generic", (0..bone_count).collect())
-        };
+        let (skeleton_kind, mirror_map): (&'static str, Vec<usize>) =
+            if bone_count == 22 && parents == HUMAN_PARENTS {
+                ("human", HUMAN_MIRROR.to_vec())
+            } else if bone_count == 24 && parents == CROWD_PARENTS {
+                ("crowd", CROWD_MIRROR.to_vec())
+            } else {
+                ("generic", (0..bone_count).collect())
+            };
         if mirrored {
-            bind = mirror_map.iter().map(|&i| (-bind[i].0, bind[i].1, bind[i].2, bind[i].3)).collect();
+            bind = mirror_map
+                .iter()
+                .map(|&i| (-bind[i].0, bind[i].1, bind[i].2, bind[i].3))
+                .collect();
             let mut inverse = HashMap::new();
             for (destination, source) in mirror_map.iter().enumerate() {
                 inverse.insert(*source as i64, destination as i64);
             }
-            parents = mirror_map.iter().map(|&i| if parents[i] < 0 { -1 } else { inverse[&parents[i]] }).collect();
+            parents = mirror_map
+                .iter()
+                .map(|&i| {
+                    if parents[i] < 0 {
+                        -1
+                    } else {
+                        inverse[&parents[i]]
+                    }
+                })
+                .collect();
         }
         Ok(Self {
             source_data: data.clone(),
@@ -290,11 +391,22 @@ impl SingleClip {
             q[bone] = decode_rotation(u32_at(&self.data, base + 4 * k)?);
         }
         for (k, &bone) in self.translation_bones.iter().enumerate() {
-            t[bone] = decode_translation(u32_at(&self.data, base + 4 * (self.rotation_count + k))?, self.translation_exponent);
+            t[bone] = decode_translation(
+                u32_at(&self.data, base + 4 * (self.rotation_count + k))?,
+                self.translation_exponent,
+            );
         }
         if self.mirrored {
-            q = self.mirror_map.iter().map(|&i| mirror_rotation(q[i])).collect();
-            t = self.mirror_map.iter().map(|&i| mirror_translation(t[i])).collect();
+            q = self
+                .mirror_map
+                .iter()
+                .map(|&i| mirror_rotation(q[i]))
+                .collect();
+            t = self
+                .mirror_map
+                .iter()
+                .map(|&i| mirror_translation(t[i]))
+                .collect();
         }
         Ok((q, t))
     }
@@ -308,19 +420,38 @@ impl SingleClip {
         let i = j.saturating_sub(1);
         let f = (tick - self.ticks[i]) / (self.ticks[j] - self.ticks[i]).max(1.0);
         let dt = self.deltas[i] as f64 + 1.0;
-        let prev = if i > 0 { self.deltas[i - 1] as f64 + 1.0 } else { self.data[self.times_offset - 1] as f64 + 1.0 };
+        let prev = if i > 0 {
+            self.deltas[i - 1] as f64 + 1.0
+        } else {
+            self.data[self.times_offset - 1] as f64 + 1.0
+        };
         let following = self.deltas[j] as f64 + 1.0;
         let h = f * f * (3.0 - 2.0 * f);
         let a = dt / (dt + prev) * f * (f * (f - 2.0) + 1.0);
         let b = dt / (dt + following) * f * f * (f - 1.0);
-        Window { i, j, f, prev, dt, following, h, a, b }
+        Window {
+            i,
+            j,
+            f,
+            prev,
+            dt,
+            following,
+            h,
+            a,
+            b,
+        }
     }
 
     /// Native normalized nonuniform cubic interpolation for ordinary body tracks (RVA 0x3c143a0).
     pub fn sample(&self, seconds: f64) -> Result<(Vec<Quat>, Vec<Vec3>)> {
         let w = self.sample_window(seconds);
         let (i, j) = (w.i as i64, w.j as i64);
-        let controls = [self.control(i - 1)?, self.control(i)?, self.control(j)?, self.control(j + 1)?];
+        let controls = [
+            self.control(i - 1)?,
+            self.control(i)?,
+            self.control(j)?,
+            self.control(j + 1)?,
+        ];
         let mut qs = Vec::with_capacity(self.bone_count);
         let mut ts = Vec::with_capacity(self.bone_count);
         for bone in 0..self.bone_count {
@@ -330,10 +461,22 @@ impl SingleClip {
                     values[k] = values[k].map(|v| -v);
                 }
             }
-            let q: Quat = std::array::from_fn(|c| curve1(values[0][c], values[1][c], values[2][c], values[3][c], w.h, w.a, w.b));
+            let q: Quat = std::array::from_fn(|c| {
+                curve1(
+                    values[0][c],
+                    values[1][c],
+                    values[2][c],
+                    values[3][c],
+                    w.h,
+                    w.a,
+                    w.b,
+                )
+            });
             qs.push(normalize(q));
             let tv: [Vec3; 4] = std::array::from_fn(|k| controls[k].1[bone]);
-            ts.push(std::array::from_fn(|c| curve1(tv[0][c], tv[1][c], tv[2][c], tv[3][c], w.h, w.a, w.b)));
+            ts.push(std::array::from_fn(|c| {
+                curve1(tv[0][c], tv[1][c], tv[2][c], tv[3][c], w.h, w.a, w.b)
+            }));
         }
         // Native sampler RVA 0x3c14f8f rescales only the root translation.
         if let Some(root) = ts.first_mut() {
@@ -347,12 +490,20 @@ impl SingleClip {
         let name_hash = u32_at(&self.data, table + prop * 8)?;
         let metadata = u32_at(&self.data, table + prop * 8 + 4)?;
         let start = at(table + 2 * (metadata >> 12) as usize, index * 12)?;
-        let xyz = [i16_at(&self.data, start)?, i16_at(&self.data, start + 2)?, i16_at(&self.data, start + 4)?]
-            .map(|v| v as f64 / 32767.0);
+        let xyz = [
+            i16_at(&self.data, start)?,
+            i16_at(&self.data, start + 2)?,
+            i16_at(&self.data, start + 4)?,
+        ]
+        .map(|v| v as f64 / 32767.0);
         let scale = 2.0 / (1.0 + sum_sq(&xyz));
         let mut q = [xyz[0] * scale, xyz[1] * scale, xyz[2] * scale, scale - 1.0];
-        let mut t = [i16_at(&self.data, start + 6)?, i16_at(&self.data, start + 8)?, i16_at(&self.data, start + 10)?]
-            .map(|v| v as f64 / 16.0);
+        let mut t = [
+            i16_at(&self.data, start + 6)?,
+            i16_at(&self.data, start + 8)?,
+            i16_at(&self.data, start + 10)?,
+        ]
+        .map(|v| v as f64 / 16.0);
         if self.mirrored {
             q = mirror_rotation(q);
             t = mirror_translation(t);
@@ -369,7 +520,10 @@ impl SingleClip {
             if matches!(self.skeleton_kind, "human" | "crowd") {
                 mapping.extend([self.bone_count + 1, self.bone_count]);
             }
-            ensure!((joint as usize) < mapping.len(), "Prop attachment is outside the spatial track mapping");
+            ensure!(
+                (joint as usize) < mapping.len(),
+                "Prop attachment is outside the spatial track mapping"
+            );
             joint = mapping[joint as usize] as i64;
         }
         Ok(joint)
@@ -381,7 +535,12 @@ impl SingleClip {
         let mut result = Vec::with_capacity(self.prop_count);
         for prop in 0..self.prop_count {
             let (i, j) = (w.i as i64, w.j as i64);
-            let values = [self.prop_control(prop, i - 1)?, self.prop_control(prop, i)?, self.prop_control(prop, j)?, self.prop_control(prop, j + 1)?];
+            let values = [
+                self.prop_control(prop, i - 1)?,
+                self.prop_control(prop, i)?,
+                self.prop_control(prop, j)?,
+                self.prop_control(prop, j + 1)?,
+            ];
             let qs: [Quat; 4] = std::array::from_fn(|k| values[k].1);
             let ts: [Vec3; 4] = std::array::from_fn(|k| values[k].2);
             let (q, t) = prop_cubic(&qs, &ts, (w.h, w.a, w.b));
@@ -422,15 +581,27 @@ fn qlog(q: Quat) -> Vec3 {
 }
 fn qexp(v: Vec3) -> Quat {
     let length = sum_sq(&v).sqrt();
-    let scale = if length > 1e-15 { length.sin() / length } else { 1.0 };
+    let scale = if length > 1e-15 {
+        length.sin() / length
+    } else {
+        1.0
+    };
     [v[0] * scale, v[1] * scale, v[2] * scale, length.cos()]
 }
 fn prop_cubic(qs: &[Quat; 4], ts: &[Vec3; 4], (h, a, b): (f64, f64, f64)) -> (Quat, Vec3) {
     let first = qrelative(qs[1], qs[0]);
     let middle = qrelative(qs[2], qs[1]);
     let last = qrelative(qs[3], qs[2]);
-    let logs = [qlog(middle), qlog(qmul(middle, first)), qlog(qmul(last, middle))];
-    let powers: Vec<Quat> = [h, a, b].iter().zip(logs).map(|(w, v)| qexp(v.map(|x| w * x))).collect();
+    let logs = [
+        qlog(middle),
+        qlog(qmul(middle, first)),
+        qlog(qmul(last, middle)),
+    ];
+    let powers: Vec<Quat> = [h, a, b]
+        .iter()
+        .zip(logs)
+        .map(|(w, v)| qexp(v.map(|x| w * x)))
+        .collect();
     let q = normalize(qmul(qmul(powers[2], powers[1]), qmul(powers[0], qs[1])));
     let t = std::array::from_fn(|c| curve1(ts[0][c], ts[1][c], ts[2][c], ts[3][c], h, a, b));
     (q, t)
@@ -442,24 +613,48 @@ fn trajectory_control(clip: &SingleClip, index: i64) -> Result<Vec3> {
     let mode = (u32_at(&clip.data, 8)? >> 30) as usize;
     let start = clip.payload + ((clip.layout >> 24) & 0x1fffe) as usize;
     let stride = STRIDES[mode];
-    ensure!((-1..=clip.key_count as i64).contains(&index), "Trajectory control index out of range");
+    ensure!(
+        (-1..=clip.key_count as i64).contains(&index),
+        "Trajectory control index out of range"
+    );
     let p = at(start, index * stride as i64)?;
-    ensure!(p + stride <= clip.data.len(), "Truncated motion trajectory controls");
+    ensure!(
+        p + stride <= clip.data.len(),
+        "Truncated motion trajectory controls"
+    );
     let d = &clip.data;
     let v = match mode {
-        0 => [i16_at(d, p)? as f64 / 8.0, i16_at(d, p + 2)? as f64 / 8.0, i16_at(d, p + 4)? as f64 * 8.0],
+        0 => [
+            i16_at(d, p)? as f64 / 8.0,
+            i16_at(d, p + 2)? as f64 / 8.0,
+            i16_at(d, p + 4)? as f64 * 8.0,
+        ],
         2 => [f32_at(d, p)?, f32_at(d, p + 4)?, f32_at(d, p + 8)?],
         3 => [f32_at(d, p)?, f32_at(d, p + 4)?, 0.0],
-        _ => [i16_at(d, p)? as f64 / 8.0, i16_at(d, p + 2)? as f64 / 8.0, 0.0],
+        _ => [
+            i16_at(d, p)? as f64 / 8.0,
+            i16_at(d, p + 2)? as f64 / 8.0,
+            0.0,
+        ],
     };
-    Ok(if clip.mirrored { [-v[0], v[1], -v[2]] } else { v })
+    Ok(if clip.mirrored {
+        [-v[0], v[1], -v[2]]
+    } else {
+        v
+    })
 }
 /// (x cm, z cm, heading units) at a playback time; native RVA 0x3c11750.
 pub fn sample_trajectory(clip: &SingleClip, seconds: f64) -> Result<(f64, f64, i64)> {
     let w = clip.sample_window(seconds);
     let (i, j) = (w.i as i64, w.j as i64);
-    let c = [trajectory_control(clip, i - 1)?, trajectory_control(clip, i)?, trajectory_control(clip, j)?, trajectory_control(clip, j + 1)?];
-    let out: Vec3 = std::array::from_fn(|k| curve1(c[0][k], c[1][k], c[2][k], c[3][k], w.h, w.a, w.b));
+    let c = [
+        trajectory_control(clip, i - 1)?,
+        trajectory_control(clip, i)?,
+        trajectory_control(clip, j)?,
+        trajectory_control(clip, j + 1)?,
+    ];
+    let out: Vec3 =
+        std::array::from_fn(|k| curve1(c[0][k], c[1][k], c[2][k], c[3][k], w.h, w.a, w.b));
     // The native sampler converts heading to int32 before applying mirroring.
     Ok((out[0], out[1], out[2].trunc() as i64))
 }
@@ -468,14 +663,22 @@ pub fn sample_trajectory(clip: &SingleClip, seconds: f64) -> Result<(f64, f64, i
 pub fn shot_events(clip: &SingleClip) -> Result<Vec<Value>> {
     let start = clip.bind_offset + clip.bone_count * 16;
     // Events precede the other payload tables. Never scan packed controls.
-    let mut limits = vec![clip.data.len(), clip.times_offset, clip.frames_offset - clip.stride];
+    let mut limits = vec![
+        clip.data.len(),
+        clip.times_offset,
+        clip.frames_offset - clip.stride,
+    ];
     for i in 0..clip.scalar_count {
         let target = clip.payload + u16_at(&clip.data, clip.payload + 28 + i * 2)? as usize * 2;
         if target > start {
             limits.push(target);
         }
     }
-    let end = limits.into_iter().filter(|x| *x >= start).min().context("Shot event table has no bounded terminator")?;
+    let end = limits
+        .into_iter()
+        .filter(|x| *x >= start)
+        .min()
+        .context("Shot event table has no bounded terminator")?;
     let mut result = Vec::new();
     let mut offset = start;
     while offset + 7 < end {
@@ -486,7 +689,9 @@ pub fn shot_events(clip: &SingleClip) -> Result<Vec<Value>> {
             return Ok(result);
         }
         ensure!(seconds.is_finite(), "Nonfinite shot event time");
-        result.push(json!({"type":kind,"flags":flags,"source_seconds":seconds,"time":seconds / clip.speed}));
+        result.push(
+            json!({"type":kind,"flags":flags,"source_seconds":seconds,"time":seconds / clip.speed}),
+        );
         offset += 8;
     }
     bail!("Shot event table has no bounded terminator")
@@ -535,22 +740,34 @@ impl MultipleClip {
         let actor_count = u32_at(&data, 4)? as usize;
         let reference = u32_at(&data, 8)?;
         let headers = 16 + u16_at(&data, 16)? as usize;
-        ensure!((1..=64).contains(&actor_count), "Unrecognized actor header layout");
+        ensure!(
+            (1..=64).contains(&actor_count),
+            "Unrecognized actor header layout"
+        );
         let expected = (28 + 12 * (actor_count - 1) + 7) / 8 * 8;
         ensure!(headers == expected, "Unrecognized actor header layout");
-        ensure!(headers + 40 * actor_count <= data.len(), "Truncated actor headers");
+        ensure!(
+            headers + 40 * actor_count <= data.len(),
+            "Truncated actor headers"
+        );
         let mut actors = Vec::with_capacity(actor_count);
         for actor in 0..actor_count {
             let start = headers + actor * 40;
             let id = u32_at(&data, start)?;
             let flags = u32_at(&data, start + 4)?;
             let back = ((u32_at(&data, start + 8)? >> 21) & 511) as usize * 8;
-            ensure!(back == start, "Actor back-reference disagrees with its container offset");
+            ensure!(
+                back == start,
+                "Actor back-reference disagrees with its container offset"
+            );
             let record = 16 + actor * 12;
             let relative = u16_at(&data, record)? as usize;
             let orientation = u16_at(&data, record + 2)?;
             let (x, z) = (f32_at(&data, record + 4)?, f32_at(&data, record + 8)?);
-            ensure!(record + relative == start, "Actor table and contiguous headers disagree");
+            ensure!(
+                record + relative == start,
+                "Actor table and contiguous headers disagree"
+            );
             ensure!(x.is_finite() && z.is_finite(), "Nonfinite actor placement");
             actors.push(Actor {
                 actor_index: actor,
@@ -575,9 +792,15 @@ impl MultipleClip {
         })
     }
     pub fn actor(&self, index: usize) -> Result<SingleClip> {
-        ensure!(index < self.actor_count, "Actor index is outside this container");
+        ensure!(
+            index < self.actor_count,
+            "Actor index is outside this container"
+        );
         let start = self.actors[index].header_offset;
-        let mut clip = SingleClip::new(self.data[start..].to_vec(), &format!("{} actor {index}", self.name))?;
+        let mut clip = SingleClip::new(
+            self.data[start..].to_vec(),
+            &format!("{} actor {index}", self.name),
+        )?;
         clip.source_data = self.source_data.clone();
         clip.resolved_name = self.resolved_name.clone();
         Ok(clip)
@@ -591,17 +814,39 @@ pub struct Archive {
     multiple: HashMap<u32, String>,
 }
 const MAX_MEMBER: u64 = 64 * 1024 * 1024;
+fn read_member_bounded(member: impl Read, expected: u64, limit: u64) -> Result<Vec<u8>> {
+    ensure!(
+        limit <= MAX_MEMBER && expected <= limit,
+        "Animation member exceeds its byte budget"
+    );
+    let mut bytes = Vec::new();
+    member.take(limit + 1).read_to_end(&mut bytes)?;
+    ensure!(
+        bytes.len() as u64 == expected && bytes.len() as u64 <= limit,
+        "Animation member expanded size differs"
+    );
+    Ok(bytes)
+}
 impl Archive {
     pub fn open(path: &Path) -> Result<Self> {
         let zip = zip::ZipArchive::new(BufReader::new(File::open(path)?))?;
-        Ok(Self { zip, single: HashMap::new(), multiple: HashMap::new() })
+        Ok(Self {
+            zip,
+            single: HashMap::new(),
+            multiple: HashMap::new(),
+        })
     }
     pub fn read(&mut self, name: &str) -> Result<Vec<u8>> {
-        let mut member = self.zip.by_name(name).with_context(|| format!("Animation member is missing: {name}"))?;
-        ensure!(member.size() <= MAX_MEMBER, "Animation member exceeds its byte budget");
-        let mut bytes = Vec::with_capacity(member.size() as usize);
-        member.read_to_end(&mut bytes)?;
-        Ok(bytes)
+        let mut member = self
+            .zip
+            .by_name(name)
+            .with_context(|| format!("Animation member is missing: {name}"))?;
+        ensure!(
+            member.size() <= MAX_MEMBER,
+            "Animation member exceeds its byte budget"
+        );
+        let expected = member.size();
+        read_member_bounded(member, expected, MAX_MEMBER)
     }
     /// archive_cache Entry.index: motion headers keyed by stored ID.
     pub fn index(&mut self, cancelled: &dyn Fn() -> bool) -> Result<usize> {
@@ -620,10 +865,19 @@ impl Archive {
                 continue;
             }
             let mut header = [0u8; 4];
-            member.read_exact(&mut header).with_context(|| format!("Truncated motion header: {name}"))?;
+            member
+                .read_exact(&mut header)
+                .with_context(|| format!("Truncated motion header: {name}"))?;
             let identifier = u32::from_le_bytes(header);
-            let ids = if is_single { &mut single } else { &mut multiple };
-            ensure!(ids.insert(identifier, name).is_none(), "Ambiguous motion ID");
+            let ids = if is_single {
+                &mut single
+            } else {
+                &mut multiple
+            };
+            ensure!(
+                ids.insert(identifier, name).is_none(),
+                "Ambiguous motion ID"
+            );
         }
         self.single = single;
         self.multiple = multiple;
@@ -631,7 +885,10 @@ impl Archive {
     }
     /// AnimationArchive.load: follow reference records to their payload.
     pub fn load(&mut self, name: &str) -> Result<SingleClip> {
-        ensure!(name.ends_with(".SingleMoCap"), "Only SingleMoCap clips are currently supported");
+        ensure!(
+            name.ends_with(".SingleMoCap"),
+            "Only SingleMoCap clips are currently supported"
+        );
         let original = self.read(name)?;
         let mut data = original.clone();
         let mut resolved = name.to_owned();
@@ -648,7 +905,11 @@ impl Archive {
             if self.single.is_empty() {
                 self.index(&|| false)?;
             }
-            resolved = self.single.get(&reference).with_context(|| format!("Missing referenced clip ID {reference:08x}"))?.clone();
+            resolved = self
+                .single
+                .get(&reference)
+                .with_context(|| format!("Missing referenced clip ID {reference:08x}"))?
+                .clone();
             data = self.read(&resolved)?;
             followed = true;
         }
@@ -664,7 +925,10 @@ impl Archive {
     }
     /// multiple.load_multiple.
     pub fn load_multiple(&mut self, name: &str) -> Result<MultipleClip> {
-        ensure!(name.ends_with(".MultipleMoCap"), "Expected MultipleMoCap member");
+        ensure!(
+            name.ends_with(".MultipleMoCap"),
+            "Expected MultipleMoCap member"
+        );
         let original = self.read(name)?;
         let mut data = original.clone();
         let mut resolved = name.to_owned();
@@ -672,14 +936,21 @@ impl Archive {
         let mut followed = false;
         loop {
             let header = MultipleClip::new(data.clone(), &resolved)?;
-            ensure!(seen.insert(header.identifier), "Cyclic MultipleMoCap reference");
+            ensure!(
+                seen.insert(header.identifier),
+                "Cyclic MultipleMoCap reference"
+            );
             if header.reference == 0 {
                 break;
             }
             if self.multiple.is_empty() {
                 self.index(&|| false)?;
             }
-            resolved = self.multiple.get(&header.reference).context("Missing MultipleMoCap target")?.clone();
+            resolved = self
+                .multiple
+                .get(&header.reference)
+                .context("Missing MultipleMoCap target")?
+                .clone();
             data = self.read(&resolved)?;
             followed = true;
         }
@@ -708,13 +979,34 @@ impl Archive {
 
 // hand_pose.py
 const HAND_NODES: [&str; 17] = [
-    "Hand", "thumb_1", "thumb_2", "thumb_3", "finger_1_1", "finger_1_2", "finger_1_3", "finger_2_1", "finger_2_2",
-    "finger_2_3", "hand_edge", "finger_3_1", "finger_3_2", "finger_3_3", "finger_4_1", "finger_4_2", "finger_4_3",
+    "Hand",
+    "thumb_1",
+    "thumb_2",
+    "thumb_3",
+    "finger_1_1",
+    "finger_1_2",
+    "finger_1_3",
+    "finger_2_1",
+    "finger_2_2",
+    "finger_2_3",
+    "hand_edge",
+    "finger_3_1",
+    "finger_3_2",
+    "finger_3_3",
+    "finger_4_1",
+    "finger_4_2",
+    "finger_4_3",
 ];
 const HAND_PARENTS: [i64; 17] = [-1, 0, 1, 2, 0, 4, 5, 0, 7, 8, 0, 10, 11, 12, 10, 14, 15];
 /// Polynomial time correction of the ordinary quaternion blend (RVA 0x3c12470).
-const BLEND_COEFFICIENTS: [f64; 6] =
-    [0.9223620295524597, -2.3059051036834717, 2.8912253379821777, -2.030932903289795, 0.5227404832839966, 0.0002550582867115736];
+const BLEND_COEFFICIENTS: [f64; 6] = [
+    0.9223620295524597,
+    -2.3059051036834717,
+    2.8912253379821777,
+    -2.030932903289795,
+    0.5227404832839966,
+    0.0002550582867115736,
+];
 
 pub struct HandLibrary {
     pub source_sha256: String,
@@ -732,11 +1024,25 @@ impl HandLibrary {
             .bind
             .iter()
             .enumerate()
-            .map(|(i, b)| if i == 0 { -1 } else { i as i64 + signed(b.3 as u64, 12).div_euclid(4) })
+            .map(|(i, b)| {
+                if i == 0 {
+                    -1
+                } else {
+                    i as i64 + signed(b.3 as u64, 12).div_euclid(4)
+                }
+            })
             .collect();
-        ensure!(parents == HAND_PARENTS, "Hand bind metadata disagrees with source finger hierarchy");
-        let poses = (0..clip.key_count as i64).map(|i| clip.control(i).map(|c| c.0)).collect::<Result<_>>()?;
-        Ok(Self { source_sha256: sha256_hex(&clip.source_data), poses })
+        ensure!(
+            parents == HAND_PARENTS,
+            "Hand bind metadata disagrees with source finger hierarchy"
+        );
+        let poses = (0..clip.key_count as i64)
+            .map(|i| clip.control(i).map(|c| c.0))
+            .collect::<Result<_>>()?;
+        Ok(Self {
+            source_sha256: sha256_hex(&clip.source_data),
+            poses,
+        })
     }
     pub fn source_json(&self) -> Value {
         json!({"schema":"nba2k27-hand-library-v1","sex":"male","source_sha256":self.source_sha256,
@@ -761,19 +1067,31 @@ fn pose_rotations(library: &HandLibrary, selector: [i64; 4], mirrored: bool) -> 
     if selector[0] == 0 && selector[2] == 0 {
         return Ok(identity);
     }
-    ensure!(selector[0] + selector[2] == 255, "Hand weights must sum to 255");
+    ensure!(
+        selector[0] + selector[2] == 255,
+        "Hand weights must sum to 255"
+    );
     let mut result = identity;
     let mut total = 0;
     for (weight, pose) in [(selector[0], selector[1]), (selector[2], selector[3])] {
         if weight == 0 {
             break;
         }
-        let rotations = library.poses.get(pose as usize).context("Hand pose ID exceeds source library")?;
+        let rotations = library
+            .poses
+            .get(pose as usize)
+            .context("Hand pose ID exceeds source library")?;
         total += weight;
         result = result
             .iter()
             .zip(rotations)
-            .map(|(a, b)| blend_rotation(*a, if mirrored { mirror_rotation(*b) } else { *b }, weight as f64 / total as f64))
+            .map(|(a, b)| {
+                blend_rotation(
+                    *a,
+                    if mirrored { mirror_rotation(*b) } else { *b },
+                    weight as f64 / total as f64,
+                )
+            })
             .collect();
     }
     Ok(result)
@@ -785,7 +1103,10 @@ struct HandSelectors {
 }
 impl HandSelectors {
     fn new(clip: &SingleClip) -> Result<Self> {
-        ensure!(clip.bone_count == 22, "Hand selectors require the human track map");
+        ensure!(
+            clip.bone_count == 22,
+            "Hand selectors require the human track map"
+        );
         let count = (clip.flags >> 25) & 7;
         let end = (300.0 * clip.ticks.last().unwrap() / clip.rate as f64).ceil() as i64;
         let mut streams = Vec::new();
@@ -804,7 +1125,10 @@ impl HandSelectors {
             while pos + 3 < clip.data.len() {
                 let word = i32_at(&clip.data, pos)?;
                 let tick = (word >> 8) as i64;
-                ensure!(previous.is_none_or(|p| tick >= p), "Hand event clock is not ordered");
+                ensure!(
+                    previous.is_none_or(|p| tick >= p),
+                    "Hand event clock is not ordered"
+                );
                 events.push((tick, (word & 255) as i64));
                 previous = Some(tick);
                 if tick >= end && events.len() >= 2 {
@@ -819,10 +1143,17 @@ impl HandSelectors {
         while streams.len() < 2 {
             streams.push(None);
         }
-        Ok(Self { streams, speed: clip.speed, mirrored: clip.mirrored })
+        Ok(Self {
+            streams,
+            speed: clip.speed,
+            mirrored: clip.mirrored,
+        })
     }
     fn sample(&self, seconds: f64) -> Result<Vec<[i64; 4]>> {
-        ensure!(seconds.is_finite() && seconds >= 0.0, "Invalid hand sample time");
+        ensure!(
+            seconds.is_finite() && seconds >= 0.0,
+            "Invalid hand sample time"
+        );
         let tick = f32r(f32r(f32r(seconds) * self.speed) * 300.0).round_ties_even() as i64;
         let mut result = Vec::new();
         for events in &self.streams {
@@ -833,7 +1164,11 @@ impl HandSelectors {
             let (mut lo, mut hi) = (1usize, events.len());
             while lo < hi {
                 let mid = (lo + hi) / 2;
-                if events[mid].0 < tick { lo = mid + 1 } else { hi = mid }
+                if events[mid].0 < tick {
+                    lo = mid + 1
+                } else {
+                    hi = mid
+                }
             }
             let j = lo.min(events.len() - 1).max(1);
             let (a, b) = (events[j - 1], events[j]);
@@ -842,10 +1177,16 @@ impl HandSelectors {
                 continue;
             }
             ensure!(b.0 > a.0, "Changing hand poses share the same event tick");
-            let fraction = f32r((tick - a.0) as f64 / (b.0 - a.0) as f64).min(1.0).max(0.0);
+            let fraction = f32r((tick - a.0) as f64 / (b.0 - a.0) as f64)
+                .min(1.0)
+                .max(0.0);
             let smooth = f32r(f32r(fraction * fraction) * f32r(3.0 - f32r(fraction + fraction)));
             let weight = f32r(smooth * 255.0).round_ties_even() as i64;
-            result.push(if weight <= 127 { [255 - weight, a.1, weight, b.1] } else { [weight, b.1, 255 - weight, a.1] });
+            result.push(if weight <= 127 {
+                [255 - weight, a.1, weight, b.1]
+            } else {
+                [weight, b.1, 255 - weight, a.1]
+            });
         }
         if self.mirrored {
             result.reverse();
@@ -873,9 +1214,19 @@ pub fn decode_loaded_clip(
     hand_library: Option<&HandLibrary>,
 ) -> Result<Map<String, Value>> {
     ensure!(fps > 0, "FPS must be positive");
-    ensure!((1..=63).contains(&clip.bone_count), "Spatial clip needs between 1 and 63 joints");
-    let hand_library = if clip.skeleton_kind == "human" { hand_library } else { None };
-    ensure!(clip.rate > 0 && clip.speed > 0.0 && clip.speed.is_finite(), "Clip has invalid playback timing");
+    ensure!(
+        (1..=63).contains(&clip.bone_count),
+        "Spatial clip needs between 1 and 63 joints"
+    );
+    let hand_library = if clip.skeleton_kind == "human" {
+        hand_library
+    } else {
+        None
+    };
+    ensure!(
+        clip.rate > 0 && clip.speed > 0.0 && clip.speed.is_finite(),
+        "Clip has invalid playback timing"
+    );
     let selectors = hand_library.map(|_| HandSelectors::new(clip)).transpose()?;
     // Nominal duration is descriptive; source key times and speed set actual playback.
     let seconds = clip.ticks.last().unwrap() / (clip.rate as f64 * clip.speed);
@@ -914,8 +1265,18 @@ pub fn decode_loaded_clip(
     });
     let map = obj.as_object_mut().unwrap();
     if !human {
-        map.insert("bone_names".into(), json!((0..clip.bone_count).map(|i| format!("joint_{i}")).collect::<Vec<_>>()));
-        map.insert("hierarchy_status".into(), json!("Serialized bind hierarchy; native crowd or default spatial destination map"));
+        map.insert(
+            "bone_names".into(),
+            json!(
+                (0..clip.bone_count)
+                    .map(|i| format!("joint_{i}"))
+                    .collect::<Vec<_>>()
+            ),
+        );
+        map.insert(
+            "hierarchy_status".into(),
+            json!("Serialized bind hierarchy; native crowd or default spatial destination map"),
+        );
         map.insert(
             "status".into(),
             json!("Native ordinary spatial/movement sampling verified offline; markers represent tracks without source geometry"),
@@ -928,19 +1289,27 @@ pub fn decode_loaded_clip(
         map.insert("container_type".into(), json!("MultipleMoCap"));
         map.insert("actor_index".into(), json!(actor));
         map.insert("actor_count".into(), json!(container.actor_count));
-        map.insert("container_actors".into(), Value::Array(container.actors.iter().map(Actor::to_json).collect()));
+        map.insert(
+            "container_actors".into(),
+            Value::Array(container.actors.iter().map(Actor::to_json).collect()),
+        );
         map.insert(
             "placement_status".into(),
             json!("Native actor origin/heading composition verified offline; player hierarchy inferred"),
         );
-        map.insert("container_placement".into(), container.actors[actor].to_json());
+        map.insert(
+            "container_placement".into(),
+            container.actors[actor].to_json(),
+        );
         map.insert(
             "packed_export_status".into(),
             json!("Private actor payload reconstruction and container export supported offline"),
         );
     }
     ensure!(finite(&obj), "Motion contains nonfinite values");
-    let Value::Object(map) = obj else { unreachable!() };
+    let Value::Object(map) = obj else {
+        unreachable!()
+    };
     Ok(map)
 }
 
@@ -963,10 +1332,18 @@ impl Node {
         }
     }
     fn num(&self) -> Option<f64> {
-        if let Node::Num(n) = self { Some(*n) } else { None }
+        if let Node::Num(n) = self {
+            Some(*n)
+        } else {
+            None
+        }
     }
     fn str(&self) -> Option<&str> {
-        if let Node::Str(s) = self { Some(s) } else { None }
+        if let Node::Str(s) = self {
+            Some(s)
+        } else {
+            None
+        }
     }
     fn int(&self, key: &str, default: i64) -> Result<i64> {
         match self.get(key) {
@@ -1009,7 +1386,10 @@ impl Parser<'_> {
                     self.ws();
                     let key = self.string()?;
                     self.ws();
-                    ensure!(self.b.get(self.p) == Some(&b':'), "Invalid character scene object");
+                    ensure!(
+                        self.b.get(self.p) == Some(&b':'),
+                        "Invalid character scene object"
+                    );
                     self.p += 1;
                     let value = self.value(depth + 1)?;
                     // Python dict semantics: a repeated key keeps its first position.
@@ -1066,16 +1446,27 @@ impl Parser<'_> {
             }
             _ => {
                 let start = self.p;
-                while self.p < self.b.len() && matches!(self.b[self.p], b'0'..=b'9' | b'-' | b'+' | b'.' | b'e' | b'E') {
+                while self.p < self.b.len()
+                    && matches!(
+                        self.b[self.p],
+                        b'0'..=b'9' | b'-' | b'+' | b'.' | b'e' | b'E'
+                    )
+                {
                     self.p += 1;
                 }
                 let text = std::str::from_utf8(&self.b[start..self.p])?;
-                Node::Num(text.parse().with_context(|| format!("Invalid character scene number {text:?}"))?)
+                Node::Num(
+                    text.parse()
+                        .with_context(|| format!("Invalid character scene number {text:?}"))?,
+                )
             }
         })
     }
     fn string(&mut self) -> Result<String> {
-        ensure!(self.b.get(self.p) == Some(&b'"'), "Expected a character scene string");
+        ensure!(
+            self.b.get(self.p) == Some(&b'"'),
+            "Expected a character scene string"
+        );
         let start = self.p;
         self.p += 1;
         while self.p < self.b.len() && self.b[self.p] != b'"' {
@@ -1090,7 +1481,10 @@ impl Parser<'_> {
     }
 }
 pub fn parse_ordered(text: &str) -> Result<Node> {
-    let mut parser = Parser { b: text.as_bytes(), p: 0 };
+    let mut parser = Parser {
+        b: text.as_bytes(),
+        p: 0,
+    };
     let value = parser.value(0)?;
     parser.ws();
     ensure!(parser.p == text.len(), "Trailing data in character scene");
@@ -1098,10 +1492,28 @@ pub fn parse_ordered(text: &str) -> Result<Node> {
 }
 
 const MAIN_JOINTS: [&str; 22] = [
-    "def_hips", "def_spine", "def_spine1", "def_spine2", "def_neck", "def_head", "def_leftShoulder", "def_leftArm",
-    "def_leftForearm", "def_leftHand", "def_rightShoulder", "def_rightArm", "def_rightForearm", "def_rightHand",
-    "def_leftUpLeg", "def_leftLeg", "def_leftFoot", "def_leftToeBase", "def_rightUpLeg", "def_rightLeg",
-    "def_rightFoot", "def_rightToeBase",
+    "def_hips",
+    "def_spine",
+    "def_spine1",
+    "def_spine2",
+    "def_neck",
+    "def_head",
+    "def_leftShoulder",
+    "def_leftArm",
+    "def_leftForearm",
+    "def_leftHand",
+    "def_rightShoulder",
+    "def_rightArm",
+    "def_rightForearm",
+    "def_rightHand",
+    "def_leftUpLeg",
+    "def_leftLeg",
+    "def_leftFoot",
+    "def_leftToeBase",
+    "def_rightUpLeg",
+    "def_rightLeg",
+    "def_rightFoot",
+    "def_rightToeBase",
 ];
 pub struct Character {
     pub positions_cm: Vec<Vec3>,
@@ -1120,31 +1532,58 @@ pub fn read_character(path: &Path) -> Result<Character> {
     let source_sha256 = sha256_hex(&bytes);
     let mut archive = zip::ZipArchive::new(std::io::Cursor::new(bytes))?;
     let names: Vec<String> = archive.file_names().map(str::to_owned).collect();
-    let files: HashMap<String, String> = names.iter().map(|n| (n.to_lowercase(), n.clone())).collect();
-    let scene = names.iter().find(|n| n.to_lowercase() == "hihead.scne").context("Character IFF has no hihead.SCNE")?.clone();
+    let files: HashMap<String, String> = names
+        .iter()
+        .map(|n| (n.to_lowercase(), n.clone()))
+        .collect();
+    let scene = names
+        .iter()
+        .find(|n| n.to_lowercase() == "hihead.scne")
+        .context("Character IFF has no hihead.SCNE")?
+        .clone();
     let mut read = |name: &str| -> Result<Vec<u8>> {
         let mut member = archive.by_name(name)?;
-        ensure!(member.size() <= MAX_MEMBER, "Character member exceeds its byte budget");
-        let mut out = Vec::new();
-        member.read_to_end(&mut out)?;
-        Ok(out)
+        ensure!(
+            member.size() <= MAX_MEMBER,
+            "Character member exceeds its byte budget"
+        );
+        let expected = member.size();
+        read_member_bounded(member, expected, MAX_MEMBER)
     };
     let raw = read(&scene)?;
     let text = String::from_utf8(raw)?;
     let text = text.strip_prefix('\u{feff}').unwrap_or(&text);
-    let text: Vec<&str> = text.lines().filter(|l| !l.trim_start().starts_with("//")).collect();
+    let text: Vec<&str> = text
+        .lines()
+        .filter(|l| !l.trim_start().starts_with("//"))
+        .collect();
     let text = text.join("\n");
-    let document = parse_ordered(&if text.trim_start().starts_with('{') { text } else { format!("{{{text}}}") })?;
-    let Node::Obj(top) = &document else { bail!("Character scene has no model") };
-    let root = top.iter().map(|(_, v)| v).find(|v| v.get("Model").is_some()).context("Character scene has no model")?;
-    let Some(Node::Obj(models)) = root.get("Model") else { bail!("Character scene has no model") };
+    let document = parse_ordered(&if text.trim_start().starts_with('{') {
+        text
+    } else {
+        format!("{{{text}}}")
+    })?;
+    let Node::Obj(top) = &document else {
+        bail!("Character scene has no model")
+    };
+    let root = top
+        .iter()
+        .map(|(_, v)| v)
+        .find(|v| v.get("Model").is_some())
+        .context("Character scene has no model")?;
+    let Some(Node::Obj(models)) = root.get("Model") else {
+        bail!("Character scene has no model")
+    };
     let model = models
         .iter()
         .map(|(_, v)| v)
         .find(|v| v.get("Transform").is_some() && v.get("MatrixWeightsBuffer").is_some())
         .context("Character scene has no skinned model")?;
     let mut buffer = |info: &Node| -> Result<Vec<u8>> {
-        let name = info.get("Binary").and_then(Node::str).context("Missing character buffer name")?;
+        let name = info
+            .get("Binary")
+            .and_then(Node::str)
+            .context("Missing character buffer name")?;
         let bin = format!("{}.bin", name.rsplit_once('.').map(|p| p.0).unwrap_or(name));
         let candidate = files
             .get(&name.to_lowercase())
@@ -1154,7 +1593,9 @@ pub fn read_character(path: &Path) -> Result<Character> {
         let mut value = read(&candidate)?;
         if value.starts_with(b"\x1f\x8b") {
             let mut out = Vec::new();
-            flate2::read::GzDecoder::new(&value[..]).take(MAX_MEMBER + 1).read_to_end(&mut out)?;
+            flate2::read::GzDecoder::new(&value[..])
+                .take(MAX_MEMBER + 1)
+                .read_to_end(&mut out)?;
             value = out;
         }
         ensure!(
@@ -1163,13 +1604,19 @@ pub fn read_character(path: &Path) -> Result<Character> {
         );
         Ok(value)
     };
-    let formats = model.get("VertexFormat").context("Character has no vertex format")?;
+    let formats = model
+        .get("VertexFormat")
+        .context("Character has no vertex format")?;
     let streams = match model.get("VertexStream") {
         Some(Node::List(s)) => s,
         _ => bail!("Character has no vertex streams"),
     };
-    let position = formats.get("POSITION0").context("Character has no positions")?;
-    let weights = formats.get("WEIGHTDATA0").context("Character has no skin weights")?;
+    let position = formats
+        .get("POSITION0")
+        .context("Character has no positions")?;
+    let weights = formats
+        .get("WEIGHTDATA0")
+        .context("Character has no skin weights")?;
     ensure!(
         position.get("Format").and_then(Node::str) == Some("R21G21B22_UINT")
             && weights.get("Format").and_then(Node::str) == Some("R32_UINT")
@@ -1177,72 +1624,139 @@ pub fn read_character(path: &Path) -> Result<Character> {
         "Character preview requires the verified packed position/16-bit weight format"
     );
     let stream = |format: &Node| -> Result<&Node> {
-        streams.get(format.int("Stream", 0)? as usize).context("Invalid character vertex stream")
+        streams
+            .get(format.int("Stream", 0)? as usize)
+            .context("Invalid character vertex stream")
     };
     let pstream = stream(position)?;
     let pdata = buffer(pstream)?;
     let stride = pstream.int("Stride", 0)? as usize;
     let poff = position.int("ByteOffset", 0)? as usize;
-    ensure!(stride >= poff + 8 && stride > 0 && pdata.len() % stride == 0, "Invalid character position stream");
+    ensure!(
+        stride >= poff + 8 && stride > 0 && pdata.len() % stride == 0,
+        "Invalid character position stream"
+    );
     let count = pdata.len() / stride;
     let lod_verts = match model.get("Lods") {
-        Some(Node::List(l)) => l.first().map(|l| l.int("LodVerts", -1)).transpose()?.unwrap_or(-1),
+        Some(Node::List(l)) => l
+            .first()
+            .map(|l| l.int("LodVerts", -1))
+            .transpose()?
+            .unwrap_or(-1),
         _ => -1,
     };
-    ensure!(count as i64 == lod_verts, "Unexpected character LOD vertex layout");
+    ensure!(
+        count as i64 == lod_verts,
+        "Unexpected character LOD vertex layout"
+    );
     let wstream = stream(weights)?;
     let wdata = buffer(wstream)?;
     let wstride = wstream.int("Stride", 0)? as usize;
     let woff = weights.int("ByteOffset", 0)? as usize;
-    ensure!(wstride >= woff + 4 && wdata.len() == count * wstride, "Invalid character weight stream");
+    ensure!(
+        wstride >= woff + 4 && wdata.len() == count * wstride,
+        "Invalid character weight stream"
+    );
     let matrix = buffer(model.get("MatrixWeightsBuffer").unwrap())?;
-    let Some(Node::Obj(transforms)) = model.get("Transform") else { bail!("Character has no joints") };
+    let Some(Node::Obj(transforms)) = model.get("Transform") else {
+        bail!("Character has no joints")
+    };
     let names: Vec<String> = transforms.iter().map(|(k, _)| k.clone()).collect();
     let mut rest: Vec<Vec3> = Vec::new();
     let mut parents = Vec::new();
     for (i, (_, bone)) in transforms.iter().enumerate() {
         let parent = bone.int("Parent", -1)?;
-        ensure!(parent < i as i64 && parent >= -1, "Character hierarchy is not ordered");
-        let local = bone.nums("Translate").unwrap_or_else(|| vec![0.0; 3]);
-        ensure!(local.len() == 3 && local.iter().all(|v| v.is_finite()), "Invalid character joint translation");
         ensure!(
-            ["Rotate", "Rotation", "Scale", "Matrix"].iter().all(|k| bone.get(k).is_none()),
+            parent < i as i64 && parent >= -1,
+            "Character hierarchy is not ordered"
+        );
+        let local = bone.nums("Translate").unwrap_or_else(|| vec![0.0; 3]);
+        ensure!(
+            local.len() == 3 && local.iter().all(|v| v.is_finite()),
+            "Invalid character joint translation"
+        );
+        ensure!(
+            ["Rotate", "Rotation", "Scale", "Matrix"]
+                .iter()
+                .all(|k| bone.get(k).is_none()),
             "Character preview requires a translation-only bind hierarchy"
         );
-        let base = if parent >= 0 { rest[parent as usize] } else { [0.0; 3] };
+        let base = if parent >= 0 {
+            rest[parent as usize]
+        } else {
+            [0.0; 3]
+        };
         // Python: v + (rest[parent][k] if parent>=0 else 0); 0 is int, same value.
         rest.push(std::array::from_fn(|k| local[k] + base[k]));
         parents.push(parent);
     }
     let main: Vec<usize> = MAIN_JOINTS
         .iter()
-        .map(|n| names.iter().position(|m| m == n).context("Character is missing a required human joint"))
+        .map(|n| {
+            names
+                .iter()
+                .position(|m| m == n)
+                .context("Character is missing a required human joint")
+        })
         .collect::<Result<_>>()?;
-    let pscale = position.nums("Scale").filter(|v| v.len() >= 3).context("Invalid character position scale")?;
-    let poffset = position.nums("Offset").filter(|v| v.len() >= 3).context("Invalid character position offset")?;
+    let pscale = position
+        .nums("Scale")
+        .filter(|v| v.len() >= 3)
+        .context("Invalid character position scale")?;
+    let poffset = position
+        .nums("Offset")
+        .filter(|v| v.len() >= 3)
+        .context("Invalid character position offset")?;
     let mut positions = Vec::with_capacity(count);
     let mut skin = Vec::with_capacity(count);
     for i in 0..count {
         let word = u64_at(&pdata, i * stride + poff)?;
-        let raw = [word & 0x1fffff, (word >> 21) & 0x1fffff, (word >> 42) & 0x3fffff];
+        let raw = [
+            word & 0x1fffff,
+            (word >> 21) & 0x1fffff,
+            (word >> 42) & 0x3fffff,
+        ];
         let p: Vec3 = std::array::from_fn(|k| raw[k] as f64 * pscale[k] + poffset[k]);
-        ensure!(p.iter().all(|v| v.is_finite()), "Nonfinite character vertex");
+        ensure!(
+            p.iter().all(|v| v.is_finite()),
+            "Nonfinite character vertex"
+        );
         positions.push(p);
         let word = u32_at(&wdata, i * wstride + woff)?;
         let (n, index) = ((word & 255) as usize, (word >> 8) as usize);
         let values: Vec<(usize, f64)> = if n == 0 {
             vec![(index, 1.0)]
         } else {
-            ensure!((index + n + 1) * 4 <= matrix.len(), "Skin weight pointer is out of range");
-            let packed: Vec<u32> = (0..=n).map(|k| u32_at(&matrix, (index + k) * 4)).collect::<Result<_>>()?;
-            ensure!(packed.iter().map(|v| (v & 65535) as u64).sum::<u64>() == 65535, "Packed skin weights do not sum to 65535");
-            packed.iter().filter(|v| *v & 65535 != 0).map(|v| ((v >> 16) as usize, (v & 65535) as f64 / 65535.0)).collect()
+            ensure!(
+                (index + n + 1) * 4 <= matrix.len(),
+                "Skin weight pointer is out of range"
+            );
+            let packed: Vec<u32> = (0..=n)
+                .map(|k| u32_at(&matrix, (index + k) * 4))
+                .collect::<Result<_>>()?;
+            ensure!(
+                packed.iter().map(|v| (v & 65535) as u64).sum::<u64>() == 65535,
+                "Packed skin weights do not sum to 65535"
+            );
+            packed
+                .iter()
+                .filter(|v| *v & 65535 != 0)
+                .map(|v| ((v >> 16) as usize, (v & 65535) as f64 / 65535.0))
+                .collect()
         };
-        ensure!(!values.is_empty() && values.iter().all(|(j, _)| *j < names.len()), "Invalid character skin joint");
+        ensure!(
+            !values.is_empty() && values.iter().all(|(j, _)| *j < names.len()),
+            "Invalid character skin joint"
+        );
         skin.push(values);
     }
-    let index_info = model.get("IndexBuffer").context("Character has no index buffer")?;
-    ensure!(index_info.get("Format").and_then(Node::str) == Some("R16_UINT"), "Unsupported character index format");
+    let index_info = model
+        .get("IndexBuffer")
+        .context("Character has no index buffer")?;
+    ensure!(
+        index_info.get("Format").and_then(Node::str) == Some("R16_UINT"),
+        "Unsupported character index format"
+    );
     let index_data = buffer(index_info)?;
     let mut triangles = Vec::new();
     let mut materials = Vec::new();
@@ -1256,7 +1770,10 @@ pub fn read_character(path: &Path) -> Result<Character> {
             last_material = m.to_owned();
         }
         ensure!(
-            prim.get("Type").and_then(Node::str).unwrap_or("TRIANGLE_LIST") == "TRIANGLE_LIST",
+            prim.get("Type")
+                .and_then(Node::str)
+                .unwrap_or("TRIANGLE_LIST")
+                == "TRIANGLE_LIST",
             "Unsupported character primitive"
         );
         let (start, n) = (prim.int("Start", -1)?, prim.int("Count", -1)?);
@@ -1265,13 +1782,23 @@ pub fn read_character(path: &Path) -> Result<Character> {
             "Invalid character primitive index range"
         );
         // Keep body surfaces hidden by the game's clothes; alpha-tested hair cards need source shaders.
-        if matches!(last_material.as_str(), "eyelashes_shader" | "l_armpitHair_shader" | "r_armpitHair_shader") {
+        if matches!(
+            last_material.as_str(),
+            "eyelashes_shader" | "l_armpitHair_shader" | "r_armpitHair_shader"
+        ) {
             continue;
         }
         let mut at = start as usize;
         while at < (start + n) as usize {
-            let tri = [u16_at(&index_data, at * 2)?, u16_at(&index_data, at * 2 + 2)?, u16_at(&index_data, at * 2 + 4)?];
-            ensure!(tri.iter().all(|v| (*v as usize) < count), "Character triangle has an invalid vertex");
+            let tri = [
+                u16_at(&index_data, at * 2)?,
+                u16_at(&index_data, at * 2 + 2)?,
+                u16_at(&index_data, at * 2 + 4)?,
+            ];
+            ensure!(
+                tri.iter().all(|v| (*v as usize) < count),
+                "Character triangle has an invalid vertex"
+            );
             triangles.push(tri);
             materials.push(last_material.clone());
             at += 3;
@@ -1295,27 +1822,42 @@ pub fn character_payload(source: &Character) -> Result<Value> {
     let names = &source.bone_names;
     let parents = &source.bone_parents;
     let mut native: Vec<usize> = source.main_joint_indices.clone();
-    let mut lookup: HashMap<usize, usize> = native.iter().enumerate().map(|(i, j)| (*j, i)).collect();
+    let mut lookup: HashMap<usize, usize> =
+        native.iter().enumerate().map(|(i, j)| (*j, i)).collect();
     let mut rig_names: Vec<String> = MAIN_JOINTS.iter().map(|s| s.to_string()).collect();
     let mut rig_parents: Vec<i64> = HUMAN_PARENTS.to_vec();
     let mut hands = Vec::new();
     for (side, prefix) in [(0, "def_l_"), (1, "def_r_")] {
         for (joint, name) in names.iter().enumerate() {
-            if !name.starts_with(prefix) || !["thumb_", "finger_", "hand_edge"].iter().any(|s| name.contains(s)) {
+            if !name.starts_with(prefix)
+                || !["thumb_", "finger_", "hand_edge"]
+                    .iter()
+                    .any(|s| name.contains(s))
+            {
                 continue;
             }
-            let parent = usize::try_from(parents[joint]).ok().and_then(|p| lookup.get(&p).copied());
+            let parent = usize::try_from(parents[joint])
+                .ok()
+                .and_then(|p| lookup.get(&p).copied());
             let parent = parent.context("Finger parent is missing from the retained rig")?;
             let index = native.len();
             lookup.insert(joint, index);
             native.push(joint);
             rig_names.push(name.clone());
             rig_parents.push(parent as i64);
-            let pose_node = HAND_NODES.iter().enumerate().skip(1).find(|(_, n)| format!("{prefix}{n}") == *name).map(|(i, _)| i);
+            let pose_node = HAND_NODES
+                .iter()
+                .enumerate()
+                .skip(1)
+                .find(|(_, n)| format!("{prefix}{n}") == *name)
+                .map(|(i, _)| i);
             hands.push(json!({"joint":index,"side":side,"pose_node":pose_node}));
         }
     }
-    ensure!(hands.len() == 42, "Expected 21 retained finger/edge joints per hand");
+    ensure!(
+        hands.len() == 42,
+        "Expected 21 retained finger/edge joints per hand"
+    );
     let mut mapped = Vec::with_capacity(names.len());
     for joint in 0..names.len() {
         let mut current = joint as i64;
@@ -1338,7 +1880,10 @@ pub fn character_payload(source: &Character) -> Result<Value> {
             }
         }
         merged.sort_by(|a, b| a.0.cmp(&b.0).then(a.1.total_cmp(&b.1)));
-        ensure!(merged.len() <= 4, "Character skin requires an unsupported number of influences");
+        ensure!(
+            merged.len() <= 4,
+            "Character skin requires an unsupported number of influences"
+        );
         for k in 0..4 {
             skin_index.push(merged.get(k).map(|m| m.0).unwrap_or(0));
             skin_weight.push(merged.get(k).map(|m| m.1).unwrap_or(0.0));
@@ -1380,6 +1925,16 @@ pub fn character_payload(source: &Character) -> Result<Value> {
 
 #[cfg(test)]
 mod tests {
+    #[test]
+    fn archive_member_reads_cap_expansion_and_reject_declared_size_drift() {
+        use super::read_member_bounded;
+        assert_eq!(read_member_bounded(&b"abc"[..], 3, 4).unwrap(), b"abc");
+        assert!(read_member_bounded(&b"abc"[..], 2, 4).is_err());
+        assert!(read_member_bounded(&b"a"[..], 2, 4).is_err());
+        let mut source = std::io::Cursor::new([0; 12]);
+        assert!(read_member_bounded(&mut source, 4, 4).is_err());
+        assert_eq!(source.position(), 5);
+    }
     use super::*;
     #[test]
     fn rotation_words_are_unit_quaternions() {
@@ -1398,9 +1953,15 @@ mod tests {
     fn ordered_scene_keeps_key_order_and_first_position() {
         let node = parse_ordered(r#"{"b":1,"a":{"z":[1,2.5e1,-3],"y":"x\"q"},"b":2}"#).unwrap();
         let Node::Obj(items) = &node else { panic!() };
-        assert_eq!(items.iter().map(|i| i.0.as_str()).collect::<Vec<_>>(), ["b", "a"]);
+        assert_eq!(
+            items.iter().map(|i| i.0.as_str()).collect::<Vec<_>>(),
+            ["b", "a"]
+        );
         assert_eq!(items[0].1.num(), Some(2.0));
-        assert_eq!(node.get("a").unwrap().nums("z").unwrap(), vec![1.0, 25.0, -3.0]);
+        assert_eq!(
+            node.get("a").unwrap().nums("z").unwrap(),
+            vec![1.0, 25.0, -3.0]
+        );
         assert_eq!(node.get("a").unwrap().get("y").unwrap().str(), Some("x\"q"));
     }
     #[test]

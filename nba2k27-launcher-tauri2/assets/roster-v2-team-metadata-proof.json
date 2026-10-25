@@ -1,6 +1,6 @@
 {
   "schema": "nba2k27-v2-team-type-classic-year-v1",
-  "imageSha256": "29A96471C55909FC2BCEA6C699C59238656A501C19B50C74ED64B0D842E576A1",
+  "imageSha256": "B673EB04593D6D5A4DFB9E270178E04C017BD9F277514D256EA98FFB792ED27B",
   "type": {
     "offset": 4668,
     "shift": 26,
@@ -20,34 +20,34 @@
   },
   "spans": [
     {
-      "rva": 28132016,
+      "rva": 28132192,
       "bytes": 2469,
-      "sha256": "29ccf708668b153a13e639eae1fa9857193c55a0387546504a2b1e1efbcf039f"
+      "sha256": "7df0339fb007e534fd2bef8b4cf13bfa41ba02833f7e68008adcfee79ee4d18f"
     },
     {
       "rva": 143344,
       "bytes": 67,
-      "sha256": "b5ee5ebc557520017782b5564f8a4389429a1e0ffed2a5e9e25477b178ab11db"
+      "sha256": "90a674f8860ed699ad406d8164f671838364e347b66029986fa65537ddf5c1a7"
     },
     {
-      "rva": 49852528,
+      "rva": 49852704,
       "bytes": 746,
-      "sha256": "e029147e673baa20d6dc194ccff7e4f2cb26d8f1439c0bcd9f441cf7f758a062"
+      "sha256": "8dee9d04e6ca45940bbba5d3d7299db6d950019393d31440229df5c33f1d9e1b"
     },
     {
-      "rva": 50796192,
+      "rva": 50796368,
       "bytes": 329,
-      "sha256": "036c870ad3407b43a63b0850207a6b5e11524defd8a7bee8da58a63724c26ad1"
+      "sha256": "8c3d03dc8c7ecaa7557e8ab544a691087520e1ed6a0c25f29d5b20970bef2a18"
     },
     {
       "rva": 142944,
       "bytes": 33,
-      "sha256": "f39cea6987b3598a6ed3df988acf9126ee1f368e8d4be231c666f2c83f7a2520"
+      "sha256": "bf7905349d00d15c297a19fd32e931eb58783b5a25136aa6e6719c451957d8e5"
     },
     {
-      "rva": 61166176,
+      "rva": 61166816,
       "bytes": 24931,
-      "sha256": "cf3ab90da8d414c1ef2e321544b158aed56c7461d371807873a474658c6e0c12"
+      "sha256": "abe5b75ab41118dbe13310c3bfe98ec762c138af538600bf6af9ed212e9629f4"
     },
     {
       "rva": 144435520,
@@ -65,7 +65,7 @@
       "sha256": "784e26f832f64cbe27f9e5ca1b5272aafd74c58c0caacfcfd92268cf8716175f"
     },
     {
-      "rva": 49834816,
+      "rva": 49834992,
       "bytes": 10,
       "sha256": "db3ae5223afca4f522f91cff30ca71d02504fe91de43a8ba8d7a645d805fcb14"
     }

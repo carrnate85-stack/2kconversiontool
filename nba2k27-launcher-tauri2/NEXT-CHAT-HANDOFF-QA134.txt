@@ -1,0 +1,15 @@
+QA134 — Curator follows Downloads tab — 2026-10-24
+DEV ONLY 0.53.38. No installation, promotion, activation, GitHub writes, game interaction, or computer use.
+
+Curator selects and lists only items from the active Downloads tab (Startup videos, Playlists, Blacktop Previews). Heading names that collection. Changing tabs while Curator is open changes the visible collection; drafts remain in the full catalog, so filtering never removes other collections when publishing. Empty collections have an explicit disabled option. Tabs and selector are disabled during pending operations to avoid switching the target while a link/artwork request is running. Edit handlers target the visible selected item, including fallback selection after a tab switch.
+
+QA133 link-editing, automatic load, fixed card button state, compact headers and toolbar preserved. Complete preview replacement is still pending USER UPLOAD: the accessory-only tjl35b7c57a5yvt archive was inspected and rejected as a full replacement; the original complete pack remains default. See QA133 report for verified archive findings and native tests.
+
+Validation: TypeScript,252frontend tests/48files,Vite passed. Dev release compiled. No new backend logic; no broad main Rust tests run. Visual/user acceptance remains pending. Main/Share freshly hashed unchanged at QA129 1D1BBAD3843001D5A08581FBBC05FBA10E8571215D8A82966A0A8FAEA1123E60. QA073 natural Rust AV,QA078 Clang crash,QA106 Season History assertion remain unresolved.
+
+Candidate:C:\Users\carrn\CodexProjects\2kconversiontool\nba2k27-launcher-tauri2\Dev\Pending\QA134\launcher.exe
+SHA256:6C0AD817806BA476FC4F622AC675A751AA09C6EA01F0F96DB58A74A5E8B7C5BE
+Bytes:48974336
+PDB SHA256:9EFB3CBBD1A06A9D623BB6C56236D3B36F46B8614DD8D105E8E34F0BD196BF31
+Starter:Open QA134 Dev.lnk / Start QA134 Dev.ps1. Exact-hash and idle guards retained. Close existing dev launcher normally first. DO NOT promote this curator build; future Main/Share builds omit dev-curator.
+Backups:Backups/qa134-tab-curator-20261024. Reports:artifacts/qa134-tab-curator.

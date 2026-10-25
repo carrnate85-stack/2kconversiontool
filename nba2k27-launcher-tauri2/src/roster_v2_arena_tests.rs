@@ -41,9 +41,9 @@ impl Fake {
         h[60..64].copy_from_slice(&128u32.to_le_bytes());
         h[128..132].copy_from_slice(b"PE\0\0");
         h[132..134].copy_from_slice(&0x8664u16.to_le_bytes());
-        h[136..140].copy_from_slice(&0x6ac53765u32.to_le_bytes());
+        h[136..140].copy_from_slice(&0x6ad2e48cu32.to_le_bytes());
         h[152..154].copy_from_slice(&0x20bu16.to_le_bytes());
-        h[208..212].copy_from_slice(&0x35bde000u32.to_le_bytes());
+        h[208..212].copy_from_slice(&0x36532000u32.to_le_bytes());
         m.put(BASE, &h);
         for &(rva, prefix, target) in owner::RIP_ANCHORS {
             let mut b = prefix.to_vec();
@@ -53,8 +53,8 @@ impl Fake {
         for &(rva, b) in owner::FIELD_ANCHORS {
             m.put(BASE + rva, b)
         }
-        m.q(BASE + owner::ROOT_CLASS, BASE + 0x024e65f0);
-        m.q(BASE + owner::ROOT_CLASS + 8, BASE + 0x024e6660);
+        m.q(BASE + owner::ROOT_CLASS, BASE + 0x24e66a0);
+        m.q(BASE + owner::ROOT_CLASS + 8, BASE + 0x24e6710);
         m.q(BASE + owner::ROOT, ROOT);
         m.q(ROOT, BASE + owner::ROOT_CLASS);
         m.q(ROOT + 0xa8, OWNER);

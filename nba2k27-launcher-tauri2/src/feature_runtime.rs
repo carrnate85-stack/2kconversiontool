@@ -435,6 +435,18 @@ fn publish_freestyle_or_restore<A: DataAccess>(
     }
 }
 
+/// The WPF helper takes complete picker/roster proofs immediately before its
+/// tight four-DWORD publication and immediately after it.  Keep the same
+/// narrow mutation window here: each DWORD still has the durable intent,
+/// expected-prefix and read-back guards in `publish_freestyle_or_restore`, but
+/// the expensive complete picker snapshot is not repeated between adjacent
+/// owned words.  Repeating it there made normal picker animation wide enough
+/// to move the selected-category window after a prefix write, forcing an exact
+/// restore and a permanent session hold (QA094 live component 0x200).
+fn freestyle_full_guard(index: usize, changes: usize) -> bool {
+    index == 0 || index == changes
+}
+
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 enum FeatureLane {
     Camera,
@@ -526,6 +538,9 @@ pub(crate) struct Runner {
     npc_profile: bool,
     npc_held: Option<String>,
     npc_moved: BTreeMap<u64, u8>,
+    debug_applied: bool,
+    debug_snapshot: Option<crate::debug_menu_v2::Snapshot>,
+    debug_started: Instant,
 }
 impl Runner {
     pub fn wnba_loader_enabled(&self) -> bool {
@@ -572,10 +587,14 @@ impl Runner {
             npc_profile: false,
             npc_held: None,
             npc_moved: BTreeMap::new(),
+            debug_applied: false,
+            debug_snapshot: None,
+            debug_started: Instant::now(),
         };
         for (name, enabled) in [
             ("cameras", !plan.cameras.is_empty()),
             ("scaler", plan.scaler_percent.is_some()),
+            ("debug-menus", plan.debug_menus),
         ] {
             runner.set(
                 name,
@@ -862,7 +881,7 @@ impl Runner {
                 attempt,
                 retries_left,
             } => {
-                for name in ["cameras", "scaler", "wnba-freestyle"] {
+                for name in ["cameras", "scaler", "wnba-freestyle", "debug-menus"] {
                     if !self.idle(name) {
                         self.set(
                             name,
@@ -875,7 +894,7 @@ impl Runner {
                 }
             }
             AccessOpenDisposition::Held => {
-                for name in ["cameras", "scaler", "wnba-freestyle"] {
+                for name in ["cameras", "scaler", "wnba-freestyle", "debug-menus"] {
                     if !self.idle(name) {
                         if name == "cameras" {
                             // Nothing was written: access never opened.
@@ -897,7 +916,7 @@ impl Runner {
         if !self.plan.enabled() {
             return;
         }
-        let names = ["cameras", "scaler", "wnba-freestyle"];
+        let names = ["cameras", "scaler", "wnba-freestyle", "debug-menus"];
         match self.gate_retry.failed() {
             AccessOpenDisposition::Waiting {
                 attempt,
@@ -927,7 +946,7 @@ impl Runner {
     /// A tick returned an error it did not attribute to one feature. Every
     /// active feature holds (no further writes); the session keeps running.
     pub fn tick_failed(&mut self, error: &anyhow::Error) {
-        for name in ["cameras", "scaler", "wnba-freestyle"] {
+        for name in ["cameras", "scaler", "wnba-freestyle", "debug-menus"] {
             if !self.idle(name) {
                 self.record_failure(name, error);
             }
@@ -945,7 +964,7 @@ impl Runner {
         }
         self.gate_retry.succeeded();
         if !parent_alive {
-            for name in ["cameras", "scaler", "wnba-freestyle"] {
+            for name in ["cameras", "scaler", "wnba-freestyle", "debug-menus"] {
                 if !self.idle(name) {
                     self.set(name,"owner-closed","Launcher closed; no new memory writes. Owned allocations remain until game exit.");
                 }
@@ -1002,6 +1021,7 @@ impl Runner {
             }
             let other_features = (!self.plan.cameras.is_empty() && !self.idle("cameras"))
                 || (self.plan.scaler_percent.is_some() && !self.idle("scaler"))
+                || (self.plan.debug_menus && !self.idle("debug-menus"))
                 || self.camera_stop_pending;
             if !other_features {
                 return Ok(());
@@ -1061,6 +1081,11 @@ impl Runner {
                         }
                     }
                 }
+            }
+        }
+        if self.plan.debug_menus && !self.held("debug-menus") {
+            if let Err(error) = self.debug_tick(&mut access) {
+                self.record_failure("debug-menus", &error);
             }
         }
         if let Some(variant) = self.plan.wnba_mixed {
@@ -1208,6 +1233,169 @@ impl Runner {
                 })
             })
             .collect()
+    }
+    /// WPF parity: enable the three registered Boolean feature entries once
+    /// for this exact game process. All three are captured and journaled as a
+    /// single logical transaction before the first byte changes. A partial
+    /// failure restores the verified prefix and is terminal for this session.
+    fn debug_tick(&mut self, access: &mut Access) -> Result<()> {
+        if self.debug_applied {
+            let current = crate::debug_menu_v2::capture(access)?;
+            ensure!(
+                self.debug_snapshot.as_ref() == Some(&current)
+                    && current.entries.iter().all(|entry| entry.value == 1),
+                "Owned debug-menu feature values changed after publication"
+            );
+            self.set(
+                "debug-menus",
+                "active",
+                "Built-in debug menus are enabled for this game session. Steam Offline Mode is required.",
+            );
+            return Ok(());
+        }
+
+        let first = match crate::debug_menu_v2::capture(access) {
+            Ok(value) => value,
+            Err(error)
+                if self.debug_started.elapsed() < Duration::from_secs(120)
+                    && error.chain().any(|cause| {
+                        matches!(
+                            cause.to_string().as_str(),
+                            "Debug-menu feature manager has not initialized"
+                                | "Debug-menu feature table is outside fixed bounds"
+                                | "Allowlisted debug-menu feature is not registered"
+                        )
+                    }) =>
+            {
+                self.set(
+                    "debug-menus",
+                    "waiting",
+                    &format!("Waiting for the game's debug-feature registry: {error:#}"),
+                );
+                return Ok(());
+            }
+            Err(error) => return Err(error),
+        };
+        let second = crate::debug_menu_v2::capture(access)?;
+        if first != second {
+            self.set(
+                "debug-menus",
+                "waiting",
+                "The game's debug-feature registry is still changing; no write was attempted.",
+            );
+            return Ok(());
+        }
+        let changes = crate::debug_menu_v2::enable_plan(&first)?;
+        if changes.is_empty() {
+            self.debug_applied = true;
+            self.debug_snapshot = Some(first);
+            self.set(
+                "debug-menus",
+                "active",
+                "All three built-in debug-menu flags were already enabled; their exact values are being monitored.",
+            );
+            return Ok(());
+        }
+        let apply_rows = changes
+            .iter()
+            .map(|change| Change {
+                at: change.address,
+                before: vec![change.before],
+                after: vec![change.after],
+            })
+            .collect::<Vec<_>>();
+        let restore_rows = changes
+            .iter()
+            .rev()
+            .map(|change| Change {
+                at: change.address,
+                before: vec![change.after],
+                after: vec![change.before],
+            })
+            .collect::<Vec<_>>();
+
+        access.begin_batch(Feature::Debug)?;
+        let result = (|| -> Result<crate::debug_menu_v2::Snapshot> {
+            let journal = self.journal()?;
+            ensure!(
+                journal.remaining() >= changes.len() * 2 + 3,
+                "The session intent budget cannot cover debug-menu publication and restore"
+            );
+            let apply_intent = journal.write_intent("debug-menus", apply_rows)?;
+            let restore_intent = journal.write_intent("debug-menus", restore_rows)?;
+            let mut current = first.clone();
+            let mut applied = Vec::new();
+            for change in &changes {
+                let before = current.clone();
+                let mut after = before.clone();
+                crate::debug_menu_v2::apply(&mut after, change)?;
+                match access.write_debug(change, &before, &after, &apply_intent, journal) {
+                    Ok(()) => {
+                        current = after;
+                        applied.push(change.clone());
+                    }
+                    Err(write_error) => {
+                        let observed = crate::debug_menu_v2::capture(access)?;
+                        if observed == after {
+                            current = after;
+                            applied.push(change.clone());
+                        } else {
+                            ensure!(
+                                observed == before,
+                                "Debug-menu publication failed and the exact resulting state is unknown: {write_error:#}"
+                            );
+                            current = before;
+                        }
+                        for original in applied.iter().rev() {
+                            let reverse = crate::debug_menu_v2::Change {
+                                definition: original.definition,
+                                address: original.address,
+                                before: original.after,
+                                after: original.before,
+                            };
+                            let restore_before = current.clone();
+                            let mut restore_after = restore_before.clone();
+                            crate::debug_menu_v2::apply(&mut restore_after, &reverse)?;
+                            access
+                                .write_debug(
+                                    &reverse,
+                                    &restore_before,
+                                    &restore_after,
+                                    &restore_intent,
+                                    journal,
+                                )
+                                .with_context(|| {
+                                    format!(
+                                        "Debug-menu publication failed and its verified prefix could not be restored: {write_error:#}"
+                                    )
+                                })?;
+                            current = restore_after;
+                        }
+                        ensure!(
+                            current == first && crate::debug_menu_v2::capture(access)? == first,
+                            "Debug-menu rollback did not return to the complete original snapshot"
+                        );
+                        return Err(write_error.context(
+                            "Debug-menu publication failed; every changed flag was restored",
+                        ));
+                    }
+                }
+            }
+            journal.append(Event::Applied {
+                feature: "debug-menus".into(),
+            })?;
+            Ok(current)
+        })();
+        access.end_batch();
+        let active = result?;
+        self.debug_applied = true;
+        self.debug_snapshot = Some(active);
+        self.set(
+            "debug-menus",
+            "active",
+            "Built-in debug menus are enabled for this game session. Steam Offline Mode is required.",
+        );
+        Ok(())
     }
     /// WPF parity: no menu gate. The helper installed once per game process as
     /// soon as the static tables validated, as one all-or-nothing transaction.
@@ -1798,7 +1986,8 @@ impl Runner {
                     crate::freestyle_v2::Tables::read(a)? == expected,
                     "Freestyle category ownership changed before write"
                 );
-                if priority {
+                let full_guard = freestyle_full_guard(index, plan.changes.len());
+                if priority && full_guard {
                     crate::wnba_priority_categories::verify(
                         &proof_root,
                         &proof_session,
@@ -1806,7 +1995,9 @@ impl Runner {
                         a,
                     )?;
                 }
-                crate::freestyle_v2::verify_compact(a, a, &first)?;
+                if full_guard {
+                    crate::freestyle_v2::verify_compact(a, a, &first)?;
+                }
                 if index == plan.changes.len() {
                     // WPF temporal shape: deep pair before plan, deep post after
                     // four adjacent guarded DWORDs. In-place row changes can be
@@ -1820,9 +2011,10 @@ impl Runner {
                     crate::freestyle_v2::Tables::read(a)? == expected,
                     "Freestyle navigation changed during readiness check"
                 );
-                if priority {
+                if priority && full_guard {
                     // Last source/token check before this scalar's durable
-                    // intent and write; capture() also brackets the full roster.
+                    // publication boundary; capture() also brackets the full
+                    // roster. Middle DWORDs stay in the tight owned prefix.
                     crate::wnba_priority_categories::verify(
                         &proof_root,
                         &proof_session,
@@ -1864,7 +2056,7 @@ impl Runner {
         }
         self.journal = None;
         self.access = None;
-        for name in ["cameras", "scaler", "wnba-freestyle"] {
+        for name in ["cameras", "scaler", "wnba-freestyle", "debug-menus"] {
             if self.states[name].phase != "disabled" {
                 self.set(
                     name,
@@ -2803,6 +2995,16 @@ mod tests {
             );
         }
         assert!(freestyle_progress(&plan, 5).is_err());
+    }
+    #[test]
+    fn freestyle_full_picker_guard_brackets_the_tight_four_word_publication() {
+        let phases = (0..=4)
+            .map(|index| freestyle_full_guard(index, 4))
+            .collect::<Vec<_>>();
+        assert_eq!(phases, vec![true, false, false, false, true]);
+        assert!(freestyle_full_guard(0, 1));
+        assert!(freestyle_full_guard(1, 1));
+        assert!(!freestyle_full_guard(2, 1));
     }
     #[test]
     fn exhausted_journal_budget_cannot_authorize_a_new_image_write() {

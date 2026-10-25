@@ -368,6 +368,7 @@ button:disabled { cursor: default; opacity: .45; }
 .presentation-section > summary { cursor:pointer; padding:12px 0; font-size:14px; font-weight:700; color:var(--text); }
 .presentation-section > summary::marker { color:var(--green); }
 .home-session-picks small { grid-column:1/-1; color:#91a1b7; font-size:11px; }
+.home-startup-video .home-startup-video-status { grid-column:auto; line-height:1.35; }
 @media(max-width:700px){.home-session-picks{grid-template-columns:minmax(0,1fr);}}
 .video-library-row { display:grid; grid-template-columns:minmax(120px,1fr) 105px 120px; gap:10px; align-items:center; padding:4px 12px; border-bottom:1px solid var(--line); min-height:36px; }
 .video-library-row input { min-width:0; width:100%; }

@@ -178,10 +178,7 @@ impl ArenaIntent {
             );
             ensure!(
                 value.replacement.as_deref()
-                    == Some(&arena::template_fields(
-                        c.file.as_deref().unwrap(),
-                        c.floor_file.as_deref().unwrap()
-                    )?),
+                    == Some(&arena::choice_fields(&c)?),
                 "Arena intent filenames differ from exact catalog"
             );
         } else {
@@ -279,11 +276,13 @@ impl<H: Host> crate::arena_session::Access for ArenaAccess<H> {
             "Arena mapping write has no exact durable intent"
         );
         let r = intent.record.as_ref().unwrap();
-        let fields = intent.replacement.as_deref().unwrap_or(&r.fields);
+        let fields = if restore && crate::custom_blacktop::enabled() && intent.selected.starts_with("custom-") && arena_v2::revalidate(&self.host, r, &r.fields).is_ok() {
+            r.fields.as_slice()
+        } else { intent.replacement.as_deref().unwrap_or(&r.fields) };
         // Full initial capture uses a read-only handle before any VM_WRITE.
         let snapshot = (|| -> Result<_> {
             self.host.guard(!restore)?;
-            let snapshot = arena_v2::capture(&self.host, arena::choice("default")?, expected)?;
+            let snapshot = arena_v2::capture(&self.host, &arena::choice("default")?, expected)?;
             arena_v2::revalidate(&self.host, r, fields)?;
             Ok(snapshot)
         })()
@@ -312,7 +311,7 @@ impl<H: Host> crate::arena_session::Access for ArenaAccess<H> {
                 );
                 arena_v2::revalidate(&self.host, r, fields)
             })?;
-        arena_v2::capture(&self.host, arena::choice("default")?, next)?;
+        arena_v2::capture(&self.host, &arena::choice("default")?, next)?;
         arena_v2::revalidate(&self.host, r, fields)
     }
     fn template(&self, record: &arena::Record, expected: &[u8], next: &[u8]) -> Result<()> {
@@ -338,12 +337,11 @@ impl<H: Host> crate::arena_session::Access for ArenaAccess<H> {
         );
         let snapshot = (|| -> Result<_> {
             self.host.guard(!restore)?;
-            let snapshot =
-                arena_v2::capture(&self.host, arena::choice("default")?, &arena::STOCK)?;
+            let snapshot = arena_v2::capture(&self.host, &arena::choice("default")?, &arena::STOCK)?;
             arena_v2::revalidate(&self.host, r, expected)?;
             if !restore {
                 arena_v2::verify_assets(
-                    arena::choice(&intent.selected)?,
+                    &arena::choice(&intent.selected)?,
                     Some(&self.host.manifest()?),
                 )?;
             }

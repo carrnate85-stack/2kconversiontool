@@ -1,7 +1,8 @@
 //! Session-owned NTFS links for mods/players/<player> and char/sig/<player>.
 //! The original WPF behavior is retained: loose char/sig files win, duplicate
-//! packages fail before publication, and no player data is copied. A durable
-//! intent plus nonce-named staged links supports conditional crash recovery.
+//! packages fail before publication, and publication shares source data without
+//! copying. Recovery backs up obsolete owned links when their source was replaced
+//! or removed. A durable intent plus nonce-named links supports crash recovery.
 #![allow(dead_code)]
 use crate::{
     backend,
@@ -12,7 +13,7 @@ use serde::{Deserialize, Serialize};
 use std::{
     collections::{BTreeMap, BTreeSet},
     fs::{self, File},
-    io::Read,
+    io::{Read, Seek, SeekFrom},
     os::windows::{
         fs::{MetadataExt, OpenOptionsExt},
         io::AsRawHandle,
@@ -111,6 +112,19 @@ fn directory_id(path: &Path) -> Result<FileId> {
         "Player-folder directory was replaced or linked"
     );
     identity(&file)
+}
+fn same_contents(a: &mut File, b: &mut File) -> Result<bool> {
+    if a.metadata()?.len() != b.metadata()?.len() { return Ok(false); }
+    a.seek(SeekFrom::Start(0))?;
+    b.seek(SeekFrom::Start(0))?;
+    let mut left = [0; 65536];
+    let mut right = [0; 65536];
+    loop {
+        let n = a.read(&mut left)?;
+        if n == 0 { return Ok(true); }
+        b.read_exact(&mut right[..n])?;
+        if left[..n] != right[..n] { return Ok(false); }
+    }
 }
 fn read_record(file: &mut File) -> Result<Record> {
     ensure!(
@@ -428,6 +442,19 @@ impl Store {
         }
         Ok(())
     }
+    /// Recover root authority only from this bounded exact-session receipt,
+    /// followed by its existing actual directory-identity validation.
+    pub(crate) fn recorded_root(portable: &Path, session: &str) -> Result<Option<PathBuf>> {
+        let _portable = Directories::pin(portable)?;
+        let _data = Directories::pin(&portable.join("Data"))?;
+        let marker = portable.join("Data").join(MARKER);
+        if missing(&marker)? {
+            return Ok(None);
+        }
+        let record = read_record(&mut open_file(&marker, false)?)?;
+        let store = Self::recover(portable, &record.root, session)?;
+        Ok(store.map(|s| s.record.root.clone()))
+    }
     pub fn recover(portable: &Path, mods: &Path, session: &str) -> Result<Option<Self>> {
         let marker = portable.join("Data").join(MARKER);
         if missing(&marker)? {
@@ -455,6 +482,52 @@ impl Store {
             loose_priority: 0,
         }))
     }
+    /// Preserve an obsolete owned link outside the mod tree before unlinking
+    /// it. Copying also supports mod roots on a different volume. Only complete,
+    /// flushed, byte-verified copies are atomically published; retries reuse an
+    /// identical archive without overwriting anything. Pins survive the unlink.
+    fn archive_previous(
+        &self, entry: &Entry, owned: &mut File, closed: &impl Fn() -> Result<()>,
+    ) -> Result<(File, Vec<Directories>)> {
+        let mut pins = vec![Directories::pin(&self.portable)?];
+        let mut dir = self.portable.clone();
+        for part in ["Backups", "replaced-player-links", &self.record.session] {
+            dir.push(part);
+            if missing(&dir)? {
+                closed()?;
+                fs::create_dir(&dir)?;
+            }
+            pins.push(Directories::pin(&dir)?);
+        }
+        let target = dir.join(&entry.name);
+        if !missing(&target)? {
+            let mut archive = open_file(&target, false)?;
+            ensure!(same_contents(owned, &mut archive)?,
+                "Previous player backup differs; owned link retained: {}", target.display());
+            return Ok((archive, pins));
+        }
+        closed()?;
+        let temp = dir.join(format!(".{}.tmp", backend::unique_id()));
+        let mut archive = fs::OpenOptions::new()
+            .read(true).write(true).create_new(true)
+            .access_mode(0x80000000 | 0x40000000 | 0x10000).share_mode(1)
+            .custom_flags(FILE_FLAG_OPEN_REPARSE_POINT.0).open(&temp)?;
+        let result = (|| -> Result<()> {
+            owned.seek(SeekFrom::Start(0))?;
+            let count = std::io::copy(owned, &mut archive)?;
+            archive.sync_all()?;
+            ensure!(count == owned.metadata()?.len() && same_contents(owned, &mut archive)?,
+                "Previous player backup verification failed; owned link retained");
+            closed()?;
+            loader_files::publish(&archive, &target)?;
+            Ok(())
+        })();
+        if let Err(error) = result {
+            let _ = loader_files::unlink(&archive);
+            return Err(error);
+        }
+        Ok((archive, pins))
+    }
     pub fn restore(&mut self, closed: impl Fn() -> Result<()>) -> Result<()> {
         closed()?;
         self.record.validate(self.root(), &self.record.session)?;
@@ -468,55 +541,65 @@ impl Store {
                     .matches(&directory_id(&self.sig())?),
             "Player-folder directory ownership changed"
         );
+        let mut held = Vec::new();
         for entry in &self.record.entries {
-            let staged = self.sig().join(&entry.staged);
-            let staged_exists = !missing(&staged)?;
-            // A staged link still present means the atomic no-replace rename
-            // did not consume it. An identical loose user link is NOT ours.
-            let target = if staged_exists {
-                Some(staged)
-            } else if self.record.publish_started {
-                Some(self.sig().join(&entry.name))
-            } else {
-                None
-            };
-            let Some(target) = target else {
-                continue;
-            };
-            if missing(&target)? {
-                continue;
+            let restored = (|| -> Result<()> {
+                let staged = self.sig().join(&entry.staged);
+                let staged_exists = !missing(&staged)?;
+                // A staged link still present means the atomic no-replace rename
+                // did not consume it. An identical loose user link is NOT ours.
+                let target = if staged_exists {
+                    Some(staged)
+                } else if self.record.publish_started {
+                    Some(self.sig().join(&entry.name))
+                } else {
+                    None
+                };
+                let Some(target) = target else {
+                    return Ok(());
+                };
+                if missing(&target)? {
+                    return Ok(());
+                }
+                let meta = fs::symlink_metadata(&target)?;
+                if !meta.is_file() || !ordinary(&meta) {
+                    ensure!(!staged_exists, "Foreign staged player file left untouched");
+                    return Ok(());
+                }
+                let mut file = open_file(&target, true)?;
+                if !entry.identity.matches(&identity(&file)?) {
+                    ensure!(!staged_exists, "Foreign staged player file left untouched");
+                    return Ok(());
+                }
+                // Updating/removing a source is normal mod management. Preserve
+                // the old data in a durable backup instead of blocking recovery.
+                // Never touch a replacement source or a foreign loose target.
+                let source = self.record.root.join(&entry.source);
+                let original = (|| -> Result<_> {
+                    let pin = Directories::pin(source.parent().unwrap())?;
+                    let source = fs::OpenOptions::new().read(true).share_mode(1 | 4)
+                        .custom_flags(FILE_FLAG_OPEN_REPARSE_POINT.0).open(&source)?;
+                    let meta = source.metadata()?;
+                    ensure!(meta.is_file() && ordinary(&meta)
+                        && entry.identity.matches(&identity(&source)?), "Source replaced");
+                    Ok((pin, source))
+                })().ok();
+                let _archive = if original.is_none() {
+                    Some(self.archive_previous(entry, &mut file, &closed)?)
+                } else { None };
+                closed()?;
+                loader_files::unlink(&file)?;
+                Ok(())
+            })();
+            if let Err(error) = restored {
+                held.push(format!("{}: {error:#}", entry.name));
             }
-            let meta = fs::symlink_metadata(&target)?;
-            if !meta.is_file() || !ordinary(&meta) {
-                ensure!(!staged_exists, "Foreign staged player file left untouched");
-                continue;
-            }
-            let file = open_file(&target, true)?;
-            if !entry.identity.matches(&identity(&file)?) {
-                ensure!(!staged_exists, "Foreign staged player file left untouched");
-                continue;
-            }
-            // Never delete what became the last copy after a user removed or
-            // replaced the original source. Keep both receipt and data for review.
-            let source = self.record.root.join(&entry.source);
-            let _source_pin = Directories::pin(source.parent().unwrap())?;
-            let source_meta = fs::symlink_metadata(&source)?;
-            ensure!(
-                source_meta.is_file() && ordinary(&source_meta),
-                "Player source changed; owned link left for review"
-            );
-            let source = fs::OpenOptions::new()
-                .read(true)
-                .share_mode(1 | 4)
-                .custom_flags(FILE_FLAG_OPEN_REPARSE_POINT.0)
-                .open(&source)?;
-            ensure!(
-                entry.identity.matches(&identity(&source)?),
-                "Player source was replaced; owned link left for review"
-            );
-            closed()?;
-            loader_files::unlink(&file)?;
         }
+        ensure!(
+            held.is_empty(),
+            "Player-folder entries held for review: {}",
+            held.join("; ")
+        );
         let mut marker = open_file(&self.marker(), true)?;
         ensure!(
             read_record(&mut marker)? == self.record,
@@ -641,7 +724,7 @@ mod tests {
         assert!(!store.sig().join(&entry.staged).exists());
     }
     #[test]
-    fn replaced_loose_files_survive_cleanup_and_missing_sources_hold_the_last_copy() {
+    fn replaced_loose_files_survive_cleanup_and_missing_sources_are_archived() {
         let f = Fixture::new();
         f.write("players/Amir/png1452.iff", b"player");
         let mut store = f.store().unwrap();
@@ -659,12 +742,74 @@ mod tests {
         let mut store = f.store().unwrap();
         store.activate(|| Ok(())).unwrap();
         fs::remove_file(f.mods.join("players/Amir/png1452.iff")).unwrap();
-        assert!(store.restore(|| Ok(())).is_err());
-        assert!(store.marker().exists());
+        store.restore(|| Ok(())).unwrap();
+        assert!(!store.marker().exists());
+        assert!(!f.mods.join("char/sig/png1452.iff").exists());
         assert_eq!(
-            fs::read(f.mods.join("char/sig/png1452.iff")).unwrap(),
+            fs::read(f.portable.join("Backups/replaced-player-links").join(&f.session).join("png1452.iff")).unwrap(),
             b"last copy"
         );
+    }
+    #[test]
+    fn replaced_player_source_is_preserved_and_old_link_is_backed_up_without_holding_launch() {
+        let f = Fixture::new();
+        f.write("players/Prince/png0923.iff", b"old player");
+        let mut store = f.store().unwrap();
+        store.activate(|| Ok(())).unwrap();
+        fs::remove_file(f.mods.join("players/Prince/png0923.iff")).unwrap();
+        f.write("players/Prince/png0923.iff", b"updated player");
+        drop(store);
+        let mut recovered = f.recover().unwrap().unwrap();
+        recovered.restore(|| Ok(())).unwrap();
+        assert_eq!(fs::read(f.mods.join("players/Prince/png0923.iff")).unwrap(), b"updated player");
+        assert!(!f.mods.join("char/sig/png0923.iff").exists());
+        assert!(!recovered.marker().exists());
+        let backup=f.portable.join("Backups/replaced-player-links").join(&f.session).join("png0923.iff");
+        assert_eq!(fs::read(backup).unwrap(), b"old player");
+        // A fresh launch selects the replacement, never the archived version.
+        drop(recovered);
+        let mut fresh=f.store().unwrap();
+        fresh.activate(|| Ok(())).unwrap();
+        assert_eq!(fs::read(f.mods.join("char/sig/png0923.iff")).unwrap(), b"updated player");
+        fresh.restore(|| Ok(())).unwrap();
+    }
+    #[test]
+    fn backup_then_interruption_retries_without_overwrite_and_rejects_foreign_backup() {
+        for changed in [false, true] {
+            let f=Fixture::new();
+            f.write("players/Prince/png0923.iff", b"old player");
+            let mut store=f.store().unwrap();store.activate(|| Ok(())).unwrap();
+            fs::remove_file(f.mods.join("players/Prince/png0923.iff")).unwrap();
+            let backup=f.portable.join("Backups/replaced-player-links").join(&f.session).join("png0923.iff");
+            assert!(store.restore(|| { ensure!(!backup.exists(), "game started after backup"); Ok(()) }).is_err());
+            assert_eq!(fs::read(&backup).unwrap(),b"old player");
+            assert!(store.marker().exists());
+            assert!(f.mods.join("char/sig/png0923.iff").exists());
+            if changed { fs::write(&backup,b"user changed backup").unwrap(); }
+            drop(store);
+            let mut store=f.recover().unwrap().unwrap();
+            if changed {
+                assert!(store.restore(|| Ok(())).is_err());
+                assert_eq!(fs::read(&backup).unwrap(),b"user changed backup");
+                assert_eq!(fs::read(f.mods.join("char/sig/png0923.iff")).unwrap(),b"old player");
+            } else {
+                store.restore(|| Ok(())).unwrap();
+                assert!(!store.marker().exists());
+                assert!(!f.mods.join("char/sig/png0923.iff").exists());
+            }
+        }
+    }
+    #[test]
+    fn foreign_backup_directory_never_receives_old_player_data() {
+        let f=Fixture::new();
+        f.write("players/Prince/png0923.iff",b"old player");
+        let mut store=f.store().unwrap();store.activate(|| Ok(())).unwrap();
+        fs::remove_file(f.mods.join("players/Prince/png0923.iff")).unwrap();
+        fs::create_dir(f.base.join("foreign")).unwrap();
+        crate::mod_profile::fixture_junction(&f.portable.join("Backups"),&f.base.join("foreign")).unwrap();
+        assert!(store.restore(|| Ok(())).is_err());
+        assert_eq!(fs::read_dir(f.base.join("foreign")).unwrap().count(),0);
+        assert_eq!(fs::read(f.mods.join("char/sig/png0923.iff")).unwrap(),b"old player");
     }
     #[test]
     fn tampered_receipt_foreign_root_and_junction_sources_are_refused() {
@@ -932,5 +1077,36 @@ mod tests {
                 );
             }
         }
+    }
+
+    #[test]
+    fn unavailable_backup_holds_only_that_last_copy_and_recorded_root_survives_profile_cleanup() {
+        let f = Fixture::new();
+        f.write("players/One/a.iff", b"one");
+        f.write("players/Two/b.iff", b"two");
+        let mut s = f.store().unwrap();
+        s.activate(|| Ok(())).unwrap();
+        fs::remove_file(f.mods.join("players/One/a.iff")).unwrap();
+        // A genuine inability to preserve the last copy still holds this entry,
+        // without preventing cleanup of unrelated owned links.
+        fs::write(f.portable.join("Backups"), b"foreign file").unwrap();
+        assert!(s.restore(|| Ok(())).is_err());
+        assert_eq!(fs::read(f.mods.join("char/sig/a.iff")).unwrap(), b"one");
+        assert!(!f.mods.join("char/sig/b.iff").exists());
+        assert!(f.portable.join("Data").join(MARKER).exists());
+        assert_eq!(
+            Store::recorded_root(&f.portable, &f.session)
+                .unwrap()
+                .unwrap(),
+            f.mods.canonicalize().unwrap()
+        );
+        assert!(Store::recorded_root(&f.portable, &"f".repeat(48)).is_err());
+        fs::hard_link(
+            f.mods.join("char/sig/a.iff"),
+            f.mods.join("players/One/a.iff"),
+        )
+        .unwrap();
+        s.restore(|| Ok(())).unwrap();
+        assert!(!f.mods.join("char/sig/a.iff").exists());
     }
 }

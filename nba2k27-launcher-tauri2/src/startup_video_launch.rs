@@ -37,15 +37,13 @@ impl Coordinator {
             message: Mutex::new(json!({"phase":"idle","finished":true})),
         }
     }
-    fn start_bound(&self, binding: Binding, media: VideoLease, cancel: &AtomicBool) -> Result<()> {
+    pub fn begin(&self, media: VideoLease) -> Result<String> {
+        self.ensure_available()?;
         let mut runtime = self
             .runtime
             .lock()
             .map_err(|_| anyhow::anyhow!("Intro service unavailable"))?;
-        ensure!(
-            !self.stopped.load(Ordering::Acquire) && !cancel.load(Ordering::Acquire),
-            "Launcher is closing"
-        );
+        ensure!(!self.stopped.load(Ordering::Acquire), "Launcher is closing");
         if runtime.is_none() {
             let helper = crate::startup_video_helper::prepare(
                 &self.root,
@@ -58,20 +56,47 @@ impl Coordinator {
                 Arc::new(helper),
             )));
         }
-        ensure!(
-            !self.stopped.load(Ordering::Acquire) && !cancel.load(Ordering::Acquire),
-            "Launcher is closing"
+        static NEXT: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(1);
+        let token = format!(
+            "{:032x}{:016x}",
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)?
+                .as_nanos(),
+            NEXT.fetch_add(1, Ordering::Relaxed)
         );
-        // Serialized with shutdown: it either sees this newly started runtime
-        // and cancels it, or this admission observes the stop and never starts.
-        runtime.as_ref().unwrap().start(binding, media)?;
-        Ok(())
+        let active = runtime.as_ref().unwrap().clone();
+        active.start(token.clone(), media)?;
+        drop(runtime); // Intro callbacks need the coordinator lock while preparing.
+        // Present before Steam can take foreground. There is no fixed delay:
+        // proceed as soon as the hidden media handshake and show/play complete.
+        // A broken/cold media view cannot hold Play indefinitely.
+        let ready = Instant::now();
+        while ready.elapsed() < Duration::from_secs(3) {
+            let state = active.status();
+            if state["phase"] == "Playing" {
+                return Ok(token);
+            }
+            if state["finished"] == true {
+                anyhow::bail!("Startup video did not open: {}", state["message"]);
+            }
+            ensure!(!self.stopped.load(Ordering::Acquire), "Launcher is closing");
+            thread::sleep(Duration::from_millis(10));
+        }
+        let _ = active.cancel(&token, crate::startup_video_policy::Reason::LaunchFailed);
+        anyhow::bail!("Startup video preparation exceeded three seconds; game launch continues")
+    }
+    pub fn cancel_launch(&self, token: &str) {
+        if let Ok(runtime) = self.runtime.lock() {
+            if let Some(runtime) = runtime.as_ref() {
+                let _ = runtime.cancel(token, crate::startup_video_policy::Reason::LaunchFailed);
+            }
+        }
     }
     pub fn arm(
         self: &Arc<Self>,
         backend: Weak<Backend>,
         session: String,
-        media: VideoLease,
+        token: String,
     ) -> Result<()> {
         ensure!(
             session.len() == 48 && session.bytes().all(|b| b.is_ascii_hexdigit()),
@@ -94,30 +119,57 @@ impl Coordinator {
             .lock()
             .map_err(|_| anyhow::anyhow!("Intro status unavailable"))? =
             json!({"phase":"waiting-for-launched-game","finished":false});
+        crate::startup_video_tauri::write_trace(
+            &self.root,
+            &session,
+            "waiting-for-launched-game",
+            false,
+            "Video already preparing/playing; watching the exact launch for audio binding",
+        );
         let spawned = thread::Builder::new().name("startup-launch-owner".into()).spawn(move || {
             let result = (|| -> Result<()> {
                 let started = Instant::now();
-                while !cancel.load(Ordering::Acquire) && started.elapsed() < Duration::from_secs(120) {
+                let mut bound=false;
+                let mut last_progress=Instant::now()-Duration::from_secs(1);
+                while !cancel.load(Ordering::Acquire) {
+                    ensure!(bound || started.elapsed()<Duration::from_secs(120),"Timed out waiting for the exact launched game");
                     let coordinator = owner.upgrade().context("Launcher closed before intro")?;
                     ensure!(!coordinator.stopped.load(Ordering::Acquire), "Launcher closed before intro");
+                    if coordinator.runtime.lock().is_ok_and(|r| r.as_ref().is_some_and(|r|r.status()["finished"]==true)) {return Ok(());}
                     let backend = backend.upgrade().context("Launch owner closed before intro")?;
-                    if let Some((identity, _root)) = backend.session.intro_binding(&session)? {
+                    let runtime=coordinator.runtime.lock().map_err(|_|anyhow::anyhow!("Intro service unavailable"))?.clone().context("Intro closed")?;
+                    // The existing native status is read-only metadata. Never feed
+                    // another launch's stages into this generation's video.
+                    if last_progress.elapsed()>=Duration::from_millis(500) {
+                        if let Ok(Some(status))=backend.session.intro_progress(&session) {let _=runtime.update_launch_status(&token,&status);}
+                        last_progress=Instant::now();
+                    }
+                    if !bound { if let Some((identity, _root)) = backend.session.intro_binding(&session)? {
                         let binding = Binding::from_launched(&session, identity.pid, identity.started.parse()?, std::path::Path::new(&identity.path))?;
                         ensure!(!cancel.load(Ordering::Acquire), "Intro cancelled before binding");
-                        coordinator.start_bound(binding, media, &cancel)?;
-                        return Ok(());
-                    }
+                        let runtime=coordinator.runtime.lock().map_err(|_|anyhow::anyhow!("Intro service unavailable"))?.clone().context("Intro closed")?;
+                        runtime.bind(&token,binding)?;
+                        bound=true;
+                    }}
                     drop(backend);
                     drop(coordinator);
-                    thread::sleep(Duration::from_millis(100));
+                    thread::sleep(Duration::from_millis(if bound {500}else{100}));
                 }
                 anyhow::bail!("Startup video cancelled or timed out waiting for its launched game")
             })();
             if let Some(owner) = owner.upgrade() {
                 if let Err(error) = result {
+                    owner.cancel_launch(&token);
                     if let Ok(mut message) = owner.message.lock() {
                         *message = json!({"phase":"not-played","finished":true,"message":format!("{error:#}")});
                     }
+                    crate::startup_video_tauri::write_trace(
+                        &owner.root,
+                        &session,
+                        "not-played",
+                        true,
+                        &format!("{error:#}"),
+                    );
                 }
             }
             cancel.store(true, Ordering::Release);
@@ -167,17 +219,6 @@ impl Coordinator {
         runtime.request(window, request)
     }
     pub fn status(&self) -> Value {
-        if self
-            .waiting
-            .lock()
-            .is_ok_and(|v| v.as_ref().is_some_and(|w| !w.load(Ordering::Acquire)))
-        {
-            return self
-                .message
-                .lock()
-                .map(|v| v.clone())
-                .unwrap_or_else(|_| json!({"phase":"waiting-for-launched-game","finished":false}));
-        }
         if let Ok(runtime) = self.runtime.lock() {
             if let Some(runtime) = runtime.as_ref() {
                 let status = runtime.status();

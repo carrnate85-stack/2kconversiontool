@@ -10,11 +10,11 @@ import struct
 from wnba_v2_route_audit import Image, find_vtable
 
 ROOT = Path(__file__).resolve().parents[1]
-EXE_SHA = '29a96471c55909fc2bcea6c699c59238656a501c19b50c74ed64b0d842e576a1'
+EXE_SHA = 'b673eb04593d6d5a4dfb9e270178e04c017bd9f277514d256ea98ffb792ed27b'
 FEATURES = (
-    ('ENABLE_DEBUG_MENUS', 0x8EB3D32B, 0x39E3537, 0xB5246A8, 0x7C04398),
-    ('MENU_ENABLE_DEBUG_MENU_OPTION_IN_CLEAN', 0x976369F2, 0x39E3603, 0xB524738, 0x7C049F8),
-    ('NAVIGATION_MENU_SHOW_ALL_ITEMS', 0x5B4DD268, 0x39E3625, 0xB524750, 0x7C04B08),
+    ('ENABLE_DEBUG_MENUS', 0x8EB3D32B, 0x39E37B7, 0xB5246A8, 0x7C04398),
+    ('MENU_ENABLE_DEBUG_MENU_OPTION_IN_CLEAN', 0x976369F2, 0x39E3883, 0xB524738, 0x7C049F8),
+    ('NAVIGATION_MENU_SHOW_ALL_ITEMS', 0x5B4DD268, 0x39E38A5, 0xB524750, 0x7C04B08),
 )
 
 
@@ -31,9 +31,9 @@ def audit(path):
         for name, target, leaf_size in (
             ('CanonicalManagerGetter', 0x4AF80, None), ('ManagerConstructor', 0x4B700, None),
             ('BooleanFeatureConstructor', 0x4BC60, None), ('ManagerGetBool', 0x4E110, None),
-            ('SortedMapGetBool', 0x4BB0BB0, None), ('SortedMapFind', 0x4BAE860, 71),
-            ('BooleanElementRead', 0x4CD2EC0, 43), ('MapCreateBoolean', 0x4BAB260, None),
-            ('MapCreateBooleanWrapper', 0x4BACFC0, None), ('FeatureRegistrationInitializer', 0x39DDFD0, None),
+            ('SortedMapGetBool', 0x4BB0E30, None), ('SortedMapFind', 0x4BAEAE0, 71),
+            ('BooleanElementRead', 0x4CD3140, 43), ('MapCreateBoolean', 0x4BAB4E0, None),
+            ('MapCreateBooleanWrapper', 0x4BAD240, None), ('FeatureRegistrationInitializer', 0x39DE250, None),
         ):
             entry = entries[bisect.bisect_right(starts, target)-1]
             if leaf_size is None and entry[0] != target:
@@ -51,9 +51,9 @@ def audit(path):
             code = image.read(at, 7)
             if code[:3] != opcode or at+7+struct.unpack_from('<i', code, 3)[0] != target:
                 raise ValueError('Manager getter field proof differs')
-        fields = ((0x4E136, '488d8bf8000000'), (0x4BB0BC2, '448b4918'),
-                  (0x4BB0BCB, '4c8b11'), (0x4BB0BEE, '498b04f2'),
-                  (0x4BB0BF2, '3910'), (0x4CD2EE2, '0fb6440108'))
+        fields = ((0x4E136, '488d8bf8000000'), (0x4BB0E42, '448b4918'),
+                  (0x4BB0E4B, '4c8b11'), (0x4BB0E6E, '498b04f2'),
+                  (0x4BB0E72, '3910'), (0x4CD3162, '0fb6440108'))
         for at, expected in fields:
             if image.read(at, len(bytes.fromhex(expected))) != bytes.fromhex(expected):
                 raise ValueError('Native map/entry field proof differs')

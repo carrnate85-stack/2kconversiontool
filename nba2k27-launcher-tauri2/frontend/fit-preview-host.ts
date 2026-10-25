@@ -26,47 +26,68 @@ export type FitRequest = {
   showMannequinEarly: boolean;
 };
 
-class FitPreviewHost {
+export class FitPreviewHost {
   private worker: Worker | null = null;
   private pending = new Map<number, Pending>();
   private sequence = 0;
   private originals: Promise<string[]> | null = null;
+  private ready: Promise<void> | null = null;
+  private epoch = 0;
 
   private ensure() {
     if (this.worker) return this.worker;
     const worker = new Worker("./fit-preview/fit-runtime.js");
     this.worker = worker;
     this.originals ??= call<string[]>("previews:fit-originals");
-    this.originals
-      .then((originals) => worker.postMessage({ init: { originals } }))
-      .catch((error) => this.fail(new Error(String(error))));
-    worker.onmessage = (event) => void this.receive(event.data);
+    this.ready = this.originals.then((originals) => {
+      if (this.worker === worker) worker.postMessage({ init: { originals } });
+    });
+    void this.ready.catch((error) => {
+      if (this.worker === worker) {
+        this.originals = null;
+        this.fail(new Error(String(error)));
+      }
+    });
+    worker.onmessage = (event) => void this.receive(worker, event.data);
     worker.onerror = (event) => {
       if (this.worker === worker)
         this.fail(new Error(`Preview worker stopped (${event.message || "error"}).`));
     };
     return worker;
   }
-  private async receive(message: {
+  private send(worker: Worker, message: { id?: number; [key: string]: unknown }) {
+    const epoch = this.epoch;
+    void this.ready!.then(() => {
+      // Initialization must be posted first. Ignore cancelled or superseded work
+      // that was waiting for the catalog, including background prefetch requests.
+      if (this.worker === worker && epoch === this.epoch &&
+          (message.id === undefined || this.pending.has(message.id))) worker.postMessage(message);
+    }).catch((error) => {
+      if (this.worker === worker) this.fail(new Error(String(error)));
+    });
+  }
+  private async receive(worker: Worker, message: {
     host?: { id: number; op: string; args: { name?: string; stamp?: string } };
     id?: number;
     progress?: boolean;
     payload?: FitPayload;
     error?: string;
   }) {
+    if (this.worker !== worker) return;
     if (message.host) {
       const { id, op, args } = message.host;
       try {
         if (op === "resource") {
           const value = await invoke<ArrayBuffer>("preview_resource", { name: args.name });
-          this.worker?.postMessage({ hostReply: { id, value } }, [value]);
+          if (this.worker === worker) worker.postMessage({ hostReply: { id, value } }, [value]);
           return;
         }
         const channel = op === "index" ? "previews:fit-index" : op === "key" ? "previews:fit-key" : "";
         if (!channel) throw new Error("Unknown preview request");
-        this.worker?.postMessage({ hostReply: { id, value: await call(channel, args) } });
+        const value = await call(channel, args);
+        if (this.worker === worker) worker.postMessage({ hostReply: { id, value } });
       } catch (error) {
-        this.worker?.postMessage({ hostReply: { id, error: String(error) } });
+        if (this.worker === worker) worker.postMessage({ hostReply: { id, error: String(error) } });
       }
       return;
     }
@@ -83,6 +104,7 @@ class FitPreviewHost {
   private fail(error: Error) {
     this.worker?.terminate();
     this.worker = null;
+    this.ready = null;
     for (const item of this.pending.values()) item.reject(error);
     this.pending.clear();
   }
@@ -92,12 +114,12 @@ class FitPreviewHost {
     const id = ++this.sequence;
     return new Promise((resolve, reject) => {
       this.pending.set(id, { resolve: resolve as (v: FitPayload) => void, reject });
-      worker.postMessage({ id, request: { warm: true } });
+      this.send(worker, { id, request: { warm: true } });
     });
   }
   prefetch(asset: string) {
     if (!/^[a-zA-Z0-9_]{1,200}$/.test(asset)) return false;
-    this.ensure().postMessage({ prefetch: asset });
+    this.send(this.ensure(), { prefetch: asset });
     return true;
   }
   render(request: FitRequest, onProgress?: (payload: FitPayload) => void) {
@@ -110,7 +132,7 @@ class FitPreviewHost {
     }
     return new Promise<FitPayload>((resolve, reject) => {
       this.pending.set(id, { resolve, reject, onProgress });
-      worker.postMessage({
+      this.send(worker, {
         id,
         request: {
           items: request.items,
@@ -122,6 +144,7 @@ class FitPreviewHost {
     });
   }
   cancel() {
+    this.epoch++;
     this.worker?.postMessage({ cancel: true });
     void call("previews:fit-cancel").catch(() => {});
     for (const item of this.pending.values()) item.reject(new Error("Preview cancelled."));

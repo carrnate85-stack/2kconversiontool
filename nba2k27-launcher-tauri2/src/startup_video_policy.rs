@@ -10,6 +10,42 @@ pub(crate) const PAD_RELEASE_MS: u64 = 200;
 /// intro close and return focus while that helper finishes restoring alone.
 pub(crate) const RESTORE_RELEASE_MS: u64 = 2_000;
 
+/// Only native-owned handles from this exact launch may authorize presentation.
+/// A zero foreground handle is a transient Windows activation gap, not permission.
+pub(crate) fn launch_foreground_owned(
+    foreground: u64,
+    game: u64,
+    intro: u64,
+    main: u64,
+    overlay: u64,
+) -> bool {
+    foreground != 0 && [game, intro, main, overlay].contains(&foreground)
+}
+
+/// A retained, still-live game may briefly own a small splash window before
+/// its render window exists. That transition is not a user Alt-Tab.
+pub(crate) fn playback_foreground_owned(
+    foreground: u64,
+    intro: u64,
+    foreground_pid: u32,
+    game_pid: Option<u32>,
+    game_alive: bool,
+) -> bool {
+    foreground != 0
+        && (foreground == intro
+            || (game_alive && foreground_pid != 0 && game_pid == Some(foreground_pid)))
+}
+#[cfg(test)]
+#[test]
+fn playback_admits_only_intro_or_retained_live_game_even_during_splash() {
+    assert!(playback_foreground_owned(10, 10, 1, None, false));
+    assert!(playback_foreground_owned(20, 10, 42, Some(42), true));
+    assert!(!playback_foreground_owned(20, 10, 42, Some(42), false));
+    assert!(!playback_foreground_owned(20, 10, 99, Some(42), true));
+    assert!(!playback_foreground_owned(0, 0, 42, Some(42), true));
+    assert!(!playback_foreground_owned(20, 10, 0, Some(0), true));
+}
+
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub(crate) struct GameKey {
     pub pid: u32,
@@ -207,6 +243,19 @@ impl Session {
         let mut session = Self::new(token, None, Some(owner_window), Phase::Preparing, now);
         let effects = session.prepare(MonitorTarget::OwnerWindow(owner_window), now);
         Ok((session, effects))
+    }
+    /// Bind only a trusted native launch after owner-window playback begins.
+    pub(crate) fn bind_launched_game(&mut self, game: GameKey) -> Result<()> {
+        game.validate()?;
+        ensure!(
+            self.game.is_none() && matches!(self.phase, Phase::Preparing | Phase::Playing),
+            "Intro cannot bind a second or completed launch"
+        );
+        self.game = Some(game);
+        if self.phase == Phase::Preparing {
+            self.audio_ready = false;
+        }
+        Ok(())
     }
     fn new(
         token: u64,

@@ -1,0 +1,67 @@
+QA093 DEV CHECKPOINT - 2026-10-21
+
+Scope
+- Dev-only current-patch repair for Blacktop WNBA category publication, gameplay-ball preparation and scoreboard persistence.
+- Nothing was installed, promoted or copied into the active dev app by development work.
+
+Current game identity
+- NBA2K27.exe bytes: 880329496
+- PE timestamp/image: 6AD2E48C / 36532000
+- SHA-256: B673EB04593D6D5A4DFB9E270178E04C017BD9F277514D256EA98FFB792ED27B
+
+Blacktop WNBA
+- QA092 held on `Blacktop original exception-table entry or unwind frame differs`.
+- The exact current runtime-function entry, unwind bytes, continuation and method hash matched. Read-only live evidence proved the current `.pdata` entry and `.rdata` unwind page are PAGE_READONLY (0x02), not PAGE_EXECUTE_WRITECOPY (0x80).
+- native/wnba_blacktop_category_win.hpp now requires exact committed image-backed PAGE_READONLY metadata while retaining all entry/unwind/image/session/durability/no-replay guards.
+- Evidence/report: artifacts/qa093-blacktop-wnba-remap/REPORT.md
+
+Gameplay ball
+- QA092 selected Easterbunny but stopped with `Version 2 gameplay-ball proof changed at 4140C30`; ownsMutation=false and appliedRevision=0.
+- All 15 gameplay-only anchors were remapped to the current image. RTTI, world/manager/ball types and all runtime safety/restore guards remain unchanged.
+- Disk audit scripts now independently pin the current exact image.
+- Evidence/report: artifacts/qa093-ball-blacktop/REPORT.md
+
+Scoreboard
+- QA092 era-1980 applied all 3 headers, then normal native lifecycle bookkeeping changed at context+0x48/+0x68 and triggered a complete guarded restore.
+- src/scoreboard_v2.rs now excludes only opaque context+0x08..+0x9F lifecycle bookkeeping. Context vtable, +A0/+A8 bucket table, selected resource owner/serial, registry, package tree, all property bytes, allocations, process identity and menu owner remain exact.
+- Current lifecycle fixture is 2032 bytes, SHA-256 5B2041E362FEBCFB3590874CA7C8F58BBE32B3E430D880A976D64DCC58D26BC1.
+- Evidence/report: artifacts/qa093-scoreboard/REPORT.md
+
+Native payload
+- assets/native/version-outfits-v2-qa093.dll
+- Bytes: 1966080
+- SHA-256: AE510886572ECB00D7B0A293EED196FB7D4719B969165FAD041EB495A8B0D7C5
+- QA092's exact payload remains admitted for recovery only. New publication accepts only QA093.
+
+Validation
+- QA093 native payload build: 18 targeted checks passed, including both Blacktop unwind fixtures.
+- WNBA Rust filter: 21 passed, 0 failed, 3 opt-in checks ignored.
+- Ball core: 18 passed, 0 failed, 2 ignored; exact installed-image verifier and both independent disk audits passed.
+- Scoreboard core: 19 passed, 0 failed, 1 ignored; scoreboard runtime 8 passed; exact installed-image verifier and 18-anchor disk audit passed.
+- Payload recovery identity test passed.
+- cargo fmt --check passed.
+- cargo build --offline --locked --release --features dev-wnba-categories passed.
+- QA078 Clang outfit fixture still reproduces 0xC0000409 and remains unresolved.
+
+QA093 candidate
+- Dev/Pending/QA093/launcher.exe
+- Bytes: 46662144
+- SHA-256: A0E63FED206889891A9972807787B7CC354C98D0B18275A4E4200162C23C1637
+- Starter: Start QA093 Dev.vbs
+
+Starter status
+- PowerShell syntax and VBS command construction passed.
+- Candidate size/hash and CheckOnly passed while game and launcher were closed; no activation occurred.
+- The starter backs up the active dev executable, copies only the exact QA093 candidate, durably flushes/verifies it and launches the dev copy. It does not install or promote a release.
+
+Next live acceptance
+- Start QA093 normally with the dev starter.
+- Keep WNBA Blacktop enabled and select the desired ball and scoreboard before Play.
+- Use Play normally, wait briefly at Home for source registration, then enter Blacktop selection.
+- Confirm the WNBA category is selectable, then enter a match and confirm the selected gameplay ball and scoreboard remain visible.
+- Read the new exact-session provider state/journals before changing code again.
+
+Preserved qualifications
+- QA073 natural Rust test access violation and its exact EXE/PDB evidence remain unresolved.
+- QA078 Clang fixture crash remains unresolved.
+- Offline/static success does not establish live WNBA, ball or scoreboard gameplay acceptance.

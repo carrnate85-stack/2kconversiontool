@@ -1,0 +1,16 @@
+QA123 version 0.53.27 is compiled, packaged and promoted to Main and Share.
+
+Exact executable SHA-256:
+CD68164C6872F1ECAEB96EA7D9EA2FD4270A3C5732E7291078EDC68107DE051B
+Bytes: 47003648
+
+Main:
+C:\Program Files (x86)\Steam\steamapps\common\NBA 2K27\2k Launcher\App\2k Launcher Rust.exe
+
+Share:
+Builds\0.53.27\Share-QA123-Accessory-Catalog\NBA 2K27 Launcher 0.53.27.exe
+
+Recovery:
+C:\Program Files (x86)\Steam\steamapps\common\NBA 2K27\2k Launcher\Recovery\App-before-QA123-20261022-201519-9330
+
+Read artifacts\qa123-catalog-audit\FINAL-PROMOTION.txt and REPORT.txt for validation and accessory-audit details. Main/Share are byte-identical. Data/Library were preserved. Installed smoke loaded the production UI and exited cleanly, retaining only the known QA106 Season History totals/awards persistence qualification. Visual accessory acceptance is still pending.

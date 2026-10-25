@@ -13,37 +13,37 @@ pub(crate) const TEAM_STRIDE: usize = 0x1550;
 pub(crate) const ARENA_STRIDE: usize = 0x1278;
 pub(crate) const UNIFORM_STRIDE: usize = 0x170;
 pub(crate) const SERIALIZER: u64 = 0x006a_e330;
-pub(crate) const SERIALIZER_BYTES: usize = 50325;
+pub(crate) const SERIALIZER_BYTES: usize = 54512;
 pub(crate) const SERIALIZER_SHA256: &str =
-    "b5f0449fac3b3e2cd0d6009212a6b39062bdfd6568aada1f7704425923c739bf";
+    "bea589403432ea7a3de52024502554fda1e3ca842c75e6e01abe8f667d56feb0";
 pub(crate) const PLAYER_FIELDS_VERIFIED: bool = false;
 pub(crate) const TEAM_FIELDS_VERIFIED: bool = false;
 pub(crate) const WRITES_SUPPORTED: bool = false;
 
 pub(crate) const RIP_ANCHORS: &[(u64, &[u8], u64)] = &[
-    (0x0211_a0fb, &[0x48, 0x8b, 0x05], ROOT),
-    (0x0211_a120, &[0x48, 0x8b, 0x05], ROOT),
-    (0x0240_6bf9, &[0x48, 0x8d, 0x3d], ROOT_CLASS),
+    (0x0211_a1ab, &[0x48, 0x8b, 0x05], ROOT),
+    (0x0211_a1d0, &[0x48, 0x8b, 0x05], ROOT),
+    (0x0240_6ca9, &[0x48, 0x8d, 0x3d], ROOT_CLASS),
 ];
 pub(crate) const FIELD_ANCHORS: &[(u64, &[u8])] = &[
-    (0x0211_a102, &[0x48, 0x8b, 0x80, 0xa8, 0, 0, 0]),
+    (0x0211_a1b2, &[0x48, 0x8b, 0x80, 0xa8, 0, 0, 0]),
     // Bounded owner-relative player count/table, exact stride.
     (
-        0x02cc_96f1,
+        0x02cc_97a1,
         &[
             0x3b, 0x51, 0x10, 0x73, 0x12, 0x89, 0xd0, 0x48, 0x69, 0xc0, 0xf8, 0x04, 0, 0, 0x48,
             0x03, 0x41, 0x18,
         ],
     ),
     (
-        0x02dd_d3b1,
+        0x02dd_d461,
         &[
             0x3b, 0x91, 0x80, 0, 0, 0, 0x73, 0x15, 0x89, 0xd0, 0x48, 0x69, 0xc0, 0x50, 0x15, 0, 0,
             0x48, 0x03, 0x81, 0x88, 0, 0, 0,
         ],
     ),
     (
-        0x02ed_9bd1,
+        0x02ed_9c81,
         &[
             0x3b, 0x51, 0x60, 0x73, 0x12, 0x89, 0xd0, 0x48, 0x69, 0xc0, 0x78, 0x12, 0, 0, 0x48,
             0x03, 0x41, 0x68,
@@ -52,7 +52,7 @@ pub(crate) const FIELD_ANCHORS: &[(u64, &[u8])] = &[
     // This is owner-relative +290, NOT the current old decoder's allocation-
     // relative +290. No caller may silently substitute one for the other.
     (
-        0x02ed_cb31,
+        0x02ed_cbe1,
         &[
             0x3b, 0x91, 0x90, 0x02, 0, 0, 0x73, 0x15, 0x89, 0xd0, 0x48, 0x69, 0xc0, 0x70, 0x01, 0,
             0, 0x48, 0x03, 0x81, 0x98, 0x02, 0, 0,
@@ -106,8 +106,8 @@ pub(crate) fn verify_identity_profile(m: &impl Memory) -> Result<()> {
         "Roster profile requires x64 PE32+"
     );
     ensure!(
-        u32::from_le_bytes(header[pe + 8..pe + 12].try_into()?) == 0x6ac5_3765
-            && u32::from_le_bytes(header[pe + 80..pe + 84].try_into()?) == 0x35bd_e000,
+        u32::from_le_bytes(header[pe + 8..pe + 12].try_into()?) == 0x6ad2_e48c
+            && u32::from_le_bytes(header[pe + 80..pe + 84].try_into()?) == 0x3653_2000,
         "Unsupported read-only roster build"
     );
     for &(rva, prefix, target) in RIP_ANCHORS {
@@ -130,7 +130,7 @@ pub(crate) fn verify_identity_profile(m: &impl Memory) -> Result<()> {
         );
     }
     let bytes = read(m, at(m, ROOT_CLASS)?, 16)?;
-    for (i, method) in [0x024e_65f0, 0x024e_6660].into_iter().enumerate() {
+    for (i, method) in [0x024e_66a0, 0x024e_6710].into_iter().enumerate() {
         ensure!(
             u64::from_le_bytes(bytes[i * 8..i * 8 + 8].try_into()?) == at(m, method)?,
             "Roster container class differs"

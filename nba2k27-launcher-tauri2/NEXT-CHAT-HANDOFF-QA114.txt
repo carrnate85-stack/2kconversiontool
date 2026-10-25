@@ -1,0 +1,23 @@
+QA114 - MANNEQUIN CONTROLS / QUIET UPDATES - DEV ONLY
+2026-10-22. Version 0.53.18.
+
+Adds Front/Back buttons preserving zoom/pan, Reset restoring default angle and full framing, double-click refit preserving angle, and Light/Dark CSS-only backdrop controls with pressed state and keyboard focus styling. Canvas fit now accounts for narrow viewports. Body replacement no longer resets framing after the first successful model load, so the current angle, pan and zoom stay across outfit changes within the open dialog.
+
+After a completed outfit has displayed, ignore intermediate worker visuals while retaining the current outfit; apply the final payload when ready. First open retains early mannequin display. Quiet compact updating indicator replaces frequent progress/asset-count text. Existing cancellation/generation checks remain. Worker and decoding paths unchanged; no added geometry, textures, shadow maps or animation loop. Styling/control sources are reproducibly incorporated by tools/build-fit-preview-runtime.mjs and recorded in generated provenance.
+
+Validation: TypeScript and JavaScript syntax checks passed; 3 Node camera/backdrop interaction tests and 5 frontend worker/label tests passed; Vite and native release build passed with existing native warnings. Static source audit confirmed unchanged worker and animation-frame scheduling. No visual or real load-time acceptance claimed. No computer use, game launch/memory access, installation or promotion. No user Data/Library changes.
+
+Candidate: Dev/Pending/QA114/launcher.exe
+SHA256: 46C2CD71A2BA3384B985490FBA0805BF7494A1A7FEC4433A6F0119C88AA0104A
+Bytes: 46864896
+PDB: Dev/Pending/QA114/launcher.pdb
+Starter: Open QA114 Dev.lnk -> Start QA114 Dev.ps1
+Verifies hash/size and requires game/launcher closed. User click backs up and replaces Dev/Portable only. Staging does not activate. Main and sharing unchanged.
+Backup: Backups/qa114-mannequin-controls-20261022-103253
+Evidence: artifacts/qa114-mannequin-controls
+Retains QA113 lighting and unidentified-shoe ordering, QA112 labels and preview recovery, QA111 first-open fix. QA073 natural Rust AV, QA078 fixture crash and QA106 Season History smoke persistence remain unresolved.
+
+User check: use QA114 dev starter after closing old launcher. Check Front/Back/Reset, zoom then double-click, Light/Dark backgrounds, and outfit changes retaining viewing angle/zoom/pan and completed visuals until ready. No game test needed for these preview controls.
+Visual suggestions only, not implemented: subtle floor/contact cue below feet; more consistent selected-piece card backgrounds/crops; softer highlight separation on clothing without washing colors. Any dynamic shadows/postprocessing would need a GPU budget check.
+Starter CheckOnly exit=1. No activation performed.
+CheckOnly held safely because prior dev launcher PID 21940 is still open; no replacement performed. Close it normally before using QA114 starter.

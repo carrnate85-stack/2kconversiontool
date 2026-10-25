@@ -28,7 +28,15 @@ mod camera_names;
 mod camera_policy;
 mod camera_v2;
 mod close_policy;
+mod curated_catalog;
+mod curated_http;
+mod curated_library;
+mod curated_metadata;
+#[cfg(feature = "dev-curator")]
+mod curated_publisher;
 mod custom_arena_profiles;
+mod custom_blacktop;
+mod debug_menu_v2;
 mod editor_presets;
 mod feature_journal;
 mod feature_plan;
@@ -63,11 +71,18 @@ mod jukebox_v2_resources;
 mod launcher_health;
 mod launcher_tools;
 mod launcher_update;
+#[cfg(feature="dev-hub-updates")]
+mod hub_shutdown;
+#[cfg(feature="dev-hub-updates")]
+static HUB_SHUTDOWN: std::sync::Mutex<Option<hub_shutdown::Request>> = std::sync::Mutex::new(None);
 mod legacy_saved_media;
 mod library;
 mod loader_files;
 mod mod_install;
 mod mod_profile;
+mod mod_recycle;
+#[cfg(feature = "dev-model-preview")]
+mod model_preview_dev;
 mod native_overlay;
 mod native_session;
 mod online_ratings;
@@ -92,6 +107,7 @@ mod player_header_labels;
 mod player_transaction;
 mod presentation_v2;
 mod presentation_v2_runtime;
+mod preview_download;
 mod preview_service;
 mod previews;
 mod provider_access;
@@ -139,6 +155,7 @@ mod selector_runtime;
 mod selector_tables;
 mod session_safety;
 mod settings_compat;
+mod shoe_labels;
 mod sigconfig;
 mod startup_mp4;
 mod startup_video_audio;
@@ -148,6 +165,8 @@ mod startup_video_launch;
 mod startup_video_media;
 mod startup_video_native;
 mod startup_video_policy;
+#[cfg(feature = "dev-debug-menus")]
+mod startup_video_probe;
 mod startup_video_runtime;
 mod startup_video_tauri;
 mod steam_libraries;
@@ -158,6 +177,7 @@ mod team_dna;
 mod team_transaction;
 #[cfg(all(test, windows, target_arch = "x86_64"))]
 mod test_crash_capture;
+mod trusted_oodle;
 mod uniform_changes;
 mod uniform_transaction;
 mod vcblowfish;
@@ -199,21 +219,21 @@ struct State {
     smoke: bool,
 }
 static CLOSE_PROMPT_ACTIVE: AtomicBool = AtomicBool::new(false);
-fn minimize_owned_session_on_close(window: &tauri::Window) -> bool {
+static EXIT_WATCHDOG_ARMED: AtomicBool = AtomicBool::new(false);
+fn explain_owned_session_close_block(window: &tauri::Window) {
     let Ok(owner) = window.hwnd() else {
-        return false;
+        return;
     };
-    let answer = unsafe {
+    unsafe {
         MessageBoxW(
             Some(HWND(owner.0)),
             w!(
-                "NBA 2K27 is starting, running, or finishing session cleanup.\n\nMinimize the launcher and keep it open?\n\nYes (recommended): minimize without interrupting the current session.\n\nNo: close anyway. This can interrupt startup or disable live controls. Close NBA 2K27 before reopening the launcher or completing recovery."
+                "NBA 2K27 is starting, running, or finishing session cleanup.\n\nClose NBA 2K27 and wait for the session to finish, then close the launcher again.\n\nThe launcher will remain visible. It will not minimize or leave a launcher/provider process running in the background."
             ),
-            w!("Keep 2k Launcher open?"),
-            MB_YESNO | MB_ICONWARNING | MB_DEFBUTTON1 | MB_SETFOREGROUND,
-        )
-    };
-    close_policy::minimize(answer.0)
+            w!("Finish the active session before closing"),
+            MB_OK | MB_ICONWARNING | MB_SETFOREGROUND,
+        );
+    }
 }
 /// WPF showed an owned warning box before shared or inconsistent season saves.
 fn editor_confirm(message: &str) -> bool {
@@ -274,6 +294,67 @@ fn trusted(w: &WebviewWindow) -> Result<()> {
     );
     Ok(())
 }
+/// Explicit window authority before any dispatcher fallthrough. Overlays can
+/// operate their catalogs, never settings paths, installers or update services.
+fn channel_allowed(label: &str, channel: &str, args: &Value, smoke: bool) -> bool {
+    if label == "main" {
+        return true;
+    }
+    if !matches!(label, "overlay" | "live-overlay") {
+        return false;
+    }
+    if channel == "save-settings" {
+        return args.as_object().is_some_and(|p| {
+            p.keys().all(|k| {
+                matches!(
+                    k.as_str(),
+                    "arena" | "arenaId" | "ball" | "scoreboard" | "scoreboardId"
+                )
+            })
+        }) || (smoke && label == "overlay");
+    }
+    if matches!(
+        channel,
+        "bootstrap"
+            | "media"
+            | "library"
+            | "outfit"
+            | "choices"
+            | "wardrobe"
+            | "outfit-pieces"
+            | "outfit-for-pool"
+            | "random-outfit"
+            | "select-outfit-piece"
+            | "save-outfit"
+            | "arena-favorites"
+            | "arena-favorite"
+    ) {
+        return true;
+    }
+    if label == "overlay" {
+        return channel == "overlay-close";
+    }
+    matches!(
+        channel,
+        "native-session-status"
+            | "native-overlay-status"
+            | "native-overlay-heartbeat"
+            | "native-overlay-layout"
+            | "native-overlay-hide"
+            | "native-rules-read"
+            | "native-rules-apply"
+            | "native-arena-select"
+            | "native-ball-select"
+            | "native-scoreboard-select"
+            | "native-outfit-command"
+            | "previews:ball-thumbnail"
+    ) || (smoke
+        && matches!(
+            channel,
+            "smoke-native-overlay-metrics" | "smoke-native-overlay-result"
+        ))
+        || (smoke && label == "live-overlay" && matches!(channel, "capture" | "smoke-game-rules"))
+}
 fn preview_window_allowed(label: &str, channel: &str) -> bool {
     (label == "main" && channel.starts_with("previews:"))
         || (label == "live-overlay" && channel == "previews:ball-thumbnail")
@@ -296,7 +377,7 @@ fn build_live_overlay(
         "live-overlay",
         WebviewUrl::App("index.html?overlay=1&live=1".into()),
     )
-    .title("Blacktop native F8 · QA")
+    .title("Blacktop native F8 Â· QA")
     .owner_raw(owner)
     .inner_size(1200., 112.)
     .decorations(false)
@@ -535,6 +616,9 @@ async fn launcher(
     args: Value,
 ) -> std::result::Result<Value, String> {
     trusted(&window).map_err(|e| e.to_string())?;
+    if !channel_allowed(window.label(), &channel, &args, state.smoke) {
+        return Err("This command requires the main launcher window".into());
+    }
     if channel.len() > 60
         || serde_json::to_vec(&args).map_err(|e| e.to_string())?.len() > 2 * 1024 * 1024
     {
@@ -565,25 +649,47 @@ async fn launcher(
                 .map_err(|e| format!("{e:#}"))?;
             let backend = state.backend.clone();
             let command = channel.clone();
-            let (mut result, intro) = tauri::async_runtime::spawn_blocking(move || {
-                backend
-                    .launch_request(&command, args)
-                    .map_err(|e| format!("{e:#}"))
+            let startup = state.startup.clone();
+            let (launch, token) = tauri::async_runtime::spawn_blocking(move || {
+                let mut token = None;
+                let mut begin = |media| {
+                    token = Some(startup.begin(media)?);
+                    Ok(())
+                };
+                let result = backend
+                    .launch_request_with_intro(&command, args, &mut begin)
+                    .map_err(|e| format!("{e:#}"));
+                if result.is_err() {
+                    if let Some(token) = &token {
+                        startup.cancel_launch(token);
+                    }
+                }
+                (result, token)
             })
             .await
-            .map_err(|e| e.to_string())??;
-            if let Some(intro) = intro {
-                let session = result["session"].as_str().unwrap_or("").to_owned();
-                // The game has already been dispatched. A separate intro error
-                // must never make the UI imply that launch itself failed.
-                result["startupIntro"] =
-                    match state
-                        .startup
-                        .arm(Arc::downgrade(&state.backend), session, intro)
-                    {
-                        Ok(()) => json!({"phase":"waiting-for-launched-game"}),
-                        Err(error) => json!({"phase":"not-played","message":format!("{error:#}")}),
+            .map_err(|e| e.to_string())?;
+            let (mut result, _) = launch?;
+            if let Some(token) = token {
+                let accepted = matches!(
+                    result["phase"].as_str(),
+                    Some("waiting-for-game" | "game-running")
+                );
+                if accepted {
+                    let session = result["session"].as_str().unwrap_or("").to_owned();
+                    result["startupIntro"] = match state.startup.arm(
+                        Arc::downgrade(&state.backend),
+                        session,
+                        token.clone(),
+                    ) {
+                        Ok(()) => json!({"phase":"playing-on-launch"}),
+                        Err(error) => {
+                            state.startup.cancel_launch(&token);
+                            json!({"phase":"not-played","message":format!("{error:#}")})
+                        }
                     };
+                } else {
+                    state.startup.cancel_launch(&token);
+                }
             }
             return Ok(result);
         }
@@ -1131,8 +1237,185 @@ async fn launcher(
                 handle.exit(0);
             });
             return Ok(
-                json!({"message":"Finishing session cleanup, then installing and restarting…"}),
+                json!({"message":"Finishing session cleanup, then installing and restartingâ€¦"}),
             );
+        }
+        #[cfg(feature = "dev-curator")]
+        "curated:editor" | "curated:publish" | "curated:preview" | "curated:artwork"
+        | "curated:check-link" => {
+            if window.label() != "main" || state.smoke {
+                return Err("Curator requires the dev launcher main window".into());
+            }
+            state
+                .backend
+                .ensure_open_for_launch()
+                .map_err(|e| e.to_string())?;
+            let path = if channel == "curated:artwork" {
+                let chosen = ui(window.clone(), |hwnd| pick(hwnd, false)).await?;
+                if chosen.is_null() {
+                    return Ok(Value::Null);
+                }
+                Some(PathBuf::from(
+                    chosen.as_str().ok_or("Invalid image filename")?,
+                ))
+            } else {
+                None
+            };
+            let backend = state.backend.clone();
+            let command = channel.to_string();
+            return tauri::async_runtime::spawn_blocking(move || -> Result<Value, String> {
+                (|| -> anyhow::Result<Value> {
+                    if command == "curated:check-link" {
+                        let id = args["id"]
+                            .as_str()
+                            .ok_or_else(|| anyhow::anyhow!("Choose a download"))?;
+                        let link = args["url"]
+                            .as_str()
+                            .ok_or_else(|| anyhow::anyhow!("Paste a MediaFire link"))?;
+                        return Ok(serde_json::to_value(curated_publisher::check_link(
+                            id, link,
+                        )?)?);
+                    }
+                    if command == "curated:editor" {
+                        return curated_publisher::editor();
+                    }
+                    if let Some(path) = path {
+                        return Ok(json!({"url":curated_publisher::artwork(&path)?}));
+                    }
+                    anyhow::ensure!(
+                        serde_json::to_vec(&args)?.len() <= 2 * 1024 * 1024,
+                        "Curator catalog too large"
+                    );
+                    let catalog: curated_metadata::Catalog =
+                        serde_json::from_value(args["catalog"].clone())?;
+                    curated_metadata::validate(&catalog)?;
+                    if command == "curated:publish" {
+                        anyhow::ensure!(
+                            args.as_object().is_some_and(|a| a.contains_key("sha")),
+                            "Load the curator before publishing"
+                        );
+                        return curated_publisher::publish(&catalog, args["sha"].as_str());
+                    }
+                    backend.curated.preview(&catalog)?;
+                    backend.curated.snapshot(&backend.root)
+                })()
+                .map_err(|e| format!("{e:#}"))
+            })
+            .await
+            .map_err(|e| e.to_string())?;
+        }
+        "curated:status" | "curated:refresh" | "curated:download" | "curated:cancel" => {
+            if window.label() != "main" || state.smoke {
+                return Err("Downloads require the main launcher window".into());
+            }
+            let backend = state.backend.clone();
+            let app = window.app_handle().clone();
+            let command = channel.to_string();
+            return tauri::async_runtime::spawn_blocking(move || -> Result<Value, String> {
+                let work = (|| -> anyhow::Result<Value> {
+                    match command.as_str() {
+                        "curated:status" => {}
+                        "curated:refresh" => backend.curated.refresh()?,
+                        "curated:cancel" => {
+                            let id = args["id"]
+                                .as_str()
+                                .ok_or_else(|| anyhow::anyhow!("Download identity required"))?;
+                            backend.curated.cancel(id)?;
+                            if id == curated_catalog::PREVIEW_ID {
+                                backend.previews.cancel_download();
+                            }
+                        }
+                        _ => {
+                            backend.ensure_open_for_launch()?;
+                            let id = args["id"]
+                                .as_str()
+                                .ok_or_else(|| anyhow::anyhow!("Download identity required"))?;
+                            if id == curated_catalog::PREVIEW_ID {
+                                backend.curated.run_preview(|entry, progress, cancel| {
+                                    backend
+                                        .previews
+                                        .download_entry(entry, |done, total, phase| {
+                                            if cancel.load(std::sync::atomic::Ordering::Acquire) {
+                                                backend.previews.cancel_download();
+                                            }
+                                            progress(done, total, phase);
+                                        })
+                                })?;
+                            } else {
+                                backend.curated.install(
+                                    &backend.root,
+                                    id,
+                                    |entry, path, cancel, progress| {
+                                        if entry.kind == "videos" {
+                                            backend.import_curated_video(
+                                                path,
+                                                &entry.name,
+                                                cancel,
+                                                progress,
+                                            )
+                                        } else {
+                                            let game = backend.current_settings()?.game_root;
+                                            backend.jukebox.import_downloaded(
+                                                path,
+                                                Path::new(&game),
+                                                app.clone(),
+                                                cancel,
+                                                progress,
+                                            )
+                                        }
+                                    },
+                                )?;
+                            }
+                        }
+                    }
+                    let mut snapshot = backend.curated.snapshot(&backend.root)?;
+                    if let Some(items) = snapshot["items"].as_array_mut() {
+                        for item in items {
+                            if item["id"] == curated_catalog::PREVIEW_ID {
+                                item["installed"] = json!(backend.previews.pack_installed(
+                                    item["sha256"].as_str().unwrap_or(""),
+                                    item["bytes"].as_u64().unwrap_or(0)
+                                )?);
+                            }
+                        }
+                    }
+                    Ok(snapshot)
+                })();
+                work.map_err(|e| format!("{e:#}"))
+            })
+            .await
+            .map_err(|e| e.to_string())?;
+        }
+        "download-previews" | "preview-download-status" | "cancel-preview-download" => {
+            if window.label() != "main" || state.smoke || !args.is_null() {
+                return Err("Preview downloads require the main launcher window".into());
+            }
+            if channel == "preview-download-status" {
+                return state
+                    .backend
+                    .previews
+                    .download_status()
+                    .map_err(|e| format!("{e:#}"));
+            }
+            if channel == "cancel-preview-download" {
+                state.backend.previews.cancel_download();
+                return Ok(Value::Null);
+            }
+            let backend = state.backend.clone();
+            let handle = window.app_handle().clone();
+            return tauri::async_runtime::spawn_blocking(move || {
+                backend
+                    .previews
+                    .download(|done, total, phase| {
+                        let _ = handle.emit(
+                            "preview-progress",
+                            json!({"done":done,"total":total,"phase":phase}),
+                        );
+                    })
+                    .map_err(|e| format!("{e:#}"))
+            })
+            .await
+            .map_err(|e| e.to_string())?;
         }
         "import-previews" => {
             let chosen = ui(window.clone(), |hwnd| pick(hwnd, false)).await?;
@@ -1399,6 +1682,24 @@ async fn launcher(
             })
             .await;
         }
+        "recycle-mod-items" => {
+            if window.label() != "main" || state.smoke {
+                return Err("Remove mods from the main launcher window".into());
+            }
+            require_game_closed()?;
+            let root = state
+                .backend
+                .current_settings()
+                .map_err(|e| format!("{e:#}"))?
+                .mods_root;
+            let files = mod_recycle::resolve(&root, &args).map_err(|e| format!("{e:#}"))?;
+            let removed = files.len();
+            return ui(window, move |hwnd| {
+                mod_recycle::recycle(hwnd, &files)?;
+                Ok(json!({"removed":removed,"recycled":true}))
+            })
+            .await;
+        }
         "mod-install-plan" | "mod-install-commit" => {
             if window.label() != "main" || state.smoke {
                 return Err("Install mods from the main launcher window".into());
@@ -1447,6 +1748,30 @@ async fn launcher(
                         &mod_install::Limits::default(),
                     )
                     .map_err(|e| format!("{e:#}"))
+            })
+            .await
+            .map_err(|e| e.to_string())?;
+        }
+        "mod-install-history" | "mod-install-restore" => {
+            if window.label() != "main" || state.smoke {
+                return Err("Manage mod recovery from the main launcher".into());
+            }
+            require_game_closed()?;
+            let settings = state
+                .backend
+                .current_settings()
+                .map_err(|e| format!("{e:#}"))?;
+            let b = state.backend.clone();
+            return tauri::async_runtime::spawn_blocking(move || {
+                if channel == "mod-install-history" {
+                    b.mod_install.history(Path::new(&settings.mods_root))
+                } else {
+                    b.mod_install.restore(
+                        Path::new(&settings.mods_root),
+                        args["id"].as_str().unwrap_or(""),
+                    )
+                }
+                .map_err(|e| format!("{e:#}"))
             })
             .await
             .map_err(|e| e.to_string())?;
@@ -1517,6 +1842,9 @@ async fn launcher(
             .await;
         }
         "game-hang-capture" => {
+            if !cfg!(feature = "dev-curator") {
+                return Err("Game memory capture is available only in the developer build".into());
+            }
             if window.label() != "main" || state.smoke {
                 return Err("Capture a game hang from the main launcher window".into());
             }
@@ -1594,7 +1922,7 @@ async fn launcher(
                 "overlay",
                 WebviewUrl::App("index.html?overlay=1".into()),
             )
-            .title("Blacktop overlay · offline preview")
+            .title("Blacktop overlay Â· offline preview")
             .inner_size(width, 640.)
             .position(x, y)
             .decorations(false)
@@ -1739,6 +2067,14 @@ fn run() -> Result<()> {
         "Close and back up the older WPF/Electron App before promoting Rust into this portable folder. Do not keep two launchers in the active App folder."
     );
     let _instance = instance::acquire(&root)?;
+    #[cfg(feature = "dev-debug-menus")]
+    if args.iter().any(|a| a == "--startup-intro-check") {
+        ensure!(
+            smoke && args.iter().any(|a| a == "--smoke-root"),
+            "Startup intro check requires an explicit isolated smoke root"
+        );
+        return startup_video_probe::run(root);
+    }
     if args.iter().any(|a| a == "--provider-worker-check") {
         ensure!(smoke, "Provider fixture requires isolated smoke mode");
         return provider_worker::self_check(&root);
@@ -1810,11 +2146,16 @@ fn run() -> Result<()> {
         );
         return Ok(());
     }
+    let started = Instant::now();
     let backend = Arc::new(Backend::new(root)?);
+    let backend_init_ms = started.elapsed().as_secs_f64() * 1000.;
+    let _ = backend::atomic_json(
+        &backend.root.join("Logs/startup-native-timing.json"),
+        &json!({"version":backend::VERSION,"backendInitMs":backend_init_ms,"smoke":smoke}),
+    );
     if !smoke {
         custom_arena_profiles::Service::start(&backend)?;
     }
-    let started = Instant::now();
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![
             launcher,
@@ -1830,7 +2171,7 @@ fn run() -> Result<()> {
             let profile = backend.root.join("Cache/WebView2");
             let files = Arc::new(browser_files::Service::new());
             let online_ratings = Arc::new(online_ratings::Service::new());
-            if !smoke {
+            if !smoke && cfg!(feature="dev-curator") {
                 let backend = backend.clone();
                 let handle = app.handle().clone();
                 game_capture::start_hotkey(backend.root.clone(), move || {
@@ -2202,6 +2543,8 @@ fn run() -> Result<()> {
                         Ok(())
                     }));
             }
+            #[cfg(feature="dev-hub-updates")]
+            start_hub_shutdown_listener(app.handle().clone());
             if decode_fixture {
                 main.show()?;
             }
@@ -2226,26 +2569,27 @@ fn run() -> Result<()> {
                             return;
                         }
                         let keep_open = !state.smoke && state.backend.session.should_keep_open();
-                        if close_policy::should_prompt(state.smoke, true, keep_open) {
+                        if close_policy::should_block_close(state.smoke, true, keep_open) {
                             let Some(_prompt) = close_policy::Prompt::acquire(&CLOSE_PROMPT_ACTIVE)
                             else {
                                 api.prevent_close();
                                 return;
                             };
-                            if minimize_owned_session_on_close(window) {
-                                api.prevent_close();
-                                // Do not call begin_shutdown/cancel here:
-                                // the exact original parent stays alive.
-                                let _ = window.minimize();
-                                return;
-                            }
+                            api.prevent_close();
+                            // Keep the original parent and its recovery owner
+                            // visibly alive. A later close can exit the entire
+                            // app only after this exact session has ended.
+                            explain_owned_session_close_block(window);
+                            return;
                         }
+                        close_policy::arm_exit_watchdog(&EXIT_WATCHDOG_ARMED);
                     }
                     state.backend.begin_shutdown();
                     state.files.cancel();
                     state.backend.presets.cancel();
                     state.backend.jukebox.cancel();
                     state.startup.shutdown();
+                    window.app_handle().exit(0);
                 }
             }
             if window.label() == "main" && matches!(event, tauri::WindowEvent::Destroyed) {
@@ -2281,6 +2625,13 @@ fn run() -> Result<()> {
                     state.overlay.shutdown();
                     state.browser.shutdown();
                     state.backend.session.shutdown();
+                    #[cfg(feature="dev-hub-updates")]
+                    if let Ok(mut pending)=HUB_SHUTDOWN.lock() {
+                        if let Some(request)=pending.take() {
+                            let status=if state.backend.session.should_keep_open(){"busy"}else{"cleaned"};
+                            let _=hub_shutdown::finish(&request,status);
+                        }
+                    }
                     // WPF launcher-health `shutdown` metric (prepare -> finalize),
                     // from the first cleanup pass only.
                     static SHUTDOWN: std::sync::Once = std::sync::Once::new();
@@ -2327,6 +2678,70 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn overlay_authority_excludes_installers_paths_and_unrelated_writes() {
+        for label in ["overlay", "live-overlay"] {
+            for channel in [
+                "mod-install-commit",
+                "launcher-update-apply",
+                "save-library",
+                "open-external",
+                "native-launch-modded",
+                "unknown",
+            ] {
+                assert!(!channel_allowed(label, channel, &json!({}), false));
+            }
+            assert!(!channel_allowed(
+                label,
+                "save-settings",
+                &json!({"gameRoot":"C:/foreign"}),
+                false
+            ));
+            assert!(channel_allowed(
+                label,
+                "save-settings",
+                &json!({"ball":"Current installed"}),
+                false
+            ));
+            assert!(channel_allowed(label, "bootstrap", &Value::Null, false));
+        }
+        assert!(!channel_allowed(
+            "overlay",
+            "native-outfit-command",
+            &Value::Null,
+            false
+        ));
+        assert!(channel_allowed(
+            "live-overlay",
+            "native-outfit-command",
+            &Value::Null,
+            false
+        ));
+        assert!(!channel_allowed(
+            "foreign",
+            "bootstrap",
+            &Value::Null,
+            false
+        ));
+        assert!(channel_allowed(
+            "live-overlay",
+            "capture",
+            &json!({"name":"native-overlay-arena"}),
+            true
+        ));
+        assert!(channel_allowed(
+            "live-overlay",
+            "smoke-game-rules",
+            &Value::Null,
+            true
+        ));
+        assert!(!channel_allowed(
+            "live-overlay",
+            "capture",
+            &json!({"name":"native-overlay-arena"}),
+            false
+        ));
+    }
     #[test]
     fn overlay_preview_permission_is_only_read_only_ball_thumbnail() {
         assert!(preview_window_allowed("main", "previews:thumbnail"));
@@ -2414,4 +2829,29 @@ mod tests {
             cfg!(all(debug_assertions, not(feature = "custom-protocol")))
         );
     }
+}
+
+#[cfg(feature="dev-hub-updates")]
+fn start_hub_shutdown_listener(app:tauri::AppHandle) {
+    let Ok(exe)=std::env::current_exe().and_then(std::fs::canonicalize) else{return};
+    let Ok(target)=std::fs::canonicalize(hub_shutdown::root().join("App")) else{return};
+    if exe.parent()!=Some(target.as_path()){return}
+    std::thread::spawn(move||loop{
+        if let Ok(Some(request))=hub_shutdown::poll(include_str!("../../2k-tools-hub/dev-update-config/installed-worker.sha256")) {
+            let handle=app.clone();
+            let _=app.run_on_main_thread(move||{
+                let Some(state)=handle.try_state::<State>() else{return};
+                if state.backend.session.should_keep_open()||CLOSE_PROMPT_ACTIVE.load(Ordering::Acquire) {
+                    let _=hub_shutdown::finish(&request,"busy");return;
+                }
+                let Ok(mut pending)=HUB_SHUTDOWN.lock() else{return};
+                if pending.is_some(){return}
+                *pending=Some(request);drop(pending);
+                state.backend.begin_shutdown();
+                state.files.cancel();state.backend.presets.cancel();state.backend.jukebox.cancel();
+                state.startup.shutdown();handle.exit(0);
+            });
+        }
+        std::thread::sleep(std::time::Duration::from_millis(250));
+    });
 }

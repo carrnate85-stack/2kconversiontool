@@ -104,7 +104,10 @@ pub(crate) struct Blowfish {
 }
 impl Blowfish {
     pub(crate) fn new(key: &[u8]) -> Result<Self> {
-        ensure!((1..=72).contains(&key.len()), "Blowfish key length rejected");
+        ensure!(
+            (1..=72).contains(&key.len()),
+            "Blowfish key length rejected"
+        );
         let words = pi_words();
         ensure!(
             words[0] == 0x243F_6A88 && words[18] == 0xD131_0BA6,
@@ -200,7 +203,10 @@ mod tests {
         Blowfish::new(&[0; 8]).unwrap().encrypt(&mut block).unwrap();
         assert_eq!(hex(&block), "4ef997456198dd78");
         let mut block = [0xFF; 8];
-        Blowfish::new(&[0xFF; 8]).unwrap().encrypt(&mut block).unwrap();
+        Blowfish::new(&[0xFF; 8])
+            .unwrap()
+            .encrypt(&mut block)
+            .unwrap();
         assert_eq!(hex(&block), "51866fd5b85ecb8a");
         let key: Vec<u8> = (0..32).collect();
         let bf = Blowfish::new(&key).unwrap();

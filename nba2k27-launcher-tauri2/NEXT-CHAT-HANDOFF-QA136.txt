@@ -1,0 +1,15 @@
+QA136 — Download shortcuts and video action layout — 2026-10-24
+DEV ONLY 0.53.40. No install, promotion, activation, GitHub writes, game access, or computer use.
+
+Download playlists beside Add from library navigates to Downloads/Playlists (not More; user corrected placement). Download videos beside + Add MP4 navigates to Downloads/Startup videos. Blacktop Download previews now navigates to Downloads/Blacktop Previews instead of immediately downloading the pinned pack. All use explicit initial-tab state passed from App; the page mounts fresh when navigating. No auto-download/selection changes. Existing operations and unsaved jukebox exclusions guard navigation as appropriate.
+
+Startup video row buttons were crowded into a192px column. Actions now have285px, explicit nonshrinking intrinsic button widths and6px gaps. Labels shortened to Preview/Close and Selected/Enable/Use, keeping behavior. Narrow screens place actions under the row and permit wrapping instead of text overlap. Matching table header geometry updated. User screenshot/source CSS informed change; no live visual inspection claimed.
+
+TypeScript,252frontend tests/48files,Vite build and native dev release passed. Main/Share freshly hash-verified unchanged at QA129. Cameras remains disabled. QA133 complete-preview upload still pending; original complete pack default retained. Prior unresolved QA073 natural Rust AV,QA078 Clang crash,QA106 Season History assertion unaffected.
+
+Candidate:C:\Users\carrn\CodexProjects\2kconversiontool\nba2k27-launcher-tauri2\Dev\Pending\QA136\launcher.exe
+SHA256:96070A59D1DA1F7360EBB0BF7964A2EB2EB104BC407C48DBC499106D308E9835
+Bytes:48974848
+PDB SHA256:B0BBB715738FDF4A61F3BAEA8AA3583B510A91353C69DCB428EE387F59BC3DCE
+Starter:Open QA136 Dev.lnk / Start QA136 Dev.ps1. Exact-hash/idle guard retained. Close current dev normally first. Do not promote this curator EXE; omit dev-curator from future Main/Share.
+Backups:Backups/qa136-playlist-shortcut-20261024. Reports:artifacts/qa136-playlist-shortcut.

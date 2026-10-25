@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>3D Mod Preview · Test Build</title>
+    <style>
+      :root { color-scheme: dark; font: 12px/1.4 Inter, Segoe UI, sans-serif; background:#05070b; color:#e8edf7 }
+      * { box-sizing:border-box }
+      html, body, #previewCanvas { width:100%; height:100%; margin:0 }
+      body { overflow:hidden }
+      #previewCanvas { display:block; touch-action:none; outline:none }
+      #hint { position:fixed; left:14px; bottom:12px; margin:0; padding:7px 10px; border:1px solid #ffffff1f; border-radius:7px; background:#080b10cc; color:#aab5c8; pointer-events:none; backdrop-filter:blur(8px) }
+      #hint[data-state="error"] { color:#ffb3b3; border-color:#ff67674d }
+    </style>
+  </head>
+  <body>
+    <canvas id="previewCanvas" aria-label="Interactive 3D mod preview" tabindex="0"></canvas>
+    <p id="hint" role="status">Drag to orbit · wheel to zoom · right-drag to pan</p>
+    <script type="module" src="./bridge.js"></script>
+  </body>
+</html>

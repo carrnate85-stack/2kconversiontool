@@ -430,8 +430,12 @@ mod tests {
         ));
         fs::create_dir(&root).unwrap();
         let path = root.join("manifest");
-        fs::write(&path, b"balls/ball_a.iff,0M,1,2
-").unwrap();
+        fs::write(
+            &path,
+            b"balls/ball_a.iff,0M,1,2
+",
+        )
+        .unwrap();
         let key = |p: &Path| {
             let f = File::open(p).unwrap();
             manifest_key(&f, &f.metadata().unwrap()).unwrap()
@@ -454,8 +458,12 @@ mod tests {
         };
         assert!(!proofs.proven(&longer, "balls/ball_a.iff"));
         fs::remove_file(&path).unwrap();
-        fs::write(&path, b"balls/ball_a.iff,0M,1,2
-").unwrap();
+        fs::write(
+            &path,
+            b"balls/ball_a.iff,0M,1,2
+",
+        )
+        .unwrap();
         let replaced = key(&path);
         assert_ne!(replaced.identity, first.identity);
         assert!(!proofs.proven(&replaced, "balls/ball_a.iff"));
@@ -477,12 +485,17 @@ mod tests {
         let mut text = vec![0u16; 32768];
         let mut n = text.len() as u32;
         unsafe {
-            QueryFullProcessImageNameW(query.0, PROCESS_NAME_WIN32, PWSTR(text.as_mut_ptr()), &mut n)
-                .unwrap()
+            QueryFullProcessImageNameW(
+                query.0,
+                PROCESS_NAME_WIN32,
+                PWSTR(text.as_mut_ptr()),
+                &mut n,
+            )
+            .unwrap()
         };
         let id = Identity {
             pid,
-            started: ((((c.dwHighDateTime as u64) << 32) | c.dwLowDateTime as u64)).to_string(),
+            started: (((c.dwHighDateTime as u64) << 32) | c.dwLowDateTime as u64).to_string(),
             path: String::from_utf16(&text[..n as usize]).unwrap(),
         };
         let data = vec![7u8; 4096];
@@ -492,18 +505,35 @@ mod tests {
             for _ in 0..rounds {
                 f();
             }
-            println!("{label}: {:.1} us", t.elapsed().as_secs_f64() * 1e6 / rounds as f64);
+            println!(
+                "{label}: {:.1} us",
+                t.elapsed().as_secs_f64() * 1e6 / rounds as f64
+            );
         };
-        time("checkpoint (retained)", 2000, &mut || assert!(retained(query.0, &id).unwrap()));
-        time("checkpoint (alive+birth)", 2000, &mut || assert!(alive(query.0, &id).unwrap()));
+        time("checkpoint (retained)", 2000, &mut || {
+            assert!(retained(query.0, &id).unwrap())
+        });
+        time("checkpoint (alive+birth)", 2000, &mut || {
+            assert!(alive(query.0, &id).unwrap())
+        });
         time("VirtualQueryEx", 2000, &mut || {
             let mut info = MEMORY_BASIC_INFORMATION::default();
-            unsafe { VirtualQueryEx(query.0, Some(at as _), &mut info, size_of::<MEMORY_BASIC_INFORMATION>()) };
+            unsafe {
+                VirtualQueryEx(
+                    query.0,
+                    Some(at as _),
+                    &mut info,
+                    size_of::<MEMORY_BASIC_INFORMATION>(),
+                )
+            };
         });
         time("ReadProcessMemory 416", 2000, &mut || {
             let mut b = vec![0u8; 416];
             let mut done = 0;
-            unsafe { ReadProcessMemory(query.0, at as _, b.as_mut_ptr() as _, 416, Some(&mut done)).unwrap() };
+            unsafe {
+                ReadProcessMemory(query.0, at as _, b.as_mut_ptr() as _, 416, Some(&mut done))
+                    .unwrap()
+            };
         });
         time("process snapshot+guard rows", 20, &mut || {
             session_safety::processes().unwrap();

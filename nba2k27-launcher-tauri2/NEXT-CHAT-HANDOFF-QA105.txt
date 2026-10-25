@@ -1,0 +1,58 @@
+2K LAUNCHER — NEXT CHAT HANDOFF QA105
+Written 2026-10-21 after repairing the invisible startup-video overlay route.
+
+CANONICAL PROJECT
+C:\Users\carrn\CodexProjects\2kconversiontool\nba2k27-launcher-tauri2
+
+CURRENT INSTALLED MAIN / SHARE
+- Still QA104 version 0.53.8.
+- SHA-256: 33FFBB1F6736DE46D9B0206635E9FF9058EE382397BBCFAAB91C7577856EAABE.
+- Neither was changed by QA105 work.
+
+QA105 DEV CANDIDATE
+- Version: 0.53.9.
+- Dev: Dev\Pending\QA105\launcher.exe
+- Starter: Start QA105 Dev.ps1
+- Bytes: 46768640
+- SHA-256: 3468FB5FE6554F8771017C261530802470989DCE5E51C9AE475126C6DBA20D77
+- Report: artifacts\qa105-startup-video-overlay\REPORT.md
+
+PROBLEM AND FIX
+- The intended behavior is a dedicated borderless always-on-top video window
+  over the game.
+- The failed QA104 session created/navigated that WebView but never acknowledged
+  media readiness, so the still-hidden window timed out.
+- The exact selected NBA 2K14 Intro MP4 exists and decodes in WebView2.
+- QA105 injects the trusted immutable bootstrap before the first page script,
+  removing the first-navigation IPC/capability race.
+- Later callbacks retain exact label, route, generation, session and launched
+  game ownership checks.
+- A durable per-session trace now lands at
+  <portable root>\Logs\startup-video-last.json.
+
+VALIDATION
+- TypeScript passed; Vite production build passed.
+- Full frontend: 44 files / 237 tests passed.
+- Focused startup frontend: 13 tests passed.
+- Rust startup-video suite: 14 passed.
+- Closed/failed launch binding guard: passed.
+- Fresh release build used default custom-protocol plus dev WNBA/debug features.
+- Packaged UI rendered and exited 0 with 13 checks. The known unrelated Season
+  History totals/awards persistence assertion remains.
+- All four saved MP4s decoded at 12 actual frame positions with no game access,
+  guardian or audio output.
+- Staged hash/idle check passed.
+
+NEXT LIVE CHECK
+- Run Start QA105 Dev.ps1 with the game and launcher closed.
+- Keep the existing startup video enabled and click Play normally.
+- Expect the separate video window over the game; click or Escape/Enter/Space
+  skips it.
+- If it is absent, preserve Dev\Portable\Logs\startup-video-last.json before
+  another Play attempt; it should now name the last reached phase or failure.
+
+DO NOT CLAIM YET
+- Actual over-game playback is not accepted until the user sees it live.
+- QA105 is not installed/promoted and no sharing executable was replaced.
+- QA073 natural Rust test access violation and QA078 Clang fixture crash remain
+  unresolved.

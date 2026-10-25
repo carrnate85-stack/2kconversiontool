@@ -2,20 +2,20 @@
 //!
 //! Blacktop's production WPF path differs from Freestyle: it swaps a stock
 //! roster-loader callback at an inactive Home/Quick Play boundary, then exposes
-//! category 3 using a process-lifetime executable bridge. The Version 2 callback,
-//! loader, dispatch and continuation have not all been independently established.
-//! Keep runtime disabled; never substitute Freestyle's four data-only DWORDs.
+//! category 3 using a process-lifetime executable bridge. The current Version 2
+//! callback, loader, dispatch and continuation are pinned by the native QA088
+//! disk profile; never substitute Freestyle's four data-only DWORDs.
 use anyhow::{Result, ensure};
 use std::collections::BTreeSet;
 
-pub(crate) const RUNTIME_MAPPED: bool = false;
-pub(crate) const BLOCKER: &str = "Blacktop WNBA Version 2 callback and stock loader are mapped, but category dispatch/continuation and the executable bridge still require independent proof";
+pub(crate) const RUNTIME_MAPPED: bool = true;
+pub(crate) const BLOCKER: &str = "Blacktop WNBA Version 2 native profile is not mapped";
 pub(crate) const LABEL_RECORD: u64 = 0xACFC4D0;
 pub(crate) const DELEGATE_VTABLE_CANDIDATE: u64 = 0x74CD158;
 pub(crate) const DELEGATE_OBJECT_CANDIDATE: u64 = 0x9B31BB0;
-pub(crate) const CALLBACK_SLOT_CANDIDATE: u64 = 0x74CDE68;
-pub(crate) const STOCK_CALLBACK_CANDIDATE: u64 = 0x23531A0;
-pub(crate) const STOCK_MIXED_LOADER_CANDIDATE: u64 = 0x236FB30;
+pub(crate) const CALLBACK_SLOT_CANDIDATE: u64 = 0x74CDE88;
+pub(crate) const STOCK_CALLBACK_CANDIDATE: u64 = 0x236E5C0;
+pub(crate) const STOCK_MIXED_LOADER_CANDIDATE: u64 = 0x236FBE0;
 pub(crate) const EURO_LABEL: u64 = 0x6FC058B0442652CD;
 pub(crate) const WOMEN_LABEL: u64 = 0x0F39A44C3426C962;
 const HOME: u32 = 0x6509837B;
@@ -235,7 +235,7 @@ mod tests {
         }
     }
     #[test]
-    fn no_category_before_stable_roster_or_executable_bridge_and_no_runtime_mapping() {
+    fn no_category_before_stable_roster_or_executable_bridge_and_runtime_is_mapped() {
         let state = SessionPolicy::default();
         assert!(
             state
@@ -249,6 +249,6 @@ mod tests {
                 .unwrap()
                 .is_empty()
         );
-        assert!(require_runtime_mapping().is_err());
+        require_runtime_mapping().unwrap();
     }
 }

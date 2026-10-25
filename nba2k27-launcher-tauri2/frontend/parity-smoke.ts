@@ -86,30 +86,14 @@ export async function paritySmoke(a: Actions) {
   a.page("Play session");
   await delay();
   if (
-    document.querySelector<HTMLDetailsElement>("details[data-play-advanced]")
-      ?.open ||
+    document.querySelector("details[data-play-advanced]") ||
     document.querySelector(".native-blacktop-observer")
   )
     throw Error("QA diagnostics were exposed on the simple Play page");
   if (document.querySelectorAll("button[data-primary-play]").length !== 1)
     throw Error("The main page did not have one primary Play action");
   await call("capture", { name: "play-home" });
-  document
-    .querySelector<HTMLElement>("details[data-play-advanced] > summary")!
-    .click();
-  await until(
-    () => !!document.querySelector(".native-blacktop-observer"),
-    "Advanced launch tools did not open",
-  );
-  checks.push("simple-play-home-advanced-closed-by-default");
-  button(".launch-readiness button", "Check launch readiness").click();
-  await until(
-    () =>
-      document
-        .querySelector(".launch-readiness")
-        ?.textContent?.includes("Read-only checks passed") ?? false,
-    "Native launch preflight fixture did not pass",
-  );
+  checks.push("simple-play-home-no-advanced-tools");
   const preflight = await call<any>("launch-preflight");
   if (
     preflight.fixture !== true ||
@@ -120,29 +104,9 @@ export async function paritySmoke(a: Actions) {
       "Preflight did not retain disabled live execution or exact launch option",
     );
   checks.push(
-    "native-read-only-launch-preflight-ui",
+    "native-read-only-launch-preflight",
     "validated-steam-without-eac-plan",
     "game-feature-writes-remain-disabled",
-  );
-  button(".launch-readiness button", "Launch game only (QA)").click();
-  await until(
-    () => !!document.querySelector(".native-launch-confirm"),
-    "Steam QA confirmation did not open",
-  );
-  if (!button(".native-launch-confirm button", "Launch via Steam").disabled)
-    throw Error("Unacknowledged launch was enabled");
-  document
-    .querySelector<HTMLInputElement>(".native-launch-confirm input")!
-    .click();
-  await until(
-    () => !button(".native-launch-confirm button", "Launch via Steam").disabled,
-    "Launch acknowledgement did not enable confirmation",
-  );
-  await call("capture", { name: "steam-only-confirmation" });
-  button(".native-launch-confirm button", "Cancel").click();
-  await until(
-    () => !document.querySelector(".native-launch-confirm"),
-    "Cancel did not close confirmation",
   );
   let launchRefused = false;
   try {
@@ -239,14 +203,7 @@ export async function paritySmoke(a: Actions) {
     "owned-helper-graceful-and-job-close-exit",
     "foreign-helper-stop-refused",
   );
-  if (
-    !button(".native-blacktop-observer button", "Start read-only observer")
-      .disabled
-  )
-    throw Error("Observer enabled without launched game");
   const observerFixture = await call<any>("smoke-blacktop-observer");
-  if (!button(".native-overlay-controls button", "Enable native F8").disabled)
-    throw Error("Native F8 enabled without launched game/acknowledgement");
   let f8Refused = false;
   try {
     await call("native-overlay-enable", {
@@ -313,62 +270,16 @@ export async function paritySmoke(a: Actions) {
     }
     if (!refused) throw Error("Smoke permitted live rules access");
   }
-  button(".native-rules button", "Load isolated rules fixture").click();
-  await until(
-    () => document.querySelectorAll(".native-rule-row").length === 39,
-    "All rules did not render",
-  );
-  // WPF parity: no confirmation checkbox or Apply button; choosing a value is
-  // the change. Off/On rules are two buttons, others a list.
-  const rulesPanel = document.querySelector(".native-rules")!;
   if (
-    rulesPanel.querySelector('input[type="checkbox"]') ||
-    [...rulesPanel.querySelectorAll("button")].some(
-      (b) => b.textContent?.trim() === "Apply",
-    )
+    document.querySelector(".native-rules") ||
+    document.querySelector(".native-overlay-controls") ||
+    document.querySelector(".native-blacktop-observer")
   )
-    throw Error("Rules still require a confirmation or Apply step");
-  const shotClock = [...document.querySelectorAll(".native-rule-row")].find(
-    (r) => r.querySelector(".native-rule-name")?.textContent === "Shot Clock",
-  );
-  if (
-    shotClock &&
-    shotClock.querySelectorAll("button[aria-pressed]").length !== 2
-  )
-    throw Error("Off/On rule is not drawn as two buttons");
-  rulesPanel.scrollIntoView({ block: "start" });
-  await delay();
-  await call("capture", { name: "native-rules-review" });
-  document
-    .querySelector('[data-rule="ThreePointShotRestriction"]')!
-    .scrollIntoView({ block: "center" });
-  await delay();
-  await call("capture", { name: "native-rules-numeric-choices" });
-  await call("smoke-resize", { width: 1060, height: 700 });
-  await delay();
-  const rulesGrid = document.querySelector<HTMLElement>(".native-rules-grid")!;
-  if (rulesGrid.scrollWidth > rulesGrid.clientWidth + 1)
-    throw Error("Rules grid has horizontal overflow");
-  document.querySelector(".native-rules")!.scrollIntoView({ block: "start" });
-  await delay();
-  await call("capture", { name: "native-rules-minimum-size" });
-  await call("smoke-resize", { width: 1440, height: 900 });
-  await delay();
-  select('[data-rule="ThreePointShotRestriction"] select', "2");
-  await until(
-    () =>
-      document
-        .querySelector(".native-rules")
-        ?.textContent?.includes("disabled in smoke mode") ?? false,
-    "Live rule change was not visibly refused",
-  );
-  if (document.querySelectorAll(".native-rule-row").length)
-    throw Error("Rules snapshot remained after a refused change");
+    throw Error("Removed QA controls returned to the Play page");
   checks.push(
     "native-rules-39-mappings-and-rollback-fixtures",
     "live-rule-reads-and-writes-refused-in-smoke",
-    "native-rules-choose-applies-and-consumed-snapshot",
-    "native-rules-minimum-width-no-overflow",
+    "qa-controls-hidden-from-play-page",
   );
   checks.push(
     "native-blacktop-sparse-memory-boundaries",

@@ -7,44 +7,44 @@ const STRIDE: usize = 72;
 const MAX_ROWS: usize = 4096;
 const PROFILE: &[(u64, usize, &str)] = &[
     (
-        48107120,
+        0x2de0f20,
         83,
-        "6e367717cee6608cea195c8c55ac7bc18f875dfc15d351f88712e4f9f1d62e10",
+        "848714bafbbe2b9ba09d6d990839e84949789f65072c52fe89ecf0476bf57193",
     ),
     (
-        48107264,
+        0x2de0fb0,
         214,
-        "31454249e561831d510e9d2f7264292faac6009922484c2ef094a16c00d6132a",
+        "f9c2d79f1f1e86d729cd682ba73c6cd4a1aa2fe37e825a491e109a5dbeba6942",
     ),
     (
-        46948832,
+        0x2cc6290,
         99,
         "d0f49b0aa4f6118b81f2276622e0c1b2a7e4222179cbb54224d6564fb9070d28",
     ),
     (
-        46943280,
+        0x2cc4ce0,
         980,
-        "e02709a8c17865a088006ce0c79949660bbaf375235b74b453d6b6c31a55b6a5",
+        "2896f579190631610d46b34614759cfdadaae6a395737ecc5447f051b0ae21b8",
     ),
     (
-        48107488,
+        0x2de1090,
         220,
-        "fe089022d88ad093c4f832e6b24c834d458a89956c0bc899314e481860c311f7",
+        "1f00226bc80b3f981954f24201525b1497089c8a6654f286e38dc984bd12aaa5",
     ),
     (
-        48107712,
+        0x2de1170,
         220,
-        "89f84c7573d61d1fc21ba72c8be74b06a7bc90caef9ca3ef63cd66f629a2a123",
+        "b6e6fb42b45c84ec1c594cdcfd1719d7907d6c62c6033c07066f32d19ad17d72",
     ),
     (
-        79452208,
+        0x4bc5ab0,
         222,
         "0eeb3301e76b137734b2ca65ec4dfdbe61c1dd854bb4ac1ffdf599fe2962066e",
     ),
     (
-        49390544,
+        0x2f1a480,
         288,
-        "3d4dadabe0f92da852b5bad3e75a97a16c772f04df5d992fd5c118947ef1ca38",
+        "6d41341bb4e87ec3179aa40588e5a289f5cf91842dc0536d9b7ec355b155530c",
     ),
 ];
 
@@ -63,7 +63,7 @@ pub(crate) fn proof() -> Result<()> {
     ensure!(
         v["schema"] == "nba2k27-v2-origins-readonly-proof-v1"
             && v["imageSha256"]
-                == "29A96471C55909FC2BCEA6C699C59238656A501C19B50C74ED64B0D842E576A1"
+                == "B673EB04593D6D5A4DFB9E270178E04C017BD9F277514D256EA98FFB792ED27B"
             && v["readOnly"] == true,
         "Origin proof identity differs"
     );

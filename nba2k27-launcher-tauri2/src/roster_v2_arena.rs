@@ -7,23 +7,23 @@ use sha2::{Digest, Sha256};
 use std::{collections::BTreeMap, sync::OnceLock};
 pub(crate) const STRIDE: usize = 4728;
 pub(crate) const TEAM_POINTER: usize = 0xee0;
-const PROOF_HASH: &str = "f5fae5c88d96cfcb091298a5cabfbc50edaf2785392c27d1899108853643dc8d";
-const IMAGE: &str = "29A96471C55909FC2BCEA6C699C59238656A501C19B50C74ED64B0D842E576A1";
+const PROOF_HASH: &str = "ab8a6256b09230eb6e669d10d5ab9c61eccae91e31adebab64667a1d02480ab8";
+const IMAGE: &str = "B673EB04593D6D5A4DFB9E270178E04C017BD9F277514D256EA98FFB792ED27B";
 const SPANS: &[(u64, usize, &str)] = &[
     (
-        0x2ed9aa0,
+        0x2ed9b50,
         275,
-        "08e3cc94ccaf88726af0ff89b0cf0bf2d8e4a6b7ce5d5e718a8517ac843da292",
+        "11a006a01037b14aa0f08c6d58e6bd77b7695b6539d485388081bb584043a41e",
     ),
     (
         0x44380,
         67,
-        "75f733cb3f251b2b20a7e3c9bfc01dfa80508acfa89c55fd446deae1795f3e2d",
+        "67b847d74aa5bb5cc2cdc1d607d2bf637d2ea3e8a32af15f33ad90a5f36d9df5",
     ),
     (
-        0x2f88ab0,
+        0x2f88b60,
         471,
-        "3922dd9acfed1f74a4767975295eb1a491ff82cd13a7b6ea6009eaa7ae00e4b8",
+        "c2ff38a2f23c17dfb7b8d598d61d2aec881ae92242e0323b0d304d976d781d3b",
     ),
 ];
 fn bytes(hex: &str) -> Result<Vec<u8>> {

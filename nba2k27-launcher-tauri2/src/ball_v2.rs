@@ -15,7 +15,7 @@ pub(crate) const HOLDER: u64 = 0x0AAE33E8;
 pub(crate) const RENDERER: u64 = 0x0AB0C4F8;
 pub(crate) const REFERENCES: u64 = 0x0AD068E8;
 const RECORD_OFFSET: u64 = 0xF4D28;
-const SHA: &str = "29A96471C55909FC2BCEA6C699C59238656A501C19B50C74ED64B0D842E576A1";
+const SHA: &str = "B673EB04593D6D5A4DFB9E270178E04C017BD9F277514D256EA98FFB792ED27B";
 fn at(m: &impl Memory, rva: u64) -> Result<u64> {
     m.base().checked_add(rva).context("Ball RVA overflow")
 }

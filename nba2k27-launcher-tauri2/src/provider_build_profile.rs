@@ -56,6 +56,16 @@ pub(crate) const ANCHORS: &[(u32, &[u8])] = &[
     ),
 ];
 
+/// The October 21 provider bodies moved together by 0x280. Keep the legacy
+/// array above for the prior exact-build admission; the relocation catalog is
+/// generated from these independently resolved current addresses.
+pub(crate) fn current_anchors() -> Vec<(u32, &'static [u8])> {
+    ANCHORS
+        .iter()
+        .map(|(rva, bytes)| (rva + 0x280, *bytes))
+        .collect()
+}
+
 #[derive(Clone, Copy)]
 struct Section {
     rva: u32,

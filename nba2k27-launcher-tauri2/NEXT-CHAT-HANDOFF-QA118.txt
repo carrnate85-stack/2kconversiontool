@@ -1,0 +1,25 @@
+QA118 - ACCESSORY PREVIEW AUDIT AND VERIFIED EXPANSION - DEV ONLY
+2026-10-22. Version 0.53.22.
+
+USER SCOPE: check other accessories for preview issues and fix what is supported by evidence. No computer use, game launch/stop, memory access, installation, promotion or activation. Main/share and user Data/Library unchanged.
+
+RESULT: Catalog metadata audit covered all 20,939 accessory records. 14,406 have eligible static geometry; selected 3,731 candidates for actual bundled-worker before/after checks using read-only exported installed resources. Before: 1,381 shown. Final: 2,845 shown. 1,464 newly working preview variants: 83 headbands, 670 left-arm sleeves, 671 right-arm sleeves, 8 left-hand wrist tapes, 8 right-hand wrist tapes, 24 hats. Zero formerly shown variants became unavailable in this candidate set. This is offline worker acceptance, not on-screen/GPU or gameplay acceptance; not all 20,939 items were rendered.
+
+IMPLEMENTATION: Checked-in tools/fit-preview/accessory-material-map.json has 1,441 exact opaque source-color variants (one already worked under QA117), with material hash, shader, exact hashed DDS name and decoded range fingerprint. Require unchanged source identity, finite four-component range, exact fingerprint, and absence of static/dynamic color bindings. Keep original geometry/attachment/shader/animation limits. 32 explicitly inspected numbered hat artwork bundles may expand to their exact ordered color layers; all other placement and texture completeness checks remain. 24 hat variants newly pass; several inspected bundles still fail other required artwork checks, deliberately retained. Each layer keeps QA117 separate cache identity. This expands the existing decoded resources without extra texture decoding, network requests or render passes; packaged executable increased by 29,184 bytes.
+
+EVIDENCE: artifacts/qa118-accessory-audit/inventory.json and summary.json record full catalog/source classification. 2,085 exported/reference files hashed in input-hashes.json; texture and geometry metadata saved separately, zero scan errors. Read-only export used the retained QA113 test executable and did not run a launcher/game. texture-samples.png visually confirms sample finished-color DDS designs. Unknown/animated or ambiguous materials remain unsupported.
+
+VALIDATION: 3,731 before/after real bundled worker comparisons; final source-color pass separately tested all 1,441 entries. after.jsonl used an intermediate 476-entry diffuse allowlist with identical final hat logic; comparison.json merges final diffuse-final.jsonl over that run, so every changed final diffuse entry was rechecked. 35 representative cold/warm requests preserve identical states: 15 shown and 20 deliberately unavailable; all shown hat layers retain distinct keys and omit duplicate cached bytes. The first warm harness assumed all 32 mapped bundles would satisfy all placement checks and correctly failed; final harness checks preservation for both supported and unsupported states. Four positive/negative helper tests cover every mapping, changed identities, tint bindings, malformed ranges and ambiguous hat lists. TypeScript, 245 frontend tests in 47 files, JS syntax, Vite and native release build passed. Native build retains 90 existing warnings. No live appearance claim.
+
+REMAINING within selected 3,731: 115 unsupported accessory color materials and 771 hats with unresolved required artwork. These include unmapped/ambiguous multi-image bundles and additional placement requirements; do not relax checks or silently approximate them. Animated and unsupported geometry families outside the selected subset also remain. Original acceptance / gameplay parity is not changed by this preview work.
+
+DEV CANDIDATE: Dev/Pending/QA118/launcher.exe
+SHA256: 4CA8BB7D651ABF1A20C0C914EC087E11EBDC28AA981E4B425361644F337862EE
+Bytes: 46895616
+PDB SHA256: C59185C3AE379097DFE12A66710DD960208D37FFA782952E13C9B95756E28E4A
+Starter: Open QA118 Dev.lnk -> Start QA118 Dev.ps1
+Starter CheckOnly passed: hash/size valid, game/launcher closed, no activation. A user click backs up/replaces Dev/Portable only. Close old dev launcher before clicking. Main/share unchanged.
+Backup: Backups\qa118-accessory-audit-20261022-110704
+Changed source: tools/fit-preview/accessory-materials.js, accessory-materials.test.mjs, new accessory-material-map.json, tools/build-fit-preview-runtime.mjs, generated runtime/provenance, version files. Source hashes recorded in source-hashes.json. This handoff and REPORT.txt contain matching evidence.
+
+NEXT: User may inspect representative headbands (Proving Grounds/The Track), WNBA/Pro-Am/paisley sleeves, camouflage/tie-dye wrist tape and Mitchell & Ness/Vandy/New Era Eras hats in QA118. No need to run auxiliary scripts. Unsupported items keep explicit status. QA073 natural Rust AV, QA078 Clang fixture crash and QA106 Season History smoke persistence remain unresolved.

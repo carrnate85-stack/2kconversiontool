@@ -9,6 +9,7 @@ pub(crate) enum Feature {
     Camera,
     Scaler,
     Freestyle,
+    Debug,
 }
 impl Feature {
     pub fn name(self) -> &'static str {
@@ -16,6 +17,7 @@ impl Feature {
             Self::Camera => "cameras",
             Self::Scaler => "scaler",
             Self::Freestyle => "wnba-freestyle",
+            Self::Debug => "debug-menus",
         }
     }
     fn verify(self, m: &impl Memory) -> Result<()> {
@@ -23,6 +25,7 @@ impl Feature {
             Self::Camera => crate::camera_v2::verify_profile(m),
             Self::Scaler => crate::scaler_v2::verify_profile(m),
             Self::Freestyle => crate::freestyle_v2::validate_profile(m),
+            Self::Debug => crate::debug_menu_v2::verify_profile(m),
         }
     }
 }
@@ -60,6 +63,7 @@ fn image_allowed(feature: Feature, rva: u64, len: usize) -> bool {
         }
         Feature::Scaler => rva == 0x0A41D07C && len == 4,
         Feature::Freestyle => len == 4 && crate::freestyle_v2::CHANGES.iter().any(|c| c.rva == rva),
+        Feature::Debug => false,
     }
 }
 pub(crate) struct Access {
@@ -446,6 +450,69 @@ impl Access {
             protection,
         }
         .write_verify()
+    }
+    /// One Boolean value in the exact-build feature registry. The address is
+    /// accepted only when two full captures identify the same allowlisted
+    /// entry and the image page remains ordinary writable data.
+    pub fn write_debug(
+        &mut self,
+        change: &crate::debug_menu_v2::Change,
+        before: &crate::debug_menu_v2::Snapshot,
+        after: &crate::debug_menu_v2::Snapshot,
+        intent: &Intent,
+        journal: &mut Journal,
+    ) -> Result<()> {
+        let _ = journal;
+        let before_byte = [change.before];
+        let after_byte = [change.after];
+        ensure!(
+            intent.permits(
+                Feature::Debug.name(),
+                change.address,
+                &before_byte,
+                &after_byte
+            ) && change.before <= 1
+                && change.after <= 1
+                && change.before != change.after,
+            "No durable intent authorizes this debug-menu Boolean"
+        );
+        ensure!(
+            crate::debug_menu_v2::capture(self)? == *before,
+            "Debug-menu ownership changed before write"
+        );
+        let _gate = session_safety::write_gate()?;
+        let handle = self.writer(Feature::Debug)?;
+        let info = self.region(change.address, 1)?;
+        ensure!(
+            info.Type == MEM_IMAGE
+                && info.AllocationBase as u64 == self.base()
+                && info.Protect == PAGE_READWRITE,
+            "Debug-menu value is not writable game-image data"
+        );
+        ensure!(
+            crate::debug_menu_v2::capture(self)? == *before,
+            "Debug-menu ownership changed at publication boundary"
+        );
+        NativeData {
+            access: self,
+            handle,
+            at: change.address,
+            before: &before_byte,
+            after: &after_byte,
+            protection: Protection {
+                handle,
+                at: change.address,
+                len: 1,
+                original: info.Protect,
+                changed: false,
+            },
+        }
+        .write_verify()?;
+        ensure!(
+            crate::debug_menu_v2::capture(self)? == *after,
+            "Debug-menu readback or unchanged-entry verification failed"
+        );
+        Ok(())
     }
     fn write_inner(
         &mut self,

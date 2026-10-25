@@ -185,7 +185,7 @@ impl Journal {
         ensure!(
             matches!(
                 feature,
-                "cameras" | "scaler" | "wnba-freestyle" | "wnba-freestyle-loader"
+                "cameras" | "scaler" | "wnba-freestyle" | "wnba-freestyle-loader" | "debug-menus"
             ) && !changes.is_empty()
                 && changes.len() <= 128
                 && changes.iter().all(

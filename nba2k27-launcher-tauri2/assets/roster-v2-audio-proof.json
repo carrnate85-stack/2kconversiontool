@@ -1,6 +1,6 @@
 {
   "schema": "nba2k27-v2-player-full-name-audio-v1",
-  "imageSha256": "29A96471C55909FC2BCEA6C699C59238656A501C19B50C74ED64B0D842E576A1",
+  "imageSha256": "B673EB04593D6D5A4DFB9E270178E04C017BD9F277514D256EA98FFB792ED27B",
   "field": "FirstLastNameSID",
   "offset": 744,
   "bytes": 2,
@@ -11,21 +11,21 @@
   "anchors": [
     {
       "rva": 7024299,
-      "hex": "0fbfafe8020000c74424208d000000488d159af120064c89e14531c041b91c463ccbe8ce9a53044885c0740a4889c189eae88fa15304"
+      "hex": "0fbfafe8020000c74424208d000000488d159af120064c89e14531c041b91c463ccbe84e9d53044885c0740a4889c189eae80fa45304"
     },
     {
       "rva": 6908149,
-      "hex": "4883ec204889f9bac8581e094531c0e8377c55044883c420668986e8020000"
+      "hex": "4883ec204889f9bac8581e094531c0e8b77e55044883c420668986e8020000"
     }
   ],
   "methods": [
     {
-      "rva": 79614064,
+      "rva": 79614704,
       "bytes": 75,
       "sha256": "3a13c19b60bdaba3ca33478c459d821935b49044af0ba67a5c0c1bab06899ca4"
     },
     {
-      "rva": 79619392,
+      "rva": 79620032,
       "bytes": 349,
       "sha256": "3dfdf2dbf8051874963baeb6ae5b64859aacdeafa78607862238f1cb6982b1c7"
     }

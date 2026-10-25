@@ -283,6 +283,39 @@ pub(crate) fn verify_build(path: &Path) -> Result<VerifiedImage> {
             }
             ("Version 2", false)
         }
+        (0x6AD2E48C, 0x36532000) => {
+            // October 21 update: retain the structural provider proof, then
+            // expose only the independently remapped Version 2 feature lanes.
+            // The broad native write gate remains closed because the complete
+            // roster/team serializer layout is not yet proven for this image.
+            let _provider = crate::feature_relocation::admit_mod_loading(path)
+                .map_err(|e| anyhow::anyhow!("Unsupported game build: {e:#}"))?;
+            match crate::provider_build_profile::verify_outfit_carry_v2_launch(
+                &mut file, &bytes, pe,
+            ) {
+                Ok(()) => outfits_mapped = true,
+                Err(e) => {
+                    outfit_error = Some(format!(
+                        "Version 2 outfit editing is off: the outfit carry-over proof did not pass for this game image ({e:#}). Mod loading is available separately."
+                    ))
+                }
+            }
+            return Ok(VerifiedImage {
+                _file: file,
+                build: serde_json::json!({
+                    "label": "Version 2",
+                    "modProviderMapped": true,
+                    "nativeWritesMapped": false,
+                    "version2ArenaBallMapped": true,
+                    "version2GameplayBallMapped": true,
+                    "version2ScoreboardMapped": true,
+                    "observerMapped": true,
+                    "version2OutfitCarryMapped": outfits_mapped,
+                    "version2OutfitCarryError": outfit_error,
+                    "resolvedUpdate": {"timestamp": "6AD2E48C", "imageSize": "36532000"},
+                }),
+            });
+        }
         _ => {
             // Unrecognized game update: admit mod loading only, and only when
             // WPF's structural provider resolver and every provider ABI anchor

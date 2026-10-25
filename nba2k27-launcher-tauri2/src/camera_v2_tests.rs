@@ -84,7 +84,7 @@ fn fixture(base: u64) -> Fake {
     h[pe..pe + 4].copy_from_slice(b"PE\0\0");
     h[pe + 4..pe + 6].copy_from_slice(&0x8664u16.to_le_bytes());
     h[pe + 6..pe + 8].copy_from_slice(&3u16.to_le_bytes());
-    h[pe + 8..pe + 12].copy_from_slice(&0x6AC53765u32.to_le_bytes());
+    h[pe + 8..pe + 12].copy_from_slice(&0x6AD2E48Cu32.to_le_bytes());
     h[pe + 20..pe + 22].copy_from_slice(&240u16.to_le_bytes());
     h[pe + 24..pe + 26].copy_from_slice(&0x20Bu16.to_le_bytes());
     h[pe + 48..pe + 56].copy_from_slice(&PREFERRED.to_le_bytes());

@@ -39,7 +39,7 @@ pub(crate) const FIELD_ANCHORS: &[(u64, &[u8])] = &[
             1, 0x30, 1, 0xC3,
         ],
     ),
-    (0x32FB9E0, &[0x48, 0x8B, 0x8E, 0x80, 0x10, 0, 0]),
+    (0x32FBB60, &[0x48, 0x8B, 0x8E, 0x80, 0x10, 0, 0]),
     (
         0x17CC50,
         &[
@@ -151,7 +151,7 @@ pub(crate) fn verify_profile(m: &impl Memory) -> Result<()> {
     }
     // Exact RIP stores still prove both count addresses independently. The
     // reference is rebuilt each call; grouped transport changes no comparison.
-    for (at, target) in [(0x32F799Au64, LINEUP + 4), (0x32F79A0, LINEUP + 8)] {
+    for (at, target) in [(0x32F7B1Au64, LINEUP + 4), (0x32F7B20, LINEUP + 8)] {
         let mut expected = vec![0x89, 0x05];
         expected.extend_from_slice(&i32::try_from(target as i64 - (at + 6) as i64)?.to_le_bytes());
         anchors.push((at, expected, "Version 2 outfit lineup directory changed"));

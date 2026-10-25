@@ -403,7 +403,11 @@ async fn serve(
                             Ok(())
                         };
                         match operation {
-                            "arena-select" => control.select_arena(&r.asset_id, authorize),
+                            "arena-select" => {
+                                authorize()?;
+                                control.prepare_custom_arena(&assets, &r.asset_id)?;
+                                control.select_arena(&r.asset_id, authorize)
+                            },
                             "ball-select" => control.select_ball(&r.asset_id, authorize),
                             "scoreboard-select" => {
                                 control.select_scoreboard(&r.asset_id, authorize)

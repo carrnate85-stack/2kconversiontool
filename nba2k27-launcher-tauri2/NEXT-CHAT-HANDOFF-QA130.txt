@@ -1,0 +1,26 @@
+QA130 startup-video launch progress - 2026-10-24
+Dev only, version 0.53.34. User requested preview/testing before promotion.
+
+Changes:
+- Small bottom-left 190px track, 4px high, using the launcher's exact green gradient #188f59 -> #45e39d. Compact launch-stage label above it. Existing skip hint shifted upward to keep clear. Reduced-motion preference disables transitions.
+- Shared launcher stage mapping extracted to frontend/launch-progress.ts. Progress advances on observed stages, never on a timer; no percentage label. Session ready describes launcher/provider setup, not a claim that an in-game court has loaded. Steam-only completion says Game running.
+- Initial stage Preparing launch covers the native preparation before Steam dispatch. Once the exact launch session exists, its status snapshots supply stage changes, including provider preparation and connection. A busy/missing snapshot keeps the last known stage.
+- Native progress reader uses controller.try_lock and existing bounded, ownership-validated provider-state files. It does not call the provider's status RPC or read/write game memory. Refresh is at most twice per second.
+- The intro's narrow launchStatus request validates the exact window/route and generation, returns only sanitized stage/error flags, and cannot choose a session or invoke general launcher commands. Polling stops on close. Launch-stage changes are included in the existing trace for test diagnosis.
+- The audio/game-binding worker continues observing stages while the video is active; binding is still one-time, with the previous timeout, ownership, silence and no-replay guards.
+
+Validation:
+- TypeScript,248 frontend tests/47files,Vite,optimized native build passed.
+- 87 isolated startup lifecycle tests passed,1 ignored.
+- Exact staged EXE silent WebView2 video fixture passed. Video rect[0,0,1280,830], meter rect[38,781.703125,190,25.296875]; computed gradient matches the launcher green exactly.
+- Real narrow IPC/frontend rendering exercised synthetic native stages Preparing playlist audio -> Session ready. This proves routing/label updates and placement; actual live game launch stages still need user testing.
+- Starter CheckOnly passed; game/launcher closed; no activation performed.
+
+Candidate C:\Users\carrn\CodexProjects\2kconversiontool\nba2k27-launcher-tauri2\Dev\Pending\QA130\launcher.exe
+SHA256 1AD58BBA5D02D5AE1A96944CB51C9600A3B55C6CB38331AAB73B3C07B4E10974
+Bytes 59637248
+PDB SHA256 ED9439193A36130A8ED28F32A7C422748F462B3472D52209488CF3640A458414
+Starter Open QA130 Dev.lnk / Start QA130 Dev.ps1. Exact-hash idle guard, prior-dev backup and durable copy retained.
+Main/Share remain QA129 0.53.33, freshly verified SHA256 1D1BBAD3843001D5A08581FBBC05FBA10E8571215D8A82966A0A8FAEA1123E60. No installation, promotion, game launch/stop or dev activation performed. Existing Data/Library preserved.
+Prior unresolved QA106 Season History UI smoke assertion, QA073 Rust natural AV and QA078 Clang fixture crash remain unchanged.
+Source backups Backups/qa130-intro-progress-20261024. Evidence artifacts/qa130-intro-progress.

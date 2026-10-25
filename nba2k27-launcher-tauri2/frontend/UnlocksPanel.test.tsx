@@ -2,7 +2,12 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 import { UnlocksPanel, freestyleUnlockMessage } from "./UnlocksPanel";
 
-function render(freestyle: boolean, blacktopAvailable = false) {
+function render(
+  freestyle: boolean,
+  blacktopAvailable = false,
+  debugMenusAvailable = false,
+  debugMenus = false,
+) {
   let writes = 0;
   const html = renderToStaticMarkup(
     <UnlocksPanel
@@ -12,6 +17,9 @@ function render(freestyle: boolean, blacktopAvailable = false) {
       onFreestyleChange={() => writes++}
       freestyleMessage={freestyleUnlockMessage(freestyle)}
       blacktopAvailable={blacktopAvailable}
+      debugMenus={debugMenus}
+      debugMenusAvailable={debugMenusAvailable}
+      onDebugMenusChange={() => writes++}
     />,
   );
   return { html, writes };
@@ -45,5 +53,13 @@ describe("Unlocks panel", () => {
     expect(html.match(/disabled=""/g)).toHaveLength(1);
     expect(html).not.toMatch(/id="unlockWnbaBlacktop"[^>]*disabled/);
     expect(html).toContain("Use Y to cycle to WNBA teams in Blacktop");
+  });
+
+  it("exposes the session-only debug choice only in its dev capability", () => {
+    const { html } = render(false, true, true, true);
+    expect(html.match(/disabled=""/g) ?? []).toHaveLength(0);
+    expect(html).toMatch(/id="enableDebugMenus"[^>]*checked/);
+    expect(html).toContain("Armed for the next Play session");
+    expect(html).toContain("never saved");
   });
 });

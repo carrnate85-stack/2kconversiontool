@@ -280,7 +280,7 @@ fn automatic_profile_retry_key_is_stable_entire_launch_and_excludes_own_row_byte
 }
 
 fn protected_fixture() -> (u64, u64, u64, Vec<u8>) {
-    let base = 0x3000_0000u64;
+    let base = 0x30000000u64;
     let owner = base + 0x800;
     let root = base + 0x100;
     let mut h = vec![0; OWNER_HEADER];
@@ -303,7 +303,7 @@ fn protected_fixture() -> (u64, u64, u64, Vec<u8>) {
     {
         h[off..off + 8].copy_from_slice(&count.to_le_bytes());
         if ![0x10, 0x60, 0x80, 0x290].contains(&off) {
-            h[off + 4..off + 8].copy_from_slice(&0xfedc_ba98u32.to_le_bytes());
+            h[off + 4..off + 8].copy_from_slice(&0xfedcba98u32.to_le_bytes());
         }
         h[off + 8..off + 16].copy_from_slice(&(base + 0x10000 + i as u64 * 0x100000).to_le_bytes());
     }

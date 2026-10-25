@@ -35,6 +35,7 @@ describe("Portable library workflows", () => {
 import {
   classifyMod,
   filterModGroups,
+  isModelPreviewCandidate,
   modGroups,
   normalizeModTags,
   sortModGroups,
@@ -65,6 +66,11 @@ describe("WPF-style mod library bundles", () => {
     expect(classifyMod("misc.iff")).toBe("IFF");
     expect(classifyMod("x.dds")).toBe("Texture");
     expect(classifyMod("x.txt")).toBe("Other");
+  });
+  it("offers the staged renderer only for IFF model candidates", () => {
+    expect(isModelPreviewCandidate(files[0])).toBe(true);
+    expect(isModelPreviewCandidate({ name: "arena.iff.bin", path: "arena.iff.bin", folder: "", bytes: 1 })).toBe(true);
+    expect(isModelPreviewCandidate({ name: "court.dds", path: "court.dds", folder: "", bytes: 1 })).toBe(false);
   });
   it("bundles player dependencies under the base iff", () => {
     const groups = modGroups(

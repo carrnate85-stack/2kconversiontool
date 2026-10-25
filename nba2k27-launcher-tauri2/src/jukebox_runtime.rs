@@ -507,6 +507,17 @@ impl Runtime {
         };
         Ok(serde_json::to_value(summary)?)
     }
+    pub(crate) fn import_downloaded(
+        &self,
+        path: &Path,
+        game: &Path,
+        app: tauri::AppHandle,
+        cancel: &AtomicBool,
+        progress: impl Fn(&str),
+    ) -> Result<String> {
+        let ready = self.ready(game, app)?;
+        ready.api.import_downloaded(path, cancel, progress)
+    }
     pub fn select_for_play(&self, args: Value) -> Result<Value> {
         #[derive(serde::Deserialize)]
         #[serde(rename_all = "camelCase", deny_unknown_fields)]

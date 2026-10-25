@@ -33,10 +33,17 @@ struct Source {
 }
 impl Source {
     fn path(&self, organized: &str, legacy: &str) -> PathBuf {
-        self.root.join(if self.layout == Layout::Organized { organized } else { legacy })
+        self.root.join(if self.layout == Layout::Organized {
+            organized
+        } else {
+            legacy
+        })
     }
     fn outfits(&self) -> PathBuf {
-        self.path("Library/Outfits/outfit-presets.json", "blacktop/outfit-presets.json")
+        self.path(
+            "Library/Outfits/outfit-presets.json",
+            "blacktop/outfit-presets.json",
+        )
     }
     fn previews(&self) -> PathBuf {
         self.path("Library/Preview Packs", "blacktop/preview-packs")
@@ -48,28 +55,50 @@ impl Source {
         self.path("Data/scaler/preferences.json", "scaler/preferences.json")
     }
     fn favorites(&self) -> PathBuf {
-        self.path("Data/blacktop/arena-favorites.json", "blacktop/arena-favorites.json")
+        self.path(
+            "Data/blacktop/arena-favorites.json",
+            "blacktop/arena-favorites.json",
+        )
     }
 }
 /// WPF `resolveStorage` order, after the Rust launcher's own folder (a WPF
 /// library promoted in place keeps its WPF files beside the Rust data).
 fn sources(root: &Path, game_root: &str) -> Vec<Source> {
     let appdata = std::env::var_os("APPDATA").map(PathBuf::from);
-    let mut list = vec![Source { label: "This launcher folder", root: root.into(), layout: Layout::Organized }];
+    let mut list = vec![Source {
+        label: "This launcher folder",
+        root: root.into(),
+        layout: Layout::Organized,
+    }];
     if let Some(a) = &appdata {
-        list.push(Source { label: "AppData library (2k Launcher)", root: a.join("2k Launcher"), layout: Layout::Organized });
+        list.push(Source {
+            label: "AppData library (2k Launcher)",
+            root: a.join("2k Launcher"),
+            layout: Layout::Organized,
+        });
     }
     if !game_root.is_empty() {
-        list.push(Source { label: "Game-folder library (2k Launcher)", root: Path::new(game_root).join("2k Launcher"), layout: Layout::Organized });
+        list.push(Source {
+            label: "Game-folder library (2k Launcher)",
+            root: Path::new(game_root).join("2k Launcher"),
+            layout: Layout::Organized,
+        });
     }
     if let Some(a) = &appdata {
-        list.push(Source { label: "Original library (nba2k27-mod-launcher)", root: a.join("nba2k27-mod-launcher"), layout: Layout::Legacy });
+        list.push(Source {
+            label: "Original library (nba2k27-mod-launcher)",
+            root: a.join("nba2k27-mod-launcher"),
+            layout: Layout::Legacy,
+        });
     }
     let mut seen = vec![];
     list.retain(|s| {
         let key = s.root.canonicalize().ok();
         let keep = key.as_ref().is_some_and(|k| !seen.contains(k))
-            && (s.outfits().is_file() || s.previews().is_dir() || s.settings().is_file() || s.scaler().is_file());
+            && (s.outfits().is_file()
+                || s.previews().is_dir()
+                || s.settings().is_file()
+                || s.scaler().is_file());
         if let Some(k) = key {
             seen.push(k);
         }
@@ -112,10 +141,29 @@ fn plan_outfits(root: &Path, src: &Source) -> Result<Vec<Planned>> {
     );
     let catalog = crate::outfits::catalog()?;
     let mut out = vec![];
-    for preset in doc["outfits"].as_array().context("WPF outfit list missing")?.iter().take(1000) {
-        let name = preset["name"].as_str().unwrap_or("Outfit").trim().to_string();
-        let id: String = preset["id"].as_str().unwrap_or("").chars().filter(|c| c.is_ascii_hexdigit()).take(8).collect();
-        let file = root.join("Library/Outfits").join(format!("{}-wpf-{}.2koutfit", file_stem(&name), if id.is_empty() { "0" } else { &id }));
+    for preset in doc["outfits"]
+        .as_array()
+        .context("WPF outfit list missing")?
+        .iter()
+        .take(1000)
+    {
+        let name = preset["name"]
+            .as_str()
+            .unwrap_or("Outfit")
+            .trim()
+            .to_string();
+        let id: String = preset["id"]
+            .as_str()
+            .unwrap_or("")
+            .chars()
+            .filter(|c| c.is_ascii_hexdigit())
+            .take(8)
+            .collect();
+        let file = root.join("Library/Outfits").join(format!(
+            "{}-wpf-{}.2koutfit",
+            file_stem(&name),
+            if id.is_empty() { "0" } else { &id }
+        ));
         // The WPF preset body is the shared-outfit Selection (streetId,
         // bottom, shoe, sock, layer, accessory/accessories).
         let mut selection = preset.clone();
@@ -130,8 +178,13 @@ fn plan_outfits(root: &Path, src: &Source) -> Result<Vec<Planned>> {
         let (document, status) = match encoded {
             Err(e) => (None, format!("Not importable: {e:#}")),
             Ok(d) => {
-                let status = match fs::read(&file).ok().and_then(|b| serde_json::from_slice::<Value>(&b).ok()) {
-                    None if file.exists() => "Conflict: a different file already uses this name".to_string(),
+                let status = match fs::read(&file)
+                    .ok()
+                    .and_then(|b| serde_json::from_slice::<Value>(&b).ok())
+                {
+                    None if file.exists() => {
+                        "Conflict: a different file already uses this name".to_string()
+                    }
                     None => "Ready".into(),
                     Some(existing) if existing == d => "Already imported".into(),
                     Some(_) => "Conflict: a different file already uses this name".into(),
@@ -139,7 +192,12 @@ fn plan_outfits(root: &Path, src: &Source) -> Result<Vec<Planned>> {
                 (Some(d), status)
             }
         };
-        out.push(Planned { name, file, document, status });
+        out.push(Planned {
+            name,
+            file,
+            document,
+            status,
+        });
     }
     Ok(out)
 }
@@ -182,7 +240,11 @@ fn advanced_patch(b: &Backend, src: &Source) -> Result<Vec<(String, &'static str
         // proven one-to-one Rust meanings.
         for (wpf, key, label) in [
             ("startCameras", "camerasEnabled", "Start cameras with Play"),
-            ("unlockWnbaFreestyle", "unlockWnbaFreestyle", "WNBA teams in Freestyle"),
+            (
+                "unlockWnbaFreestyle",
+                "unlockWnbaFreestyle",
+                "WNBA teams in Freestyle",
+            ),
             ("unlockWnbaBlacktop", "unlockWnba", "WNBA teams in Blacktop"),
             ("startupVideoEnabled", "startupVideo", "Startup video"),
         ] {
@@ -194,12 +256,24 @@ fn advanced_patch(b: &Backend, src: &Source) -> Result<Vec<(String, &'static str
     if let Some(p) = read_json(&src.scaler(), 64 * 1024).filter(|v| v.is_object()) {
         let percent = p["percent"].as_f64().filter(|v| (50.0..=150.0).contains(v));
         if let (Some(enabled), Some(percent)) = (p["enabled"].as_bool(), percent) {
-            push("scaler", "Player scale", json!(if enabled { (percent * 100.).round() / 10000. } else { 1.0 }));
+            push(
+                "scaler",
+                "Player scale",
+                json!(if enabled {
+                    (percent * 100.).round() / 10000.
+                } else {
+                    1.0
+                }),
+            );
         }
         for (wpf, key, label) in [
             ("coaches", "scalerCoaches", "Scale coaches"),
             ("cheerleaders", "scalerCheerleaders", "Scale cheerleaders"),
-            ("arenaPersonnel", "scalerArenaPersonnel", "Scale arena personnel"),
+            (
+                "arenaPersonnel",
+                "scalerArenaPersonnel",
+                "Scale arena personnel",
+            ),
         ] {
             if let Some(v) = p[wpf].as_bool() {
                 push(key, label, json!(v));
@@ -239,7 +313,10 @@ pub(crate) fn scan(b: &Backend) -> Result<Value> {
         let packs = preview_packs(src);
         let newest = packs.first();
         let advanced = advanced_patch(b, src)?;
-        let new_favorites: Vec<String> = favorites(src).into_iter().filter(|f| !current_favorites.contains(f)).collect();
+        let new_favorites: Vec<String> = favorites(src)
+            .into_iter()
+            .filter(|f| !current_favorites.contains(f))
+            .collect();
         list.push(json!({
             "index": i,
             "label": src.label,
@@ -270,7 +347,9 @@ pub(crate) fn scan(b: &Backend) -> Result<Value> {
 
 /// Import the chosen categories from one scanned source.
 pub(crate) fn apply(b: &Backend, args: &Value) -> Result<Value> {
-    let index = args["index"].as_u64().context("Choose a previous library")? as usize;
+    let index = args["index"]
+        .as_u64()
+        .context("Choose a previous library")? as usize;
     let categories: Vec<&str> = args["categories"]
         .as_array()
         .context("Choose what to import")?
@@ -278,18 +357,27 @@ pub(crate) fn apply(b: &Backend, args: &Value) -> Result<Value> {
         .filter_map(Value::as_str)
         .collect();
     ensure!(
-        !categories.is_empty() && categories.iter().all(|c| matches!(*c, "outfits" | "previews" | "advanced")),
+        !categories.is_empty()
+            && categories
+                .iter()
+                .all(|c| matches!(*c, "outfits" | "previews" | "advanced")),
         "Choose what to import"
     );
     ensure!(
-        !crate::session_safety::processes()?.iter().any(|p| p.name.eq_ignore_ascii_case("NBA2K27.exe")),
+        !crate::session_safety::processes()?
+            .iter()
+            .any(|p| p.name.eq_ignore_ascii_case("NBA2K27.exe")),
         "Close NBA 2K27 before importing the previous launcher library. The original data remains untouched."
     );
     let settings = b.current_settings()?;
     let all = sources(&b.root, &settings.game_root);
-    let src = all.get(index).context("That previous library is no longer available.")?;
+    let src = all
+        .get(index)
+        .context("That previous library is no longer available.")?;
     ensure!(
-        args["path"].as_str().is_some_and(|p| Path::new(p) == src.root),
+        args["path"]
+            .as_str()
+            .is_some_and(|p| Path::new(p) == src.root),
         "The previous library changed; scan again."
     );
     let mut done = serde_json::Map::new();
@@ -317,7 +405,8 @@ pub(crate) fn apply(b: &Backend, args: &Value) -> Result<Value> {
         let mut saved = false;
         if !b.root.join("Data/outfit.json").exists() {
             if let Some(d) = first {
-                let outfit = crate::outfits::catalog()?.imported_outfit(&serde_json::to_vec(&d)?)?;
+                let outfit =
+                    crate::outfits::catalog()?.imported_outfit(&serde_json::to_vec(&d)?)?;
                 b.dispatch("save-outfit", serde_json::to_value(outfit)?)?;
                 saved = true;
             }
@@ -328,8 +417,12 @@ pub(crate) fn apply(b: &Backend, args: &Value) -> Result<Value> {
         let active = b.previews.status()?;
         let active_id = active_preview_id(&b.root);
         let result = match preview_packs(src).first() {
-            None => json!({"imported":false,"message":"No preview pack was found in the previous library."}),
-            Some((p, _, _)) if preview_sha(p).is_some_and(|sha| active_id.as_deref() == Some(sha.as_str())) => {
+            None => {
+                json!({"imported":false,"message":"No preview pack was found in the previous library."})
+            }
+            Some((p, _, _))
+                if preview_sha(p).is_some_and(|sha| active_id.as_deref() == Some(sha.as_str())) =>
+            {
                 json!({"imported":false,"message":"This preview pack is already active."})
             }
             Some(_) if !active.is_null() => {
@@ -344,15 +437,21 @@ pub(crate) fn apply(b: &Backend, args: &Value) -> Result<Value> {
     }
     if categories.contains(&"advanced") {
         let rows = advanced_patch(b, src)?;
-        let patch: serde_json::Map<String, Value> = rows.iter().map(|(k, _, _, v)| (k.clone(), v.clone())).collect();
+        let patch: serde_json::Map<String, Value> = rows
+            .iter()
+            .map(|(k, _, _, v)| (k.clone(), v.clone()))
+            .collect();
         if !patch.is_empty() {
             b.dispatch("save-settings", Value::Object(patch))?;
         }
-        let current: Vec<String> = serde_json::from_value(b.dispatch("arena-favorites", json!({}))?).unwrap_or_default();
+        let current: Vec<String> =
+            serde_json::from_value(b.dispatch("arena-favorites", json!({}))?).unwrap_or_default();
         let mut added = 0;
         for id in favorites(src).into_iter().filter(|f| !current.contains(f)) {
             // Unknown ids are refused by the Rust catalog check; skip them.
-            if b.dispatch("arena-favorite", json!({"id":id,"favorite":true})).is_ok() {
+            if b.dispatch("arena-favorite", json!({"id":id,"favorite":true}))
+                .is_ok()
+            {
                 added += 1;
             }
         }
@@ -360,13 +459,16 @@ pub(crate) fn apply(b: &Backend, args: &Value) -> Result<Value> {
     }
     let mut m = marker(&b.root);
     for (k, v) in &done {
-        m["categories"][k] = json!({"source":src.root,"at":crate::launcher_health::now_iso(),"result":v});
+        m["categories"][k] =
+            json!({"source":src.root,"at":crate::launcher_health::now_iso(),"result":v});
     }
     m["schema"] = json!(1);
     m["sourcePreserved"] = json!(true);
     fs::create_dir_all(b.root.join("Data/Rust"))?;
     crate::backend::atomic_json(&b.root.join(MARKER), &m)?;
-    Ok(json!({"source":src.root,"results":done,"message":"Previous launcher data imported. The old library was preserved."}))
+    Ok(
+        json!({"source":src.root,"results":done,"message":"Previous launcher data imported. The old library was preserved."}),
+    )
 }
 
 #[cfg(test)]
@@ -374,18 +476,32 @@ mod tests {
     use super::*;
     #[test]
     fn legacy_and_organized_paths_follow_destination_for() {
-        let o = Source { label: "", root: "C:\\L".into(), layout: Layout::Organized };
-        let l = Source { label: "", root: "C:\\L".into(), layout: Layout::Legacy };
+        let o = Source {
+            label: "",
+            root: "C:\\L".into(),
+            layout: Layout::Organized,
+        };
+        let l = Source {
+            label: "",
+            root: "C:\\L".into(),
+            layout: Layout::Legacy,
+        };
         assert!(o.outfits().ends_with("Library/Outfits/outfit-presets.json"));
         assert!(l.outfits().ends_with("blacktop/outfit-presets.json"));
         assert!(o.previews().ends_with("Library/Preview Packs"));
         assert!(l.previews().ends_with("blacktop/preview-packs"));
-        assert!(l.settings().ends_with("settings.json") && !l.settings().to_string_lossy().contains("Data"));
+        assert!(
+            l.settings().ends_with("settings.json")
+                && !l.settings().to_string_lossy().contains("Data")
+        );
     }
     #[test]
     fn preview_sha_comes_only_from_exact_wpf_names() {
         let sha = "34e5ab928969668401b8cd186f5614a372cdfbadb898c686bb390677e5742821";
-        assert_eq!(preview_sha(Path::new(&format!("C:\\p\\preview-{sha}.zip"))).as_deref(), Some(sha));
+        assert_eq!(
+            preview_sha(Path::new(&format!("C:\\p\\preview-{sha}.zip"))).as_deref(),
+            Some(sha)
+        );
         assert!(preview_sha(Path::new("C:\\p\\preview-abc.zip")).is_none());
         assert!(preview_sha(Path::new("C:\\p\\other.zip")).is_none());
     }

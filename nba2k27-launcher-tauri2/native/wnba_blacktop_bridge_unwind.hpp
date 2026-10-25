@@ -16,14 +16,14 @@ inline constexpr std::array<std::uint8_t,12> kZeroPrologueNegativeControl{
 inline constexpr std::array<std::uint8_t,12> kStockFrame{
     0x01,0x07,0x04,0x00,0x07,0x32,0x03,0x30,0x02,0x70,0x01,0x60
 };
-inline constexpr std::uintptr_t kStockUnwindRva=0x85CDABC;
+inline constexpr std::uintptr_t kStockUnwindRva=0x85CDBBC;
 // Exact static .pdata entry, disk-derived and independently read back from the
-// owned live V2 image. This image maps that section EXECUTE_WRITECOPY (0x80).
-inline constexpr std::uintptr_t kStockFunctionRva=0xC6BA008;
+// owned live V2 image. This image maps that section READONLY (0x02).
+inline constexpr std::uintptr_t kStockFunctionRva=0xC0AC13C;
 inline constexpr std::array<std::uint8_t,16> kChainInfo{
     0x21,0x00,0x00,0x00, // Version1, CHAININFO, no local prologue/codes/frame.
-    0xD0,0xBD,0x30,0x02, // Original RUNTIME_FUNCTION BeginAddress230BDD0.
-    0xCB,0xBE,0x30,0x02, // EndAddress230BECB (exclusive).
-    0xBC,0xDA,0x5C,0x08  // UnwindData85CDABC, all relative to game image base.
+    0x80,0xBE,0x30,0x02, // Original RUNTIME_FUNCTION BeginAddress230BE80.
+    0x7B,0xBF,0x30,0x02, // EndAddress230BF7B (exclusive).
+    0xBC,0xDB,0x5C,0x08  // UnwindData85CDBBC, all relative to game image base.
 };
 } // namespace wnba_blacktop_bridge_unwind

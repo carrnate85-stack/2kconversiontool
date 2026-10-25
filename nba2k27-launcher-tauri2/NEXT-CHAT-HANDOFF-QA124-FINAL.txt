@@ -1,0 +1,40 @@
+QA124 FINAL HANDOFF - 2026-10-23
+
+QA124 version 0.53.28 is compiled, packaged, and promoted to Main.
+
+Exact binary:
+- Bytes: 47003648
+- SHA-256: 236166C70F014ED835A533BE27CF52DA5DA9A612C62331CE88288D30D44F8CFD
+
+Main:
+C:\Program Files (x86)\Steam\steamapps\common\NBA 2K27\2k Launcher\App\2k Launcher Rust.exe
+
+Sharing EXE:
+C:\Users\carrn\CodexProjects\2kconversiontool\nba2k27-launcher-tauri2\Builds\0.53.28\Share-QA124-Classic-Shorts\NBA 2K27 Launcher 0.53.28.exe
+
+Recovery:
+C:\Program Files (x86)\Steam\steamapps\common\NBA 2K27\2k Launcher\Recovery\App-before-QA124-20261023-183550-2796
+
+Receipt:
+C:\Users\carrn\CodexProjects\2kconversiontool\nba2k27-launcher-tauri2\artifacts\qa124-main-promotion-20261023-183550-2796.json
+
+Final report:
+C:\Users\carrn\CodexProjects\2kconversiontool\nba2k27-launcher-tauri2\artifacts\qa124-classic-shorts\FINAL-PROMOTION.txt
+
+Delivered behavior:
+- Combined classic and Nike shorts texture containers fall back to available[0] after preferred dependency checks.
+- The embedded texture named "color" remains the selected diffuse texture.
+- Catalog photos remain unchanged.
+
+Preservation:
+- 182 Data files and 483 Library files were hash-verified unchanged.
+- The full previous App tree was hash-verified in Recovery.
+- No game or launcher process was started during promotion.
+
+Pending live check:
+Open Outfit Editor and visually confirm representative classic basketball shorts and Nike shorts now show their real diffuse texture on the mannequin rather than gray.
+
+Retained unresolved items:
+- QA106 Season History totals/awards persistence assertion.
+- QA073 natural Rust access violation with exact EXE/PDB evidence.
+- QA078 Clang fixture crash.

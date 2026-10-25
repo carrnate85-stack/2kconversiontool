@@ -18,7 +18,7 @@
 #page-mods #modSearch { width:100%; min-height:43px; padding:10px 14px 10px 43px; font-size:13px; }
 #page-mods #modResultSummary { grid-column:auto; text-align:right; margin:0; padding-left:22px; border-left:1px solid var(--line); color:var(--muted); font-size:11px; line-height:1.5; }
 #page-mods .table-card { min-height:220px; background:var(--bg); border-radius:8px; }
-#page-mods :is(.table-head,.mod-row,.mod-dependency-row) { grid-template-columns:minmax(180px,1fr) 110px minmax(130px,.52fr) 68px 161px; gap:16px; }
+#page-mods :is(.table-head,.mod-row,.mod-dependency-row) { grid-template-columns:minmax(180px,1fr) 110px minmax(130px,.52fr) 90px 344px; gap:14px; }
 #page-mods .table-head { flex-shrink:0; padding:11px 18px; min-height:46px; background:var(--panel); border-bottom:1px solid var(--line); font-size:10px; letter-spacing:.06em; }
 #page-mods .table-head button { display:flex; align-items:center; gap:8px; padding:4px 0; border:0; min-width:0; background:none; color:var(--muted); font:inherit; text-align:left; text-transform:uppercase; cursor:pointer; }
 #page-mods .table-head button > span { opacity:.6; font-size:13px; }
@@ -40,9 +40,18 @@
 #page-mods .mod-tag-button { height:33px; padding:7px 10px; border-radius:6px; color:var(--text); background:var(--panel-2); font-size:11px; }
 #page-mods .mod-tag-button.untagged { color:var(--muted); }
 #page-mods .mod-tag-button:hover { border-color:var(--court); }
-#page-mods .mod-file-actions { gap:7px; }
+#page-mods .mod-row > .size,#page-mods .mod-dependency-row > :nth-child(4) { min-width:0; justify-self:end; padding-right:8px; text-align:right; white-space:nowrap; }
+#page-mods .mod-file-actions { box-sizing:border-box; display:grid; grid-template-columns:repeat(4,max-content); justify-content:end; width:100%; min-width:0; gap:6px; padding-left:8px; }
 #page-mods .mod-file-actions button { display:flex; align-items:center; justify-content:center; gap:6px; font-size:10px; min-height:32px; padding:6px 9px; }
 #page-mods .mod-file-actions .nav-icon { width:15px; height:15px; }
+#page-mods .mod-file-actions .mod-remove-button { color:var(--danger,#ff9ca6); border-color:color-mix(in srgb,var(--danger,#ff9ca6) 42%,var(--line)); }
+#page-mods .mod-file-actions .mod-remove-button:hover:not(:disabled) { background:color-mix(in srgb,var(--danger,#ff9ca6) 12%,var(--panel-2)); }
+#page-mods .mod-remove-dialog { width:min(620px,calc(100vw - 28px)); }
+#page-mods .mod-remove-dialog > p { margin:8px 0; color:var(--muted); line-height:1.55; }
+#page-mods .mod-remove-dialog > p strong { color:var(--text); }
+#page-mods .mod-remove-file-list { display:flex; flex-direction:column; gap:5px; max-height:156px; margin:13px 0; padding:10px 12px; overflow:auto; border:1px solid var(--line); border-radius:6px; background:var(--bg); color:var(--muted); font-size:10px; }
+#page-mods .mod-remove-dialog footer { display:flex; justify-content:flex-end; gap:8px; margin-top:14px; }
+#page-mods .mod-remove-confirm { background:var(--danger,#b94651); border-color:var(--danger,#d25a65); }
 #page-mods .mod-dependency-row { padding:8px 12px 8px 18px; background:color-mix(in srgb,var(--court) 3%,var(--bg)); border-top:0; border-bottom:1px solid var(--line); }
 #page-mods .dependency-path { padding-left:36px; }
 #page-mods .mod-library-footer { flex-shrink:0; display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px 20px; padding:10px 18px; border-top:1px solid var(--line); color:var(--muted); font-size:10px; line-height:1.5; }
@@ -51,7 +60,7 @@
   #page-mods .mod-library-actions { grid-column:1/-1; justify-content:flex-end; }
   #page-mods .mod-search-toolbar { gap:12px; }
   #page-mods #modResultSummary { padding-left:12px; max-width:230px; }
-  #page-mods :is(.table-head,.mod-row,.mod-dependency-row) { grid-template-columns:minmax(180px,1fr) minmax(105px,.5fr) 145px; gap:12px; }
+  #page-mods :is(.table-head,.mod-row,.mod-dependency-row) { grid-template-columns:minmax(180px,1fr) minmax(105px,.5fr) 344px; gap:12px; }
   #page-mods .table-head > :nth-child(2),#page-mods .table-head > :nth-child(4),#page-mods .mod-row > .category,#page-mods .mod-row > .size,#page-mods .mod-dependency-row > :nth-child(2),#page-mods .mod-dependency-row > :nth-child(3),#page-mods .mod-dependency-row > :nth-child(4) { display:none; }
   #page-mods .mod-file-actions { grid-column:3; }
   #page-mods .mod-dependency-row .dependency-path { grid-column:1/3; }

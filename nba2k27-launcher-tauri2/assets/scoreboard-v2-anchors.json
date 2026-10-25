@@ -1,105 +1,105 @@
 {
   "schema": "nba2k27-v2-scoreboard-anchors-v1",
-  "sha256": "29A96471C55909FC2BCEA6C699C59238656A501C19B50C74ED64B0D842E576A1",
-  "peTimestamp": 1791309669,
-  "imageSize": 901636096,
+  "sha256": "B673EB04593D6D5A4DFB9E270178E04C017BD9F277514D256EA98FFB792ED27B",
+  "peTimestamp": 1792205964,
+  "imageSize": 911417344,
   "gameProcessAccess": false,
   "packageTableRva": 177785920,
   "activeRva": 177846352,
   "secondaryActiveRva": 177694976,
   "resourcesRva": 199840312,
   "resourceVtableRva": 135273528,
-  "resourceMethodRva": 84696432,
+  "resourceMethodRva": 84697072,
   "resourceLocatorRva": 135273984,
   "anchors": [
     {
-      "rva": 18436173,
-      "hex": "488d3de47b7f09",
+      "rva": 18436301,
+      "hex": "488D3D647B7F09",
       "label": "package-table-lea"
     },
     {
-      "rva": 18436192,
-      "hex": "4883c6184881fe000c0000741e837c3e080074ec48837c3e100075e4488d0c3e4883c108",
+      "rva": 18436320,
+      "hex": "4883C6184881FE000C0000741E837C3E080074EC48837C3E100075E4488D0C3E4883C108",
       "label": "package-stride-count-entry"
     },
     {
-      "rva": 18436444,
-      "hex": "488d0ddd7a7f0941b8000c000031d2e866672d",
+      "rva": 18436572,
+      "hex": "488D0D5D7A7F0941B8000C000031D2E8E66A2D",
       "label": "package-table-native-zero-init"
     },
     {
-      "rva": 18433290,
-      "hex": "488b19eb0590488b1c034885db7422b8800000003b2b77eeb87800000072e7",
+      "rva": 18433418,
+      "hex": "488B19EB0590488B1C034885DB7422B8800000003B2B77EEB87800000072E7",
       "label": "package-tree-root-and-children"
     },
     {
-      "rva": 18434263,
-      "hex": "486341103b41147d5a4889ce488b79084889c148c1e107488d04c1488d1c074883c3084801c7",
+      "rva": 18434391,
+      "hex": "486341103B41147D5A4889CE488B79084889C148C1E107488D04C1488D1C074883C3084801C7",
       "label": "package-storage-used-capacity-stride136-sentinel"
     },
     {
-      "rva": 18434321,
-      "hex": "48c747680000000048895f6048895f58c5f857c0c5f811477048c7878000000000000000ff4610eb0231ff4889f848",
+      "rva": 18434449,
+      "hex": "48C747680000000048895F6048895F58C5F857C0C5F811477048C7878000000000000000FF4610EB0231FF4889F848",
       "label": "package-property-list-and-tree-initialization"
     },
     {
-      "rva": 16994544,
-      "hex": "4d8b49504939c9740e45390175f24d85c97404418b51088910c3660f1f",
+      "rva": 16994672,
+      "hex": "4D8B49504939C9740E45390175F24D85C97404418B51088910C3660F1F",
       "label": "property-next-key-value"
     },
     {
-      "rva": 18396729,
-      "hex": "8138f01035c675ef4885c074068b4008894120",
+      "rva": 18396857,
+      "hex": "8138F01035C675EF4885C074068B4008894120",
       "label": "scorebug-cached-resource-consumer"
     },
     {
-      "rva": 17112843,
-      "hex": "8b57208993e8020000",
+      "rva": 17112971,
+      "hex": "8B57208993E8020000",
       "label": "scorebug-instance-resource-copy"
     },
     {
-      "rva": 18040047,
-      "hex": "4889355a738609",
+      "rva": 18040175,
+      "hex": "488935DA728609",
       "label": "main-active-scorebug-store"
     },
     {
-      "rva": 17126532,
-      "hex": "488b0d75149209",
+      "rva": 17126660,
+      "hex": "488B0DF5139209",
       "label": "secondary-active-scorebug-load"
     },
     {
-      "rva": 84409891,
-      "hex": "488b050e54e106",
+      "rva": 84410531,
+      "hex": "488B058E51E106",
       "label": "native-resource-root-load"
     },
     {
-      "rva": 17119297,
-      "hex": "c744242018f7e57d4889c1bac1a905bb41b83b27e5dc41b9c4628e98",
+      "rva": 17119425,
+      "hex": "C744242018F7E57D4889C1BAC1A905BB41B83B27E5DC41B9C4628E98",
       "label": "scoreboard-registry-four-type-keys"
     },
     {
-      "rva": 17119335,
-      "hex": "4863084885c97e244883c004666666662e0f1f8400000000003b300f84a5010000480504010000",
+      "rva": 17119463,
+      "hex": "4863084885C97E244883C004666666662E0F1F8400000000003B300F84A5010000480504010000",
       "label": "registry-count-rows-stride260"
     },
     {
-      "rva": 84742179,
-      "hex": "486386a000000048ffc84c63ef4921c5488b86a80000004e8b24e8",
+      "rva": 84742819,
+      "hex": "486386A000000048FFC84C63EF4921C5488B86A80000004E8B24E8",
       "label": "registry-bucket-count-and-pointer"
     },
     {
-      "rva": 84742256,
-      "hex": "41f6442423020f8534010000418b04243b45280f85270100008b452c85c0740b41394424040f8515010000498b4424284885c00f84070100008b48543b4d24",
+      "rva": 84742896,
+      "hex": "41F6442423020F8534010000418B04243B45280F85270100008B452C85C0740B41394424040F8515010000498B4424284885C00F84070100008B48543B4D24",
       "label": "registry-row-owner-type-checks"
     },
     {
-      "rva": 84744626,
-      "hex": "488b48284c8b1148895424204889c24189f041ff92c8000000",
+      "rva": 84745266,
+      "hex": "488B48284C8B1148895424204889C24189F041FF92C8000000",
       "label": "registry-vtable-C8-dispatch"
     },
     {
-      "rva": 84696432,
-      "hex": "564883ec304883b9800000000074184181f8c1a905bb74174181f82a5f4fc87506488d4218eb0c31c04883c4305ec3488b421848",
+      "rva": 84697072,
+      "hex": "564883EC304883B9800000000074184181F8C1A905BB74174181F82A5F4FC87506488D4218EB0C31C04883C4305EC3488B421848",
       "label": "typed-resource-data-getter"
     }
   ]

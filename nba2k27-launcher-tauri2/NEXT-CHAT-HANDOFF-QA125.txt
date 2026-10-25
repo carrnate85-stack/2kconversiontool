@@ -1,0 +1,25 @@
+QA125 DEV-ONLY STARTUP VIDEO - 2026-10-24
+
+Read artifacts/qa125-startup-video/REPORT.txt and candidate.json.
+Version 0.53.29; no installation or promotion authorized or performed.
+
+Verified failure: startup audio guardian rejected the real installed filename "2k Launcher Rust.exe". Exact regression fails before fix and passes after. Versioned sharing names are now accepted under the same exact PID/birth/path/creator/root/nonce/session guards. Embedded guardian rebuilt and hashed.
+Actual shared intro window builder + production frontend/ACL/IPC/media path has been exercised with the selected NBA 2K14 video. Final staged EXE produced a decoded 1920x1080 frame at 508 ms, exited 0, and saved probe-final-confirmed/Logs/startup-intro-probe.json (pass=true). No game or audio guardian was started in this fixture. Main/audio/game fullscreen acceptance is still pending.
+
+Tests: 245 frontend passed; 77 native startup passed, 1 ignored. TypeScript, Vite and release build passed. Intermediate missing probe report runs were NOT accepted; missing Logs creation and last-window/report ordering were corrected before final confirmation.
+
+Candidate: Dev/Pending/QA125/launcher.exe
+Bytes: 59543040
+SHA256: 8B5BD933A112A072E21B4B675006014FB0AA29892102597E9FDF3D74A2A791F7
+PDB SHA256: F9453C4DC39BC9D38E8955444AFC186B3D04E0947D47DDE9ED6A50D1225E6DC7
+Guardian SHA256: 8A64BF87E1DB2B6EBCD9536BF69E86B8F919F80F3AE5681C583115CC3F6A65F1
+Starter: Open QA125 Dev.lnk / Start QA125 Dev.ps1
+Starter CheckOnly verified hash then held because installed Main PID 53808 was still open. Nothing activated. User should close Main normally, open QA125, select NBA 2K14 Intro, enable Startup video and click Play.
+
+Dev/Portable had no Rust MP4 catalog and startupVideo=false/video="". Added only a verified copied NBA 2K14 MP4 and a new catalog; existing dev settings/files preserved. The user still needs to enable/select it. Do not mistake disabled dev settings for a playback failure.
+
+Main and Share remain QA124 0.53.28 SHA256 236166C70F014ED835A533BE27CF52DA5DA9A612C62331CE88288D30D44F8CFD; hashes verified unchanged. User's open Main was not closed. No game was launched or stopped.
+
+Normal Play now logs per-session startup-video-<48hexsession>.jsonl alongside startup-video-last.json, including bootstrap/metadata/canplay/playing/decoded-frame/error. Media vs audio timeout is explicit, and transient destroy ACK no longer erases a causal error.
+
+Preserve unresolved QA073 natural Rust access violation/exact EXE-PDB, QA078 Clang fixture crash, QA106 Season History persistence qualification. These unrelated issues were not retested or declared resolved.

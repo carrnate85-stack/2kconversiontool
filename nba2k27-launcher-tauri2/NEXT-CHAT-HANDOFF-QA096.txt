@@ -1,0 +1,44 @@
+QA096 DEV CHECKPOINT - 2026-10-21
+
+Scope
+- Focus only WNBA Blacktop.
+- QA096 is staged dev-only. It was not installed, activated, promoted, or used to control the running game.
+
+Live QA095 evidence
+- Game PID 13868, provider PID 29428, launcher PID 27596 remained running during investigation/staging.
+- The source trial registered successfully.
+- The mixed roster callback armed/restored twice.
+- The category route published/restored twice.
+- Third publication: label intent/applied sequences 29-30, dispatch intent sequence 31, no dispatch applied receipt, held 31 ms later.
+- Therefore the blocker was paired category publication timing on re-entry, not missing WNBA source/roster data.
+
+WPF comparison
+- nba2k27-mod-launcher/unlocks-helper/BlacktopCategory.cs lines 62-64 proves selection once, then publishes label and dispatch consecutively.
+- QA095 repeated a transient context check inside the second word's protected write. The category transition can legitimately move that context.
+
+QA096 change
+- native/wnba_blacktop_category_win.hpp uses retained authority/source/consent at the dispatch CAS instead of repeating menu-context sampling between label and dispatch.
+- Exact route/table/label bytes, profile, bridge, page protection, CAS/readback, identity, ownership and no-replay guards remain.
+- native/wnba_blacktop_category_core.hpp now durably closes a proven no-effect CAS intent before attempting exact rollback.
+- Tests cover dispatch no-effect closure plus label rollback.
+- Rust embeds version-outfits-v2-qa096.dll for new publication and keeps QA094 recovery-only.
+
+Validation
+- cargo fmt check passed.
+- 17 native executables passed, including category/core/coordinator/roster/profile/bridge/unwind/smoke.
+- Rust payload compatibility and independent payload-hash tests passed.
+- Optimized offline locked release with dev-wnba-categories passed.
+- QA078 Clang fixture still reproduces 0xC0000409 and remains unresolved.
+- QA073 natural Rust test access violation remains unresolved.
+
+Candidate
+- Dev/Pending/QA096/launcher.exe
+- bytes 46680064
+- SHA-256 2443F7E4E3F927CA58ACD1408AAF01AEBCA621850C1693682768529F240CC18A
+- Start QA096 Dev.vbs
+- Active dev executable remained QA095 hash 02F2C22BA07A95BBC92088FAACFCBDD08312EDF33931EC1ED3651CE48B1E4489.
+
+Next live acceptance
+- User must close current game and launcher normally, then run Start QA096 Dev.vbs.
+- Enable WNBA Blacktop, Play, enter selection, select the WNBA category, return Home, and enter selection again.
+- Do not claim gameplay acceptance from offline checks.

@@ -18,6 +18,16 @@
 .blacktop-catalog::backdrop {
   background: #020806c7;
 }
+.custom-blacktop-import { min-height: 0; overflow: auto; padding: 16px; }
+.custom-blacktop-import h3 { margin-top: 0; }
+.custom-blacktop-import fieldset { border: 0; margin: 12px 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.custom-blacktop-import label { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.custom-blacktop-import input, .custom-blacktop-import select { width: 100%; min-width: 0; height: 40px; box-sizing: border-box; padding: 8px 10px; font-size: 13px; line-height: 20px; }
+.custom-blacktop-import small, .custom-blacktop-path { color: var(--muted); overflow-wrap: anywhere; }
+.custom-blacktop-buttons { display: flex; flex-wrap: wrap; gap: 8px; }
+.custom-blacktop-buttons button { min-height: 36px; padding: 6px 14px; border: 1px solid var(--line); border-radius: 6px; background: var(--panel); color: var(--text); }
+.custom-blacktop-buttons button:first-child { background: var(--court); color: #13200f; }
+@media (max-width: 600px) { .custom-blacktop-import fieldset { grid-template-columns: 1fr; } }
 .blacktop-catalog-header,
 .blacktop-catalog-controls,
 .blacktop-catalog-footer {
@@ -191,6 +201,16 @@
   border-radius: 50%;
   font-size: 20px;
 }
+.custom-arena-menu {
+  position: fixed;
+  z-index: 10;
+  padding: 6px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #122431;
+  box-shadow: 0 8px 24px #0008;
+}
+.custom-arena-menu button { min-height: 36px; }
 .blacktop-catalog-star {
   position: absolute;
   top: 7px;

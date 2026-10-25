@@ -1,0 +1,28 @@
+QA112 - SHOE NAMES / BRAND GROUPS / PREVIEW RECOVERY - DEV ONLY
+2026-10-22. Version 0.53.16.
+
+User reports shoe catalogue shows numeric IDs with lost brand groups, and mannequin warns about unavailable variants and shoe_0215_default. Verified all 503 compiled shoe rows had group Other; frontend only humanized raw IDs; backend search checked only IDs. Retained WPF has verified shoe-style-name metadata but this catalogue did not use it.
+
+Changes:
+- Generated assets/shoe-model-display.json from hash-pinned retained WPF data/shoe-model-names.json and shoe-style-names.js humanizer. 615 model display identities including the explicitly supported stock 0000 shoe; 435 selectable shoe entries now have names/brands, 17 groups represented. src/shoe_labels.rs enriches wardrobe and garment results at load time. Frontend shared label/readableName use the same JSON, covering catalogue tiles, selected outfit and mannequin photos. Existing image keys, asset IDs and pool eligibility unchanged.
+- Shoes search matches model, brand, colorway and exact asset ID. Other clothing search retains original behavior. Regression testing caught and corrected an initial broader token-search change affecting NO SHIRT results; before/after logs retained.
+- Preview recovery tests compatible observed variants only when strict composition fails. If every matching successful variant yields exactly the same item list, preview uses that list without the generic variant warning. No draft binding, saving, game-memory operation or weakening of game composition validation. Ambiguous/incompatible combinations still preview explicit selected pieces with a clear warning.
+- Unmapped shoe warning now says the 3D shoe preview is unavailable and other clothing remains shown, using readable names where known. Unknown numbered shoes are explicitly grouped/labeled Unidentified, never assigned guessed brands.
+
+0215 investigation: explicit read-only installed-game archive test confirmed shoes/shoe_style_0215.iff absent, whereas shoes/shoe_style_1000.iff exists (967 packed bytes). 0215 also absent from retained WPF mapping. No model/brand inferred. 0000 also has no style file but has the WPF worker's explicit generic-shoe path. No game process launch, live memory, desktop control or installed file change.
+
+Validation: TypeScript passed; 47 frontend files / 245 tests passed, including shared-label and unmapped-message regressions. 37 backend tests passed, including new names/brand/search/exact-ID/pool check and existing catalogue/outfit/player/library checks. 3 mannequin tests passed including unchanged strict validation and unique preview recovery. Explicit installed-archive shoe check passed. Vite + native release build passed with existing warnings. Initial sandbox backend runs failed Access Denied; approved rerun passed after the unrelated-search regression was fixed. No visual acceptance claimed. QA073 natural Rust AV, QA078 Clang crash and QA106 Season History smoke persistence issue remain unresolved.
+
+Candidate: Dev/Pending/QA112/launcher.exe
+SHA256: 17167C0BE9C3D986D2F4DB32824D4CCE860FD6A3D470E3BF0BD35C6A27B2A540
+Bytes: 46843392
+PDB: Dev/Pending/QA112/launcher.pdb
+Starter: Open QA112 Dev.lnk -> Start QA112 Dev.ps1
+Starter verifies candidate hash/size, refuses if game/launcher active, backs up and updates only Dev/Portable on user click. Staging does not activate anything. Main and sharing builds unchanged.
+Backups: Backups/qa112-shoe-catalog-20261022-095508
+Evidence, coverage and source hashes: artifacts/qa112-shoe-catalog
+Retains QA111 first-open worker fix and QA110 one-click hosted preview download.
+
+Next user check: close prior dev launcher and open QA112. Open Shoes, check brand filters and names, search Nike / New Balance / a model name, then open mannequin. Unmapped legacy shoes such as 0215 remain unavailable for 3D; catalogue selection itself remains available. Saved/game-ready outfits still require validated composition.
+Starter CheckOnly exit=0. QA112 staged hash verified; game/launcher closed; no activation performed.
+

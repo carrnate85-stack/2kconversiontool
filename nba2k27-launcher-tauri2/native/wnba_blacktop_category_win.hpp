@@ -12,19 +12,19 @@ namespace wnba_blacktop_category {
 namespace win_detail {
 struct Method { std::uintptr_t rva; std::size_t bytes; const char* hash; };
 inline constexpr Method methods[]={
- {0x230BDD0,251,"609EBB39DD59BC250AEA4D651A3D66C3A545039356EFDD3706BAB863A8A77C0D"},
- {0x27E7DB0,64,"131C597236431B0419EB704D8BF2FBE4C0B11D2963C66F420EE187B5976317C5"},
- {0x27E7DF0,221,"FA0316CAEF03EB2EFB57226B59975C42D62A44EB86F63E67A96933245E659B3C"},
- {0x27E7900,204,"1D02BACC7FE7191E2543BCC8E2B6E83C68DD298D76D7A16870193AF3BAEB9CA5"},
- {0x27E7B10,321,"A5DB80B8D7A91B874D4C487D02DC86D1F9B79381FFB9EF02422FC5058A548A10"},
- {0x230C310,851,"BCA331EE13DF6631AB79D2D04B8AA38148FFF2061689BED15E07629B825FD5F3"},
- {0x3115430,72936,"55713EE348DA4ED27AE52BCB246029FCDD655F9F252B5DE266CD05B036D440B3"},
+ {0x230BE80,251,"C8B6AA7952EABD418A8AD788E661728A5F223790031B7BF84DE6EF57F6CF7A92"},
+ {0x27E7E60,64,"131C597236431B0419EB704D8BF2FBE4C0B11D2963C66F420EE187B5976317C5"},
+ {0x27E7EA0,221,"8FF33BEC3FE5BDD395F25D50151232E618FA138EA9D569D824DBAE13992B94D4"},
+ {0x27E79B0,204,"59C7E5904DA647E49F67E95F81BEBBA56BEB1F2EC19554EE260AE2D42D29CC72"},
+ {0x27E7BC0,321,"525402F2DC58A69F65DE958974D8744CF68FD478DAF0AB9E65547452A116F3F2"},
+ {0x230C3C0,851,"4343DDF7CC2E1696A37ABCA23046E0A31A94BBEFDF0474AE70CD79E6FC4288FF"},
+ {0x31154E0,72936,"39372B4A0CDFDB668551C41C3DB3C576CE97465574BFB333DB83274E137B8B5C"},
 };
 inline constexpr std::array<unsigned char,24> stock_table={
- 0xCC,0x5E,0xEE,0xFA,0xDA,0x5E,0xEE,0xFA,0xD3,0x5E,0xEE,0xFA,
- 0x58,0x5F,0xEE,0xFA,0x2E,0x5F,0xEE,0xFA,0x37,0x5F,0xEE,0xFA};
+ 0x7C,0x5F,0xEE,0xFA,0x8A,0x5F,0xEE,0xFA,0x83,0x5F,0xEE,0xFA,
+ 0x08,0x60,0xEE,0xFA,0xDE,0x5F,0xEE,0xFA,0xE7,0x5F,0xEE,0xFA};
 inline bool image_span(std::uintptr_t base,std::uintptr_t at,std::size_t bytes,DWORD protection) {
- if(!bytes || at<base || at>base+0x35BDE000 || bytes>base+0x35BDE000-at)return false;
+ if(!bytes || at<base || at>base+0x36532000 || bytes>base+0x36532000-at)return false;
  MEMORY_BASIC_INFORMATION m{};
  return VirtualQuery(reinterpret_cast<void*>(at),&m,sizeof m)==sizeof m &&
   m.State==MEM_COMMIT && m.Type==MEM_IMAGE &&
@@ -435,24 +435,30 @@ template<class SourceHost> class NativeHost {
   constexpr std::array<unsigned char,7> id={0x0F,0xB7,0x81,0x20,0x0F,0,0};
   constexpr std::array<unsigned char,7> name={0x48,0x8D,0x81,0xFA,0x02,0,0};
   std::array<unsigned char,7> a{},b{};
-  if(!(win_detail::image_span(base_,base_+0x2DDA683,a.size(),PAGE_EXECUTE_READ) &&
-   win_detail::image_span(base_,base_+0x2DDA68E,b.size(),PAGE_EXECUTE_READ) &&
-   read_memory(base_+0x2DDA683,a.data(),a.size()) && a==id &&
-   read_memory(base_+0x2DDA68E,b.data(),b.size()) && b==name))
+  if(!(win_detail::image_span(base_,base_+0x2DDA733,a.size(),PAGE_EXECUTE_READ) &&
+   win_detail::image_span(base_,base_+0x2DDA73E,b.size(),PAGE_EXECUTE_READ) &&
+   read_memory(base_+0x2DDA733,a.data(),a.size()) && a==id &&
+   read_memory(base_+0x2DDA73E,b.data(),b.size()) && b==name))
     return refuse("Blacktop roster getter bytes or protection differ");
   constexpr auto unwind=wnba_blacktop_bridge_unwind::kStockFrame;
-  std::array<unsigned char,12> actual{};DWORD64 image{};
-  const auto* function=RtlLookupFunctionEntry(base_+0x230BE2B,&image,nullptr);
-  // The current image's static exception-table entry is mapped 0x80, not RO.
-  // Admit only this exact address/protection/triple; other code/data checks
-  // retain their own stricter expected protections.
-  const bool valid=image==base_ && function &&
-   reinterpret_cast<std::uintptr_t>(function)==base_+wnba_blacktop_bridge_unwind::kStockFunctionRva &&
-   win_detail::image_span(base_,reinterpret_cast<std::uintptr_t>(function),sizeof *function,PAGE_EXECUTE_WRITECOPY) &&
-   function->BeginAddress==0x230BDD0 && function->EndAddress==0x230BECB && function->UnwindData==0x85CDABC &&
-   win_detail::image_span(base_,base_+0x85CDABC,actual.size(),PAGE_READONLY) &&
-   read_memory(base_+0x85CDABC,actual.data(),actual.size()) && actual==unwind;
-  return valid || refuse("Blacktop original exception-table entry or unwind frame differs");
+  RUNTIME_FUNCTION pinned{},resolved{};std::array<unsigned char,12> actual{};
+  // Prove the exact static .pdata row directly. RtlLookupFunctionEntry is
+  // allowed to return a loader-managed copy of that row, so its pointer is not
+  // an ownership identity. The returned image base and values still must equal
+  // this independently pinned, read-only row before any bridge allocation.
+  if(!win_detail::image_span(base_,base_+wnba_blacktop_bridge_unwind::kStockFunctionRva,
+       sizeof pinned,PAGE_READONLY) ||
+     !read_memory(base_+wnba_blacktop_bridge_unwind::kStockFunctionRva,&pinned,sizeof pinned) ||
+     pinned.BeginAddress!=0x230BE80 || pinned.EndAddress!=0x230BF7B || pinned.UnwindData!=0x85CDBBC)
+    return refuse("Blacktop static exception-table entry differs");
+  DWORD64 image{};const auto* function=RtlLookupFunctionEntry(base_+0x230BEDB,&image,nullptr);
+  if(!function || image!=base_ || !read_memory(reinterpret_cast<std::uintptr_t>(function),&resolved,sizeof resolved) ||
+     std::memcmp(&resolved,&pinned,sizeof pinned)!=0)
+    return refuse("Blacktop runtime exception lookup differs from pinned static entry");
+  if(!win_detail::image_span(base_,base_+0x85CDBBC,actual.size(),PAGE_READONLY) ||
+     !read_memory(base_+0x85CDBBC,actual.data(),actual.size()) || actual!=unwind)
+    return refuse("Blacktop original unwind frame differs");
+  return true;
  }
  bool publishing_scope(win_detail::ScopeFailure* diagnostic=nullptr)const {
   using F=win_detail::ScopeFailure;
@@ -729,7 +735,14 @@ public:
     const bool publishing=c.before==std::uint32_t(kStockDispatch);
     // No early return inside this protection window: final denial still
     // restores the exact original page access before returning no-CAS.
-    if(!publishing || forward_ready()) {
+    // The retained WPF implementation proves Blacktop selection immediately
+    // before changing the label, then publishes the dispatch without another
+    // menu-context sample between the paired words. The category transition
+    // itself can advance that context. The core has already completed two
+    // deep checkpoints and exact-route proofs for this dispatch; retain the
+    // final authority/source/consent gate here without rejecting that normal
+    // transition between the label and dispatch CAS operations.
+    if(!publishing || publishing_scope()) {
     const auto prior=InterlockedCompareExchange(reinterpret_cast<volatile LONG*>(c.at),LONG(c.after),LONG(c.before));
     if(std::uint32_t(prior)!=c.before) {
      mutation_conflict_=true;reason_="Blacktop dispatch CAS conflicted; identical foreign data is not owned";
@@ -745,6 +758,12 @@ public:
  bool journal_applied(const Binding& b,const Change& c) {
   if(!pending_ || !same(*pending_,c))return false;
   const bool ok=record(b,"ACTION=DATA_CAS_APPLIED\nADDRESS="+std::to_string(c.at)+"\nAFTER="+std::to_string(c.after));
+  if(ok)pending_.reset();return ok;
+ }
+ bool journal_not_applied(const Binding& b,const Change& c) {
+  if(!pending_ || !same(*pending_,c))return false;
+  const bool ok=record(b,"ACTION=DATA_CAS_NOT_APPLIED\nADDRESS="+std::to_string(c.at)+
+    "\nEXPECTED_BEFORE="+std::to_string(c.before)+"\nEFFECTS=none;exact-before-route-readback");
   if(ok)pending_.reset();return ok;
  }
  bool journal_bridge_intent(const Binding& b) {

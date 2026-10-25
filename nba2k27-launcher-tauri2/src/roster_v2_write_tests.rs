@@ -43,6 +43,10 @@ struct Fake {
     foreign: bool,
     change_owner: bool,
     cancel_at: Option<usize>,
+    expired_at: Option<usize>,
+    recovering: Cell<bool>,
+    recovery_checks: Cell<usize>,
+    recovery_limit: Option<usize>,
 }
 impl Fake {
     fn new(owner: &Owner, raw: &[u8]) -> Self {
@@ -58,22 +62,56 @@ impl Fake {
             foreign: false,
             change_owner: false,
             cancel_at: None,
+            expired_at: None,
+            recovering: Cell::new(false),
+            recovery_checks: Cell::new(0),
+            recovery_limit: None,
         }
     }
 }
+impl Fake {
+    fn retained_check(&self) -> Result<()> {
+        if self.recovering.get() {
+            let n = self.recovery_checks.get() + 1;
+            self.recovery_checks.set(n);
+            ensure!(
+                self.recovery_limit.is_none_or(|limit| n <= limit),
+                "Synthetic recovery deadline expired"
+            );
+        } else {
+            ensure!(
+                self.cancel_at.is_none_or(|n| self.writes.get() < n),
+                "Synthetic close cancellation"
+            );
+            ensure!(
+                self.expired_at.is_none_or(|n| self.writes.get() < n),
+                "Synthetic forward budget expired"
+            );
+        }
+        Ok(())
+    }
+}
 impl Access for Fake {
+    fn begin_recovery(&self) -> Result<()> {
+        ensure!(!self.recovering.replace(true), "Recovery cannotrenew");
+        Ok(())
+    }
+
     fn owner(&self) -> Result<Owner> {
+        self.retained_check()?;
         let mut o = self.owner.borrow().clone();
         o.identity = identity(o.kind, &self.raw.borrow())?;
         Ok(o)
     }
     fn capture(&self) -> Result<Vec<u8>> {
+        self.retained_check()?;
         let n = self.reads.get() + 1;
         self.reads.set(n);
         ensure!(self.fail_read_at != Some(n), "Synthetic read-back failure");
         Ok(self.raw.borrow().clone())
     }
     fn write(&self, offset: usize, bytes: &[u8]) -> Result<()> {
+        self.retained_check()?;
         let n = self.writes.get() + 1;
         self.writes.set(n);
         let fail = self.fail_at == Some(n);
@@ -102,6 +140,11 @@ impl Access for Fake {
         Ok(())
     }
     fn checkpoint(&self) -> Result<()> {
+        ensure!(
+            !self.recovering.get(),
+            "Recovery neverallowsnewforwardwrites"
+        );
+        self.retained_check()?;
         ensure!(
             self.cancel_at.is_none_or(|n| self.writes.get() < n),
             "Synthetic close cancellation"
@@ -908,7 +951,22 @@ fn exact_version_two_write_profile_is_verified_from_disk_only() {
     let path = std::path::PathBuf::from(
         std::env::var_os("C27_ROSTER_GAME_EXE").expect("Explicit disk image required"),
     );
+    let routing = crate::provider_access::verify_build(&path).unwrap();
+    assert_eq!(routing.build["label"], "Version 2", "Native editor backend routing");
+    assert_eq!(routing.build["version2OutfitCarryMapped"], true, "Native appearance authority admission: {:?}", routing.build);
+    println!("Build routing and native appearance launch admission: Ok");
+    drop(routing);
     let mut file = File::open(path).unwrap();
+    let mut image_hash = Sha256::new();
+    let mut chunk = vec![0; 1024 * 1024];
+    loop {
+        let n = file.read(&mut chunk).unwrap();
+        if n == 0 { break; }
+        image_hash.update(&chunk[..n]);
+    }
+    assert_eq!(format!("{:X}", image_hash.finalize()), crate::owned_transaction::GAME_SHA,
+        "Installed image and structural transaction profile differ");
+    file.seek(SeekFrom::Start(0)).unwrap();
     let mut header = vec![0; 4096];
     file.read_exact(&mut header).unwrap();
     let pe = u32::from_le_bytes(header[60..64].try_into().unwrap()) as usize;
@@ -929,14 +987,13 @@ fn exact_version_two_write_profile_is_verified_from_disk_only() {
         file: RefCell<File>,
         header: Vec<u8>,
         base: u64,
+        preferred: u64,
+        relocations: std::collections::BTreeSet<u64>,
+        initialized: bool,
         sections: Vec<(u64, u64, u64)>,
     }
-    impl Memory for Disk {
-        fn base(&self) -> u64 {
-            self.base
-        }
-        fn read(&self, at: u64, len: usize) -> Result<Vec<u8>> {
-            let rva = at - self.base;
+    impl Disk {
+        fn raw(&self, rva: u64, len: usize) -> Result<Vec<u8>> {
             if rva == 0 && len == 4096 {
                 return Ok(self.header.clone());
             }
@@ -952,14 +1009,102 @@ fn exact_version_two_write_profile_is_verified_from_disk_only() {
             Ok(b)
         }
     }
-    let m = Disk {
+    impl Memory for Disk {
+        fn base(&self) -> u64 { self.base }
+        fn read(&self, at: u64, len: usize) -> Result<Vec<u8>> {
+            let rva = at.checked_sub(self.base).context("Before image")?;
+            let mut bytes = self.raw(rva, len)?;
+            // Replay actual PE DIR64 fixups, including reads that overlap only
+            // part of a pointer. Never edit the executable or a game process.
+            for &slot in self.relocations.range(rva.saturating_sub(7)..rva + len as u64) {
+                let original = u64::from_le_bytes(self.raw(slot, 8)?.try_into().unwrap());
+                let relocated = original.wrapping_add(self.base.wrapping_sub(self.preferred)).to_le_bytes();
+                for pos in slot.max(rva)..(slot + 8).min(rva + len as u64) {
+                    bytes[(pos - rva) as usize] = relocated[(pos - slot) as usize];
+                }
+            }
+            if self.initialized {
+                // Proven ClassicYear reflection initialization; all other
+                // descriptor bytes stay exact (see the mutation regression).
+                let slot = 0x089B_FAECu64;
+                let runtime = 0x1451_DAB1u32.to_le_bytes();
+                for pos in slot.max(rva)..(slot + 4).min(rva + len as u64) {
+                    bytes[(pos - rva) as usize] = runtime[(pos - slot) as usize];
+                }
+            }
+            Ok(bytes)
+        }
+    }
+    let reloc_dir = pe + 24 + 112 + 5 * 8;
+    let reloc_rva = u32::from_le_bytes(header[reloc_dir..reloc_dir + 4].try_into().unwrap()) as u64;
+    let reloc_len = u32::from_le_bytes(header[reloc_dir + 4..reloc_dir + 8].try_into().unwrap()) as usize;
+    let mut m = Disk {
         file: RefCell::new(file),
         header,
         base,
+        preferred: base,
+        relocations: Default::default(),
+        initialized: false,
         sections,
     };
-    verify_write_profile(&m).unwrap();
-    crate::roster_v2_readonly::verify_profile(&m).unwrap();
+    let reloc = m.raw(reloc_rva, reloc_len).unwrap();
+    let mut cursor = 0;
+    while cursor < reloc.len() {
+        assert!(cursor + 8 <= reloc.len());
+        let page = u32::from_le_bytes(reloc[cursor..cursor + 4].try_into().unwrap()) as u64;
+        let size = u32::from_le_bytes(reloc[cursor + 4..cursor + 8].try_into().unwrap()) as usize;
+        assert!(size >= 8 && size % 2 == 0 && cursor + size <= reloc.len());
+        for entry in reloc[cursor + 8..cursor + size].chunks_exact(2) {
+            let value = u16::from_le_bytes(entry.try_into().unwrap());
+            match value >> 12 {
+                0 => (),
+                10 => { assert!(m.relocations.insert(page + (value & 0xfff) as u64)); },
+                kind => panic!("Unsupported relocation type {kind}"),
+            }
+        }
+        cursor += size;
+    }
+    assert!(!m.relocations.is_empty());
+    // Disk-only code-region fixture. This checks the exact production profile
+    // routines; it does not claim to verify live memory protections or writes.
+    impl crate::blacktop_arena::Inspect for Disk {
+        fn region(&self, at: u64) -> Result<crate::blacktop_arena::Region> {
+            let (start, len, _) = self.sections.iter()
+                .find(|(s, n, _)| at >= self.base + s && at < self.base + s + n)
+                .context("Not a disk section")?;
+            Ok(crate::blacktop_arena::Region {
+                start: self.base + start, len: *len, allocation: self.base,
+                kind: 0x1000000, protection: 0x20, committed: true,
+            })
+        }
+    }
+    // Evaluate every gate before asserting, so future updates produce the full
+    // affected-feature list instead of a sequence of first-failure surprises.
+    let mut failures = Vec::new();
+    for (label, relocated_base, initialized) in [
+        ("disk", base, false),
+        ("relocated", 0x1_8000_0000, false),
+        ("relocated + initialized", 0x7ff7_ac56_0000, true),
+    ] {
+        m.base = relocated_base;
+        m.initialized = initialized;
+        let checks = [
+            ("owner/research", crate::roster_v2_profile::verify_profile(&m)),
+            ("player/team loader", crate::roster_v2_readonly::verify_profile(&m)),
+            ("Save & verify", verify_write_profile(&m)),
+            ("staff/seasons/rotations", crate::roster_v2_services::verify_profile(&m)),
+            ("arena catalog", crate::roster_v2_arena::verify_profile(&m)),
+            ("origins", crate::roster_v2_origins::verify_profile(&m)),
+            ("name/audio", crate::roster_v2_name_audio::verify_disk_profile(&m)),
+            ("appearance", crate::roster_v2_appearance::verify_profile(&m)),
+            ("appearance pool", crate::roster_v2_appearance::source::verify_pool_profile(&m)),
+            ("structural season/arena dependencies", crate::roster_v2_access::verify_structural_disk_profiles(&m)),
+        ];
+        failures.extend(checks.iter().filter_map(|(name, result)|
+            result.as_ref().err().map(|e| format!("{label} / {name}: {e:#}"))));
+        for (name, result) in &checks { println!("{label} / {name}: {result:?}"); }
+    }
+    assert!(failures.is_empty(), "Remaining roster profile failures:\n{}", failures.join("\n"));
     println!(
         "{}",
         json!({"pass":true,"uniformControls":52,"teamTextBuffers":5,"uniformSlots":32,"gameProcessAccess":false,"gameFilesChanged":false})
@@ -1458,6 +1603,63 @@ fn native_type_descriptor_pointer_binding_is_relocated_separately_from_hash_span
     }
 }
 #[test]
+fn classic_year_descriptor_accepts_only_proven_initialization_states() {
+    let rva = 0x089BFAE8;
+    let disk = unhex("70ae959c626cd412481500000400000000081324000000000000000000000000").unwrap();
+    let mut live = disk.clone();
+    live[4..8].copy_from_slice(&0x1451DAB1u32.to_le_bytes());
+    let expected = TEAM_METADATA_SPANS.iter().find(|s| s.0 == rva).unwrap().2;
+    for bytes in [disk.clone(), live.clone()] {
+        assert_eq!(format!("{:x}", Sha256::digest(team_metadata_bytes(rva, bytes).unwrap())), expected);
+    }
+    for index in 0..32 {
+        let mut changed = live.clone();
+        changed[index] ^= 1;
+        let accepted = team_metadata_bytes(rva, changed).is_ok_and(|b| format!("{:x}", Sha256::digest(b)) == expected);
+        assert!(!accepted, "Descriptor byte {index} was not checked");
+    }
+    assert!(team_metadata_bytes(rva, vec![0; 31]).is_err());
+    assert_eq!(team_metadata_bytes(rva + 1, live.clone()).unwrap(), live);
+}
+#[test]
+#[ignore = "Explicit live read-only diagnostic; never saves or invokes the appearance executor"]
+fn live_roster_profiles_and_measurement_mapping_read_only() -> Result<()> {
+    use crate::blacktop_native::Reader;
+    let pid: u32 = std::env::var("C27_ROSTER_READONLY_PID")?.parse()?;
+    let rows = session_safety::processes()?;
+    let game = rows.iter().find(|p| p.pid == pid).and_then(|p| p.identity.clone()).context("Game ended")?;
+    ensure!(Path::new(&game.path).file_name().is_some_and(|n| n.to_string_lossy().eq_ignore_ascii_case("NBA2K27.exe")), "Wrong process");
+    let m = Reader::open_readiness(&game, Path::new(&game.path).parent().context("Game directory")?)?;
+    let checks = [
+        ("Save & verify", verify_write_profile(&m)),
+        ("player/team loader", model::verify_profile(&m)),
+        ("staff/seasons", crate::roster_v2_services::verify_profile(&m)),
+        ("appearance", crate::roster_v2_appearance::verify_profile(&m)),
+        ("appearance pool", crate::roster_v2_appearance::source::verify_pool_profile(&m)),
+        ("structural dependencies", crate::roster_v2_access::verify_structural_disk_profiles(&m)),
+    ];
+    for (name, result) in &checks { println!("{name}: {result:?}"); }
+    ensure!(checks.iter().all(|(_,r)| r.is_ok()), "Live profile failure");
+    let root = u64::from_le_bytes(m.read(m.base() + profile::ROOT, 8)?.try_into().unwrap());
+    let owner_at = u64::from_le_bytes(m.read(root + 0xa8, 8)?.try_into().unwrap());
+    let (base, len) = m.roster_region(owner_at)?;
+    let state = profile::inspect_owner(&m, profile::OwnedRegion { base, len })?;
+    let mut checked = 0;
+    for index in 0..state.players.count {
+        let row = m.read(state.players.pointer + index as u64 * profile::PLAYER_STRIDE as u64, profile::PLAYER_STRIDE)?;
+        let name = String::from_utf16_lossy(&row[..40].chunks_exact(2).map(|b| u16::from_le_bytes([b[0],b[1]])).take_while(|v| *v != 0).collect::<Vec<_>>());
+        if name != "Prince" { continue; }
+        let owner = Owner { game: game.clone(), session: "a".repeat(48), image: m.base(), root: state.root, owner: state.owner, region_base: base, region_len: len, kind: Kind::Player, table: state.players.pointer, count: state.players.count, index, identity: identity(Kind::Player, &row)?, proof: proof_tag().into() };
+        crate::roster_v2_appearance::source::generation(&m, &owner)?;
+        let at = u64::from_le_bytes(row[0x78..0x80].try_into()?);
+        let word = u32::from_le_bytes(m.read(at, 4)?.try_into().unwrap());
+        println!("Prince row {index}: verified native appearance word {word:#x}");
+        checked += 1;
+    }
+    println!("Verified {checked} Prince measurement mappings; game writes: 0");
+    Ok(())
+}
+#[test]
 fn native_type_and_year_partial_effects_preserve_pending_recovery_without_foreign_undo() {
     let mut row = team_row();
     set(&mut row, TEAM_TYPE_BITS, 3);
@@ -1737,4 +1939,44 @@ fn native_origin_preserves_intent_before_effect_exact_rollback_and_legacy_exclus
     m.raw.borrow_mut()[0xB0] ^= 1;
     assert!(apply(&m, &owner, &ordinary, |_| Ok(())).is_err());
     assert_eq!(m.writes.get(), 0);
+}
+
+#[test]
+fn cancellation_and_budget_expiry_enter_separate_bounded_reverse_only_mode() {
+    let (p, o) = player_plan();
+    for expiry in [false, true] {
+        let mut m = Fake::new(&o, &p.before);
+        if expiry {
+            m.expired_at = Some(1)
+        } else {
+            m.cancel_at = Some(1)
+        };
+        let last = RefCell::new(None);
+        assert!(
+            apply(&m, &o, &p, |i| {
+                *last.borrow_mut() = Some(i.clone());
+                Ok(())
+            })
+            .is_err()
+        );
+        assert!(m.recovering.get());
+        assert!(m.recovery_checks.get() > 0);
+        assert_eq!(*m.raw.borrow(), p.before);
+        assert!(!last.borrow().as_ref().unwrap().pending);
+        assert!(m.checkpoint().is_err());
+    }
+    let mut m = Fake::new(&o, &p.before);
+    m.expired_at = Some(1);
+    m.recovery_limit = Some(0);
+    let last = RefCell::new(None);
+    assert!(
+        apply(&m, &o, &p, |i| {
+            *last.borrow_mut() = Some(i.clone());
+            Ok(())
+        })
+        .is_err()
+    );
+    assert_eq!(m.writes.get(), 1);
+    assert!(last.borrow().as_ref().unwrap().pending);
+    assert!(m.checkpoint().is_err());
 }

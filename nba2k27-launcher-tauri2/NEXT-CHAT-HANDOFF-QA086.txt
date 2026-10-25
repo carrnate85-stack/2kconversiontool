@@ -1,0 +1,37 @@
+QA086 DEV CHECKPOINT - 2026-10-21
+
+Scope
+- Dev-only. Nothing installed, promoted, or launched.
+- NBA 2K27 updated from Steam build 25761995 to 26004539.
+- New NBA2K27.exe build identity: 6AD2E48C:36532000.
+
+Compatibility result
+- Structural file-provider/mod-loading resolver passed against the updated EXE.
+- All 47 resolved vtable targets were executable and the resolver found one unique base, manager, path, and release candidate.
+- Memory-backed features remain fail-closed until their updated mappings and native artifacts are verified.
+- Cameras and scaler found every relocatable anchor/global but remain blocked by fixed-vtable dependencies.
+- Presentation missed 1 of 12 anchors; arena missed 2 of 9; ball missed 2 of 16; scoreboard missed 2 of 18 and retains a fixed-vtable blocker.
+- Roster/team editor, outfits, and jukebox retain non-relocatable hash/native blockers.
+
+Close behavior
+- Removed the normal-window minimize/background close choice.
+- If an owned game/provider session is active, closing the launcher is blocked with a visible explanation so the UI cannot disappear while a provider remains.
+- Once the owned session ends, closing the main window runs shutdown and exits the application.
+
+Validation
+- Updated EXE structural resolver: passed, read-only.
+- Per-feature compatibility inventory: passed, read-only.
+- Rust compile: passed offline/locked.
+- Close-policy tests: 2 passed.
+- QA086 starter CheckOnly: passed; no activation performed.
+
+Dev artifact
+- Dev\Pending\QA086\launcher.exe
+- Size: 59243520 bytes
+- SHA-256: 8F72E44696A7F2BCB521F640A9E8F21B4463357CA29647A530C8320443B0031D
+- Start QA086 Dev.vbs
+
+Live checks still required
+- Confirm the launcher fully exits after a normal close while no owned session is active.
+- Confirm attempting to close during an owned session keeps the window visible and shows the explanation.
+- Only mod loading is compatible with the new game build. Do not treat memory features as accepted until remapped and tested.

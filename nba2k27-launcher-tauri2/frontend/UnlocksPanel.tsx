@@ -77,6 +77,9 @@ export function UnlocksPanel({
   onFreestyleChange,
   freestyleMessage,
   blacktopAvailable = false,
+  debugMenus,
+  debugMenusAvailable,
+  onDebugMenusChange,
 }: {
   blacktop: boolean;
   onBlacktopChange: (value: boolean) => void;
@@ -84,23 +87,12 @@ export function UnlocksPanel({
   onFreestyleChange: (value: boolean) => void;
   freestyleMessage: string;
   blacktopAvailable?: boolean;
+  debugMenus: boolean;
+  debugMenusAvailable: boolean;
+  onDebugMenusChange: (value: boolean) => void;
 }) {
   return (
     <div className="unlocks-content unlocks-workspace">
-      <div
-        className="unlock-category-strip"
-        aria-label="Available unlock categories"
-      >
-        <span className="unlock-category-active" data-ui-icon="unlocks">
-          <UiIcon name="unlocks" />
-          Team access
-        </span>
-        <span data-ui-icon="settings">
-          <UiIcon name="settings" />
-          Experimental
-        </span>
-        <small>Changes apply when you launch with Play</small>
-      </div>
       <div className="unlocks-layout">
         <div className="unlocks-main">
           <section className="unlock-group" aria-labelledby="teamUnlocksTitle">
@@ -151,7 +143,9 @@ export function UnlocksPanel({
               </div>
               <span className="settings-badge">Resets on app launch</span>
             </div>
-            <article className="card debug-unlock-card unavailable">
+            <article
+              className={`card debug-unlock-card${debugMenusAvailable ? "" : " unavailable"}`}
+            >
               <span
                 className="unlock-feature-icon"
                 data-ui-icon="settings"
@@ -159,15 +153,19 @@ export function UnlocksPanel({
               >
                 <UiIcon name="settings" />
               </span>
-              <label className="settings-switch-row unlock-choice unavailable">
+              <label
+                className={`settings-switch-row unlock-choice${debugMenusAvailable ? "" : " unavailable"}`}
+              >
                 <input
                   className="settings-switch"
                   type="checkbox"
                   id="enableDebugMenus"
                   aria-describedby="debugMenuHelp"
-                  checked={false}
-                  disabled
-                  onChange={() => {}}
+                  checked={debugMenus}
+                  disabled={!debugMenusAvailable}
+                  onChange={(event) =>
+                    onDebugMenusChange(event.target.checked)
+                  }
                 />
                 <span>
                   <strong>Enable Debug Menus</strong>
@@ -191,8 +189,11 @@ export function UnlocksPanel({
                 role="status"
                 aria-live="polite"
               >
-                No supported Version 2 route is exposed; no game write will be
-                attempted.
+                {debugMenusAvailable
+                  ? debugMenus
+                    ? "Armed for the next Play session. This resets when the launcher closes."
+                    : "Off for the next Play session."
+                  : "No supported Version 2 route is exposed; no game write will be attempted."}
               </small>
             </article>
           </section>
@@ -209,8 +210,8 @@ export function UnlocksPanel({
             </p>
             <p>
               {blacktopAvailable
-                ? "Freestyle and Blacktop use the verified WNBA roster. Debug menus remain unavailable."
-                : "Freestyle uses the verified WNBA roster. Blacktop and debug menus remain unavailable."}
+                ? "Freestyle and Blacktop use the verified WNBA roster. Debug menus are a separate session-only dev choice."
+                : "Freestyle uses the verified WNBA roster. Blacktop remains unavailable; debug menus are a separate session-only dev choice."}
             </p>
           </section>
           <section className="card unlock-guide-card">

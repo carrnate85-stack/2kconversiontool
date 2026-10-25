@@ -1,25 +1,24 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { UiIcon } from "./wpf/WpfShell";
+import { ActionError } from "./UxFeedback";
 import { call } from "./api";
-import { NativeRules } from "./NativeRules";
-import { NativeOverlayControls } from "./NativeOverlay";
-import { NativeCatalogStatuses } from "./NativeCatalogStatuses";
 import { NativeFeatureStatus, type V2Features } from "./NativeFeatureStatus";
-import { NativeLaunchTiming, type LaunchTimingValue } from "./LaunchTiming";
+import { type LaunchTimingValue } from "./LaunchTiming";
 import { LaunchOverlay } from "./LaunchOverlay";
 import type { ArenaStatus } from "./NativeArena";
 import type { NativeOutfitStatus } from "./NativeOutfits";
 import {
-  NativeSelectorStatus,
   type SelectorSummary,
 } from "./NativeSelectorStatus";
 import {
   inspectPlay,
+  launchAfterSettingsSaved,
   launchRequest,
   playNeedsConfirm,
   playSummary,
   readyToConfirm,
   sessionPollInterval,
+  terminalLaunchFailure,
   type PlayReport as Report,
 } from "./PlayLaunch";
 import "./PlayHome.css";
@@ -28,6 +27,7 @@ type Session = {
   phase: string;
   message: string;
   error: string | null;
+  session?: string;
   automaticFeaturesEnabled: false;
   verifiedRuleWrites: number;
   gameStoppedByLauncher: false;
@@ -46,52 +46,39 @@ type Session = {
     v2Features?: V2Features;
   } | null;
 };
-type BlacktopObservation = {
-  phase: string;
-  message: string;
-  readOnly: true;
-  writes: 0;
-  sample: null | {
-    boundary: string;
-    requiredPlayers: number;
-    selectedPlayers: number;
-    loadedPlayers: number;
-    lineupReady: boolean;
-    playersReady: boolean;
-    currentHash: string;
-    alternateHash: string;
-    stage: number;
-    writes: 0;
-  };
-};
 export function LaunchReadiness({
   gameRoot,
   modsRoot,
   gameFound,
+  debugMenus,
+  waitForSettings,
   children,
 }: {
   gameRoot: string;
   modsRoot: string;
   gameFound?: boolean;
+  debugMenus: boolean;
+  waitForSettings?: () => Promise<void>;
   children?: ReactNode;
 }) {
   const [report, setReport] = useState<Report | null>(null),
     [busy, setBusy] = useState(false),
     [error, setError] = useState(""),
+    [pollError, setPollError] = useState(""),
     [session, setSession] = useState<Session | null>(null),
-    [observer, setObserver] = useState<BlacktopObservation | null>(null),
     [confirm, setConfirm] = useState(false),
     [ack, setAck] = useState(false);
   const [modded, setModded] = useState(false);
-  const [advanced, setAdvanced] = useState(false);
   const [launchStartedAt, setLaunchStartedAt] = useState<number | null>(null);
   const [launchError, setLaunchError] = useState(""),
     [launchNotice, setLaunchNotice] = useState("");
   const pending = useRef(false),
     launching = useRef(false),
-    generation = useRef(0);
+    generation = useRef(0),
+    launchGeneration = useRef(0),
+    launchBeganAt = useRef<number | null>(null);
   const dialog = useRef<HTMLElement>(null);
-  const pollEvery = sessionPollInterval(session?.phase, advanced);
+  const pollEvery = sessionPollInterval(session?.phase, false);
   useEffect(() => {
     if (!confirm) return;
     const before = document.activeElement as HTMLElement | null;
@@ -109,7 +96,7 @@ export function LaunchReadiness({
     return () => {
       ++generation.current;
     };
-  }, [gameRoot, modsRoot]);
+  }, [gameRoot, modsRoot, debugMenus]);
   useEffect(() => {
     let alive = true,
       polling = false;
@@ -117,22 +104,36 @@ export function LaunchReadiness({
       if (polling || (pending.current && !launching.current)) return;
       polling = true;
       try {
-        const [s, o] = await Promise.all([
-          call<Session>("native-session-status"),
-          advanced && !launching.current
-            ? call<BlacktopObservation>("native-blacktop-status")
-            : Promise.resolve(null),
-        ]);
+        const s = await call<Session>("native-session-status");
         if (alive && (!pending.current || launching.current)) {
-          if (launching.current && ["idle", "closed"].includes(s.phase)) return;
+          if (launching.current && ["idle", "closed"].includes(s.phase)) {
+            const stopped = terminalLaunchFailure(
+              s,
+              launchBeganAt.current === null
+                ? 0
+                : Date.now() - launchBeganAt.current,
+            );
+            if (stopped) {
+              ++launchGeneration.current;
+              launching.current = false;
+              pending.current = false;
+              launchBeganAt.current = null;
+              setBusy(false);
+              setSession(s);
+              setReport(null);
+              setError(stopped);
+              setLaunchError(stopped);
+            }
+            return;
+          }
           setSession(s);
+          setPollError("");
           if (s.phase === "closed" && !s.error) {
             setReport((old) => (old?.recoveryRequired ? null : old));
           }
-          if (o) setObserver(o);
         }
       } catch (e) {
-        if (alive) setError(String(e));
+        if (alive) setPollError(String(e));
       } finally {
         polling = false;
       }
@@ -143,28 +144,7 @@ export function LaunchReadiness({
       alive = false;
       clearInterval(timer);
     };
-  }, [advanced, pollEvery]);
-  async function observeBlacktop(stop: boolean) {
-    if (pending.current) return;
-    pending.current = true;
-    setBusy(true);
-    setError("");
-    try {
-      setObserver(
-        await call<BlacktopObservation>(
-          stop ? "native-blacktop-disable" : "native-blacktop-enable",
-          stop
-            ? undefined
-            : { acknowledgement: "read-only-blacktop", gameRoot },
-        ),
-      );
-    } catch (e) {
-      setError(String(e));
-    } finally {
-      pending.current = false;
-      setBusy(false);
-    }
-  }
+  }, [pollEvery]);
   async function launch(isModded: boolean, checked: Report | null) {
     if (pending.current || !readyToConfirm(checked)) return;
     if (
@@ -173,41 +153,56 @@ export function LaunchReadiness({
     )
       return;
     pending.current = true;
-    launching.current = true;
-    // WPF shows its startup overlay only for the normal modded Play.
+    const attempt = ++launchGeneration.current;
     setLaunchError("");
-    setLaunchNotice("");
-    if (isModded) setLaunchStartedAt(Date.now());
+    setLaunchNotice("Saving your choices for this Play session…");
     setBusy(true);
     setError("");
     setConfirm(false);
-    setSession({
-      phase: "waiting-for-game",
-      message: "Checking your launch settings. Keep the launcher open.",
-      error: null,
-      automaticFeaturesEnabled: false,
-      verifiedRuleWrites: 0,
-      gameStoppedByLauncher: false,
-    });
     try {
-      const request = launchRequest(isModded, gameRoot, modsRoot);
-      const started = await call<Session & { startupVideoSkipped?: string }>(
-        request.channel,
-        request.args,
+      const request = launchRequest(isModded, gameRoot, modsRoot, debugMenus);
+      const started = await launchAfterSettingsSaved(
+        waitForSettings,
+        async () => {
+          if (attempt !== launchGeneration.current)
+            throw new Error("Launch was superseded before it was sent.");
+          launching.current = true;
+          launchBeganAt.current = Date.now();
+          // WPF shows its startup overlay only for the normal modded Play.
+          if (isModded) setLaunchStartedAt(Date.now());
+          setLaunchNotice("");
+          setSession({
+            phase: "waiting-for-game",
+            message: "Checking your launch settings. Keep the launcher open.",
+            error: null,
+            automaticFeaturesEnabled: false,
+            verifiedRuleWrites: 0,
+            gameStoppedByLauncher: false,
+          });
+          return call<Session & { startupVideoSkipped?: string }>(
+            request.channel,
+            request.args,
+          );
+        },
       );
+      if (attempt !== launchGeneration.current) return;
       setSession(started);
       if (started.startupVideoSkipped)
         setLaunchNotice(started.startupVideoSkipped);
       setConfirm(false);
       setReport(null);
     } catch (e) {
+      if (attempt !== launchGeneration.current) return;
       setError(String(e));
       setLaunchError(String(e));
       setConfirm(false);
     } finally {
-      launching.current = false;
-      pending.current = false;
-      setBusy(false);
+      if (attempt === launchGeneration.current) {
+        launching.current = false;
+        pending.current = false;
+        launchBeganAt.current = null;
+        setBusy(false);
+      }
     }
   }
   async function clear() {
@@ -367,7 +362,7 @@ export function LaunchReadiness({
           )}
         </div>
       </div>
-      {sessionActive && !advanced && (
+      {sessionActive && (
         <NativeFeatureStatus
           status={session?.nativeProvider?.v2Features}
           issuesOnly
@@ -378,10 +373,27 @@ export function LaunchReadiness({
           {launchNotice}
         </p>
       )}
-      {(error || session?.error) && (
-        <p role="alert" className="notice play-launch-alert">
-          {error || session?.error}
-        </p>
+      {sessionActive &&
+        session?.startupIntro?.phase &&
+        session.startupIntro.phase !== "idle" && (
+          <p
+            role={
+              session.startupIntro.phase === "not-played" ? "alert" : "status"
+            }
+            className={
+              session.startupIntro.phase === "not-played"
+                ? "notice play-launch-alert"
+                : "muted play-launch-alert"
+            }
+          >
+            Startup video: {session.startupIntro.phase}
+            {session.startupIntro.message
+              ? ` · ${session.startupIntro.message}`
+              : ""}
+          </p>
+        )}
+      {(error || pollError || session?.error) && (
+        <ActionError text={error || pollError || session?.error} />
       )}
       {(report?.recoveryRequired ||
         session?.phase === "needs-review" ||
@@ -403,232 +415,13 @@ export function LaunchReadiness({
         <div className="play-launch-blockers" role="alert">
           <strong>Unable to start this session</strong>
           <ul>
-            {report.blockers.slice(0, 3).map((b, i) => (
+            {report.blockers.map((b, i) => (
               <li key={i}>{b}</li>
             ))}
           </ul>
-          <small>
-            Open Advanced for the complete checks and recovery controls.
-          </small>
         </div>
       )}
       {children}
-      <details
-        className="card play-advanced launch-readiness"
-        data-play-advanced
-        open={advanced}
-        onToggle={(e) => {
-          if (e.target === e.currentTarget) setAdvanced(e.currentTarget.open);
-        }}
-      >
-        <summary>
-          Advanced <span>Launch checks, recovery and in-game tools</span>
-        </summary>
-        {advanced && (
-          <div className="card-content">
-            <div className="toolbar">
-              <button disabled={busy} onClick={() => void check()}>
-                {busy ? "Checking…" : "Check launch readiness"}
-              </button>
-              <button
-                disabled={busy || sessionActive}
-                onClick={() => void check("steam-only")}
-              >
-                Launch game only (QA)
-              </button>
-              <span className="muted">
-                Readiness is read-only. Play launches once checks pass; the
-                game-only QA launch asks first.
-              </span>
-            </div>
-            {error && (
-              <p role="alert" className="notice">
-                {error}
-              </p>
-            )}
-            {session && (
-              <div className="native-session-status">
-                <p className="muted">
-                  <strong>{session.phase}</strong> · {session.message}
-                  {session.verifiedRuleWrites > 0 &&
-                    ` · Verified manual rule changes: ${session.verifiedRuleWrites}`}
-                </p>
-                {session.error && (
-                  <p role="alert" className="notice">
-                    {session.error}
-                  </p>
-                )}
-                {session.startupIntro?.phase &&
-                  session.startupIntro.phase !== "idle" && (
-                    <p className="muted">
-                      Startup video: {session.startupIntro.phase}
-                      {session.startupIntro.message
-                        ? ` · ${session.startupIntro.message}`
-                        : ""}
-                    </p>
-                  )}
-                {session.nativeProvider?.phase && (
-                  <p className="muted">
-                    Provider: {session.nativeProvider.phase}{" "}
-                    {session.nativeProvider.error &&
-                      `· ${session.nativeProvider.error}`}
-                  </p>
-                )}
-                <button disabled={busy} onClick={() => void clear()}>
-                  Clear finished launch
-                </button>
-                <NativeSelectorStatus
-                  phase={session.nativeProvider?.phase}
-                  selectors={session.nativeProvider?.selectors}
-                  playerFolderFiles={session.nativeProvider?.playerFolderFiles}
-                />
-                <NativeFeatureStatus
-                  status={session.nativeProvider?.v2Features}
-                />
-                <NativeLaunchTiming timing={session.nativeProvider?.timing} />
-                <NativeCatalogStatuses
-                  phase={session.phase}
-                  provider={session.nativeProvider}
-                />
-              </div>
-            )}
-            <div className="native-blacktop-observer">
-              <h4>Native Blacktop observer · read-only QA</h4>
-              <p className="muted">
-                Observe this prototype’s launched game only. No outfits, balls,
-                scoreboards, rules or crowd changes are applied by this
-                observer. Reading is off until you start it; it is not enabled
-                automatically on restart.
-              </p>
-              <button
-                disabled={
-                  busy ||
-                  (session?.phase !== "game-running" &&
-                    (!observer ||
-                      ["disabled", "ended"].includes(observer.phase)))
-                }
-                onClick={() =>
-                  void observeBlacktop(
-                    !!observer &&
-                      !["disabled", "ended"].includes(observer.phase),
-                  )
-                }
-              >
-                {observer && !["disabled", "ended"].includes(observer.phase)
-                  ? "Stop read-only observer"
-                  : "Start read-only observer"}
-              </button>
-              {observer && (
-                <p className="muted">
-                  <strong>{observer.phase}</strong> · {observer.message}
-                </p>
-              )}
-              {observer?.sample && (
-                <div className="info-grid">
-                  <div>
-                    <small>Blacktop boundary</small>
-                    <strong>{observer.sample.boundary}</strong>
-                  </div>
-                  <div>
-                    <small>Selected / required</small>
-                    <strong>
-                      {observer.sample.selectedPlayers} /{" "}
-                      {observer.sample.requiredPlayers}
-                    </strong>
-                  </div>
-                  <div>
-                    <small>Loaded models</small>
-                    <strong>{observer.sample.loadedPlayers}</strong>
-                  </div>
-                  <div>
-                    <small>Lineup ready</small>
-                    <strong>
-                      {observer.sample.lineupReady ? "Yes" : "No"}
-                    </strong>
-                  </div>
-                </div>
-              )}
-            </div>
-            <NativeOverlayControls
-              gameRoot={gameRoot}
-              running={session?.phase === "game-running"}
-            />
-            <NativeRules
-              gameRoot={gameRoot}
-              running={session?.phase === "game-running"}
-            />
-            {report && (
-              <>
-                <div className="info-grid">
-                  <div>
-                    <small>Process presence</small>
-                    <strong>
-                      {report.processPresenceKnown
-                        ? "Verified snapshot"
-                        : "Unknown — blocked"}
-                    </strong>
-                  </div>
-                  <div>
-                    <small>NBA 2K27</small>
-                    <strong>
-                      {report.gameRunning === null
-                        ? "Unknown"
-                        : report.gameRunning
-                          ? "Running"
-                          : "Not running"}
-                    </strong>
-                  </div>
-                  <div>
-                    <small>Session recovery</small>
-                    <strong>
-                      {report.recoveryRequired
-                        ? "Needs review"
-                        : "No pending journal"}
-                    </strong>
-                  </div>
-                  <div>
-                    <small>File/process checks</small>
-                    <strong>
-                      {report.checksPassed
-                        ? "Read-only checks passed"
-                        : "Blocked / needs review"}
-                    </strong>
-                  </div>
-                </div>
-                {report.launchPlan && (
-                  <p className="muted">
-                    {report.launchPlan.label} · Steam app{" "}
-                    {report.launchPlan.appId}
-                  </p>
-                )}
-                {!!report.blockers.length && (
-                  <ul>
-                    {report.blockers.map((b, i) => (
-                      <li key={i}>{b}</li>
-                    ))}
-                  </ul>
-                )}
-                <p className="muted compact-note">{report.note}</p>
-                {!!report.processes.length && (
-                  <details>
-                    <summary>
-                      Relevant processes · {report.processes.length}
-                    </summary>
-                    {report.processes.map((p) => (
-                      <p key={p.pid}>
-                        {p.name} · PID {p.pid} ·{" "}
-                        {p.identity
-                          ? "Start time and path available"
-                          : "Identity unavailable — no ownership granted"}
-                      </p>
-                    ))}
-                  </details>
-                )}
-              </>
-            )}
-          </div>
-        )}
-      </details>
       {confirm && (
         <div className="modal-backdrop">
           <section

@@ -27,7 +27,7 @@ template<class CategoryHost> class NativeHost {
   const bool dq=VirtualQuery(reinterpret_cast<void*>(base_+p::kDelegate),&delegate,sizeof delegate)==sizeof delegate;
   std::uintptr_t tag{};
   const bool read=outfit_match_v2::value(base_+p::kDelegate,tag);
-  const bool in_image=read && tag>=base_ && tag<base_+0x35BDE000;
+  const bool in_image=read && tag>=base_ && tag<base_+0x36532000;
   return " tag="+(read?(tag==0?std::string("zero"):(in_image?hex(tag-base_):std::string("outside-image"))):std::string("unreadable"))+
    " mgr="+(mq?hex(manager.Type)+"/"+hex(manager.Protect):std::string("query-failed"))+
    " del="+(dq?hex(delegate.Type)+"/"+hex(delegate.Protect):std::string("query-failed"));
@@ -82,7 +82,7 @@ template<class CategoryHost> class NativeHost {
   if(endpoint==Endpoint::foreign)return false;
   for(std::size_t offset=0;offset<raw.size();offset+=8) {
    std::uintptr_t pointer{};std::memcpy(&pointer,raw.data()+offset,8);
-   if(!pointer || pointer<base_ || pointer>=base_+0x35BDE000)return false;
+   if(!pointer || pointer<base_ || pointer>=base_+0x36532000)return false;
    auto rva=pointer-base_;
    if(offset==p::kOffset && rva==p::kGeneral)rva=p::kStock;
    std::memcpy(raw.data()+offset,&rva,8);
@@ -196,7 +196,7 @@ public:
    bool valid=read_memory(base_+p::kVtable,raw.data(),raw.size());normalized=raw;
    for(std::size_t offset=0;valid && offset<raw.size();offset+=8) {
     std::uintptr_t pointer{};std::memcpy(&pointer,raw.data()+offset,8);
-    if(!pointer || pointer<base_ || pointer>=base_+0x35BDE000){valid=false;break;}
+    if(!pointer || pointer<base_ || pointer>=base_+0x36532000){valid=false;break;}
     auto rva=pointer-base_;
     if(offset==p::kOffset) {
      if(pointer!=original){valid=false;break;}

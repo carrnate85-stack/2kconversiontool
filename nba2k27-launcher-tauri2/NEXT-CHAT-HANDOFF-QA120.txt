@@ -1,0 +1,18 @@
+QA120 - accessory preview continuation - 2026-10-22
+
+Current request: keep fixing remaining unsupported accessories, DEV ONLY; do not install or promote. No computer use. Work completed without game launch/memory access, activation, or changes to installed/sharing builds or user Data/Library.
+
+Read artifacts/qa120-accessory-shaders/REPORT.txt and comparison.json first. Source backup: Backups/qa120-accessory-shaders-20261022-125714.
+
+625 additional hats pass actual preview-worker checks. 196 previously supported hats also receive corrected RGB logo-region coloring. Source-bound hat mappings total 821. All 821 worker palettes verified against exact source slots. Existing guards preserved.
+1,023 worker checks: 625 improvements, zero supported-state regressions. 17 warm-cache checks passed. 8 helper tests and 245 frontend tests passed, TypeScript/Vite/generated syntax/native release build passed. Native build emits 90 warnings.
+Visual/GPU/gameplay acceptance is pending. Current localbuildglobal archive decoding still failed; readable shader property names derive from a retained historical archive and were checked against current item bindings/current clothing_global defaults, not current shader bytecode.
+
+Remaining: 57 unsupported within the original 3,731-candidate QA118 set, NOT the entire catalog: 26 material and 31 artwork reasons. Includes 12 transparent WNBA sleeves and 45 hats requiring more opacity/binding/source evidence. Continue from final-baseline.json and make-map.cjs; preserve source hashes/reference evidence. Do not enable arbitrary unknown materials or remove source guards.
+
+Version 0.53.24 staged at Dev/Pending/QA120/launcher.exe (46,962,176 bytes).
+EXE SHA256 0D83FF67C8B6B21626888A36FC93B4C0A6806D28DF99F8F8547023FA1264620A
+PDB SHA256 D7EF1F0B0C079311905AF7F2F73527BEAD0845BC0F5B4193E79E4BA139DAA59E
+User starter: Open QA120 Dev.lnk / Start QA120 Dev.ps1. CheckOnly verified hash and closed game/launcher; no activation performed. Do not activate/install/promote without applicable user authorization. Starter only updates Dev/Portable after backup on user click.
+
+Unrelated known qualifications remain unresolved: QA073 natural Rust test access violation with exact EXE/PDB evidence; QA078 Clang fixture crash; QA106 Season History smoke persistence. Do not silently mark those fixed.

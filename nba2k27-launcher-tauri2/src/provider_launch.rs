@@ -315,6 +315,13 @@ impl Control {
         );
         Ok(serde_json::to_value(self.arena.request(id, check)?)?)
     }
+    pub(crate) fn prepare_custom_arena(&self, assets: &crate::provider_assets::Service, id: &str) -> Result<()> {
+        if id.starts_with("custom-") {
+            let context = self.context.as_ref().context("Custom arenas require a launched game")?;
+            crate::custom_blacktop::publish(&context.owner.portable, &context.mods_root, assets, Some(id))?;
+        }
+        Ok(())
+    }
     pub fn select_ball(&self, id: &str, check: impl FnOnce() -> Result<()>) -> Result<Value> {
         let build = self
             .build
@@ -1150,7 +1157,7 @@ impl Control {
             // static camera tables validated, never waiting for a menu. The
             // armed native loader proves the image is initialized; the 20s
             // settle gate below is the mod loader's, not the camera's.
-            if context.features.camera_scaler_freestyle_enabled() {
+            if context.features.camera_scaler_freestyle_enabled() || context.features.debug_menus {
                 let mut runner = crate::feature_runtime::Runner::new(
                     &context.owner.portable,
                     game,
@@ -1167,10 +1174,11 @@ impl Control {
                 features = Some(runner);
             }
             let mut next_early_features = Instant::now();
-            // Scaler-enabled Play gets its existing owned feature tick without
+            // Scaler/debug-enabled Play gets its owned feature tick without
             // the incidental first 500ms sleep. No work occurs before ARMED;
             // combined enabled lanes keep the same guards/order within tick.
-            let mut first_early_features = context.features.scaler_percent.is_some();
+            let mut first_early_features =
+                context.features.scaler_percent.is_some() || context.features.debug_menus;
             let settle = Instant::now();
             // Exact pinned V2 only, after the owned ARMED report: read-only
             // stock-manager proof may end this gate early. Any doubt keeps
@@ -1575,60 +1583,82 @@ impl Control {
         );
         let cleanup = physical_before_memory(
             || -> Result<()> {
-                server.shutdown()?;
-                if let Some(s) = &mut loader {
-                    s.restore(|| closed(&context.parent))?;
-                }
-                if let Some(s) = &mut selector_files {
-                    s.restore(|| closed(&context.parent))?;
-                } else if let Some(mut interrupted) = crate::selector_files::Store::recover(
-                    &context.owner.portable,
-                    &context.mods_root,
-                    &context.owner.session,
-                )? {
-                    interrupted.restore(|| closed(&context.parent))?;
-                }
-                if let Some(s) = &mut camera_names {
-                    s.restore(|| closed(&context.parent))?;
-                } else if let Some(mut interrupted) = crate::camera_name_files::Store::recover(
-                    &context.owner.portable,
-                    &context.mods_root,
-                    &context.owner.session,
-                )? {
-                    interrupted.restore(|| closed(&context.parent))?;
-                }
-                if let Some(s) = &mut players {
-                    s.restore(|| closed(&context.parent))?;
-                } else if let Some(mut interrupted) = crate::player_folders::Store::recover(
-                    &context.owner.portable,
-                    &context.mods_root,
-                    &context.owner.session,
-                )? {
-                    interrupted.restore(|| closed(&context.parent))?;
-                }
-                // shutdown() above drains readers and releases every retained
-                // audio handle before the Store needs DELETE access for restore.
-                if let Some(session) = &jukebox {
-                    *self
-                        .jukebox
-                        .lock()
-                        .map_err(|_| anyhow::anyhow!("Jukebox status unavailable"))? = json!({"phase":"restoring","message":"Restoring exact-owned playlist files after game exit","gameplayVerified":false});
-                    session.restore(|| closed(&context.parent))?;
-                } else if crate::jukebox_launch::pending(&context.owner.portable)? {
-                    crate::jukebox_launch::recover_ended(
+                let mut failures = Vec::new();
+                crate::native_session::cleanup_step(&mut failures, "provider server", || {
+                    server.shutdown()
+                });
+                crate::native_session::cleanup_step(&mut failures, "loader", || {
+                    if let Some(s) = &mut loader {
+                        s.restore(|| closed(&context.parent))?;
+                    }
+                    Ok(())
+                });
+                crate::native_session::cleanup_step(&mut failures, "selectors", || {
+                    if let Some(s) = &mut selector_files {
+                        s.restore(|| closed(&context.parent))?;
+                    } else if let Some(mut interrupted) = crate::selector_files::Store::recover(
                         &context.owner.portable,
                         &context.mods_root,
                         &context.owner.session,
-                        || closed(&context.parent),
-                    )?;
-                }
-                *self
-                    .jukebox
-                    .lock()
-                    .map_err(|_| anyhow::anyhow!("Jukebox status unavailable"))? = json!({"phase":"default","message":"Owned playlist files restored; saved next-Play selection is unchanged","gameplayVerified":false});
-                if let Some(s) = &mut profile {
-                    s.restore(|| closed(&context.parent))?;
-                }
+                    )? {
+                        interrupted.restore(|| closed(&context.parent))?;
+                    }
+                    Ok(())
+                });
+                crate::native_session::cleanup_step(&mut failures, "camera labels", || {
+                    if let Some(s) = &mut camera_names {
+                        s.restore(|| closed(&context.parent))?;
+                    } else if let Some(mut interrupted) = crate::camera_name_files::Store::recover(
+                        &context.owner.portable,
+                        &context.mods_root,
+                        &context.owner.session,
+                    )? {
+                        interrupted.restore(|| closed(&context.parent))?;
+                    }
+                    Ok(())
+                });
+                crate::native_session::cleanup_step(&mut failures, "player links", || {
+                    if let Some(s) = &mut players {
+                        s.restore(|| closed(&context.parent))?;
+                    } else if let Some(mut interrupted) = crate::player_folders::Store::recover(
+                        &context.owner.portable,
+                        &context.mods_root,
+                        &context.owner.session,
+                    )? {
+                        interrupted.restore(|| closed(&context.parent))?;
+                    }
+                    Ok(())
+                });
+                crate::native_session::cleanup_step(&mut failures, "Jukebox", || {
+                    // shutdown() above drains readers and releases every retained
+                    // audio handle before the Store needs DELETE access for restore.
+                    if let Some(session) = &jukebox {
+                        *self
+                            .jukebox
+                            .lock()
+                            .map_err(|_| anyhow::anyhow!("Jukebox status unavailable"))? = json!({"phase":"restoring","message":"Restoring exact-owned playlist files after game exit","gameplayVerified":false});
+                        session.restore(|| closed(&context.parent))?;
+                    } else if crate::jukebox_launch::pending(&context.owner.portable)? {
+                        crate::jukebox_launch::recover_ended(
+                            &context.owner.portable,
+                            &context.mods_root,
+                            &context.owner.session,
+                            || closed(&context.parent),
+                        )?;
+                    }
+                    *self
+                        .jukebox
+                        .lock()
+                        .map_err(|_| anyhow::anyhow!("Jukebox status unavailable"))? = json!({"phase":"default","message":"Owned playlist files restored; saved next-Play selection is unchanged","gameplayVerified":false});
+                    Ok(())
+                });
+                crate::native_session::cleanup_step(&mut failures, "profile junction", || {
+                    if let Some(s) = &mut profile {
+                        s.restore(|| closed(&context.parent))?;
+                    }
+                    Ok(())
+                });
+                crate::native_session::cleanup_result(failures)?;
                 Ok(())
             },
             || -> Result<()> {

@@ -796,7 +796,9 @@ fn append_freestyle_with(
     ensure!(
         config.is_ascii()
             && text.ends_with("\r\n")
-            && text.lines().any(|l| l == format!("AUDIO_CUSTOM_MAIN={}", policy.custom))
+            && text
+                .lines()
+                .any(|l| l == format!("AUDIO_CUSTOM_MAIN={}", policy.custom))
             && !text
                 .lines()
                 .any(|l| l.to_ascii_uppercase().starts_with("FREESTYLE_")),

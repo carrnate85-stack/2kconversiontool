@@ -49,7 +49,12 @@ pub(crate) fn choices() -> &'static [Choice] {
     })
     .choices
 }
-pub(crate) fn choice(id: &str) -> Result<&'static Choice> {
+pub(crate) fn choice(id: &str) -> Result<Choice> {
+    if id.starts_with("custom-") {
+        let c = crate::custom_blacktop::resolve(id)?;
+        choice_fields(&c)?;
+        return Ok(c);
+    }
     let mut rows = choices().iter().filter(|c| c.id == id);
     let c = rows
         .next()
@@ -75,7 +80,7 @@ pub(crate) fn choice(id: &str) -> Result<&'static Choice> {
             )?;
         }
     }
-    Ok(c)
+    Ok(c.clone())
 }
 fn valid_file(s: &str, max: usize) -> bool {
     !s.is_empty()
@@ -84,8 +89,22 @@ fn valid_file(s: &str, max: usize) -> bool {
             .all(|b| b == b'_' || b.is_ascii_lowercase() || b.is_ascii_digit())
 }
 pub(crate) fn template_fields(file: &str, floor: &str) -> Result<Vec<u8>> {
+    ensure!(floor == format!("{file}_floor"), "Invalid arena template filenames");
+    filename_fields(file, floor)
+}
+pub(crate) fn choice_fields(c: &Choice) -> Result<Vec<u8>> {
+    let file = c.file.as_deref().context("Arena file missing")?;
+    let floor = c.floor_file.as_deref().context("Court file missing")?;
+    if c.id.starts_with("custom-") {
+        ensure!(crate::custom_blacktop::resolve(&c.id)? == *c, "Unregistered custom arena fields");
+        filename_fields(file, floor)
+    } else {
+        template_fields(file, floor)
+    }
+}
+pub(crate) fn filename_fields(file: &str, floor: &str) -> Result<Vec<u8>> {
     ensure!(
-        valid_file(file, 38) && valid_file(floor, 40) && floor == format!("{file}_floor"),
+        valid_file(file, 38) && valid_file(floor, 40),
         "Invalid arena template filenames"
     );
     let mut bytes = vec![0; 78];
@@ -112,6 +131,7 @@ pub(crate) fn valid_mapping(bytes: &[u8; 20]) -> bool {
 pub(crate) fn valid_template_fields(record: &Record, bytes: &[u8]) -> bool {
     record.id == 700
         && (bytes == record.fields
+            || crate::custom_blacktop::known_fields(bytes)
             || choices()
                 .iter()
                 .filter(|c| !c.disabled && c.template_arena_id == Some(700))
@@ -258,7 +278,7 @@ pub(crate) fn revalidate(m: &impl Inspect, r: &Record, expected: &[u8]) -> Resul
 }
 pub(crate) fn capture(m: &impl Inspect, c: &Choice, expected: &[u8; 20]) -> Result<Snapshot> {
     ensure!(
-        choice(&c.id)? == c,
+        choice(&c.id)? == *c,
         "Arena request differs from the exact embedded catalog record"
     );
     validate(m)?;
@@ -522,13 +542,13 @@ mod tests {
     fn selection_capture_accepts_original_zero_id_and_template_without_writes() {
         let f = fixture();
         let c = choice("arena_000_int").unwrap();
-        let s = capture(&f, c, &STOCK).unwrap();
+        let s = capture(&f, &c, &STOCK).unwrap();
         assert_eq!(s.record.unwrap().id, 0);
         let c = choice("arena_brickleyfacility_int").unwrap();
-        let s = capture(&f, c, &STOCK).unwrap();
+        let s = capture(&f, &c, &STOCK).unwrap();
         assert_eq!(s.record.unwrap().id, 700);
         assert!(
-            capture(&f, choice("default").unwrap(), &STOCK)
+            capture(&f, &choice("default").unwrap(), &STOCK)
                 .unwrap()
                 .record
                 .is_none()
@@ -540,31 +560,31 @@ mod tests {
         let c = choice("arena_000_int").unwrap();
         let mut f = fixture();
         f.put(f.base() + 0xAC77660 + 64, &0x6509837Bu32.to_le_bytes());
-        assert!(capture(&f, c, &STOCK).is_err());
+        assert!(capture(&f, &c, &STOCK).is_err());
         let mut f = fixture();
         f.put(f.base() + ANCHORS[0].0, &[0; 7]);
-        assert!(capture(&f, c, &STOCK).is_err());
+        assert!(capture(&f, &c, &STOCK).is_err());
         let mut f = fixture();
         f.regions[0].protection = 4;
-        assert!(capture(&f, c, &STOCK).is_err());
+        assert!(capture(&f, &c, &STOCK).is_err());
         let mut f = fixture();
         f.regions[1].allocation += 0x1000;
-        assert!(capture(&f, c, &STOCK).is_err());
+        assert!(capture(&f, &c, &STOCK).is_err());
         let mut f = fixture();
         f.row(2, 700, "arena_700_int");
-        assert!(capture(&f, c, &STOCK).is_err());
+        assert!(capture(&f, &c, &STOCK).is_err());
         let mut f = fixture();
         f.row(2, 0, "arena_000_int");
-        assert!(capture(&f, c, &STOCK).is_err());
+        assert!(capture(&f, &c, &STOCK).is_err());
         let mut f = fixture();
         f.torn = Some(f.base() + MAPPING);
-        assert!(capture(&f, c, &STOCK).is_err());
+        assert!(capture(&f, &c, &STOCK).is_err());
         let mut f = fixture();
         f.torn = Some(0x3000000b0);
-        assert!(capture(&f, c, &STOCK).is_err());
+        assert!(capture(&f, &c, &STOCK).is_err());
         let f = fixture();
         f.cancel.set(true);
-        assert!(capture(&f, c, &STOCK).is_err());
+        assert!(capture(&f, &c, &STOCK).is_err());
     }
     #[test]
     fn forged_catalog_choices_and_stale_native_record_leases_are_rejected() {
@@ -573,7 +593,7 @@ mod tests {
         let mut forged = c.clone();
         forged.file = Some("arena_001_int".into());
         assert!(capture(&f, &forged, &STOCK).is_err());
-        let s = capture(&f, c, &STOCK).unwrap();
+        let s = capture(&f, &c, &STOCK).unwrap();
         let r = s.record.unwrap();
         revalidate(&f, &r, &r.fields).unwrap();
         let mut forged = r.clone();

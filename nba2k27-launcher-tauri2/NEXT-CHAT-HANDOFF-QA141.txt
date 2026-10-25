@@ -1,0 +1,13 @@
+QA141 FINAL — Production0.53.44 installed and sharing EXE ready.
+Main:C:\Program Files (x86)\Steam\steamapps\common\NBA 2K27\2k Launcher\App\2k Launcher Rust.exe
+Share:C:\Users\carrn\CodexProjects\2kconversiontool\nba2k27-launcher-tauri2\Builds\0.53.44\Share-QA141-Production\NBA 2K27 Launcher 0.53.44.exe
+SHA256 both:34F7BFD5273C7118EA42FE626AF4FC9754A366DC261D6AA5F40F3F57FD0753CF
+Bytes:47994368
+Features:custom-protocol ONLY. No dev-curator,dev-debug-menus,dev-wnba-categories; debug assertions false. Cargo compiler artifact evidence:artifacts/qa141-production/production-feature-proof.json.
+No Curator/GitHub publishing, debug-menu controls, or experimental WNBA categories in Main/Share. Regular Downloads and QA130–QA140 UI updates included. Dev QA140 remains staged separately; do not confuse it with production.
+Recovery:C:\Program Files (x86)\Steam\steamapps\common\NBA 2K27\2k Launcher\Recovery\App-before-QA141-20261024-143115-5879
+Receipt:C:\Users\carrn\CodexProjects\2kconversiontool\nba2k27-launcher-tauri2\artifacts\qa141-main-promotion-20261024-143115-5879.json
+188Data files and484Library files verified unchanged. Prior App backup verified. No game/launcher started during promotion.
+Validation:252frontend tests,25isolated download/import tests passed;5opt-in native ignored. TypeScript,Vite,production release passed. Exact candidate UI smoke initialized and passed13checks before unchanged QA106 Season History persistence assertion; full smoke not passed. Initial sandbox smoke failed to initialize; authorized unsandboxed isolated retry produced report and exited0. No gameplay validation claimed.
+QA073 natural Rust AV and QA078 Clang fixture crash remain unresolved. Original full preview pack retained; new complete pack upload still pending.
+User explicitly authorized promotion and demanded no dev features. Future Main/Share release must use --no-default-features --features custom-protocol. Do not publish development flags.

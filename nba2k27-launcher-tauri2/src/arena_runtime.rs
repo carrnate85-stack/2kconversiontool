@@ -160,7 +160,8 @@ impl Runner {
         // on the shared provider loop could outlast a short selection visit
         // (live 0.51: saved arena missed the first visit, applied the next).
         if self.stable < STABLE_TICKS
-            || (request.revision == self.revision && self.checked_selection)
+            || (request.revision == self.revision && self.checked_selection
+                && !request.requested_id.starts_with("custom-"))
         {
             return Ok(());
         }

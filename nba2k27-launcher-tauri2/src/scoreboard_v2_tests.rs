@@ -174,7 +174,7 @@ fn exact_v2_reader_preflights_all_19_choices_without_writes() {
 }
 #[test]
 fn native_profile_and_resource_owner_changes_are_rejected() {
-    for target in [0x119504D, VTABLE + 0xC8] {
+    for target in [0x11950CD, VTABLE + 0xC8] {
         let mut f = fixture();
         let a = f.base() + target;
         f.put(a, &[0xCC]);
@@ -600,25 +600,32 @@ fn restore_descriptor_mismatch_reports_only_first_span_metadata_and_never_writes
 }
 
 #[test]
-fn class_bound_lifecycle_head_changes_do_not_block_owned_progress_or_restore() {
+fn class_bound_context_bookkeeping_changes_do_not_block_owned_progress_or_restore() {
     let mut f = fixture();
     let s = capture(&f, "era-1990", true).unwrap();
     let p = s.plan().unwrap();
-    assert!(
-        s.spans.iter().all(|span| !(span.address <= CTX + 0x88
-            && CTX + 0x88 < span.address + span.bytes.len() as u64))
-    );
+    assert!(s.spans.iter().all(|span| {
+        span.address + span.bytes.len() as u64 <= CTX + 8 || span.address >= CTX + 0xA0
+    }));
     for (i, c) in p.changes.iter().enumerate() {
-        // Deliberately unaligned/opaque values are never adopted or dereferenced.
-        f.q(CTX + 0x88, 0xAABBCCDD00000001 + i as u64);
+        // Exact live failures occurred at +48 and +68. Deliberately opaque
+        // values across that block are never adopted or dereferenced.
+        f.q(
+            CTX + if i % 2 == 0 { 0x48 } else { 0x68 },
+            0xAABBCCDD00000001 + i as u64,
+        );
         guard_progress(&f, &s, &p, i).unwrap();
         f.put(c.address, &c.after);
     }
     f.menu("main-menu");
-    f.q(CTX + 0x88, 0);
+    f.q(CTX + 0x48, 0);
+    f.q(CTX + 0x68, 0);
     let (_, reverse) = restore_plan(&f, &s, &p, p.changes.len()).unwrap();
     for (i, c) in reverse.changes.iter().enumerate() {
-        f.q(CTX + 0x88, 0xF0E0D0C000000001 + i as u64);
+        f.q(
+            CTX + if i % 2 == 0 { 0x48 } else { 0x68 },
+            0xF0E0D0C000000001 + i as u64,
+        );
         guard_restore(&f, &s, &p, p.changes.len(), i).unwrap();
         f.put(c.address, &c.after);
     }
@@ -627,7 +634,7 @@ fn class_bound_lifecycle_head_changes_do_not_block_owned_progress_or_restore() {
 }
 #[test]
 fn lifecycle_exception_keeps_neighbors_class_header_buckets_and_semantic_code_exact() {
-    for offset in [0u64, 8, 0x48, 0x87, 0xA0, 0xA4, 0xA8] {
+    for offset in [0u64, 0xA0, 0xA4, 0xA8] {
         let mut f = fixture();
         let s = capture(&f, "simple", true).unwrap();
         let p = s.plan().unwrap();
@@ -649,8 +656,8 @@ fn lifecycle_exception_keeps_neighbors_class_header_buckets_and_semantic_code_ex
 }
 
 #[test]
-fn every_proven_global_bookkeeping_byte_is_non_authoritative_but_instance_serial_stays_exact() {
-    for offset in 0x88..0xA0 {
+fn every_opaque_context_bookkeeping_byte_is_non_authoritative_but_instance_serial_stays_exact() {
+    for offset in 0x08..0xA0 {
         let mut f = fixture();
         let s = capture(&f, "simple", true).unwrap();
         let p = s.plan().unwrap();
@@ -683,4 +690,74 @@ fn every_proven_global_bookkeeping_byte_is_non_authoritative_but_instance_serial
     f.q(f.base() + RESOURCES, CTX + 8);
     assert!(guard_progress(&f, &s, &p, 0).is_err());
     assert!(restore_plan(&f, &s, &p, 0).is_err());
+}
+
+#[test]
+fn unrelated_registry_rows_may_load_after_apply_but_not_during_forward_publication() {
+    let other_index = profile::catalog()
+        .unwrap()
+        .iter()
+        .position(|c| c.resource != profile::STOCK && c.id != "era-1990")
+        .unwrap();
+    let unrelated_name = REGISTRY + 4 + other_index as u64 * 260 + 4;
+
+    let mut forward = fixture();
+    let snapshot = capture(&forward, "era-1990", true).unwrap();
+    let plan = snapshot.plan().unwrap();
+    let byte = forward.inner.read(unrelated_name, 1).unwrap()[0];
+    forward.put(unrelated_name, &[byte ^ 1]);
+    assert!(guard_progress(&forward, &snapshot, &plan, 0).is_err());
+
+    let mut ready = fixture();
+    let snapshot = capture(&ready, "era-1990", true).unwrap();
+    let plan = snapshot.plan().unwrap();
+    for change in &plan.changes {
+        ready.put(change.address, &change.after);
+    }
+    let byte = ready.inner.read(unrelated_name, 1).unwrap()[0];
+    ready.put(unrelated_name, &[byte ^ 1]);
+    guard_progress(&ready, &snapshot, &plan, plan.changes.len()).unwrap();
+    ready.menu("main-menu");
+    let (_, reverse) = restore_plan(&ready, &snapshot, &plan, plan.changes.len()).unwrap();
+    assert_eq!(reverse.changes.len(), plan.changes.len());
+}
+
+#[test]
+fn selected_registry_row_and_uniqueness_remain_exact_after_apply() {
+    let choice = profile::choice("era-1990").unwrap();
+    let choices = profile::catalog().unwrap();
+    let selected_index = choices
+        .iter()
+        .position(|c| c.resource == choice.resource)
+        .unwrap();
+    let other_index = choices
+        .iter()
+        .position(|c| c.resource != profile::STOCK && c.resource != choice.resource)
+        .unwrap();
+
+    let completed = |mut f: Fake| {
+        let snapshot = capture(&f, "era-1990", true).unwrap();
+        let plan = snapshot.plan().unwrap();
+        for change in &plan.changes {
+            f.put(change.address, &change.after);
+        }
+        (f, snapshot, plan)
+    };
+
+    let (mut changed, snapshot, plan) = completed(fixture());
+    let selected_name = REGISTRY + 4 + selected_index as u64 * 260 + 4;
+    let byte = changed.inner.read(selected_name, 1).unwrap()[0];
+    changed.put(selected_name, &[byte ^ 1]);
+    assert!(guard_progress(&changed, &snapshot, &plan, plan.changes.len()).is_err());
+
+    let (mut duplicate, snapshot, plan) = completed(fixture());
+    let other = REGISTRY + 4 + other_index as u64 * 260;
+    duplicate.d(other, choice.resource);
+    assert!(guard_progress(&duplicate, &snapshot, &plan, plan.changes.len()).is_err());
+
+    let (mut changed_id, snapshot, plan) = completed(fixture());
+    changed_id.d(other, 0x12345678);
+    assert!(guard_progress(&changed_id, &snapshot, &plan, plan.changes.len()).is_err());
+    changed_id.menu("main-menu");
+    assert!(restore_plan(&changed_id, &snapshot, &plan, plan.changes.len()).is_err());
 }

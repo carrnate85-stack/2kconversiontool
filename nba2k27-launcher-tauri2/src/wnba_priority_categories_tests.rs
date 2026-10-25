@@ -113,9 +113,9 @@ fn fixture() -> (Fake, Vec<u8>, Vec<u8>) {
     let priority = 0x40000;
     f.q(base + 0xBB9A8E8 + 0x38, context);
     f.q(context + 0x100, manager);
-    f.q(manager, base + 0x812C7C8);
+    f.q(manager, base + 0x812C8C8);
     f.q(manager + 0x48, priority);
-    f.q(priority, base + 0x812D868);
+    f.q(priority, base + 0x812D968);
     f.q(priority + 8, manager);
     f.q(priority + 0x10, 0x50000);
     f.q(priority + 0x18, 0x60000);

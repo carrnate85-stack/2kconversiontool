@@ -164,7 +164,7 @@ export function PlayJukeboxChoice({
       <label className="home-startup-toggle">
         <span className="home-field-label" data-ui-icon="jukebox">
           <UiIcon name="jukebox" />
-          Jukebox playlist
+          Jukebox Playlist
         </span>
         <input
           id="homeJukeboxEnabled"
@@ -179,7 +179,7 @@ export function PlayJukeboxChoice({
       </label>
       <select
         id="homeJukeboxPlaylist"
-        aria-label="Jukebox playlist"
+        aria-label="Jukebox Playlist"
         value={selectedId}
         disabled={!available || busy}
         onChange={(event) => {

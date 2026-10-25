@@ -742,7 +742,11 @@ fn prepared_cache_ignores_foreign_invalid_or_linked_records() {
     assert!(!clear(&f.root).unwrap());
 }
 fn freestyle_policy(custom_slots: usize) -> AudioPolicy {
-    let custom = format!("{}{}", "1".repeat(custom_slots), "0".repeat(71 - custom_slots));
+    let custom = format!(
+        "{}{}",
+        "1".repeat(custom_slots),
+        "0".repeat(71 - custom_slots)
+    );
     AudioPolicy {
         main: custom.clone(),
         park: "0".repeat(54),
@@ -819,10 +823,14 @@ fn v2_proxy_source_uses_rust_owned_freestyle_profile() {
         "if(count<1||count>58)return false;",
         "key!=0xFAB3211A",
     ] {
-        assert!(source.contains(proof), "V2 Freestyle parser anchor changed: {proof}");
+        assert!(
+            source.contains(proof),
+            "V2 Freestyle parser anchor changed: {proof}"
+        );
     }
     let header = include_str!("../native/freestyle_build_profile_v2.hpp");
     assert!(header.contains("timestamp==0x6AC53765 && image_size==0x35BDE000"));
+    assert!(header.contains("timestamp==0x6AD2E48C && image_size==0x36532000"));
     assert!(header.contains("{0x25C4A7,0xA31E7D0,0x677F930,"));
     assert!(header.contains("{0x48,0x8d,0x0d,0x22,0x23,0x0c,0x0a}"));
 }

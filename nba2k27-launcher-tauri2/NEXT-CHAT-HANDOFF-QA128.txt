@@ -1,0 +1,26 @@
+QA128 startup-video layout fix - 2026-10-24
+Dev only, version 0.53.32. No install, promotion or dev activation by the assistant.
+
+QA127 live trace confirms Playing and decoded frame; user reports small top-center picture.
+Root cause: frontend/style.css video selector contributes max-height:450px and margin-top:18px. The startup-specific rule previously did not reset those properties. The native fullscreen window was not sufficient to stretch the inner video.
+Fix: startup-specific video fills the viewport absolutely, clears max-width/max-height and all margins/padding/borders, retains object-fit:contain and centers the image. Catalog video/photo styling unchanged.
+Frame telemetry now records decoded size, video rectangle, viewport, fit and DPI ratio. Dev-only isolated probe asserts full viewport coverage above the old cap and contain aspect behavior.
+
+Verification with actual compiled Tauri/WebView2 intro route and copied MP4:
+Negative control (old CSS): decoded 1920x1080, viewport1280x830, video rectangle[0,18,1280,450], expected failure/exit1 at540ms.
+Exact staged fixed candidate: decoded1920x1080, viewport1280x830, video rectangle[0,0,1280,830], pass/exit0 at544ms.
+These silent fixtures do not access the game, guardian or mixer, and do not exercise game fullscreen/Alt-Tab. Actual fullscreen game presentation remains for user confirmation.
+TypeScript, 6 focused frontend tests, Vite and release build passed. Existing compiler warnings remain. Main native test suite not rerun for this CSS change.
+
+Candidate: C:\Users\carrn\CodexProjects\2kconversiontool\nba2k27-launcher-tauri2\Dev\Pending\QA128\launcher.exe
+SHA256: 5A2A76EE691705FA8797BBC052815C1F01F2BA20C8ABFF8DBCA164EA4EC4D6C6
+Bytes: 59573248
+PDB SHA256: 4FD3FCC68536546D822B672D486347E8AE777EC93EFA2281A1B44405C8F7D224
+Guardian unchanged SHA256: 9F738AF9AD229C23EBD1D8D0883C32FB311F50E4486931BEE78605B9F6E325FE
+Starter: Open QA128 Dev.lnk / Start QA128 Dev.ps1. Hash/size checks and idle guard retained. See starter-check.log for current availability. User closes existing dev launcher normally before opening this shortcut.
+
+Main and Share freshly verified unchanged at QA124 0.53.28, SHA256236166C70F014ED835A533BE27CF52DA5DA9A612C62331CE88288D30D44F8CFD.
+Dev Data/Library preserved. Source backups: Backups/qa128-startup-layout-20261024.
+Unresolved QA073 natural Rust AV/exact EXE-PDB, QA078 Clang fixture crash and QA106 Season History qualification remain unchanged.
+
+Evidence: artifacts/qa128-startup-layout. Read REPORT.txt, candidate.json and probe-before/probe-after logs. Latest user test QA127 successfully played but was small. QA128 fixes verified CSS sizing; no user gameplay acceptance claimed.

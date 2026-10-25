@@ -189,11 +189,17 @@ impl Image {
             pe >= 0x40 && pe + 24 + 112 <= 4096 && &h[pe..pe + 4] == b"PE\0\0",
             parse
         );
-        ensure!(u16::from_le_bytes(h[pe + 24..pe + 26].try_into()?) == 0x20B, parse);
+        ensure!(
+            u16::from_le_bytes(h[pe + 24..pe + 26].try_into()?) == 0x20B,
+            parse
+        );
         let count = u16::from_le_bytes(h[pe + 6..pe + 8].try_into()?) as usize;
         let optional = u16::from_le_bytes(h[pe + 20..pe + 22].try_into()?) as usize;
         let start = pe + 24 + optional;
-        ensure!((1..=96).contains(&count) && start + count * 40 <= h.len(), parse);
+        ensure!(
+            (1..=96).contains(&count) && start + count * 40 <= h.len(),
+            parse
+        );
         let d = |o: usize| u32::from_le_bytes(h[o..o + 4].try_into().unwrap());
         let sections = (0..count)
             .map(|i| {
@@ -239,7 +245,9 @@ impl Image {
                 let raw = self
                     .bytes()
                     .get(s.raw as usize..s.raw as usize + s.raw_size as usize)?;
-                let name = String::from_utf8_lossy(&s.name).trim_end_matches('\0').to_string();
+                let name = String::from_utf8_lossy(&s.name)
+                    .trim_end_matches('\0')
+                    .to_string();
                 Some((name, s.va, raw))
             })
             .collect()
@@ -248,14 +256,22 @@ impl Image {
     pub(crate) fn section_name(&self, rva: u32) -> Option<String> {
         self.sections
             .iter()
-            .find(|s| rva >= s.va && (rva as u64) < s.va as u64 + s.virtual_size.max(s.raw_size) as u64)
-            .map(|s| String::from_utf8_lossy(&s.name).trim_end_matches('\0').to_string())
+            .find(|s| {
+                rva >= s.va && (rva as u64) < s.va as u64 + s.virtual_size.max(s.raw_size) as u64
+            })
+            .map(|s| {
+                String::from_utf8_lossy(&s.name)
+                    .trim_end_matches('\0')
+                    .to_string()
+            })
     }
     /// Section flags for `rva` (writable 0x80000000, executable 0x20000000).
     pub(crate) fn section_flags(&self, rva: u32) -> Option<u32> {
         self.sections
             .iter()
-            .find(|s| rva >= s.va && (rva as u64) < s.va as u64 + s.virtual_size.max(s.raw_size) as u64)
+            .find(|s| {
+                rva >= s.va && (rva as u64) < s.va as u64 + s.virtual_size.max(s.raw_size) as u64
+            })
             .map(|s| s.flags)
     }
     pub(crate) fn read_rva(&self, rva: u32, n: usize) -> Option<&[u8]> {
@@ -303,7 +319,8 @@ impl Image {
         (count, hits)
     }
     fn matches_at(&self, rva: u32, sig: &Sig) -> bool {
-        self.at(rva, sig.bytes.len()).is_some_and(|b| matches(b, sig))
+        self.at(rva, sig.bytes.len())
+            .is_some_and(|b| matches(b, sig))
     }
     fn call_target(&self, rva: u32) -> Option<u32> {
         let b = self.at(rva, 5)?;
@@ -578,12 +595,19 @@ pub(crate) fn proven(report: &Value) -> Result<bool> {
     if ok {
         let c = &report["checks"];
         ensure!(
-            ["managerClusterCandidates", "baseClusterCandidates", "pathCandidates", "referenceReleaseCandidates"]
-                .iter()
-                .all(|k| c[*k] == 1)
+            [
+                "managerClusterCandidates",
+                "baseClusterCandidates",
+                "pathCandidates",
+                "referenceReleaseCandidates"
+            ]
+            .iter()
+            .all(|k| c[*k] == 1)
                 && c["executableVtableTargets"] == VTABLE_SLOTS
                 && report["layout"].as_object().is_some_and(|m| m.len() == 20)
-                && report["vtable"].as_array().is_some_and(|v| v.len() == VTABLE_SLOTS),
+                && report["vtable"]
+                    .as_array()
+                    .is_some_and(|v| v.len() == VTABLE_SLOTS),
             "Provider resolver reported success without unique structural validation."
         );
     }
@@ -617,7 +641,9 @@ fn cache_dir(root: &Path) -> PathBuf {
 pub(crate) fn status(root: &Path, game_root: &Path, force: bool) -> Result<Value> {
     let exe = game_root.join("NBA2K27.exe");
     if !exe.is_file() {
-        return Ok(json!({"status":"blocked","message":"Choose the installed NBA 2K27 folder.","report":null}));
+        return Ok(
+            json!({"status":"blocked","message":"Choose the installed NBA 2K27 folder.","report":null}),
+        );
     }
     let (size, modified, stamp) = identity(&exe)?;
     if !force {
@@ -676,8 +702,14 @@ fn view(mut report: Value, source: &str) -> Value {
 fn pinned_comparison(report: &Value) -> Value {
     let key = format!(
         "{}:{}",
-        report["timestamp"].as_str().unwrap_or("").trim_start_matches("0x"),
-        report["imageSize"].as_str().unwrap_or("").trim_start_matches("0x")
+        report["timestamp"]
+            .as_str()
+            .unwrap_or("")
+            .trim_start_matches("0x"),
+        report["imageSize"]
+            .as_str()
+            .unwrap_or("")
+            .trim_start_matches("0x")
     );
     let known = crate::launcher_health::known_build(&key);
     json!({
@@ -698,7 +730,11 @@ fn read_cache(root: &Path, exe: &Path, size: u64, stamp: &str) -> Option<Value> 
         let valid = name.len() == 22
             && name.ends_with(".json")
             && name[..17].bytes().enumerate().all(|(i, b)| {
-                if i == 8 { b == b'-' } else { b.is_ascii_hexdigit() && !b.is_ascii_lowercase() }
+                if i == 8 {
+                    b == b'-'
+                } else {
+                    b.is_ascii_hexdigit() && !b.is_ascii_lowercase()
+                }
             });
         let meta = entry.metadata().ok()?;
         if !valid || !meta.is_file() || meta.len() > 256 * 1024 {
@@ -725,8 +761,14 @@ fn write_cache(root: &Path, report: &Value) -> Result<()> {
     fs::create_dir_all(&dir)?;
     let name = format!(
         "{}-{}.json",
-        report["timestamp"].as_str().unwrap_or("").trim_start_matches("0x"),
-        report["imageSize"].as_str().unwrap_or("").trim_start_matches("0x")
+        report["timestamp"]
+            .as_str()
+            .unwrap_or("")
+            .trim_start_matches("0x"),
+        report["imageSize"]
+            .as_str()
+            .unwrap_or("")
+            .trim_start_matches("0x")
     );
     crate::backend::atomic_json(&dir.join(name), report)
 }
@@ -747,7 +789,10 @@ mod tests {
             ..Default::default()
         }
         .to_json();
-        assert!(proven(&r).is_err(), "success without unique checks is rejected");
+        assert!(
+            proven(&r).is_err(),
+            "success without unique checks is rejected"
+        );
         r["ok"] = json!(false);
         assert_eq!(proven(&r).unwrap(), false);
     }

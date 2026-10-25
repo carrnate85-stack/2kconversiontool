@@ -1,0 +1,13 @@
+QA138 — Camera download placement and status cleanup — 2026-10-24
+DEV ONLY 0.53.42. No install, promotion, activation, GitHub writes, game interaction or computer use.
+
+Moved Download cameras from Camera setup sidebar beneath the camera list. Reuses the same presentation-library-footer/buttons and secondary small styling as Download videos. Retains explicit50percent dimming, native disabled state and no-downloads tooltip. Removed CameraLiveStatus from the right sidebar per user screenshot of redundant ENDED status; the component no longer mounts/polls on Presentation. Under900px the remaining setup card fills its row instead of occupying half of the former two-card grid. Camera functionality and runtime backend unchanged.
+
+Validation: TypeScript,14focused tests/3files,Vite and native dev release passed. No desktop/computer-use or visual acceptance claimed. Main/Share verified unchanged at QA129. Original complete preview pack default retained pending user upload. Prior QA073 Rust AV,QA078 Clang crash,QA106 Season History assertion unresolved.
+
+Candidate:C:\Users\carrn\CodexProjects\2kconversiontool\nba2k27-launcher-tauri2\Dev\Pending\QA138\launcher.exe
+SHA256:F56E6AB39C8E6581A387B82EA323D03157AC10A9A05B864D581812060B051F42
+Bytes:48973312
+PDB SHA256:65E936092FF7394D396714A42540D14DFB10A8EE8F7B7F0BA3538F20BBE4E406
+Starter:Open QA138 Dev.lnk / Start QA138 Dev.ps1. Exact-hash/idle guards retained. Close current dev normally first. Do not promote curator EXE; omit dev-curator from future Main/Share.
+Backups:Backups/qa138-camera-button-placement-20261024. Reports:artifacts/qa138-camera-button-placement.

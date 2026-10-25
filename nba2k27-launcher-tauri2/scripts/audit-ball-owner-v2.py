@@ -4,6 +4,7 @@ import argparse, bisect, hashlib, json, re, runpy, struct
 
 ROOT = Path(__file__).resolve().parents[1]
 A = runpy.run_path(str(ROOT / "scripts/audit-roster-v2-fields.py"))
+IMAGE_SHA = "B673EB04593D6D5A4DFB9E270178E04C017BD9F277514D256EA98FFB792ED27B"
 
 
 def main():
@@ -12,7 +13,7 @@ def main():
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     with args.image.open("rb") as source:
-        assert hashlib.file_digest(source, "sha256").hexdigest().upper() == A["IMAGE_SHA"]
+        assert hashlib.file_digest(source, "sha256").hexdigest().upper() == IMAGE_SHA
     pe = A["pefile"].PE(str(args.image), fast_load=True)
     md = A["Cs"](A["CS_ARCH_X86"], A["CS_MODE_64"])
     md.detail = True
@@ -25,9 +26,9 @@ def main():
     def function_for(rva):
         # These leaf functions have no unwind entry. Their fixed, inspected
         # instruction boundaries are explicit; never round an arbitrary hit.
-        for start, end in [(0x4140C30, 0x4140C38), (0x417AB70, 0x417AB7F), (0x177B7A0, 0x177B7A8),
-                           (0x3C96870, 0x3C968AC), (0x3C968B0, 0x3C9693D), (0x3C969B0, 0x3C969F6),
-                           (0x11F7CB0, 0x11F7CCC), (0x255EA90, 0x255EA9C)]:
+        for start, end in [(0x4140EB0, 0x4140EB8), (0x417ADF0, 0x417ADFF), (0x177B850, 0x177B858),
+                           (0x3C96AF0, 0x3C96B2C), (0x3C96B30, 0x3C96BBD), (0x3C96C30, 0x3C96C76),
+                           (0x11F7D60, 0x11F7D7C), (0x255EB40, 0x255EB4C)]:
             if start <= rva < end:
                 return start, end
         index = bisect.bisect_right(starts, rva) - 1
@@ -58,28 +59,28 @@ def main():
         return {"functionStart": f"{start:08X}", "functionEnd": f"{end:08X}", "anchor": f"{rva:08X}", "instructions": rows}
 
     targets = {
-        "typed-AI-BALL-constructor": 0x3C894A0,
-        "typed-basketball-manager-constructor": 0x428A24B,
-        "typed-InitBalls-model-assignment": 0x428A367,
-        "GameData-model-to-setup74": 0x41400E4,
-        "setup74-to-InitBalls": 0x44272CB,
-        "gameplay-render-model-consumer": 0x417AC49,
-        "main-world-pointer-getter": 0x4140C30,
-        "world-manager-getter": 0x417AB70,
-        "manager-iterator-init": 0x3C96870,
-        "manager-iterator-first": 0x3C968B0,
-        "manager-iterator-next": 0x3C969B0,
+        "typed-AI-BALL-constructor": 0x3C89720,
+        "typed-basketball-manager-constructor": 0x428A4CB,
+        "typed-InitBalls-model-assignment": 0x428A5E7,
+        "GameData-model-to-setup74": 0x4140364,
+        "setup74-to-InitBalls": 0x442754B,
+        "gameplay-render-model-consumer": 0x417AEC9,
+        "main-world-pointer-getter": 0x4140EB0,
+        "world-manager-getter": 0x417ADF0,
+        "manager-iterator-init": 0x3C96AF0,
+        "manager-iterator-first": 0x3C96B30,
+        "manager-iterator-next": 0x3C96C30,
         "gameplay-model-preload": 0x2E95A4,
         "gameplay-model-release": 0x2E9932,
-        "gamedata-from-358C": 0x11DEEE4,
-        "gamedata-from-3590": 0x11DEF44,
-        "358C-3590-source-root": 0x11F7CB0,
-        "358C-3590-source-owner": 0x177B7A0,
-        "gamedata-script-ball-selection": 0x11DDD33,
-        "native-pending-ball-source-getter": 0x255EA90,
+        "gamedata-from-358C": 0x11DEF64,
+        "gamedata-from-3590": 0x11DEFC4,
+        "358C-3590-source-root": 0x11F7D60,
+        "358C-3590-source-owner": 0x177B850,
+        "gamedata-script-ball-selection": 0x11DDDB3,
+        "native-pending-ball-source-getter": 0x255EB40,
         "pending-ball-to-GameData-setter": 0x3D8850,
         "pending-ball-to-native-preload": 0x3D8874,
-        "native-ball-GameData-setter": 0x26FA902,
+        "native-ball-GameData-setter": 0x26FA9B2,
     }
     proof = {name: instructions(rva) for name, rva in targets.items()}
     candidate_fields = {}
@@ -106,7 +107,7 @@ def main():
             found.append(instructions(exact[0].address))
             assert len(found) <= 256, f"Candidate budget: {label}"
         candidate_fields[label] = found
-    report = {"schema": "nba2k27-v2-gameplay-ball-owner-proof-v1", "imageSha256": A["IMAGE_SHA"], "gameProcessAccess": False, "gameFilesChanged": False,
+    report = {"schema": "nba2k27-v2-gameplay-ball-owner-proof-v1", "imageSha256": IMAGE_SHA, "gameProcessAccess": False, "gameFilesChanged": False,
               "provenance": proof, "candidateFields": candidate_fields,
               "iteratorSentinelOffsets": list(struct.unpack("<3Q", pe.get_data(0x7C81750, 24))),
               "writesAuthorized": False, "newWriteTargetEnabled": False}

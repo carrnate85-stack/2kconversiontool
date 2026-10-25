@@ -15,6 +15,7 @@ use anyhow::{Context, Result, ensure};
 use serde_json::{Value, json};
 use sha2::Digest;
 use std::{
+    cell::{Cell, RefCell},
     collections::BTreeMap,
     mem::size_of,
     path::{Path, PathBuf},
@@ -46,6 +47,13 @@ mod appearance_access;
 mod arena_clone_access;
 #[path = "season_structure_v2_native.rs"]
 mod structural;
+#[cfg(test)]
+pub(crate) fn verify_structural_disk_profiles(m: &impl Memory) -> Result<()> {
+    let season = structural::proof(m);
+    let arena = arena_clone_access::protected_proof(m);
+    ensure!(season.is_ok() && arena.is_ok(), "Season: {season:?}; arena pools: {arena:?}");
+    Ok(())
+}
 pub(crate) fn structural_pending(root: &Path) -> Result<bool> {
     structural::pending(root)
 }
@@ -74,7 +82,7 @@ pub(crate) fn reapply_profile(
     binding: &Binding,
     profile: &crate::custom_arena_profiles::Profile,
     mods_root: &Path,
-    gate: &std::sync::MutexGuard<'static, ()>,
+    gate: &session_safety::WriteGuard,
 ) -> Result<Value> {
     arena_clone_access::reapply_profile(root, binding, profile, mods_root, gate)
 }
@@ -348,6 +356,7 @@ pub(crate) struct Access {
     binding: Binding,
     stop: Arc<AtomicBool>,
     started: Instant,
+    recovery_started: Cell<Option<Instant>>,
 }
 impl Access {
     pub fn open(binding: &Binding, stop: Arc<AtomicBool>) -> Result<Self> {
@@ -367,12 +376,24 @@ impl Access {
             binding: binding.clone(),
             stop,
             started: Instant::now(),
+            recovery_started: Cell::new(None),
         };
         model::verify_profile(&access)?;
         access.finish()?;
         Ok(access)
     }
+    fn begin_recovery(&self) -> Result<()> {
+        handle_matches(self.query.0, &self.binding.game)?;
+        if self.recovery_started.get().is_none() {
+            self.recovery_started.set(Some(Instant::now()));
+        }
+        self.checkpoint()
+    }
     fn start(&mut self) -> Result<()> {
+        ensure!(
+            self.recovery_started.get().is_none(),
+            "Recovery access cannot start another forward request; recapture required"
+        );
         self.started = Instant::now();
         self.checkpoint()?;
         guard(&session_safety::processes()?, &self.binding)?;
@@ -472,6 +493,13 @@ impl Memory for Access {
         Ok(value)
     }
     fn checkpoint(&self) -> Result<()> {
+        if let Some(started) = self.recovery_started.get() {
+            ensure!(
+                started.elapsed() < Duration::from_secs(8),
+                "Roster recovery exceeded 8-second budget"
+            );
+            return handle_matches(self.query.0, &self.binding.game);
+        }
         ensure!(
             !self.stop.load(Ordering::Acquire),
             "Read-only roster request cancelled"
@@ -490,7 +518,7 @@ fn position(value: u64) -> &'static str {
         2 => "SF",
         3 => "PF",
         4 => "C",
-        _ => "â€”",
+        _ => "—",
     }
 }
 fn birthday(y: u64, m: u64, d: u64) -> Value {
@@ -1164,7 +1192,14 @@ impl writer::Access for WriteLease<'_> {
         Ok(())
     }
     fn checkpoint(&self) -> Result<()> {
+        ensure!(
+            self.access.recovery_started.get().is_none(),
+            "Forward checkpoint refused after recovery began"
+        );
         self.access.checkpoint()
+    }
+    fn begin_recovery(&self) -> Result<()> {
+        self.access.begin_recovery()
     }
 }
 fn request_index(input: &Value, max: f64) -> Result<usize> {
@@ -1639,7 +1674,7 @@ pub(crate) struct Editor<'a> {
     pub root: &'a Path,
     pub input: &'a Value,
     pub confirm: &'a dyn Fn(&str) -> bool,
-    pub write_gate: Option<&'a std::sync::MutexGuard<'static, ()>>,
+    pub write_gate: Option<&'a session_safety::WriteGuard>,
 }
 fn int(input: &Value, key: &str, max: u64) -> Result<u64> {
     input[key]
@@ -1696,7 +1731,7 @@ impl NativeCapture {
             cached["source"] == "live-team"
                 && cached["teamId"].as_u64() == Some(team_id)
                 && cached["name"] == name.as_str(),
-            "Load this teamâ€™s roster and refresh live teams first."
+            "Load this team’s roster and refresh live teams first."
         );
         let teams = directory(state, Kind::Team)?;
         let address = record_address(state, &teams, Kind::Team, index)?;
@@ -1798,12 +1833,12 @@ impl NativeCapture {
         let s = self
             .staff
             .as_ref()
-            .context("Refresh this teamâ€™s staff before saving.")?;
+            .context("Refresh this team’s staff before saving.")?;
         ensure!(
             input["recordIndex"].as_u64() == Some(s.team_index as u64)
                 && input["teamId"].as_u64() == Some(s.team_id)
                 && input["expectedName"] == s.name.as_str(),
-            "Refresh this teamâ€™s staff before saving."
+            "Refresh this team’s staff before saving."
         );
         let slot = int(input, "slot", 31)? as usize;
         let index = int(input, "staffIndex", 8191)? as usize;
@@ -1987,7 +2022,7 @@ impl NativeCapture {
                 json!(
                     self.team_name(&state, u64::from_le_bytes(raw[0..8].try_into()?))
                         .as_str()
-                        .unwrap_or("â€”")
+                        .unwrap_or("—")
                 ),
                 self.team_name(&state, u64::from_le_bytes(raw[8..16].try_into()?)),
                 &token,
@@ -2300,6 +2335,15 @@ impl NativeCapture {
     }
     fn editor(&mut self, request: &Editor<'_>) -> Result<Value> {
         match (request.method, request.input["action"].as_str()) {
+            ("playerMeasurements", _) => {
+                let (index, identity) = self.player_identity(request.input)?;
+                let value = Captured::detail(self, index)?;
+                ensure!(value["firstName"] == identity["firstName"]
+                    && value["lastName"] == identity["lastName"]
+                    && value["cyberfaceId"] == identity["cyberfaceId"],
+                    "The player changed. Refresh the roster.");
+                Ok(value)
+            }
             ("cloneArena", _) => arena_clone_access::editor(self, request),
             ("teamRotations", Some("read")) => self.read_rotations(request.input),
             ("teamRotations", Some("save")) => self.save_rotations(request.input, request.root),
@@ -2349,8 +2393,9 @@ impl Captured for NativeCapture {
         let mut document = player_document(&value)?;
         // Unsupported/shared appearance sources remain read-only. This probe
         // opens no VM_WRITE handle and never calls the in-process executor.
-        let _ =
-            appearance_access::details(&self.access, self.snapshot.owner(), index, &mut document);
+        if let Err(error) = appearance_access::details(&self.access, self.snapshot.owner(), index, &mut document) {
+            document["measurementStatus"] = json!(format!("Height/wingspan unavailable: {error:#}"));
+        }
         self.access.finish()?;
         Ok(document)
     }
@@ -2420,6 +2465,7 @@ struct State {
     saving: bool,
     revision: u64,
     tabs: BTreeMap<String, u64>,
+    tab_used: RefCell<BTreeMap<String, Instant>>,
     view: Value,
 }
 impl State {
@@ -2436,14 +2482,29 @@ impl State {
     }
     fn lease(&mut self, tab: &str) {
         if self.tabs.len() >= 16 && !self.tabs.contains_key(tab) {
-            if let Some(key) = self.tabs.keys().next().cloned() {
+            if let Some(key) = self
+                .tabs
+                .keys()
+                .min_by_key(|key| self.tab_used.borrow().get(*key).copied())
+                .cloned()
+            {
                 self.tabs.remove(&key);
             }
         }
         self.tabs.insert(tab.into(), self.revision);
+        let used = self.tab_used.get_mut();
+        used.retain(|key, _| self.tabs.contains_key(key));
+        used.insert(tab.into(), Instant::now());
     }
     fn current(&self, tab: &str) -> bool {
-        (self.latest.is_some() || self.saving) && self.tabs.get(tab) == Some(&self.revision)
+        let current =
+            (self.latest.is_some() || self.saving) && self.tabs.get(tab) == Some(&self.revision);
+        if current {
+            self.tab_used
+                .borrow_mut()
+                .insert(tab.into(), Instant::now());
+        }
+        current
     }
 }
 pub(crate) struct Service {
@@ -2462,6 +2523,7 @@ impl Service {
                 saving: false,
                 revision: 0,
                 tabs: BTreeMap::new(),
+                tab_used: RefCell::new(BTreeMap::new()),
                 view: idle(
                     "idle",
                     "Open your owned Version 2 game session, then refresh. Saves need a current snapshot.",
@@ -2525,7 +2587,7 @@ impl Service {
                 .state
                 .lock()
                 .map_err(|_| anyhow::anyhow!("Read-only roster state unavailable"))?;
-            state.view = idle("scanning", "Reading the verified Version 2 rosterâ€¦");
+            state.view = idle("scanning", "Reading the verified Version 2 roster…");
         }
         let result = self.engine.capture(binding, self.stop.clone());
         let mut state = self

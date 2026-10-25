@@ -1,4 +1,5 @@
 import type { Outfit } from "./types";
+import { shoeLabel } from "./shoe-labels";
 export const initialOutfit: Outfit = {
   name: "My outfit",
   top: "Shirtless",
@@ -25,7 +26,7 @@ export const formatBytes = (n: number) =>
     ? `${(n / 1048576).toFixed(1)} MB`
     : `${(n / 1024).toFixed(1)} KB`;
 export const label = (id: string) =>
-  id
+    shoeLabel(id) ?? id
     .replace(/\.iff$/, "")
     .split("/")
     .pop()!

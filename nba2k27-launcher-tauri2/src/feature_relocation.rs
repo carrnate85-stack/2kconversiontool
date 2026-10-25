@@ -31,7 +31,7 @@ use crate::build_resolver::Image;
 
 pub(crate) const SCHEMA: &str = "nba2k27-v2-relocation-catalog-v1";
 pub(crate) const REPORT_SCHEMA: &str = "nba2k27-v2-feature-compatibility-v1";
-pub(crate) const PINNED: (u32, u32) = (0x6AC5_3765, 0x35BD_E000);
+pub(crate) const PINNED: (u32, u32) = (0x6AD2_E48C, 0x3653_2000);
 pub(crate) const RESOLVED_LABEL: &str = "Resolved game update";
 const MAX_WINDOW: usize = 128;
 
@@ -126,23 +126,42 @@ fn json_anchors(text: &str) -> Vec<(String, u32, Vec<u8>)> {
 }
 fn json_rvas(text: &str, keys: &[&str]) -> Vec<u32> {
     let v: Value = serde_json::from_str(text).unwrap_or_default();
-    keys.iter().filter_map(|k| v[*k].as_u64().map(|r| r as u32)).collect()
+    keys.iter()
+        .filter_map(|k| v[*k].as_u64().map(|r| r as u32))
+        .collect()
 }
 fn unhex(s: &str) -> Option<Vec<u8>> {
     (s.len() % 2 == 0)
-        .then(|| (0..s.len()).step_by(2).map(|i| u8::from_str_radix(&s[i..i + 2], 16).ok()).collect())
+        .then(|| {
+            (0..s.len())
+                .step_by(2)
+                .map(|i| u8::from_str_radix(&s[i..i + 2], 16).ok())
+                .collect()
+        })
         .flatten()
 }
 fn rip(list: &[(u64, &[u8], u64)], prefix: &str) -> (Vec<(String, u32, Vec<u8>)>, Vec<u32>) {
     let anchors = list
         .iter()
-        .map(|(rva, bytes, _)| (format!("{prefix}-rip-0x{rva:X}"), *rva as u32, bytes.to_vec()))
+        .map(|(rva, bytes, _)| {
+            (
+                format!("{prefix}-rip-0x{rva:X}"),
+                *rva as u32,
+                bytes.to_vec(),
+            )
+        })
         .collect();
     (anchors, list.iter().map(|(_, _, t)| *t as u32).collect())
 }
 fn fields(list: &[(u64, &[u8])], prefix: &str) -> Vec<(String, u32, Vec<u8>)> {
     list.iter()
-        .map(|(rva, bytes)| (format!("{prefix}-field-0x{rva:X}"), *rva as u32, bytes.to_vec()))
+        .map(|(rva, bytes)| {
+            (
+                format!("{prefix}-field-0x{rva:X}"),
+                *rva as u32,
+                bytes.to_vec(),
+            )
+        })
         .collect()
 }
 pub(crate) fn specs() -> Vec<Spec> {
@@ -152,20 +171,26 @@ pub(crate) fn specs() -> Vec<Spec> {
         label: "Mod loading (file provider)",
         depends: &[],
         blockers: &[],
-        anchors: crate::provider_build_profile::ANCHORS
-            .iter()
-            .map(|(rva, b)| (format!("provider-abi-0x{rva:X}"), *rva, b.to_vec()))
+        anchors: crate::provider_build_profile::current_anchors()
+            .into_iter()
+            .map(|(rva, b)| (format!("provider-abi-0x{rva:X}"), rva, b.to_vec()))
             .collect(),
         constants: vec![],
     });
     {
-        let (mut a, c) = rip(crate::blacktop_native::observer_profile::RIP_ANCHORS, "observer");
-        a.extend(fields(crate::blacktop_native::observer_profile::FIELD_ANCHORS, "observer"));
+        let (mut a, c) = rip(
+            crate::blacktop_native::observer_profile::RIP_ANCHORS,
+            "observer",
+        );
+        a.extend(fields(
+            crate::blacktop_native::observer_profile::FIELD_ANCHORS,
+            "observer",
+        ));
         out.push(Spec {
             key: "observer",
             label: "Blacktop session reader (shared)",
             depends: &[],
-            blockers: &["Three RTTI vtable pairs are still compared at fixed addresses."],
+            blockers: &[],
             anchors: a,
             constants: c,
         });
@@ -174,13 +199,25 @@ pub(crate) fn specs() -> Vec<Spec> {
         let (mut a, mut c) = rip(crate::rules_v2::RIP_ANCHORS, "rules");
         a.extend(fields(crate::rules_v2::FIELD_ANCHORS, "rules"));
         let getters = include_str!("../assets/rules-v2-getters.json");
-        a.extend(json_anchors(getters));
+        a.extend(
+            json_anchors(getters)
+                .into_iter()
+                .map(|(label, old, mut bytes)| {
+                    let current = crate::rules_v2::updated_getter(&label, u64::from(old)) as u32;
+                    if bytes.len() >= 7 && bytes.starts_with(&[0x48, 0x8B, 0x05]) {
+                        let displacement =
+                            (crate::rules_v2::OWNER as i64 - i64::from(current) - 7) as i32;
+                        bytes[3..7].copy_from_slice(&displacement.to_le_bytes());
+                    }
+                    (label, current, bytes)
+                }),
+        );
         c.push(crate::rules_v2::OWNER as u32);
         out.push(Spec {
             key: "rules",
             label: "Game rules",
             depends: &["observer"],
-            blockers: &["The root-tag vtable is compared at a fixed address."],
+            blockers: &[],
             anchors: a,
             constants: c,
         });
@@ -192,7 +229,7 @@ pub(crate) fn specs() -> Vec<Spec> {
             key: "roster-identity",
             label: "Roster identity (shared)",
             depends: &["observer"],
-            blockers: &["Two roster vtable methods are compared at fixed addresses."],
+            blockers: &[],
             anchors: a,
             constants: c,
         });
@@ -201,7 +238,7 @@ pub(crate) fn specs() -> Vec<Spec> {
         key: "cameras",
         label: "Cameras",
         depends: &["observer"],
-        blockers: &["The stock camera table stores absolute game addresses (camera-v2-stock.json)."],
+        blockers: &[],
         anchors: crate::camera_v2::ANCHORS
             .iter()
             .map(|(rva, b)| (format!("camera-0x{rva:X}"), *rva as u32, b.to_vec()))
@@ -224,7 +261,7 @@ pub(crate) fn specs() -> Vec<Spec> {
             key: "scaler",
             label: "Scaler",
             depends: &["observer"],
-            blockers: &["Seven vtable pairs and slot checks are compared at fixed addresses."],
+            blockers: &[],
             anchors: a,
             constants: c,
         });
@@ -236,10 +273,7 @@ pub(crate) fn specs() -> Vec<Spec> {
             key: "freestyle",
             label: "Freestyle gym and WNBA teams",
             depends: &["rules"],
-            blockers: &[
-                "Category mask page contents are compared at a fixed address.",
-                "Picker vtable slot values are compared at fixed addresses.",
-            ],
+            blockers: &[],
             anchors: a,
             constants: c,
         });
@@ -260,16 +294,27 @@ pub(crate) fn specs() -> Vec<Spec> {
         depends: &["rules"],
         blockers: &[],
         anchors: json_anchors(ball),
-        constants: json_rvas(ball, &["registryRva", "holderRva", "rendererRva", "referencesRva"]),
+        constants: json_rvas(
+            ball,
+            &["registryRva", "holderRva", "rendererRva", "referencesRva"],
+        ),
     });
     let scoreboard = include_str!("../assets/scoreboard-v2-anchors.json");
     out.push(Spec {
         key: "scoreboard",
         label: "Scoreboard",
         depends: &["rules"],
-        blockers: &["The resource vtable and locator are compared at fixed addresses."],
+        blockers: &[],
         anchors: json_anchors(scoreboard),
-        constants: json_rvas(scoreboard, &["packageTableRva", "activeRva", "secondaryActiveRva", "resourcesRva"]),
+        constants: json_rvas(
+            scoreboard,
+            &[
+                "packageTableRva",
+                "activeRva",
+                "secondaryActiveRva",
+                "resourcesRva",
+            ],
+        ),
     });
     let presentation = include_str!("../assets/presentation-v2-anchors.json");
     out.push(Spec {
@@ -281,26 +326,22 @@ pub(crate) fn specs() -> Vec<Spec> {
         constants: json_rvas(presentation, &["settingsOwnerRva", "preloadTableRva"]),
     });
     for (key, label, blockers) in [
-        ("roster", "Roster / team editor", &["The roster serializer is proven by a 50 KB code hash."][..]),
         (
-            "outfits",
-            "Outfit editing and carry-over",
-            &[
-                "Admission needs the full game-file SHA-256.",
-                "25 method bodies are proven by hashes.",
-                "The native outfit worker is compiled for this exact build.",
-            ][..],
+            "roster",
+            "Roster / team editor",
+            &["The roster serializer is proven by a 50 KB code hash."][..],
         ),
-        (
-            "jukebox",
-            "Jukebox and Freestyle playlist",
-            &[
-                "Audio codec anchors need the full game-file SHA-256.",
-                "The Freestyle playlist profile is compiled into the native proxy.",
-            ][..],
-        ),
+        ("outfits", "Outfit editing and carry-over", &[][..]),
+        ("jukebox", "Jukebox and Freestyle playlist", &[][..]),
     ] {
-        out.push(Spec { key, label, depends: &[], blockers, anchors: vec![], constants: vec![] });
+        out.push(Spec {
+            key,
+            label,
+            depends: &[],
+            blockers,
+            anchors: vec![],
+            constants: vec![],
+        });
     }
     out
 }
@@ -321,11 +362,20 @@ pub(crate) fn operand_fields(bytes: &[u8], rva: u32) -> Vec<Field> {
             || (i >= 2 && bytes[i - 2] == 0x0F && (0x80..=0x8F).contains(&prev));
         let rip = i >= 2 && prev & 0xC7 == 0x05 && modrm_opcode(&bytes[..i - 1]);
         if rel || rip {
-            let imm = if rip { immediate(&bytes[..i - 1], prev) } else { 0 };
+            let imm = if rip {
+                immediate(&bytes[..i - 1], prev)
+            } else {
+                0
+            };
             let end = i + 4 + imm;
             let disp = i32::from_le_bytes(bytes[i..i + 4].try_into().unwrap()) as i64;
             let target = (rva as i64 + end as i64 + disp) as u32;
-            out.push(Field { off: i, end, kind: if rip { "rip" } else { "rel" }.into(), target });
+            out.push(Field {
+                off: i,
+                end,
+                kind: if rip { "rip" } else { "rel" }.into(),
+                target,
+            });
             i += 4;
             continue;
         }
@@ -344,16 +394,51 @@ fn modrm_opcode(before: &[u8]) -> bool {
     }
     matches!(
         op,
-        0x01 | 0x03 | 0x09 | 0x0B | 0x21 | 0x23 | 0x29 | 0x2B | 0x31 | 0x33 | 0x38 | 0x39 | 0x3A | 0x3B
-            | 0x63 | 0x69 | 0x6B | 0x80 | 0x81 | 0x83 | 0x84 | 0x85 | 0x86 | 0x87 | 0x88 | 0x89
-            | 0x8A | 0x8B | 0x8D | 0xC6 | 0xC7 | 0xF6 | 0xF7 | 0xFE | 0xFF
+        0x01 | 0x03
+            | 0x09
+            | 0x0B
+            | 0x21
+            | 0x23
+            | 0x29
+            | 0x2B
+            | 0x31
+            | 0x33
+            | 0x38
+            | 0x39
+            | 0x3A
+            | 0x3B
+            | 0x63
+            | 0x69
+            | 0x6B
+            | 0x80
+            | 0x81
+            | 0x83
+            | 0x84
+            | 0x85
+            | 0x86
+            | 0x87
+            | 0x88
+            | 0x89
+            | 0x8A
+            | 0x8B
+            | 0x8D
+            | 0xC6
+            | 0xC7
+            | 0xF6
+            | 0xF7
+            | 0xFE
+            | 0xFF
     )
 }
 /// Immediate bytes that follow a RIP-relative displacement.
 fn immediate(before: &[u8], modrm: u8) -> usize {
     let n = before.len();
     if n >= 2 && before[n - 2] == 0x0F {
-        return if matches!(before[n - 1], 0xBA | 0x70 | 0xC2 | 0xC6) { 1 } else { 0 };
+        return if matches!(before[n - 1], 0xBA | 0x70 | 0xC2 | 0xC6) {
+            1
+        } else {
+            0
+        };
     }
     match before[n - 1] {
         0x80 | 0x83 | 0xC6 | 0x6B => 1,
@@ -381,7 +466,10 @@ fn pattern(bytes: &[u8], mask: &[bool]) -> Result<regex::bytes::Regex> {
             p.push_str(&format!("\\x{b:02X}"));
         }
     }
-    Ok(regex::bytes::RegexBuilder::new(&p).unicode(false).dot_matches_new_line(true).build()?)
+    Ok(regex::bytes::RegexBuilder::new(&p)
+        .unicode(false)
+        .dot_matches_new_line(true)
+        .build()?)
 }
 fn matches_in(image: &Image, section: &str, re: &regex::bytes::Regex, limit: usize) -> Vec<u32> {
     let mut hits = vec![];
@@ -413,13 +501,22 @@ pub(crate) fn generate(exe: &Path) -> Result<Catalog> {
     for spec in specs() {
         let mut anchors = vec![];
         for (label, rva, proof) in &spec.anchors {
-            let section = image.section_name(*rva).context("Anchor outside the image")?;
+            let section = image
+                .section_name(*rva)
+                .context("Anchor outside the image")?;
             let mut len = proof.len().max(24).min(MAX_WINDOW);
             let (bytes, flds, count) = loop {
-                let bytes = image.read_rva(*rva, len).context("Anchor outside the image")?.to_vec();
-                ensure!(bytes.starts_with(proof), "{label}: module proof differs from the reference build");
+                let bytes = image
+                    .read_rva(*rva, len)
+                    .context("Anchor outside the image")?
+                    .to_vec();
+                ensure!(
+                    bytes.starts_with(proof),
+                    "{label}: module proof differs from the reference build"
+                );
                 let flds = operand_fields(&bytes, *rva);
-                let count = matches_in(&image, &section, &pattern(&bytes, &mask_of(len, &flds))?, 3).len();
+                let count =
+                    matches_in(&image, &section, &pattern(&bytes, &mask_of(len, &flds))?, 3).len();
                 if count <= 1 || len >= MAX_WINDOW {
                     break (bytes, flds, count);
                 }
@@ -430,7 +527,10 @@ pub(crate) fn generate(exe: &Path) -> Result<Catalog> {
                 rva: *rva,
                 section,
                 hex: bytes.iter().map(|b| format!("{b:02X}")).collect(),
-                mask: mask_of(bytes.len(), &flds).iter().map(|m| if *m { '?' } else { 'x' }).collect(),
+                mask: mask_of(bytes.len(), &flds)
+                    .iter()
+                    .map(|m| if *m { '?' } else { 'x' })
+                    .collect(),
                 fields: flds,
                 reference_matches: count,
             });
@@ -438,7 +538,10 @@ pub(crate) fn generate(exe: &Path) -> Result<Catalog> {
         let mut constants: Vec<Constant> = spec
             .constants
             .iter()
-            .map(|rva| Constant { rva: *rva, flags: image.section_flags(*rva).unwrap_or(0) })
+            .map(|rva| Constant {
+                rva: *rva,
+                flags: image.section_flags(*rva).unwrap_or(0),
+            })
             .collect();
         constants.sort_by_key(|c| c.rva);
         constants.dedup_by_key(|c| c.rva);
@@ -498,7 +601,12 @@ fn resolve_feature(image: &Image, f: &FeatureCatalog, fast: bool, pinned: bool) 
         let hit: Option<u32> = if fast {
             image
                 .read_rva(a.rva, bytes.len())
-                .filter(|have| have.iter().zip(&bytes).zip(&mask).all(|((h, w), m)| *m || h == w))
+                .filter(|have| {
+                    have.iter()
+                        .zip(&bytes)
+                        .zip(&mask)
+                        .all(|((h, w), m)| *m || h == w)
+                })
                 .map(|_| a.rva)
         } else {
             match pattern(&bytes, &mask) {
@@ -522,9 +630,12 @@ fn resolve_feature(image: &Image, f: &FeatureCatalog, fast: bool, pinned: bool) 
         };
         found += 1;
         map.insert(a.rva, new_rva);
-        let Some(have) = image.read_rva(new_rva, bytes.len()) else { continue };
+        let Some(have) = image.read_rva(new_rva, bytes.len()) else {
+            continue;
+        };
         for field in a.fields.iter().filter(|x| x.kind == "rip") {
-            let disp = i32::from_le_bytes(have[field.off..field.off + 4].try_into().unwrap()) as i64;
+            let disp =
+                i32::from_le_bytes(have[field.off..field.off + 4].try_into().unwrap()) as i64;
             let target = (new_rva as i64 + field.end as i64 + disp) as u32;
             if map.get(&field.target).is_some_and(|t| *t != target) {
                 conflict = true;
@@ -539,28 +650,53 @@ fn resolve_feature(image: &Image, f: &FeatureCatalog, fast: bool, pinned: bool) 
             map.get(&c.rva).is_some_and(|new| {
                 // A re-derived global must land in a section with the original
                 // read/write/execute permissions.
-                image.section_flags(*new).is_some_and(|fl| fl & 0xE000_0000 == c.flags & 0xE000_0000)
+                image
+                    .section_flags(*new)
+                    .is_some_and(|fl| fl & 0xE000_0000 == c.flags & 0xE000_0000)
             })
         })
         .count();
-    let anchors_ok = found == f.anchors.len() && missing.is_empty() && ambiguous.is_empty() && !conflict;
+    let anchors_ok =
+        found == f.anchors.len() && missing.is_empty() && ambiguous.is_empty() && !conflict;
     let proofs_ok = anchors_ok && derived == f.constants.len();
-    let status = match (proofs_ok, pinned, f.blockers.is_empty()) {
-        (true, true, _) => "Mapped",
-        (true, false, true) => "Re-derived",
+    // A feature with no relocatable proof may be admitted only by the exact
+    // pinned-build identity.  Treating an empty proof set as successfully
+    // re-derived would silently enable hash/native-profile features on the
+    // next unknown game update.
+    let has_relocatable_proof = !f.anchors.is_empty() || !f.constants.is_empty();
+    let status = match (
+        proofs_ok,
+        pinned,
+        f.blockers.is_empty(),
+        has_relocatable_proof,
+    ) {
+        (true, true, true, _) => "Mapped",
+        (true, false, true, true) => "Re-derived",
         _ => "Needs mapping",
     };
     let message = match status {
         "Mapped" => "Verified for this game build.".to_string(),
         "Re-derived" => format!("Game updated: all {} proofs re-derived.", f.anchors.len()),
-        _ if f.anchors.is_empty() => format!("Game updated: {} needs a new mapping. {}", f.label, f.blockers.join(" ")),
+        _ if f.anchors.is_empty() => format!(
+            "Game updated: {} needs a new mapping. {}",
+            f.label,
+            f.blockers.join(" ")
+        ),
         _ if !anchors_ok => format!(
             "Game updated: {} needs a new mapping ({} of {} code anchors found{}{}).",
             f.label,
             found,
             f.anchors.len(),
-            if ambiguous.is_empty() { String::new() } else { format!(", {} ambiguous", ambiguous.len()) },
-            if conflict { ", conflicting references" } else { "" }
+            if ambiguous.is_empty() {
+                String::new()
+            } else {
+                format!(", {} ambiguous", ambiguous.len())
+            },
+            if conflict {
+                ", conflicting references"
+            } else {
+                ""
+            }
         ),
         _ if derived < f.constants.len() => format!(
             "Game updated: {} needs a new mapping ({} of {} game globals re-derived).",
@@ -590,7 +726,11 @@ fn resolve_feature(image: &Image, f: &FeatureCatalog, fast: bool, pinned: bool) 
     }
 }
 /// Resolve features (all when `only` is None) and apply dependencies.
-pub(crate) fn resolve_image(image: &Image, catalog: &Catalog, only: Option<&[&str]>) -> Vec<FeatureResult> {
+pub(crate) fn resolve_image(
+    image: &Image,
+    catalog: &Catalog,
+    only: Option<&[&str]>,
+) -> Vec<FeatureResult> {
     let pinned = (image.timestamp, image.image_size) == PINNED;
     resolve_image_with(image, catalog, only, pinned, pinned)
 }
@@ -609,17 +749,28 @@ pub(crate) fn resolve_image_with(
         .filter(|f| only.is_none_or(|o| o.contains(&f.key.as_str())))
         .map(|f| resolve_feature(image, f, fast, pinned))
         .collect();
-    let ok: BTreeMap<String, bool> =
-        results.iter().map(|r| (r.key.clone(), r.status != "Needs mapping")).collect();
+    let ok: BTreeMap<String, bool> = results
+        .iter()
+        .map(|r| (r.key.clone(), r.status != "Needs mapping"))
+        .collect();
     for r in &mut results {
-        let deps = &catalog.features.iter().find(|f| f.key == r.key).unwrap().depends;
+        let deps = &catalog
+            .features
+            .iter()
+            .find(|f| f.key == r.key)
+            .unwrap()
+            .depends;
         let failed: Vec<&String> = deps.iter().filter(|d| ok.get(*d) == Some(&false)).collect();
         if r.status != "Needs mapping" && !failed.is_empty() {
             r.status = "Needs mapping";
             r.message = format!(
                 "Game updated: {} needs a new mapping (depends on {}).",
                 r.label,
-                failed.iter().map(|s| s.as_str()).collect::<Vec<_>>().join(", ")
+                failed
+                    .iter()
+                    .map(|s| s.as_str())
+                    .collect::<Vec<_>>()
+                    .join(", ")
             );
         }
     }
@@ -645,10 +796,15 @@ pub(crate) fn admit_mod_loading(exe: &Path) -> Result<Value> {
             report["failure"].as_str().unwrap_or("unknown")
         );
         let image = Image::open(exe)?;
+        let pinned = (image.timestamp, image.image_size) == PINNED;
         let mods = resolve_image(&image, &catalog()?, Some(&["mods"]))
             .pop()
             .context("Mod-loading catalog missing")?;
-        ensure!(mods.status == "Re-derived", "{}", mods.message);
+        ensure!(
+            mod_loading_proof_admitted(&mods.status, pinned),
+            "{}",
+            mods.message
+        );
         Ok(json!({
             "label": RESOLVED_LABEL,
             "modProviderMapped": true,
@@ -663,15 +819,32 @@ pub(crate) fn admit_mod_loading(exe: &Path) -> Result<Value> {
         }))
     })();
     if let Ok(mut m) = ADMISSION.lock() {
-        m.insert(key, result.as_ref().map(|v| v.clone()).map_err(|e| format!("{e:#}")));
+        m.insert(
+            key,
+            result
+                .as_ref()
+                .map(|v| v.clone())
+                .map_err(|e| format!("{e:#}")),
+        );
     }
     result
+}
+/// The pinned build resolves at its catalog RVAs and reports `Mapped`. A later
+/// executable is admitted only when every provider proof uniquely relocates
+/// and reports `Re-derived`. Keeping these cases explicit prevents a newly
+/// pinned build from being rejected with "Verified for this game build."
+pub(crate) fn mod_loading_proof_admitted(status: &str, pinned: bool) -> bool {
+    status == if pinned { "Mapped" } else { "Re-derived" }
 }
 type Admission = BTreeMap<(PathBuf, u64, u128), std::result::Result<Value, String>>;
 static ADMISSION: Mutex<Admission> = Mutex::new(BTreeMap::new());
 fn identity(exe: &Path) -> Result<(PathBuf, u64, u128)> {
     let meta = fs::metadata(exe)?;
-    Ok((exe.into(), meta.len(), meta.modified()?.duration_since(UNIX_EPOCH)?.as_millis()))
+    Ok((
+        exe.into(),
+        meta.len(),
+        meta.modified()?.duration_since(UNIX_EPOCH)?.as_millis(),
+    ))
 }
 
 /// Features a plan may not use on a resolved update (all native features).
@@ -687,7 +860,9 @@ static REPORT: Mutex<Option<((PathBuf, u64, u128), Value)>> = Mutex::new(None);
 pub(crate) fn report(root: &Path, game_root: &Path, force: bool) -> Result<Value> {
     let exe = game_root.join("NBA2K27.exe");
     if !exe.is_file() {
-        return Ok(json!({"schema":REPORT_SCHEMA,"build":null,"features":[],"message":"Choose the installed NBA 2K27 folder."}));
+        return Ok(
+            json!({"schema":REPORT_SCHEMA,"build":null,"features":[],"message":"Choose the installed NBA 2K27 folder."}),
+        );
     }
     let key = identity(&exe)?;
     if !force {
@@ -737,7 +912,8 @@ fn remember(key: &(PathBuf, u64, u128), v: &Value) {
     }
 }
 fn cache_path(root: &Path, build: &str) -> PathBuf {
-    root.join("Cache/feature-relocation").join(format!("{}.json", build.replace(':', "-")))
+    root.join("Cache/feature-relocation")
+        .join(format!("{}.json", build.replace(':', "-")))
 }
 fn read_cache(root: &Path, key: &(PathBuf, u64, u128)) -> Option<Value> {
     let dir = root.join("Cache/feature-relocation");

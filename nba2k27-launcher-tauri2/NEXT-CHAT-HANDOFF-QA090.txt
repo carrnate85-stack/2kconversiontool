@@ -1,0 +1,40 @@
+QA090 DEV CHECKPOINT - 2026-10-21
+
+Scope
+- Fixes QA089's false "Unsupported game build" rejection of the exact remapped October 21 NBA 2K27 executable.
+- Retains QA089's explicit dev-only WNBA Freestyle/Blacktop capability feature.
+- Nothing was installed or promoted. The game was not launched.
+
+Exact reproduced failure
+- The installed EXE still matched Steam build 26004539, PE 6AD2E48C:36532000, 880329496 bytes, SHA-256 B673EB04593D6D5A4DFB9E270178E04C017BD9F277514D256EA98FFB792ED27B.
+- The real provider_v2_actual_disk_gate reproduced QA089's error verbatim: "Unsupported game build: Verified for this game build."
+- Cause: feature relocation correctly reports the pinned October build's provider proof as Mapped, while admit_mod_loading still accepted only Re-derived, which is reserved for later unrecognized updates.
+
+Correction
+- Pinned executable identity now requires the provider proof status Mapped.
+- A later unrecognized executable still requires Re-derived; Mapped cannot admit an unrecognized update.
+- Added a regression test covering both directions and both refusal cases.
+- The normal structural provider proof, exact current-game mapping, feature guards, ownership checks and no-replay protections remain in place.
+
+Validation
+- cargo fmt completed.
+- mod_loading_admission_distinguishes_pinned_and_rederived_proofs: passed.
+- The exact installed-game provider_v2_actual_disk_gate now passes, including Version 2 label, mod-provider admission, closed broad native-write gate, and independently verified outfit carry profile. Repeat launch verification completed in 30.902 ms.
+- cargo build --release --features dev-wnba-categories completed successfully.
+- Start QA090 Dev.ps1 -CheckOnly passed: exact staged hash verified, game/launcher closed, no activation performed.
+
+QA090 candidate
+- Staged executable: Dev/Pending/QA090/launcher.exe
+- Bytes: 46665728
+- SHA-256: 31BF573FDFB350E92D77F28ADC08B026669773823B631CC663807164B4652F02
+- Starter: Start QA090 Dev.vbs
+- Native payload remains QA088's remapped version-outfits-v2-qa088.dll, SHA-256 1A6DAD61915869BF2E56636A910563D27BFE967052DC5BD3E2D243505F7BBB00.
+
+Live acceptance still required
+- Start QA090 and use Play normally with WNBA Blacktop ON.
+- Confirm there is no unsupported-build rejection and the WNBA category appears in Blacktop selection.
+
+Preserved qualifications
+- QA073's natural native pre-initialization fixture remains unresolved at exit -1073740791.
+- QA078's Clang outfit fixture remains unresolved at exit -1073740791 (0xC0000409).
+- The general roster/team editor serializer still needs its separate post-patch mapping.

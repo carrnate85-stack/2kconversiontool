@@ -12,9 +12,11 @@
  function controls(){button.disabled=!!active||!valid();cancel.disabled=!active;}
  async function close(entry){if(!entry.id)return;if(entry.closing)return entry.closing;const id=entry.id;entry.closing=bridge({action:'cancel',id,destination:entry.destination}).then(receipt=>{if(receipt?.closed!==true)throw Error('The isolated browser is still closing. No values were staged.');entry.id=null;}).finally(()=>{entry.closing=null;});return entry.closing;}
  function retire(message){const prior=active;if(prior){prior.canceled=true;active=null;void close(prior).catch(()=>{});}if(message)status.textContent=message;controls();}
- const reset=e=>{epoch++;retire();player=e?.detail?.player||e?.detail||null;status.textContent='';controls();};
+ // The host dispatches open before removing the modal's hidden class. Refresh
+ // after that synchronous open completes; keep visibility checks for actions.
+ const reset=e=>{epoch++;retire();player=e?.detail?.player||e?.detail||null;status.textContent='';controls();const visit=epoch;queueMicrotask(()=>{if(visit===epoch)controls();});};
  window.addEventListener('player-editor:open',reset);window.addEventListener('player-editor:committed',reset);window.addEventListener('player-editor:closed',()=>reset());
- cancel.addEventListener('click',()=>{epoch++;retire('Capture canceled. Existing edits are unchanged.');});url.addEventListener('input',()=>{if(active){epoch++;retire('Source URL changed. Existing edits are unchanged.');}});
+ cancel.addEventListener('click',()=>{epoch++;retire('Capture canceled. Existing edits are unchanged.');});url.addEventListener('input',()=>{if(active){epoch++;retire('Source URL changed. Existing edits are unchanged.');}controls();});
  const delay=ms=>new Promise(resolve=>setTimeout(resolve,ms));
  async function open(address){
   if(active||!valid())return false;

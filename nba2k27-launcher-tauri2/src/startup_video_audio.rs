@@ -104,9 +104,18 @@ fn identity(handle: HANDLE) -> Result<Identity> {
     Ok(result)
 }
 fn normalize(path: &Path) -> String {
-    path.to_string_lossy()
-        .trim_start_matches(r"\\?\")
-        .to_ascii_lowercase()
+    // PathBuf retains separators inside joined strings (e.g. Cache/Runtime),
+    // while QueryFullProcessImageNameW returns backslashes. Compare equivalent
+    // Windows spellings without resolving links or relaxing file/creator identity.
+    let text = path
+        .to_string_lossy()
+        .replace('/', r"\")
+        .to_ascii_lowercase();
+    if let Some(unc) = text.strip_prefix(r"\\?\unc\") {
+        format!(r"\\{unc}")
+    } else {
+        text.strip_prefix(r"\\?\").unwrap_or(&text).to_owned()
+    }
 }
 fn same_identity(a: &Identity, b: &Identity) -> bool {
     a.pid == b.pid && a.birth == b.birth && normalize(&a.exe) == normalize(&b.exe)
@@ -122,6 +131,37 @@ fn read_packet(reader: &mut impl Read) -> Result<Vec<u8>> {
     let mut bytes = vec![0; size];
     reader.read_exact(&mut bytes)?;
     Ok(bytes)
+}
+fn launcher_file_name(name: &std::ffi::OsStr) -> bool {
+    if [
+        "2k Launcher Rust.exe",
+        "2k Launcher Rust Prototype.exe",
+        "nba2k27-launcher-tauri2.exe",
+        "2k Launcher.exe",
+    ]
+    .iter()
+    .any(|candidate| name.eq_ignore_ascii_case(candidate))
+    {
+        return true;
+    }
+    // The standalone sharing build uses this exact versioned filename. This
+    // recognizes only the packaging convention; PID, birth, creator, executable
+    // path and portable-root equality are still checked independently below.
+    let Some(name) = name.to_str() else {
+        return false;
+    };
+    let lower = name.to_ascii_lowercase();
+    let Some(version) = lower
+        .strip_prefix("nba 2k27 launcher ")
+        .and_then(|v| v.strip_suffix(".exe"))
+    else {
+        return false;
+    };
+    let pieces = version.split('.').collect::<Vec<_>>();
+    pieces.len() == 3
+        && pieces
+            .iter()
+            .all(|p| !p.is_empty() && p.len() <= 5 && p.bytes().all(|b| b.is_ascii_digit()))
 }
 fn validate_bootstrap(
     b: &Bootstrap,
@@ -179,13 +219,10 @@ fn validate_bootstrap(
     };
     ensure!(
         normalize(root) == normalize(parent_root)
-            && actual_parent.exe.file_name().is_some_and(|name| [
-                "2k Launcher Rust Prototype.exe",
-                "nba2k27-launcher-tauri2.exe",
-                "2k Launcher.exe"
-            ]
-            .iter()
-            .any(|n| name.eq_ignore_ascii_case(n))),
+            && actual_parent
+                .exe
+                .file_name()
+                .is_some_and(launcher_file_name),
         "Audio guardian creator is not its portable launcher"
     );
     ensure!(

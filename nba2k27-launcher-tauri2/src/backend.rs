@@ -190,6 +190,7 @@ pub struct Backend {
     decode_leases: Mutex<Vec<crate::legacy_saved_media::ResolvedVideo>>,
     library: Mutex<crate::library::Library>,
     pub previews: crate::previews::Previews,
+    pub curated: crate::curated_library::Service,
     catalog: OnceLock<Value>,
     catalog_init: Mutex<()>,
     catalog_browser_id: OnceLock<String>,
@@ -202,6 +203,8 @@ pub struct Backend {
     pub arena_profiles: crate::custom_arena_profiles::Service,
     pub jukebox: crate::jukebox_runtime::Runtime,
     pub mod_install: crate::mod_install::Installer,
+    #[cfg(feature = "dev-model-preview")]
+    pub model_preview: crate::model_preview_dev::Service,
 }
 fn wide(path: &Path) -> Result<Vec<u16>> {
     // Rust's filesystem operations support extended Windows paths, but the raw
@@ -356,10 +359,13 @@ impl Backend {
             .validate(&root)
             .context("Prototype library is invalid; original file left untouched")?;
         let previews = crate::previews::Previews::new(&root)?;
+        let _ = crate::custom_blacktop::load(&root);
         let session = crate::native_session::Service::new(root.clone())?;
         let presets = crate::editor_presets::Service::new(&root);
         let jukebox = crate::jukebox_runtime::Runtime::new(root.clone());
         let mod_install = crate::mod_install::Installer::new(&root);
+        #[cfg(feature = "dev-model-preview")]
+        let model_preview = crate::model_preview_dev::Service::new(&root);
         Ok(Self {
             root,
             presets,
@@ -371,6 +377,7 @@ impl Backend {
             closing: std::sync::atomic::AtomicBool::new(false),
             videos: Mutex::new(None),
             video_import: crate::startup_video_import::Coordinator::default(),
+            curated: crate::curated_library::Service::default(),
             decode_leases: Mutex::new(Vec::new()),
             library: Mutex::new(library),
             previews,
@@ -383,6 +390,8 @@ impl Backend {
             reference: crate::reference_stats::Service::default(),
             roster: crate::roster_native::Service::new(),
             mod_install,
+            #[cfg(feature = "dev-model-preview")]
+            model_preview,
         })
     }
     fn catalog(&self) -> Result<&Value> {
@@ -430,7 +439,10 @@ impl Backend {
         let mut bytes = Vec::new();
         flate2::read::GzDecoder::new(&include_bytes!("../assets/wardrobe.json.gz")[..])
             .read_to_end(&mut bytes)?;
-        let value = serde_json::from_slice(&bytes)?;
+        let mut value: Value = serde_json::from_slice(&bytes)?;
+        for row in value.as_array_mut().context("Wardrobe missing")? {
+            crate::shoe_labels::enrich(row);
+        }
         let _ = self.wardrobe.set(value);
         Ok(self.wardrobe.get().unwrap())
     }
@@ -597,9 +609,37 @@ impl Backend {
                     .clone();
                 let game = Path::new(&s.game_root).join("NBA2K27.exe");
                 Ok(
-                    json!({"version":VERSION,"settings":s,"settingsImport":self.settings_import,"root":self.root,"gameFound":game.is_file(),"runtime":"Rust + Tauri 2 + shared WebView2","liveGameEnabled":false,"capabilities":{"wnbaBlacktop":cfg!(debug_assertions)}}),
+                    json!({"version":VERSION,"settings":s,"settingsImport":self.settings_import,"root":self.root,"gameFound":game.is_file(),"runtime":"Rust + Tauri 2 + shared WebView2","liveGameEnabled":false,"capabilities":{"wnbaBlacktop":crate::feature_plan::dev_wnba_categories(),"debugMenus":crate::feature_plan::dev_debug_menus(),"developerTools":cfg!(feature="dev-curator"),"modelPreview":cfg!(feature="dev-model-preview"),"customBlacktop":crate::custom_blacktop::enabled()}}),
                 )
             }
+            #[cfg(feature = "dev-model-preview")]
+            "model-preview-prepare" => {
+                let settings = self.current_settings()?;
+                self.model_preview.prepare(Path::new(&settings.game_root))
+            }
+            #[cfg(feature = "dev-model-preview")]
+            "model-preview-load" => {
+                let path = args["path"].as_str().context("Mod path required")?;
+                let settings = self.current_settings()?;
+                self.model_preview.load(
+                    Path::new(&settings.game_root),
+                    Path::new(&settings.mods_root),
+                    path,
+                    args.get("config").and_then(Value::as_str),
+                )
+            }
+            #[cfg(feature = "dev-model-preview")]
+            "model-preview-arena-textures" => {
+                let session = args["session"]
+                    .as_str()
+                    .context("Preview session required")?;
+                let cursor = args["cursor"].as_u64().unwrap_or(0) as usize;
+                self.model_preview.arena_textures(session, cursor)
+            }
+            #[cfg(feature = "dev-model-preview")]
+            "model-preview-cancel" => self.model_preview.cancel(),
+            #[cfg(feature = "dev-model-preview")]
+            "model-preview-status" => self.model_preview.status(),
             "support-bundle-create" => {
                 ensure!(
                     args.is_null() || args == json!({}),
@@ -664,6 +704,10 @@ impl Backend {
                 Ok(json!(true))
             }
             "preview-status" => self.previews.status(),
+            "custom-blacktop" => {
+                let settings = self.current_settings()?;
+                crate::custom_blacktop::request(&self.root, Path::new(&settings.mods_root), &args)
+            }
             "choices" => {
                 let kind = args["kind"].as_str().context("Catalog kind required")?;
                 ensure!(
@@ -673,7 +717,12 @@ impl Backend {
                 let mut bytes = Vec::new();
                 flate2::read::GzDecoder::new(&include_bytes!("../assets/choices.json.gz")[..])
                     .read_to_end(&mut bytes)?;
-                let choices: Value = serde_json::from_slice(&bytes)?;
+                let mut choices: Value = serde_json::from_slice(&bytes)?;
+                if kind == "arena" && crate::custom_blacktop::enabled() {
+                    let settings = self.current_settings()?;
+                    choices["arena"].as_array_mut().context("Arena catalog missing")?
+                        .extend(crate::custom_blacktop::rows(&self.root, Path::new(&settings.mods_root))?);
+                }
                 let q = args["query"].as_str().unwrap_or("");
                 ensure!(q.len() <= 200, "Search is too long");
                 // WPF arena-browser.js / catalog search: every normalised term
@@ -685,15 +734,16 @@ impl Backend {
                     .collect();
                 let group = args["group"].as_str().unwrap_or("All");
                 let rows = choices[kind].as_array().context("Catalog missing")?;
-                let groups: std::collections::BTreeSet<_> =
+                let mut groups: std::collections::BTreeSet<_> =
                     rows.iter().filter_map(|r| r["group"].as_str()).collect();
+                if kind == "arena" && crate::custom_blacktop::enabled() { groups.insert("Custom"); }
                 // WPF arena picker: a Favorites tab beside the catalog groups.
                 let favorites = if kind == "arena" && group == "Favorites" {
                     Some(self.arena_favorites(None)?)
                 } else {
                     None
                 };
-                let matches: Vec<_> = rows
+                let mut matches: Vec<_> = rows
                     .iter()
                     .filter(|r| {
                         (group == "All"
@@ -712,6 +762,23 @@ impl Backend {
                             }
                     })
                     .collect();
+                // All-tab browsing: keep the stock court first, then outdoor
+                // courts and gyms. Stable sorting preserves the catalog order
+                // within each group and across the remaining arenas. Sort the
+                // complete result before paging so later pages follow it too.
+                if kind == "arena" && group == "All" {
+                    matches.sort_by_key(|row| {
+                        if row["id"] == "default" {
+                            0
+                        } else {
+                            match row["group"].as_str() {
+                                Some("Outdoor") => 1,
+                                Some("Gyms") => 2,
+                                _ => 3,
+                            }
+                        }
+                    });
+                }
                 let offset = args["offset"].as_u64().unwrap_or(0) as usize;
                 let mut page: Vec<Value> = matches
                     .iter()
@@ -906,20 +973,35 @@ impl Backend {
                         p["asset"] != "NO SHIRT"
                             && p["category"].as_str() == Some(slot)
                             && pool.is_none_or(|pool| garment_pool(p, pool))
-                            && p["asset"]
-                                .as_str()
-                                .unwrap_or("")
-                                .to_lowercase()
-                                .contains(&q)
+                            && if slot == "shoes" {
+                                let text = format!(
+                                    "{} {} {}",
+                                    p["asset"].as_str().unwrap_or(""),
+                                    p["label"].as_str().unwrap_or(""),
+                                    p["group"].as_str().unwrap_or("")
+                                )
+                                .to_lowercase();
+                                q.split_whitespace().all(|term| text.contains(term))
+                            } else {
+                                p["asset"]
+                                    .as_str()
+                                    .unwrap_or("")
+                                    .to_lowercase()
+                                    .contains(&q)
+                            }
                     })
                     .collect();
                 let mut groups: Vec<_> = items.iter().filter_map(|p| p["group"].as_str()).collect();
                 groups.sort_unstable();
                 groups.dedup();
-                let items: Vec<_> = items
+                let mut items: Vec<_> = items
                     .into_iter()
                     .filter(|p| group == "All" || p["group"] == group)
                     .collect();
+                if slot == "shoes" && group == "All" {
+                    // Stable partition before pagination keeps every identified shoe first.
+                    items.sort_by_key(|p| p["group"] == "Unidentified");
+                }
                 let offset = args["offset"].as_u64().unwrap_or(0) as usize;
                 let limit = args["limit"].as_u64().unwrap_or(40).clamp(1, 80) as usize;
                 let mut page: Vec<Value> = items
@@ -1176,6 +1258,10 @@ impl Backend {
         self.closing
             .store(true, std::sync::atomic::Ordering::Release);
         self.video_import.cancel_current();
+        self.curated.shutdown();
+        #[cfg(feature = "dev-curator")]
+        crate::curated_publisher::shutdown();
+        self.previews.shutdown();
         self.session.stop_new_launches();
     }
     pub(crate) fn ensure_open_for_launch(&self) -> Result<()> {
@@ -1259,6 +1345,35 @@ impl Backend {
         self.media()
     }
 
+    pub(crate) fn import_curated_video(
+        &self,
+        source: &Path,
+        display: &str,
+        cancel: &std::sync::atomic::AtomicBool,
+        progress: &dyn Fn(&str),
+    ) -> Result<String> {
+        self.ensure_open_for_launch()?;
+        let id = unique_id();
+        let lease = self.video_import.begin(&id)?;
+        let result = self.with_videos(|store| {
+            store.import_mp4(source, display, &unique_id(), &lease.cancel, |update| {
+                if matches!(
+                    update.phase,
+                    crate::video_library::Phase::Committing | crate::video_library::Phase::Done
+                ) {
+                    lease.commit_started();
+                } else if cancel.load(std::sync::atomic::Ordering::Acquire) {
+                    lease
+                        .cancel
+                        .store(true, std::sync::atomic::Ordering::Release);
+                }
+                progress("Checking video and adding it to Presentation");
+                Ok(())
+            })
+        });
+        self.video_import.finish(&id);
+        Ok(result?.id)
+    }
     pub(crate) fn import_video_with_progress(
         &self,
         source: &Path,
@@ -1300,7 +1415,7 @@ impl Backend {
         let _guard = LOCK
             .lock()
             .map_err(|_| anyhow::anyhow!("Arena favorites unavailable"))?;
-        let known = |id: &str| crate::blacktop_arena::choices().iter().any(|c| c.id == id);
+        let known = |id: &str| crate::blacktop_arena::choice(id).is_ok();
         let path = self.root.join("Data/arena-favorites.json");
         let mut ids: Vec<String> = match fs::read(&path) {
             Ok(bytes) => serde_json::from_slice::<Vec<String>>(&bytes)
@@ -1520,6 +1635,9 @@ fn scan_mods_limited(root: &Path, maximum: usize) -> Result<Value> {
                 ensure!(depth < 64, "Mod catalog folder tree is too deep.");
                 pending.push((entry.path(), depth + 1));
             } else if meta.is_file() {
+                if crate::mod_install::recovery_artifact(&entry.file_name().to_string_lossy()) {
+                    continue;
+                }
                 ensure!(
                     rows.len() < maximum,
                     "Mod catalog exceeded its {} file safety limit.",
@@ -1552,6 +1670,46 @@ fn group_thousands(value: usize) -> String {
 }
 #[cfg(test)]
 mod tests {
+    #[test]
+    fn shoe_catalog_restores_names_brands_search_and_exact_ids() {
+        let r = root();
+        let b = Backend::new(r.clone()).unwrap();
+        let all = b
+            .dispatch("wardrobe", json!({"slot":"shoes","limit":80}))
+            .unwrap();
+        assert_eq!(all["total"], 503);
+        for brand in ["Nike", "Jordan", "Adidas", "New Balance"] {
+            assert!(all["groups"].as_array().unwrap().iter().any(|g| g == brand));
+        }
+        let found = b.dispatch("wardrobe", json!({"slot":"shoes","pool":"female","query":"Nike Air Force 1 High","group":"Nike"})).unwrap();
+        assert!(
+            found["items"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .any(|row| row["asset"] == "shoe_1000_default"
+                    && row["label"] == "Nike Air Force 1 High · default")
+        );
+        let direct = b
+            .dispatch(
+                "garments",
+                json!({"ids":["shoe_1000_default","shoe_0215_default"]}),
+            )
+            .unwrap();
+        assert_eq!(direct[0]["group"], "Nike");
+        assert_eq!(direct[1]["group"], "Unidentified");
+        assert_eq!(direct[1]["asset"], "shoe_0215_default");
+        assert_eq!(
+            b.dispatch(
+                "wardrobe",
+                json!({"slot":"shoes","pool":"male","query":"shoe_1000_default"})
+            )
+            .unwrap()["total"],
+            0
+        );
+        drop(b);
+        std::fs::remove_dir_all(r).unwrap();
+    }
     use super::*;
     #[test]
     fn outfit_pool_templates_are_valid_exact_and_never_enable_live_access() {
@@ -1760,7 +1918,7 @@ mod tests {
         for channel in ["native-launch-modded", "native-launch-steam-only"] {
             let settings = b.current_settings().unwrap();
             let args = if channel == "native-launch-modded" {
-                json!({"acknowledgement":"native-modded-qa-explicit-blacktop","gameRoot":settings.game_root,"modsRoot":settings.mods_root})
+                json!({"acknowledgement":"native-modded-qa-explicit-blacktop","gameRoot":settings.game_root,"modsRoot":settings.mods_root,"debugMenus":false})
             } else {
                 json!({"acknowledgement":"steam-only-no-features","gameRoot":settings.game_root})
             };

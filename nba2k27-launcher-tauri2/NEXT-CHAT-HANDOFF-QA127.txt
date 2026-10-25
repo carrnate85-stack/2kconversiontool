@@ -1,0 +1,19 @@
+QA127 DEV HANDOFF - 2026-10-24
+Read artifacts/qa127-startup-foreground/REPORT.txt and preserved QA126 live trace first.
+
+QA126 live attempt: media ready, audio readiness reached, but show_fullscreen cancelled on foreground check. No actual Playing/Frame. Audio restoration completed. Prior trace lacks foreground HWND/PID, so the responsible application is unknown; do not claim it was definitely launcher focus or user Alt-Tab.
+QA127 permits the exact native-owned launcher main/overlay windows during startup, waits at most 500 ms through NULL foreground activation, and revalidates/rebinds a replacement foreground game HWND through retained OwnedGame identity. Other applications still cancel and restore. Post-play Alt-Tab behavior unchanged. New foreground-before-play trace records HWND/PID and all allowed handles.
+
+Version 0.53.31, dev only. No promotion/installation.
+Candidate Dev/Pending/QA127/launcher.exe
+SHA256 5ECA828EF7D54AA11EE5C1709D5DC6EE66E6F5DA1830223205FA21D8D7567786
+Bytes 59565056
+PDB SHA256 084225D63891E22B883A4FBB1AD7A3E012746B781D225CC68231B82A6A62034F
+Guardian SHA256 9F738AF9AD229C23EBD1D8D0883C32FB311F50E4486931BEE78605B9F6E325FE
+Starter Open QA127 Dev.lnk / Start QA127 Dev.ps1
+
+80 startup tests passed, 1 ignored. TypeScript/Vite/release build passed. Exact candidate intro page decoded 1920x1080 frame at 529 ms, pass=true, exit 0 (probe/Logs/startup-intro-probe.json). That fixture does not exercise actual game foreground/fullscreen/audio. Live acceptance pending.
+Starter CheckOnly passed: staged hash/size verified and game/launcher closed. No activation or game/process closure was performed by the assistant. User should close the current launcher normally, open QA127, click Play and keep game/launcher foreground during this test. Selecting Codex or another app before presentation can still cancel intentionally.
+
+Main/Share remain QA124 0.53.28 hash 236166C70F014ED835A533BE27CF52DA5DA9A612C62331CE88288D30D44F8CFD, freshly verified unchanged. Existing dev settings/video preserved. No game launch/read/write by assistant.
+Unresolved QA073 natural Rust AV/exact EXE-PDB, QA078 Clang fixture crash and QA106 Season History qualification unchanged.

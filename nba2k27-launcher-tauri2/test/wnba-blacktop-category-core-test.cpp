@@ -18,6 +18,7 @@ struct Host {
     Route route{};std::uintptr_t label_rva=kLabel;std::uintptr_t address=BASE+0x40000000;
     bool departed{},pub=true,rest=true,rx{},retained{},allocation_intent{},ready_intent{};
     bool seal_ok=true,write_ok=true,throw_write{},foreign_after_label{};
+    unsigned no_effect_at{};
     unsigned allocations{},journals{},fail_journal{},writes{},write_fail_at{};
     unsigned bridge_fault{},initializations{},seals{},rx_checks{},ready_calls{};
     std::string host_detail="Injected active checkpoint uncertainty";
@@ -63,6 +64,7 @@ struct Host {
     bool write_change(const Change& c){
         assert(ready_intent&&retained&&rx);++writes;
         if(throw_write)throw std::runtime_error("uncertain write");
+        if(writes==no_effect_at){events.push_back("no-effect");return false;}
         if(c.word==Word::label){
             assert(c.at==BASE+label_rva+8&&route.label==c.before);
             route.label=c.after;events.push_back(c.after==kWomen?"label-publish":"label-restore");
@@ -74,6 +76,7 @@ struct Host {
         return write_ok&&writes!=write_fail_at;
     }
     bool journal_applied(const Binding& b,const Change&){assert(b==scope());events.push_back("applied");return true;}
+    bool journal_not_applied(const Binding& b,const Change&){assert(b==scope());events.push_back("not-applied");return true;}
 };
 int main(){
     {
@@ -212,7 +215,7 @@ int main(){
         assert(s.tick(exit,h)==Result::restored && h.route==Route{});
         assert(s.tick(ready(),h)==Result::limit_reached && h.allocations==1 && h.writes==4);
     }
-    static_assert(kEntry==0x7425F58&&kStockDispatch==std::int32_t(0xFAEE5F58u));
+    static_assert(kEntry==0x7425F58&&kStockDispatch==std::int32_t(0xFAEE6008u));
     {
         auto in=ready();assert(ready_selection(in));
         for(unsigned failure=0;failure<8;++failure){auto bad=in;
@@ -255,6 +258,12 @@ int main(){
     {
         Host h;Session s(scope(),BASE,h.label_rva);h.write_fail_at=2;
         assert(s.tick(ready(),h)==Result::held&&h.route==Route{}&&h.writes==4&&h.retained);
+    }
+    {
+        Host h;Session s(scope(),BASE,h.label_rva);h.no_effect_at=2;
+        assert(s.tick(ready(),h)==Result::held&&h.route==Route{}&&h.writes==3&&h.retained);
+        assert(std::count(h.events.begin(),h.events.end(),"not-applied")==1);
+        assert(std::count(h.events.begin(),h.events.end(),"label-restore")==1);
     }
     {
         Host h;Session s(scope(),BASE,h.label_rva);h.foreign_after_label=true;

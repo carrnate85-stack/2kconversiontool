@@ -36,7 +36,7 @@ use windows::Win32::{
 };
 
 const MAX_BATCH: usize = 100;
-const MAX_PACKAGE_NATIVE: usize = 320 * 1024 * 1024;
+const MAX_PACKAGE_NATIVE: usize = package::MAX_NATIVE_IMPORT;
 const MAX_PREVIEW_TOTAL: usize = 256 * 1024 * 1024;
 const PREVIEW_TTL: Duration = Duration::from_secs(30 * 60);
 pub(crate) use jukebox_decode_worker::admission;
@@ -105,6 +105,24 @@ pub(crate) trait Host: Send + Sync + 'static {
     }
     fn preview_enabled(&self) -> bool {
         false
+    }
+    fn decode_limited(
+        &self,
+        bytes: &[u8],
+        nonce: &str,
+        cancel: Arc<AtomicBool>,
+        progress: &mut dyn FnMut(u32) -> Result<()>,
+        limit: usize,
+    ) -> Result<Vec<u8>> {
+        jukebox_decode_worker::decode_guarded_limit(
+            &std::env::current_exe()?,
+            bytes,
+            nonce,
+            cancel,
+            progress,
+            || self.decode_admission()?.require_decoder(),
+            limit,
+        )
     }
     /// Only return the host's owned loopback token route. Never a path/URL
     /// selected by the renderer. The UI independently validates this address.
@@ -240,6 +258,8 @@ struct AudioOptions {
     single: bool,
     title: Option<String>,
     artist: Option<String>,
+    // Native curated-download lease only. Never deserialized from renderer arguments.
+    downloaded: Option<PathBuf>,
 }
 impl AudioOptions {
     fn new(single: bool, title: Option<String>, artist: Option<String>) -> Result<Self> {
@@ -260,6 +280,7 @@ impl AudioOptions {
             single,
             title,
             artist,
+            downloaded: None,
         })
     }
 }
@@ -298,7 +319,11 @@ pub(crate) fn names_from_filename(stem: &str) -> (String, String) {
             }
         }
     }
-    let title = if stem.is_empty() { "Custom Song".into() } else { stem };
+    let title = if stem.is_empty() {
+        "Custom Song".into()
+    } else {
+        stem
+    };
     ("Custom".into(), title)
 }
 fn cancelled(cancel: &AtomicBool) -> Result<()> {
@@ -691,6 +716,53 @@ impl Api {
         self.shared.refresh(&service)?;
         self.reply("state", "Saved to the launcher library. Changes apply on the next Play launch; a running game was not changed.")
     }
+    pub(crate) fn import_downloaded(
+        &self,
+        path: &Path,
+        cancel: &AtomicBool,
+        progress: impl Fn(&str),
+    ) -> Result<String> {
+        let revision = self.view()?.revision;
+        let reply = self.start_job(
+            "playlist-import",
+            &revision,
+            None,
+            AudioOptions {
+                downloaded: Some(path.into()),
+                ..Default::default()
+            },
+        )?;
+        let id = reply["jobId"]
+            .as_str()
+            .context("Download import did not create a job")?
+            .to_string();
+        loop {
+            let view = self.view()?;
+            let job = view
+                .job
+                .as_ref()
+                .filter(|j| j.id == id)
+                .context("Download import job changed; inspect Jukebox before retrying")?;
+            progress(&job.message);
+            match job.phase.as_str() {
+                "completed" => {
+                    ensure!(
+                        view.state.playlists.iter().any(|p| p.id == id),
+                        "Imported playlist is missing"
+                    );
+                    return Ok(id);
+                }
+                "failed" | "cancelled" => {
+                    anyhow::bail!("{}", job.error.as_deref().unwrap_or(&job.message))
+                }
+                _ => {}
+            }
+            if cancel.load(Ordering::Acquire) && job.cancellable {
+                let _ = self.cancel(&id);
+            }
+            thread::sleep(Duration::from_millis(100));
+        }
+    }
     fn start_job(
         &self,
         kind: &str,
@@ -757,6 +829,7 @@ impl Api {
         }
         let shared = self.shared.clone();
         let kind = kind.to_string();
+        let response_id = id.clone();
         let expected = revision.to_string();
         let worker_cancel = cancel.clone();
         let thread = thread::Builder::new()
@@ -813,7 +886,7 @@ impl Api {
             anyhow::bail!("{}", job.error.as_deref().unwrap_or(&job.message));
         }
         Ok(
-            json!({"kind":if active {"started"} else if cancelled_picker {"cancelled"} else {"state"},"view":view,
+            json!({"kind":if active {"started"} else if cancelled_picker {"cancelled"} else {"state"},"view":view,"jobId":response_id,
             "message":if active {"Native import/export started."} else {"Native operation finished; inspect its final status below."}}),
         )
     }
@@ -1206,83 +1279,84 @@ fn run_job(
                 for (i, path) in paths.iter().enumerate() {
                     cancelled(cancel)?;
                     let one = (|| -> Result<()> {
-                    shared.progress(
-                        "reading",
-                        format!("Reading song {} of {}", i + 1, paths.len()),
-                        Some(i),
-                        Some(paths.len()),
-                        None,
-                    )?;
-                    ensure!(
-                        path.extension().and_then(|s| s.to_str()).is_some_and(|s| [
-                            "mp3", "wav", "m4a", "aac", "flac", "ogg", "opus"
-                        ]
-                        .iter()
-                        .any(|e| s.eq_ignore_ascii_case(e))),
-                        "Use MP3, WAV, M4A, AAC, FLAC, OGG or Opus audio; original retained"
-                    );
-                    let mut source = Source::open(path, audio::MAX_AUDIO as u64)?;
-                    let bytes = source.read_all(audio::MAX_AUDIO, cancel)?;
-                    let native = match audio::wrap(&bytes) {
-                        Ok(native) => native,
-                        Err(_) => {
-                            admitted.require_decoder()?;
-                            shared.host.decode_admission()?.require_decoder()?;
-                            shared.progress(
-                                "decoding",
-                                format!("Decoding song {} of {}", i + 1, paths.len()),
-                                Some(i),
-                                Some(paths.len()),
-                                Some(0),
-                            )?;
-                            let pcm = shared.host.decode(
-                                &bytes,
-                                &nonce()?,
-                                cancel.clone(),
-                                &mut |frames| {
-                                    cancelled(cancel)?;
-                                    shared.progress(
-                                        "decoding",
-                                        format!("Decoding song {} of {}", i + 1, paths.len()),
-                                        Some(i),
-                                        Some(paths.len()),
-                                        Some(frames),
-                                    )
-                                },
-                            )?;
-                            audio::native_pcm(&pcm)?
-                        }
-                    };
-                    let (artist, title) = names_from_filename(
-                        &path
-                            .file_stem()
-                            .context("Audio filename is missing")?
-                            .to_string_lossy(),
-                    );
-                    let title = options.title.as_deref().unwrap_or(&title);
-                    let artist = options.artist.as_deref().unwrap_or(&artist);
-                    shared.commit_boundary(
-                        cancel,
-                        "Saving validated native audio to the portable library.",
-                    )?;
-                    let mut service = lock(&shared.service)?;
-                    service.import_audio(
-                        playlist.context("Playlist is missing")?,
-                        title,
-                        artist,
-                        &native,
-                        &nonce()?,
-                    )?;
-                    shared.refresh(&service)?;
-                    drop(service);
-                    shared.progress(
-                        "reading",
-                        format!("Saved {} of {} songs", i + 1, paths.len()),
-                        Some(i + 1),
-                        Some(paths.len()),
-                        None,
-                    )?;
-                    Ok(())
+                        shared.progress(
+                            "reading",
+                            format!("Reading song {} of {}", i + 1, paths.len()),
+                            Some(i),
+                            Some(paths.len()),
+                            None,
+                        )?;
+                        ensure!(
+                            path.extension().and_then(|s| s.to_str()).is_some_and(|s| [
+                                "mp3", "wav", "m4a", "aac", "flac", "ogg", "opus"
+                            ]
+                            .iter()
+                            .any(|e| s.eq_ignore_ascii_case(e))),
+                            "Use MP3, WAV, M4A, AAC, FLAC, OGG or Opus audio; original retained"
+                        );
+                        let mut source = Source::open(path, audio::MAX_AUDIO as u64)?;
+                        let bytes = source.read_all(audio::MAX_AUDIO, cancel)?;
+                        let native = match audio::wrap(&bytes) {
+                            Ok(native) => native,
+                            Err(_) => {
+                                admitted.require_decoder()?;
+                                shared.host.decode_admission()?.require_decoder()?;
+                                shared.progress(
+                                    "decoding",
+                                    format!("Decoding song {} of {}", i + 1, paths.len()),
+                                    Some(i),
+                                    Some(paths.len()),
+                                    Some(0),
+                                )?;
+                                let pcm = shared.host.decode(
+                                    &bytes,
+                                    &nonce()?,
+                                    cancel.clone(),
+                                    &mut |frames| {
+                                        cancelled(cancel)?;
+                                        shared.progress(
+                                            "decoding",
+                                            format!("Decoding song {} of {}", i + 1, paths.len()),
+                                            Some(i),
+                                            Some(paths.len()),
+                                            Some(frames),
+                                        )
+                                    },
+                                )?;
+                                drop(bytes);
+                                audio::native_pcm(&pcm)?
+                            }
+                        };
+                        let (artist, title) = names_from_filename(
+                            &path
+                                .file_stem()
+                                .context("Audio filename is missing")?
+                                .to_string_lossy(),
+                        );
+                        let title = options.title.as_deref().unwrap_or(&title);
+                        let artist = options.artist.as_deref().unwrap_or(&artist);
+                        shared.commit_boundary(
+                            cancel,
+                            "Saving validated native audio to the portable library.",
+                        )?;
+                        let mut service = lock(&shared.service)?;
+                        service.import_audio(
+                            playlist.context("Playlist is missing")?,
+                            title,
+                            artist,
+                            &native,
+                            &nonce()?,
+                        )?;
+                        shared.refresh(&service)?;
+                        drop(service);
+                        shared.progress(
+                            "reading",
+                            format!("Saved {} of {} songs", i + 1, paths.len()),
+                            Some(i + 1),
+                            Some(paths.len()),
+                            None,
+                        )?;
+                        Ok(())
                     })();
                     if let Err(error) = one {
                         cancelled(cancel)?;
@@ -1297,7 +1371,13 @@ fn run_job(
                     }
                 }
                 let added = paths.len() - failures.len();
-                ensure!(added > 0, "{}", failures.first().map_or("No songs were added", String::as_str));
+                ensure!(
+                    added > 0,
+                    "{}",
+                    failures
+                        .first()
+                        .map_or("No songs were added", String::as_str)
+                );
                 Ok(Some(if let Some(first) = failures.first() {
                     format!("Added {added} of {} songs. {first}", paths.len())
                 } else {
@@ -1307,7 +1387,11 @@ fn run_job(
                 }))
             }
             "playlist-import" => {
-                let Some(path) = shared.host.choose_playlist(cancel)? else {
+                let Some(path) = (if let Some(path) = &options.downloaded {
+                    Some(path.clone())
+                } else {
+                    shared.host.choose_playlist(cancel)?
+                }) else {
                     return Ok(None);
                 };
                 ensure!(
@@ -1327,7 +1411,7 @@ fn run_job(
                 let mut magic = [0; 12];
                 source.file.read_exact(&mut magic)?;
                 source.file.seek(SeekFrom::Start(0))?;
-                let mut decode = |encoded: &[u8], _: usize| {
+                let mut decode = |encoded: &[u8], limit: usize| {
                     cancelled(cancel)?;
                     admitted.require_decoder()?;
                     shared.host.decode_admission()?.require_decoder()?;
@@ -1338,9 +1422,11 @@ fn run_job(
                         Some(1),
                         Some(0),
                     )?;
-                    shared
-                        .host
-                        .decode(encoded, &nonce()?, cancel.clone(), &mut |frames| {
+                    shared.host.decode_limited(
+                        encoded,
+                        &nonce()?,
+                        cancel.clone(),
+                        &mut |frames| {
                             cancelled(cancel)?;
                             shared.progress(
                                 "decoding",
@@ -1349,7 +1435,9 @@ fn run_job(
                                 Some(1),
                                 Some(frames),
                             )
-                        })
+                        },
+                        limit,
+                    )
                 };
                 let imported = if &magic == b"2KPLAYLIST2\n" {
                     let mut container = package::Container::open(CheckedRead {

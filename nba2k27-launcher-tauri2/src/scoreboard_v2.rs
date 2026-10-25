@@ -17,54 +17,54 @@ const ACTIVE: u64 = 0x0A99B850;
 const OTHER: u64 = 0x0A976900;
 const RESOURCES: u64 = 0x0BE95238;
 const VTABLE: u64 = 0x08101C38;
-const METHOD: u64 = 0x050C5D70;
+const METHOD: u64 = 0x050C5FF0;
 const LOCATOR: u64 = 0x08101E00;
 // The native context class alone permits omission of its mutable lifecycle
 // list head. Complete methods bind the constructor/global and list semantics.
 const CONTEXT_VTABLE: u64 = 0x07724EE8;
 const LIFECYCLE_METHODS: [(u64, usize, &str); 8] = [
     (
-        0x507FE10,
+        0x5080090,
         225,
-        "F66A22BF9A178262DEF5786B0B10A4AF36C41446065C6ACCD870A5CEC67D304E",
+        "EA2150313878DD3FFCDD907F7DA860028D7DC7A69914AD2E774476C990DBDA2F",
     ),
     (
-        0x507FF80,
+        0x5080200,
         379,
-        "9E2B5D7B730C3B73060A0F62B90D4DEE89348ECB65D4755D1D3E618B6F23972C",
+        "AFC9A2EA90F9F8D382EB5E7B6C5D792513E5E937062BE70479A6AC2A8D8AEA22",
     ),
     (
-        0x5080DB0,
+        0x5081030,
         164,
         "60A1C45DEE81C7A2C99D3D94E2C20756F5DF26466E218B989E4191DC3B3DC5A1",
     ),
     (
-        0x5080EA0,
+        0x5081120,
         190,
         "417CE0770E14AF728A4AAF9C04FF7841E07A3FF4688CB10FFE6E8DBE2146B997",
     ),
     (
-        0x50C9F50,
+        0x50CA1D0,
         257,
         "C3C2E4BB353E07CC92A4C7F02239BA6F917DBBCE18082771FE3148511C290E31",
     ),
     (
-        0x50d2440,
+        0x50d26c0,
         403,
         "040D960E25C4A3456A580E9471BE69F7A1D98A4B0F8F86C751AE079B97A02AAB",
     ),
     (
-        0x50d2160,
+        0x50d23e0,
         216,
         "43FFED7F8D96DA11B5AFC2694475EBE930559D1ACA98FDD84603E6236576973D",
     ),
     (
-        0x50d2350,
+        0x50d25d0,
         198,
         "9B331DE31B32D14423FE8CFE13271E7161AA076C795D5191365C4D58038DCEC2",
     ),
 ];
-const SHA: &str = "29A96471C55909FC2BCEA6C699C59238656A501C19B50C74ED64B0D842E576A1";
+const SHA: &str = "B673EB04593D6D5A4DFB9E270178E04C017BD9F277514D256EA98FFB792ED27B";
 fn at(m: &impl Memory, rva: u64) -> Result<u64> {
     m.base().checked_add(rva).context("Scoreboard RVA overflow")
 }
@@ -169,6 +169,37 @@ struct Span {
     kind: u32,
     protection: u32,
 }
+#[derive(Clone, Debug, PartialEq, Eq)]
+struct RegistryProof {
+    address: u64,
+    count: usize,
+    bytes: Vec<u8>,
+    allocation: u64,
+    kind: u32,
+    protection: u32,
+    stock_row: u64,
+    selected_row: u64,
+}
+impl RegistryProof {
+    fn same_owner(&self, other: &Self) -> bool {
+        self.address == other.address
+            && self.count == other.count
+            && (self.allocation, self.kind, self.protection)
+                == (other.allocation, other.kind, other.protection)
+            && self.stock_row == other.stock_row
+            && self.selected_row == other.selected_row
+            && self.bytes[4..]
+                .chunks_exact(260)
+                .zip(other.bytes[4..].chunks_exact(260))
+                .all(|(previous, current)| previous[..4] == current[..4])
+            && self.row(self.stock_row) == other.row(other.stock_row)
+            && self.row(self.selected_row) == other.row(other.selected_row)
+    }
+    fn row(&self, address: u64) -> &[u8] {
+        let offset = usize::try_from(address - self.address).unwrap();
+        &self.bytes[offset..offset + 260]
+    }
+}
 fn region(m: &impl Inspect, a: u64, n: usize, writable: bool) -> Result<Region> {
     let p = m.region(a)?;
     ensure!(
@@ -192,6 +223,7 @@ pub(crate) struct Snapshot {
     spans: Vec<Span>,
     fields: BTreeMap<u64, Vec<u8>>,
     field_pages: BTreeMap<u64, (u64, u32, u32)>,
+    registry: RegistryProof,
     choice: Choice,
 }
 impl Snapshot {
@@ -252,23 +284,28 @@ impl<M: Inspect> Capture<'_, M> {
         );
         Ok(v)
     }
-    fn resources(&mut self, c: &Choice) -> Result<()> {
+    fn resources(&mut self, c: &Choice) -> Result<RegistryProof> {
         let context = self.pointer(at(self.m, RESOURCES)?)?;
         // Preserve the original single-region proof for the complete header.
         region(self.m, context, 0xB0, false)?;
-        let prefix = self.keep(context, 0x88)?;
+        // Only the class pointer identifies the context. The native lifecycle
+        // methods mutate opaque bookkeeping throughout +08..+9F while the
+        // same context, bucket table and selected resource remain valid. Live
+        // exact-session evidence observed +48 and +68 changing after a fully
+        // verified scoreboard publication. Retaining that opaque block made a
+        // normal lifecycle tick look like foreign ownership.
+        let class = self.keep(context, 8)?;
         ensure!(
-            q(&prefix, 0)? == at(self.m, CONTEXT_VTABLE)?,
+            q(&class, 0)? == at(self.m, CONTEXT_VTABLE)?,
             "Scoreboard resource context class differs from native lifecycle proof"
         );
         let suffix = self.keep(context + 0xA0, 0x10)?;
-        // Native +88 is the lifecycle head; +90 is the global admission serial;
-        // +98/+9C are global current/peak hash counts. Never follow/adopt these.
         // Bucket count/pointer and the selected resource's own serial at+B0
-        // remain exact (selected resource keep(owner,0xB8) below).
-        let header = [prefix, vec![0; 24], suffix].concat();
-        let count = d(&header, 0xA0)?;
-        let buckets = q(&header, 0xA8)?;
+        // remain exact (selected resource keep(owner,0xB8) below). All
+        // identity-bearing roots, links, owners, registry rows, package tree,
+        // properties and allocation metadata are still retained verbatim.
+        let count = d(&suffix, 0)?;
+        let buckets = q(&suffix, 8)?;
         ensure!(
             count > 0 && count <= 1048576 && count.is_power_of_two() && valid_pointer(buckets),
             "Unsupported scoreboard resource bucket table"
@@ -334,11 +371,15 @@ impl<M: Inspect> Capture<'_, M> {
             (1..=4096).contains(&count),
             "Unsupported scoreboard resource count"
         );
-        let data = self.keep(registry, 4 + count * 260)?;
+        let bytes = 4 + count * 260;
+        let page = region(self.m, registry, bytes, false)?;
+        let data = read(self.m, registry, bytes)?;
         let stock = profile::choice("default")?;
         let mut found = 0;
         let mut original = 0;
-        for row in data[4..].chunks_exact(260) {
+        let mut stock_row = 0;
+        let mut selected_row = 0;
+        for (index, row) in data[4..].chunks_exact(260).enumerate() {
             let id = d(row, 0)?;
             if id != c.resource && id != profile::STOCK {
                 continue;
@@ -359,6 +400,7 @@ impl<M: Inspect> Capture<'_, M> {
                     "Stock scoreboard resource filename differs"
                 );
                 original += 1;
+                stock_row = registry + 4 + index as u64 * 260;
             }
             if id == c.resource {
                 ensure!(
@@ -366,13 +408,23 @@ impl<M: Inspect> Capture<'_, M> {
                     "Selected scoreboard resource filename differs"
                 );
                 found += 1;
+                selected_row = registry + 4 + index as u64 * 260;
             }
         }
         ensure!(
             found == 1 && original == 1,
             "Selected/stock scoreboard resource is absent or ambiguous"
         );
-        Ok(())
+        Ok(RegistryProof {
+            address: registry,
+            count,
+            bytes: data,
+            allocation: page.allocation,
+            kind: page.kind,
+            protection: page.protection,
+            stock_row,
+            selected_row,
+        })
     }
     fn descriptor(&mut self) -> Result<(BTreeMap<u64, Vec<u8>>, BTreeMap<u64, (u64, u32, u32)>)> {
         let slots = self.keep(at(self.m, PACKAGES)?, 128 * 24)?;
@@ -460,7 +512,7 @@ fn raw(m: &impl Inspect, c: &Choice, allowed: &[&str]) -> Result<Snapshot> {
             "A scoreboard instance is still active; leave the match first"
         );
     }
-    r.resources(c)?;
+    let registry = r.resources(c)?;
     let (fields, field_pages) = r.descriptor()?;
     ensure!(
         rules_v2::context(m)? == before,
@@ -472,16 +524,86 @@ fn raw(m: &impl Inspect, c: &Choice, allowed: &[&str]) -> Result<Snapshot> {
         spans: r.spans,
         fields,
         field_pages,
+        registry,
         choice: c.clone(),
     };
-    stable(m, &snapshot, &snapshot.fields, true)?;
+    stable(m, &snapshot, &snapshot.fields, true, true)?;
     Ok(snapshot)
+}
+fn registry_stable(m: &impl Inspect, s: &Snapshot, exact: bool) -> Result<()> {
+    let r = &s.registry;
+    let bytes = 4 + r.count * 260;
+    let page = region(m, r.address, bytes, false)?;
+    ensure!(
+        (page.allocation, page.kind, page.protection) == (r.allocation, r.kind, r.protection),
+        "Scoreboard registry allocation changed"
+    );
+    let data = read(m, r.address, bytes)?;
+    ensure!(
+        d(&data, 0)? as usize == r.count,
+        "Scoreboard resource count changed"
+    );
+    ensure!(
+        data[4..]
+            .chunks_exact(260)
+            .zip(r.bytes[4..].chunks_exact(260))
+            .all(|(current, original)| current[..4] == original[..4]),
+        "Scoreboard registry row identity changed"
+    );
+    let stock = profile::choice("default")?;
+    let mut found = Vec::new();
+    let mut original = Vec::new();
+    for (index, row) in data[4..].chunks_exact(260).enumerate() {
+        let id = d(row, 0)?;
+        if id != s.choice.resource && id != profile::STOCK {
+            continue;
+        }
+        let words = row[4..]
+            .chunks_exact(2)
+            .map(|p| u16::from_le_bytes([p[0], p[1]]))
+            .collect::<Vec<_>>();
+        let end = words
+            .iter()
+            .position(|v| *v == 0)
+            .context("Unterminated scoreboard registry name")?;
+        let name = String::from_utf16(&words[..end])?;
+        ensure!(name.is_ascii(), "Non-ASCII scoreboard registry filename");
+        let address = r.address + 4 + index as u64 * 260;
+        if id == profile::STOCK {
+            ensure!(
+                name.eq_ignore_ascii_case(&stock.file),
+                "Stock scoreboard resource filename differs"
+            );
+            original.push(address);
+        }
+        if id == s.choice.resource {
+            ensure!(
+                name.eq_ignore_ascii_case(&s.choice.file),
+                "Selected scoreboard resource filename differs"
+            );
+            found.push(address);
+        }
+    }
+    ensure!(
+        original == [r.stock_row]
+            && found == [r.selected_row]
+            && &data[usize::try_from(r.stock_row - r.address)?
+                ..usize::try_from(r.stock_row - r.address)? + 260]
+                == r.row(r.stock_row)
+            && &data[usize::try_from(r.selected_row - r.address)?
+                ..usize::try_from(r.selected_row - r.address)? + 260]
+                == r.row(r.selected_row)
+            && (!exact || data == r.bytes),
+        "Scoreboard registry ownership data changed"
+    );
+    Ok(())
 }
 fn stable(
     m: &impl Inspect,
     s: &Snapshot,
     expected: &BTreeMap<u64, Vec<u8>>,
     same_context: bool,
+    exact_registry: bool,
 ) -> Result<()> {
     ensure!(
         m.base() == s.base,
@@ -495,6 +617,7 @@ fn stable(
             "Scoreboard ownership data changed"
         );
     }
+    registry_stable(m, s, exact_registry)?;
     ensure!(
         expected.len() == s.fields.len(),
         "Scoreboard property set changed"
@@ -552,7 +675,13 @@ pub(crate) fn guard_progress(
         rules_v2::boundary(&before, m.base()) == "selection" && before == s.context,
         "Scoreboard selection/owner changed before publication"
     );
-    stable(m, s, &expected(s, p, applied)?, true)
+    stable(
+        m,
+        s,
+        &expected(s, p, applied)?,
+        true,
+        applied < p.changes.len(),
+    )
 }
 /// Returns a fresh bounded rollback transaction ONLY at selection/Main/Quick
 /// Play with no active instances. The old directory, list links, flags and each
@@ -572,6 +701,10 @@ pub(crate) fn restore_plan(
     ensure!(
         now.context.owner == s.context.owner,
         "Scoreboard restore rules owner changed"
+    );
+    ensure!(
+        now.registry.same_owner(&s.registry),
+        "Scoreboard restore registry owner changed"
     );
     if now.spans != s.spans {
         let index = now
@@ -658,7 +791,7 @@ pub(crate) fn guard_restore(
     for c in forward.changes.iter().take(applied).rev().take(restored) {
         bytes.get_mut(&c.address).unwrap()[..12].copy_from_slice(&c.before[..12]);
     }
-    stable(m, original, &bytes, false)?;
+    stable(m, original, &bytes, false, false)?;
     ensure!(
         rules_v2::context(m)? == before,
         "Scoreboard boundary changed during restore guard"

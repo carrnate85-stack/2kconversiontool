@@ -26,28 +26,28 @@ use std::{
 
 const PROOF_SCHEMA: &str = "nba2k27-v2-roster-write-proof-v1";
 const INTENT_SCHEMA: &str = "nba2k27-roster-v2-write-intent-v1";
-const IMAGE_HASH: &str = "29A96471C55909FC2BCEA6C699C59238656A501C19B50C74ED64B0D842E576A1";
+const IMAGE_HASH: &str = "B673EB04593D6D5A4DFB9E270178E04C017BD9F277514D256EA98FFB792ED27B";
 /// FirstLastNameSID: signed scalar; -1 disables the override. Other positive
 /// values are IDs, not proof that a corresponding name clip exists in a bank.
 pub(crate) const FULL_NAME_SID: usize = 0x2E8;
 const AUDIO_ANCHORS: &[(u64, &str)] = &[
     (
-        0x006B_2EAB,
-        "0fbfafe8020000c74424208d000000488d159af120064c89e14531c041b91c463ccbe8ce9a53044885c0740a4889c189eae88fa15304",
+        0x6b2eab,
+        "0fbfafe8020000c74424208d000000488d159af120064c89e14531c041b91c463ccbe84e9d53044885c0740a4889c189eae80fa45304",
     ),
     (
-        0x0069_68F5,
-        "4883ec204889f9bac8581e094531c0e8377c55044883c420668986e8020000",
+        0x6968f5,
+        "4883ec204889f9bac8581e094531c0e8b77e55044883c420668986e8020000",
     ),
 ];
 const AUDIO_METHODS: &[(u64, usize, &str)] = &[
     (
-        0x04BE_D070,
+        0x4bed2f0,
         75,
         "3a13c19b60bdaba3ca33478c459d821935b49044af0ba67a5c0c1bab06899ca4",
     ),
     (
-        0x04BE_E540,
+        0x4bee7c0,
         349,
         "3dfdf2dbf8051874963baeb6ae5b64859aacdeafa78607862238f1cb6982b1c7",
     ),
@@ -60,55 +60,61 @@ pub(crate) const TEAM_TYPE_BITS: Bits = (0x123C, 26, 6);
 pub(crate) const TEAM_CLASSIC_YEAR_BITS: Bits = (0x1548, 19, 8);
 const TEAM_METADATA_SPANS: &[(u64, usize, &str)] = &[
     (
-        0x1AD42B0,
+        0x1ad4360,
         2469,
-        "29ccf708668b153a13e639eae1fa9857193c55a0387546504a2b1e1efbcf039f",
+        "7df0339fb007e534fd2bef8b4cf13bfa41ba02833f7e68008adcfee79ee4d18f",
     ),
     (
-        0x22FF0,
+        0x22ff0,
         67,
-        "b5ee5ebc557520017782b5564f8a4389429a1e0ffed2a5e9e25477b178ab11db",
+        "90a674f8860ed699ad406d8164f671838364e347b66029986fa65537ddf5c1a7",
     ),
     (
-        0x2F8B070,
+        0x2f8b120,
         746,
-        "e029147e673baa20d6dc194ccff7e4f2cb26d8f1439c0bcd9f441cf7f758a062",
+        "8dee9d04e6ca45940bbba5d3d7299db6d950019393d31440229df5c33f1d9e1b",
     ),
     (
-        0x30716A0,
+        0x3071750,
         329,
-        "036c870ad3407b43a63b0850207a6b5e11524defd8a7bee8da58a63724c26ad1",
+        "8c3d03dc8c7ecaa7557e8ab544a691087520e1ed6a0c25f29d5b20970bef2a18",
     ),
     (
-        0x22E60,
+        0x22e60,
         33,
-        "f39cea6987b3598a6ed3df988acf9126ee1f368e8d4be231c666f2c83f7a2520",
+        "bf7905349d00d15c297a19fd32e931eb58783b5a25136aa6e6719c451957d8e5",
     ),
     (
-        0x3A55260,
+        0x3a554e0,
         24931,
-        "cf3ab90da8d414c1ef2e321544b158aed56c7461d371807873a474658c6e0c12",
+        "abe5b75ab41118dbe13310c3bfe98ec762c138af538600bf6af9ed212e9629f4",
     ),
     (
-        0x89BE940,
+        0x89be940,
         32,
         "374d6e34bb06cafa8d7ac03fd6b1179f7be2cb2e7a1e0c18c23e4f3a271325b4",
     ),
     (
-        0x89BFAE8,
+        0x89bfae8,
         32,
         "9740a637900b6920be7967067f487b26f028c9f3362426439b9582854caf17e3",
     ),
     (
-        0x89BD140,
+        0x89bd140,
         432,
         "784e26f832f64cbe27f9e5ca1b5272aafd74c58c0caacfcfd92268cf8716175f",
     ),
     (
-        0x2F86B40,
+        0x2f86bf0,
         10,
         "db3ae5223afca4f522f91cff30ca71d02504fe91de43a8ba8d7a645d805fcb14",
     ),
+];
+// Native descriptor traversal/store and signed-32 type selection. These prove
+// the only runtime descriptor transition normalized by team_metadata_bytes.
+const TEAM_METADATA_INITIALIZER: &[(u64, usize, &str)] = &[
+    (0x4b8612b, 85, "7869d490f347c2b0a8392ce4016f0d000680b7b4b654dec47a4f5bb835554b50"),
+    (0x4b86226, 49, "f69dd88cca579605b4628bea99dc6f7c21dd00b011e61434a9ea518048b24e2b"),
 ];
 const UNIFORM_SERIALIZER: u64 = 0x0068_7590;
 const UNIFORM_RECORD_BYTES: usize = 6411;
@@ -353,7 +359,7 @@ fn check_audio_proof(p: &Value) -> Result<()> {
             && p["requestMinimum"] == -1
             && p["requestMaximum"] == 32767
             && p["adjacentFieldOffset"] == FULL_NAME_SID + 2
-            && p["propertyNameRva"] == 0x006B_2EBAu64,
+            && p["propertyNameRva"] == 0x6b2ebau64,
         "Unsupported full-name audio scalar proof"
     );
     let anchors = p["anchors"].as_array().context("Missing audio anchors")?;
@@ -399,18 +405,18 @@ fn check_team_metadata_proof(p: &Value) -> Result<()> {
             && p["type"]["offset"] == 0x123C
             && p["type"]["shift"] == 26
             && p["type"]["bits"] == 6
-            && p["type"]["mask"] == 0xFC000000u64
+            && p["type"]["mask"] == 0xfc000000u64
             && p["type"]["knownOriginalMaximum"] == 35
             && p["type"]["targetMaximum"] == 35
             && p["classicYear"]["offset"] == 0x1548
             && p["classicYear"]["shift"] == 19
             && p["classicYear"]["bits"] == 8
-            && p["classicYear"]["mask"] == 0x07F80000u64
+            && p["classicYear"]["mask"] == 0x7f80000u64
             && p["classicYear"]["knownOriginalMaximum"] == 127
             && p["classicYear"]["canonicalTargetMaximum"] == 100
             && p["classicYear"]["legacyHistoricYearAlwaysNeutral"] == true
-            && p["enumDescriptorRva"] == 0x089BE960u64
-            && p["enumTargetRva"] == 0x0A1E7CD0u64,
+            && p["enumDescriptorRva"] == 0x89be960u64
+            && p["enumTargetRva"] == 0xa1e7cd0u64,
         "Unsupported native team metadata proof"
     );
     let spans = p["spans"]
@@ -447,6 +453,19 @@ fn team_metadata_proof() -> Result<()> {
     .map(|_| ())
     .map_err(|e| anyhow::anyhow!("Native team metadata proof unavailable: {e}"))
 }
+// The native reflection initializer replaces the ClassicYear descriptor's
+// provisional type hash with the signed-32 hash. All field-layout bytes stay
+// exact. Accept only these two proven states, never an arbitrary masked value.
+fn team_metadata_bytes(rva: u64, mut bytes: Vec<u8>) -> Result<Vec<u8>> {
+    if rva == 0x089BFAE8 {
+        ensure!(bytes.len() == 32, "Incomplete classic-year descriptor");
+        let kind = u32::from_le_bytes(bytes[4..8].try_into()?);
+        ensure!(matches!(kind, 0x12D46C62 | 0x1451DAB1),
+            "Native classic-year descriptor type differs");
+        bytes[4..8].copy_from_slice(&0x12D46C62u32.to_le_bytes());
+    }
+    Ok(bytes)
+}
 /// Content tag for the exact field, structural-write and audio proofs. Every intent records it; a journal written
 /// under different evidence is never treated as this writer's.
 pub(crate) fn proof_tag() -> &'static str {
@@ -457,6 +476,12 @@ pub(crate) fn proof_tag() -> &'static str {
         h.update(include_str!("../assets/roster-v2-write-proof.json"));
         h.update(include_str!("../assets/roster-v2-audio-proof.json"));
         h.update(include_str!("../assets/roster-v2-team-metadata-proof.json"));
+        h.update(b"classic-year-type-initialization-v1:12d46c62:1451dab1");
+        for &(rva, len, sha) in TEAM_METADATA_INITIALIZER {
+            h.update(rva.to_le_bytes());
+            h.update((len as u64).to_le_bytes());
+            h.update(sha.as_bytes());
+        }
         h.update(include_str!("../assets/roster-v2-arena-proof.json"));
         h.update(include_str!("../assets/roster-v2-origins-proof.json"));
         format!("{:x}", h.finalize())
@@ -534,18 +559,22 @@ pub(crate) fn verify_write_profile(m: &impl Memory) -> Result<()> {
     }
     name_ref(m, 0x006B_2EBA, "FirstLastNameSID")?;
     team_metadata_proof()?;
+    for &(rva, len, expected) in TEAM_METADATA_INITIALIZER {
+        ensure!(format!("{:x}", Sha256::digest(read(m, m.base() + rva, len)?)) == expected,
+            "Native team metadata initializer differs at {rva:#x}");
+    }
     for &(rva, len, expected) in TEAM_METADATA_SPANS {
         let mut hash = Sha256::new();
         for offset in (0..len).step_by(4096) {
-            hash.update(read(
+            hash.update(team_metadata_bytes(rva, read(
                 m,
                 m.base() + rva + offset as u64,
                 (len - offset).min(4096),
-            )?);
+            )?)?);
         }
         ensure!(
             format!("{:x}", hash.finalize()) == expected,
-            "Native team metadata code/field evidence differs"
+            "Native team metadata code/field evidence differs at {rva:#x}"
         );
     }
     let enum_pointer =
@@ -1473,6 +1502,10 @@ impl Owner {
     }
 }
 pub(crate) trait Access {
+    /// One-shot independently bounded retained-identity recovery; never forward permission.
+    fn begin_recovery(&self) -> Result<()> {
+        bail!("This adapter cannot enter bounded recovery")
+    }
     fn owner(&self) -> Result<Owner>;
     fn capture(&self) -> Result<Vec<u8>>;
     fn write(&self, offset: usize, bytes: &[u8]) -> Result<()>;
@@ -1798,6 +1831,7 @@ pub(crate) fn apply(
         }),
         Err(error) => {
             let rollback = (|| -> Result<()> {
+                m.begin_recovery()?;
                 for index in (0..attempted).rev() {
                     ensure!(m.owner()? == *owner, "Rollback owner changed");
                     let current = m.capture()?;

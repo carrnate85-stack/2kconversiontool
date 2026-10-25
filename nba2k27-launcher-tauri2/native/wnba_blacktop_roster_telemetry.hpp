@@ -10,7 +10,7 @@ struct ImageMetadata {
  static ImageMetadata from(bool read,std::uintptr_t pointer,std::uintptr_t base) {
   if(!read)return {};
   if(!pointer)return {Kind::null,0};
-  if(pointer>=base && pointer-base<0x35BDE000)return {Kind::image,pointer-base};
+  if(pointer>=base && pointer-base<0x36532000)return {Kind::image,pointer-base};
   return {Kind::foreign,0};
  }
 };

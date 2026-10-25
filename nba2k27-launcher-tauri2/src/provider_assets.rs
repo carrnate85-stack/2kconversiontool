@@ -462,7 +462,10 @@ impl Service {
     /// Publish the locally built, hash-pinned mixed Learn2K roster at its one
     /// fixed path. A user's own roster mod or alias at that path is preserved.
     /// May run mid-session: until then the forced OVERRIDE reads stock.
-    pub(crate) fn publish_wnba_roster(&self, prepared: &crate::wnba_roster_v2::Prepared) -> Result<()> {
+    pub(crate) fn publish_wnba_roster(
+        &self,
+        prepared: &crate::wnba_roster_v2::Prepared,
+    ) -> Result<()> {
         ensure!(
             (1..=64 * 1024 * 1024).contains(&prepared.bytes.len()),
             "Mixed roster exceeds bounds"
@@ -982,6 +985,9 @@ impl Service {
                 if meta.is_dir() {
                     pending.push((entry.path(), depth + 1));
                 } else if meta.is_file() {
+                    if crate::mod_install::recovery_artifact(&entry.file_name().to_string_lossy()) {
+                        continue;
+                    }
                     ensure!(
                         state.assets.len() < MAX_ASSETS,
                         "Profile exceeds 100,000 indexed assets"
@@ -1083,6 +1089,29 @@ impl Service {
             .get(&key)
             .cloned()
             .ok_or_else(|| Failure::Missing.into())
+    }
+    /// Immutable, session-local aliases for catalog-selected loose IFFs. No
+    /// source copy/rename and no replacement of existing provider resources.
+    pub(crate) fn publish_custom_arena_aliases(&self, aliases: &[(String, String)]) -> Result<()> {
+        ensure!(crate::custom_blacktop::enabled() && (1..=2).contains(&aliases.len()), "Custom arenas are dev only");
+        let mut prepared = Vec::new();
+        for (target, source) in aliases {
+            ensure!(target.starts_with("levels/arena_c") && target.ends_with(".iff"), "Invalid custom arena alias");
+            let source = self.query(source).context("This mod was not indexed at launch. Restart the game through the launcher after adding files.")?;
+            self.open_asset(&source)?;
+            // The game's resource device accepts both qualified paths and
+            // leaf names (as do selectors/scoreboards). Publish both forms.
+            for name in [target.as_str(), target.strip_prefix("levels/").unwrap()] {
+                let mut alias = source.clone(); alias.logical = logical(name, true)?;
+                prepared.push((Key::new(name)?, alias));
+            }
+        }
+        let mut state = self.state.lock().map_err(|_| anyhow::anyhow!("Provider state unavailable"))?;
+        for (key, asset) in &prepared {
+            if let Some(old) = state.assets.get(key) { ensure!(old.path == asset.path && old.size == asset.size, "Custom arena alias conflicts with an existing file"); }
+        }
+        for (key, asset) in prepared { state.assets.entry(key).or_insert(asset); }
+        Ok(())
     }
     fn open_asset(&self, asset: &Asset) -> Result<Arc<Pinned>> {
         self.check_components(&asset.path)?;

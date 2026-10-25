@@ -1,6 +1,6 @@
 {
   "schema": "nba2k27-v2-native-appearance-cas-proof-v1",
-  "imageSha256": "29A96471C55909FC2BCEA6C699C59238656A501C19B50C74ED64B0D842E576A1",
+  "imageSha256": "B673EB04593D6D5A4DFB9E270178E04C017BD9F277514D256EA98FFB792ED27B",
   "writes": "Only atomic32 low15bits of twoWORDs in one existingAPPEARANCEDATA row. No calls/codehooks/allocation.",
   "rootRva": 162325304,
   "rootClassRva": 122601112,
@@ -41,59 +41,59 @@
   },
   "methods": [
     {
-      "rva": 48384624,
+      "rva": 48384800,
       "bytes": 13,
       "sha256": "85d7b5f786555896ae76a6f1ff8f2b921fc39f4882129f3ead1558ae219165cc"
     },
     {
-      "rva": 48384864,
+      "rva": 48385040,
       "bytes": 14,
       "sha256": "bf0d729e28c1549182d4861562fbc331562deeaeaa40f5971dd20833b15de01a"
     },
     {
-      "rva": 48384647,
+      "rva": 48384823,
       "bytes": 37,
       "sha256": "e27294d6c7a507115ce3fd7d9c70c8041903df01b7acc98dc753c6a762b15d01"
     },
     {
-      "rva": 48384887,
+      "rva": 48385063,
       "bytes": 41,
       "sha256": "e2ea550377e8f12a4fb29d7e4cec9620fbbb794738de2e80349a72fd3ceabd87"
     },
     {
-      "rva": 52053472,
+      "rva": 52053664,
       "bytes": 34,
-      "sha256": "481cdc0ded6c3799c8a1089f36ce03355127a387950010952cd72700f91869cb"
+      "sha256": "d6a4ccfbd3053d17799fe5a4f042fe39090705d18c396a20fb7c621601183b6a"
     },
     {
-      "rva": 28368500,
+      "rva": 28368676,
       "bytes": 49,
       "sha256": "ca56b57ac277ab2fc27be8afe5b079f938ad3022f00dc284d2be7c1d29d05f06"
     },
     {
-      "rva": 48317584,
+      "rva": 48317760,
       "bytes": 26,
-      "sha256": "76f1fd22ce749bd64e84fcdcd7606db1fcfd87c40661853a01ef2b1e6e42be29"
+      "sha256": "be554de4ec45b69c4f5d0879f28c4d8705230e4ab9fd9080a17a3e7f81f9e0d3"
     },
     {
-      "rva": 48384640,
+      "rva": 48384816,
       "bytes": 211,
-      "sha256": "35e5b9c25f0959a214262d1320ca547ae56e452393c814f3f522a629bdad148b"
+      "sha256": "592d0c3635fae15354fa04853ba86aa1cb6f1cd8043c09720fb91a52339c174a"
     },
     {
-      "rva": 48384880,
+      "rva": 48385056,
       "bytes": 215,
-      "sha256": "1e8044b11ca533537a774b89d7760ec1182f0887bc0f500879703fc538a57116"
+      "sha256": "4543ebf9dfd0a4ad804e5fd6f871737cf5cdb59107563d14cb223aff6070878f"
     },
     {
-      "rva": 46826192,
+      "rva": 46826368,
       "bytes": 1775,
-      "sha256": "a38c4a0d4fda75ddb9e26ab36973c2a1a58c03221a82f1f2e3b75d3f9f04cf08"
+      "sha256": "93484610c79cd7015ee6e4b636036c62f8e2eecbeef36f425771dde3dbc3d6a9"
     },
     {
-      "rva": 49142528,
+      "rva": 49142704,
       "bytes": 180,
-      "sha256": "ab970e1b3ac8eedaacf380421b299f34e79cecf3d36b0718dd8ca5b19c461f49"
+      "sha256": "6617084f97b5cb3ce9f6d6162f8824e570362ab0ba4c597c7a4cb81783fb4119"
     }
   ],
   "remainingLiveAcceptance": "No live acceptance yet; sameimage/session/lease/privateallocation/poolmembership/alias/durability/oneattempt/conditionalreceipt undo required."

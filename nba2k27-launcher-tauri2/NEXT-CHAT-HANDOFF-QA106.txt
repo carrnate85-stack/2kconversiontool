@@ -1,0 +1,57 @@
+2K LAUNCHER — QA106 UX AND MOD RECOVERY
+2026-10-22. Dev-only, per user's explicit instruction. Do not install/promote.
+
+Project: C:\Users\carrn\CodexProjects\2kconversiontool\nba2k27-launcher-tauri2
+Version: 0.53.10
+Candidate: Dev\Pending\QA106\launcher.exe
+Starter: Start QA106 Dev.ps1
+Bytes: 46839808
+SHA256: DA83F52D31E4F1B4C48534C14921E06383C48174CFB75C409FDF3E5FA6218E62
+Report/evidence: artifacts\qa106-ux-polish
+Source backup: Backups\qa106-before-ux-* (taken before edits).
+
+IMPLEMENTED
+- Retained camera/scaler drafts, explicit unsaved/Discard controls.
+- Selected/off startup video can be enabled in Presentation; inline preview
+  text explains the separate fullscreen playback on Play.
+- Clearer launch stages, long-step guidance, expandable details, persistent
+  failures with Dismiss. Successful launch still clears normally.
+- Sidebar says Game location / Game found, matching its actual check.
+- Shared actionable errors + full Details/Copy report. Saved/Ready toast noise
+  suppressed; errors remain inline.
+- Retained replacement backups and Mod Library > Installation recovery.
+  Restore checks profile, path ownership, backup/current hashes and rechecks
+  current contents at replacement time. Restore authority is consumed durably
+  before effects. Existing atomic replacement/rollback is retained.
+  Newly added files stay in place. No retroactive recovery for old installs.
+  Backups are reserved .mod-install-<id>.bak siblings for same-volume rollback;
+  receipts are portable Recovery\ModInstalls. Both must be retained. Backups
+  are excluded from mod catalog and provider indexing. Incomplete/restoring
+  receipts are held and never automatically replayed.
+- Jukebox removal Undo (only while order still matches), Move to position,
+  consistent controls, labeled camera Up/Down, focus and reduced motion polish.
+
+VALIDATION
+- TypeScript, Vite production build passed.
+- Frontend: 45 test files / 240 tests passed.
+- Mod installer: 24 tests passed, including new recovery, restart, drift,
+  corrupt backup, wrong profile and no replay scenarios.
+- Rust tests initially hit sandbox directory-pin denials; synthetic tests
+  passed outside sandbox. No game/user library used by fixtures.
+- Fresh release build: default custom-protocol plus dev WNBA/debug features.
+- Packaged smoke evidence is ui-smoke.json alongside report. Inspect its
+  exact pass/error result; retained Season History assertion is still open.
+- Main and sharing QA104 hashes reverified unchanged:
+  33FFBB1F6736DE46D9B0206635E9FF9058EE382397BBCFAAB91C7577856EAABE.
+
+NEXT CHECKS
+- Use the dev starter with launcher/game closed. It backs up the prior dev EXE
+  and only swaps Dev\Portable\App, preserving dev Data/Library.
+- Check camera/scaler edit -> switch page -> return -> Save/Discard.
+- Check selected video off -> enable directly from Presentation.
+- Check playlist Undo and Move to position; inspect row spacing at normal size.
+- Recovery was tested only with synthetic files; review using disposable mod
+  profiles before trusting it with a real library.
+- QA105 over-game startup playback is still not live-accepted.
+- QA073 natural Rust AV, QA078 Clang fixture crash, and older Season History
+  smoke assertion remain unresolved. Offline checks are not gameplay acceptance.

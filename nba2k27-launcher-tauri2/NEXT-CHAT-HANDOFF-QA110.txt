@@ -1,0 +1,29 @@
+QA110 - OPTIONAL HOSTED PREVIEWS - DEV ONLY
+Version 0.53.14. 2026-10-22.
+
+Adds Download previews (1 GB) beside local ZIP import in Blacktop outfit tools. Progress, cancel, retry, and recovery of download status when returning to Blacktop. Downloads only after the user's click. Existing manual import retained. No hosted videos/playlists implemented.
+
+Native WinHTTP uses the original supplied MediaFire premium link, follows only HTTPS www.mediafire.com/download<number>.mediafire.com redirects, and checks response type, exact size (1,039,360,223), SHA256 and all PNG entries. Canonical URL is in src/preview_download.rs; no ephemeral CDN URL stored. Pinned SHA256: 34e5ab928969668401b8cd186f5614a372cdfbadb898c686bb390677e5742821.
+Both downloaded and copied bytes must match before manifest activation. Failed/cancelled downloads preserve current previews. Partial network/import files are removed on normal error/cancellation. Closing cancels work; a forced process exit can leave an inert partial cache directory, never automatically replayed. Downloads and manual imports share one worker lock. IPC requires main window, null arguments and non-smoke mode. No arbitrary URL accepted.
+
+Validation:
+- TypeScript passed; 45 frontend test files / 240 tests passed.
+- 2 downloader unit tests passed (redirect restrictions; valid/truncated/oversized/bad-hash/cancelled streaming).
+- 3 preview tests passed, including cancelled validation, cancelled connection cleanup, import exclusion and shutdown rejection while preserving the existing manifest.
+- Explicit ignored-by-default hosted test PASSED: actual 1.04 GB MediaFire download, correct checksum, all 38,576 thumbnails decoded/validated, isolated import + final manifest/hash + cleanup. 267.25 seconds. No user data used.
+- Vite and release dev build passed; existing compiler warnings retained.
+- No app/game launch, desktop control, live memory, install or promotion performed. Visual interaction with the new controls remains for user testing. Old QA073 natural Rust AV, QA078 Clang crash and QA106 Season History smoke persistence issue remain unresolved by these checks.
+
+Staged EXE: Dev/Pending/QA110/launcher.exe
+SHA256: F34876C09F1FD9D93692C151BF76796350D041F611EF198C4C173DCD25254A17
+Bytes: 46791168
+PDB: Dev/Pending/QA110/launcher.pdb
+Starter: Open QA110 Dev.lnk -> Start QA110 Dev.ps1
+The starter verifies staged hash/size, requires the game/launcher closed, backs up the previous dev EXE, then updates only Dev/Portable/App and opens it. Staging itself did not activate it. Main and sharing EXEs untouched. User does not want Computer Use.
+
+Source backup: Backups/qa110-preview-download-20261022-090450
+Logs/source hashes: artifacts/qa110-preview-download
+Retains prior QA109 Unlocks-strip removal, QA108 All-arena ordering, QA107 compact controls.
+Next user check: close the currently running dev launcher normally, open QA110, use Blacktop -> Download previews. Full download/import was already verified in isolation. Existing manual import remains available if hosting changes or returns a webpage.
+Starter verification: Windows PowerShell 5.1 -CheckOnly verified candidate size/hash then correctly refused activation because existing dev PID 39924 was open. Shortcut target/arguments were inspected without opening it. Existing Dev/Portable EXE hash remained E51A7AE4CE2C214F12E0A1B48885CD93C50795F0C88201F205771DDAFEDDCAEC. Candidate FileVersion 0.53.14, 46,791,168 bytes.
+

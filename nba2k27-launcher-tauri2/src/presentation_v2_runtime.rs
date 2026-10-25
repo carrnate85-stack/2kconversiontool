@@ -270,6 +270,11 @@ struct Engine {
     prepared_selection: bool,
     actor_retries: u8,
     cleanup_allowed: bool,
+    // An inactive-menu cleanup can race the game's immediate transition back
+    // into Blacktop.  No restoration is replayed through that transition.
+    // A later stable selection must prove the same owner, preset table and
+    // every unowned byte before the normal per-visit preparation may resume.
+    restore_rearm_pending: bool,
 }
 impl Engine {
     fn new(options: Options) -> Self {
@@ -296,6 +301,7 @@ impl Engine {
             prepared_selection: false,
             actor_retries: 0,
             cleanup_allowed: false,
+            restore_rearm_pending: false,
         }
     }
     fn status(&self) -> Value {
@@ -356,6 +362,25 @@ impl Engine {
             if !parent_alive {
                 self.message = "Launcher closed; no new presentation preparation".into();
                 return Ok(());
+            }
+            if self.restore_rearm_pending {
+                let current = match access.capture(true) {
+                    Ok(s) => s,
+                    Err(e) => {
+                        self.message = format!(
+                            "Waiting to prove presentation ownership after the menu transition: {e:#}"
+                        );
+                        return Ok(());
+                    }
+                };
+                let owned = self
+                    .crowd
+                    .as_ref()
+                    .context("Missing crowd ownership after interrupted restoration")?;
+                ensure!(
+                    same_crowd_owned(&current, owned),
+                    "Presentation ownership changed after interrupted menu restoration"
+                );
             }
             if self.options.mask() != 0 {
                 let before = match access.capture(false) {
@@ -435,6 +460,7 @@ impl Engine {
             self.message =
                 "Presentation is prepared for Blacktop; all five crowd sizes are covered".into();
             self.prepared_selection = true;
+            self.restore_rearm_pending = false;
         } else if let Some(owned) = self.crowd.as_ref() {
             let current = match access.capture(true) {
                 Ok(s) => s,
@@ -444,12 +470,40 @@ impl Engine {
                 }
             };
             let restore = policy::restore_crowd(&current, owned)?;
-            if !execute(access, log, "crowd-restore", &restore, false)? {
-                self.message = "Waiting for a stable inactive menu to restore the crowd".into();
-                return Ok(());
+            match execute(access, log, "crowd-restore", &restore, false) {
+                Ok(true) => {}
+                Ok(false) => {
+                    self.message = "Waiting for a stable inactive menu to restore the crowd".into();
+                    return Ok(());
+                }
+                Err(e) => {
+                    // Ordinary journal/write/ownership failures at the same
+                    // stable boundary remain hard holds.  This recovery is
+                    // only for the observed case where the game departed the
+                    // exact sampled inactive menu while the restore ran.
+                    let departed = !access.boundary().is_ok_and(|current| {
+                        current.name() == name && self.boundary.as_ref() == Some(&current)
+                    });
+                    if !departed {
+                        return Err(e);
+                    }
+                    // The game can expose Quick Play only long enough for the
+                    // durable intent and part of the owned restore, then enter
+                    // the next Blacktop visit.  Do not replay the restore in a
+                    // changing/loading context and do not strand the session.
+                    // The next selection gets a complete fresh ownership
+                    // proof above before any actor or crowd write is allowed.
+                    self.restore_rearm_pending = true;
+                    self.message = format!(
+                        "Crowd restoration was interrupted by the menu transition; waiting for a stable Blacktop selection to verify and reapply: {e:#}"
+                    );
+                    let _ = log.note("rearm-pending", "crowd-restore", &self.message);
+                    return Ok(());
+                }
             }
             self.crowd = None;
             self.cleanup_allowed = false;
+            self.restore_rearm_pending = false;
             self.crowd_phase = if self.held {
                 "restored-held"
             } else {

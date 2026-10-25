@@ -14,13 +14,18 @@ app-icon.ico
 THIRD-PARTY-NOTICES.txt
 *.zip
 
-# Local compiler output, user content and private environments
+# Local installations, compiler output, runtime state and credentials.
 /target-*/
 /Dev/
 /Data/
 /Library/
 /Cache/
 /Logs/
+**/target/
+**/target-*/
+**/Data/
+**/gen/
+**/node_modules/
 **/bin/
 **/obj/
 **/__pycache__/
@@ -35,12 +40,10 @@ THIRD-PARTY-NOTICES.txt
 *.pdb
 *.obj
 *.pyc
-# Required embedded assets are versioned.
+# Required build inputs, rather than installed application data.
 !assets/*.gz
 !app-icon.ico
 !THIRD-PARTY-NOTICES.txt
 !frontend/samples.json
-
-# Rust executable source is not compiler output.
 !**/src/bin/
 !**/src/bin/**

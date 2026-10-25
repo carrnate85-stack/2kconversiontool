@@ -85,10 +85,7 @@ impl Journal {
             "Arena receipt record is outside its directory"
         );
         if c.template_arena_id.is_some() {
-            let target = arena::template_fields(
-                c.file.as_deref().unwrap(),
-                c.floor_file.as_deref().unwrap(),
-            )?;
+            let target = arena::choice_fields(&c)?;
             ensure!(
                 r.id == 700 && self.replacement.as_ref() == Some(&target),
                 "Arena template receipt differs from the allowlisted fields"
@@ -194,24 +191,27 @@ impl Engine {
         let c = arena::choice(id)?;
         if self.selected() == id {
             let expected = self.owned.as_ref().map_or(&STOCK, |o| &o.journal.mapping);
-            a.capture(arena::choice("default")?, expected)?;
+            a.capture(&arena::choice("default")?, expected)?;
+            let mut reset = false;
             if let Some(o) = &self.owned {
                 let r = o.journal.record.as_ref().unwrap();
-                a.verify(r, o.journal.replacement.as_deref().unwrap_or(&r.fields))?;
+                if let Err(error) = a.verify(r, o.journal.replacement.as_deref().unwrap_or(&r.fields)) {
+                    // The game can restore the exact original names when it
+                    // refreshes this roster. Never adopt other bytes or owners.
+                    if !crate::custom_blacktop::enabled() || !id.starts_with("custom-") || o.journal.replacement.is_none() || a.verify(r, &r.fields).is_err() { return Err(error); }
+                    reset = true;
+                }
             }
-            return Ok(());
+            if !reset { return Ok(()); }
         }
         self.restore(a)?;
         if id == "default" {
             return Ok(());
         }
-        a.assets(c)?;
-        let s = a.capture(c, &STOCK)?;
+        a.assets(&c)?;
+        let s = a.capture(&c, &STOCK)?;
         let replacement = if c.template_arena_id.is_some() {
-            Some(arena::template_fields(
-                c.file.as_deref().unwrap(),
-                c.floor_file.as_deref().unwrap(),
-            )?)
+            Some(arena::choice_fields(&c)?)
         } else {
             None
         };
@@ -230,14 +230,14 @@ impl Engine {
         let result = (|| -> Result<()> {
             let j = &self.owned.as_ref().unwrap().journal;
             let r = j.record.as_ref().unwrap();
-            a.capture(arena::choice("default")?, &STOCK)
+            a.capture(&arena::choice("default")?, &STOCK)
                 .and_then(|_| a.verify(r, &r.fields))
                 .map_err(|e| e.context(NotPublished))?;
             if let Some(next) = &j.replacement {
                 a.template(r, &r.fields, next)?;
             }
             a.mapping(&STOCK, &j.mapping)?;
-            a.capture(arena::choice("default")?, &j.mapping)?;
+            a.capture(&arena::choice("default")?, &j.mapping)?;
             a.verify(r, j.replacement.as_deref().unwrap_or(&r.fields))?;
             Ok(())
         })();
@@ -252,7 +252,7 @@ impl Engine {
                 let untouched = not_published(&e) && {
                     let j = &self.owned.as_ref().unwrap().journal;
                     let r = j.record.as_ref().unwrap();
-                    a.capture(arena::choice("default")?, &STOCK).is_ok()
+                    a.capture(&arena::choice("default")?, &STOCK).is_ok()
                         && a.verify(r, &r.fields).is_ok()
                 };
                 if untouched && self.owned.as_ref().unwrap().remove().is_ok() {
@@ -275,13 +275,14 @@ impl Engine {
         let result = (|| -> Result<()> {
             let j = &o.journal;
             let r = j.record.as_ref().unwrap();
-            a.capture(arena::choice("default")?, &j.mapping)?;
-            a.verify(r, j.replacement.as_deref().unwrap_or(&r.fields))?;
+            a.capture(&arena::choice("default")?, &j.mapping)?;
+            let already_original = crate::custom_blacktop::enabled() && j.selected.starts_with("custom-") && j.replacement.is_some() && a.verify(r, &r.fields).is_ok();
+            if !already_original { a.verify(r, j.replacement.as_deref().unwrap_or(&r.fields))?; }
             a.mapping(&j.mapping, &STOCK)?;
-            if let Some(replacement) = &j.replacement {
+            if let Some(replacement) = &j.replacement && !already_original {
                 a.template(r, replacement, &r.fields)?;
             }
-            a.capture(arena::choice("default")?, &STOCK)?;
+            a.capture(&arena::choice("default")?, &STOCK)?;
             a.verify(r, &r.fields)?;
             o.remove()?;
             Ok(())
@@ -393,6 +394,7 @@ impl Access for NativeAccess {
         self.writer.write_mapping(expected, next)
     }
     fn assets(&self, c: &Choice) -> Result<()> {
+        if c.id.starts_with("custom-") { return crate::custom_blacktop::verify_assets(c); }
         if c.template_arena_id.is_none() {
             return Ok(());
         }
@@ -556,8 +558,10 @@ mod tests {
             ensure!(*self.map.borrow() == *expected, "Synthetic mapping changed");
             if self.blips.get() > 0 {
                 self.blips.set(self.blips.get() - 1);
-                return Err(anyhow::anyhow!("Arena mapping/context changed before publication")
-                    .context(NotPublished));
+                return Err(
+                    anyhow::anyhow!("Arena mapping/context changed before publication")
+                        .context(NotPublished),
+                );
             }
             self.attempted()?;
             *self.map.borrow_mut() = *next;
@@ -567,6 +571,28 @@ mod tests {
             ensure!(self.assets.get(), "Synthetic missing asset");
             Ok(())
         }
+    }
+    #[test]
+    #[cfg(feature = "dev-model-preview")]
+    fn custom_arena_refresh_recovers_only_exact_original_names_at_selection() {
+        let f = Fixture::new(); let a = f.access(); let mut e = f.engine();
+        fs::create_dir(f.root.join("levels")).unwrap();
+        fs::write(f.root.join("levels/test.iff"), b"fixture").unwrap();
+        let saved = crate::custom_blacktop::request(&f.root, &f.root, &serde_json::json!({"action":"add","name":"Refresh fixture","baseId":"blacktop-stock","arenaSource":"levels/test.iff","floorSource":null})).unwrap();
+        let id = saved["id"].as_str().unwrap();
+        let original = a.fields.borrow().clone();
+        e.apply(&a, id).unwrap(); let applied = a.fields.borrow().clone();
+        *a.fields.borrow_mut() = original.clone(); // the game refreshes its roster
+        a.selection.set(false); let writes = a.writes.get();
+        assert!(e.apply(&a, id).is_err()); assert_eq!(a.writes.get(), writes);
+        a.selection.set(true); e.apply(&a, id).unwrap();
+        assert_eq!(*a.fields.borrow(), applied);
+        let writes = a.writes.get(); e.apply(&a, id).unwrap(); assert_eq!(a.writes.get(), writes);
+        a.fields.borrow_mut()[0] = b'x';
+        assert!(e.apply(&a, id).is_err()); assert_eq!(a.writes.get(), writes);
+        *a.fields.borrow_mut() = original;
+        e.apply(&a, "default").unwrap();
+        assert_eq!(*a.map.borrow(), STOCK); assert!(!pending(&f.root).unwrap());
     }
     #[test]
     fn immutable_intent_precedes_writes_id_zero_noop_change_and_restore() {
@@ -839,7 +865,11 @@ mod tests {
         r.tick(&q, &a, Some("selection"), true).unwrap();
         let v = q.view().unwrap();
         assert_eq!(v.phase, "ready");
-        assert!(v.message.contains("s after reaching selection"), "{}", v.message);
+        assert!(
+            v.message.contains("s after reaching selection"),
+            "{}",
+            v.message
+        );
         // Later visits re-verify silently, without a fresh latency claim.
         r.tick(&q, &a, Some("match"), true).unwrap();
         r.tick(&q, &a, Some("selection"), true).unwrap();

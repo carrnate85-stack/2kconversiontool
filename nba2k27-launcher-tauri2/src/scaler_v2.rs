@@ -32,10 +32,10 @@ pub(crate) const RIP_ANCHORS: &[(u64, &[u8], u64)] = &[
     (0x006e_42ce, &[0xc5, 0xfa, 0x10, 0x05], INPUT),
     (0x006e_476a, &[0xc5, 0xfa, 0x10, 0x05], INPUT),
     (0x006e_4a68, &[0xc5, 0xfa, 0x10, 0x05], INPUT),
-    (0x024f_5450, &[0x48, 0x8b, 0x05], OWNER),
-    (0x024f_546c, &[0x48, 0x8d, 0x05], TABLE),
-    (0x024f_8b00, &[0x4c, 0x8d, 0x35], TABLE),
-    (0x024f_9955, &[0x48, 0x8d, 0x05], WRAPPER),
+    (0x024f_5500, &[0x48, 0x8b, 0x05], OWNER),
+    (0x024f_551c, &[0x48, 0x8d, 0x05], TABLE),
+    (0x024f_8bb0, &[0x4c, 0x8d, 0x35], TABLE),
+    (0x024f_9a05, &[0x48, 0x8d, 0x05], WRAPPER),
 ];
 pub(crate) const FIELD_ANCHORS: &[(u64, &[u8])] = &[
     // The wrapper may retain MANAGER_INSTANCE's +0x78 interface. Its native
@@ -53,9 +53,9 @@ pub(crate) const FIELD_ANCHORS: &[(u64, &[u8])] = &[
         &[0x48, 0x8d, 0x05, 0x9a, 0x89, 0x16, 0x06, 0x48, 0x89, 0x06],
     ),
     // Owner mode, bounded 30 x 0x50 wrapper walk, manager/roster slots.
-    (0x024f_5457, &[0x8b, 0x80, 0x04, 0x0a, 0, 0, 0xc3]),
+    (0x024f_5507, &[0x8b, 0x80, 0x04, 0x0a, 0, 0, 0xc3]),
     (
-        0x024f_8b10,
+        0x024f_8bc0,
         &[
             0x49, 0x83, 0xc7, 0x50, 0x49, 0x81, 0xff, 0x60, 0x09, 0, 0, 0x74, 0x33, 0x4b, 0x83,
             0x7c, 0x37, 0x10, 0, 0x74, 0xeb, 0x4b, 0x83, 0x7c, 0x37, 0x28, 0,
@@ -75,7 +75,7 @@ pub(crate) const FIELD_ANCHORS: &[(u64, &[u8])] = &[
     // Descriptor getter: actor interface+0x78 plus0xEB8 => actor+0xF30.
     (0x0081_1790, &[0x48, 0x8d, 0x81, 0xb8, 0x0e, 0, 0, 0xc3]),
     // Game populates player opt-in bit; this port does not write this flag.
-    (0x024f_54ae, &[0x80, 0x4f, 0x7d, 0x02]),
+    (0x024f_555e, &[0x80, 0x4f, 0x7d, 0x02]),
     // Evaluation consults that opt-in bit before loading shared input.
     (
         0x006e_4762,
@@ -150,8 +150,8 @@ pub(crate) fn verify_profile(m: &impl Memory) -> Result<()> {
         "Scaler requires x64 PE32+"
     );
     ensure!(
-        u32::from_le_bytes(h[pe + 8..pe + 12].try_into()?) == 0x6ac5_3765
-            && u32::from_le_bytes(h[pe + 80..pe + 84].try_into()?) == 0x35bd_e000,
+        u32::from_le_bytes(h[pe + 8..pe + 12].try_into()?) == 0x6ad2_e48c
+            && u32::from_le_bytes(h[pe + 80..pe + 84].try_into()?) == 0x3653_2000,
         "This game build has no verified scaler profile"
     );
     for &(rva, prefix, target) in RIP_ANCHORS {
@@ -174,7 +174,7 @@ pub(crate) fn verify_profile(m: &impl Memory) -> Result<()> {
         );
     }
     for (rva, methods) in [
-        (WRAPPER, [0x0292_3180, 0x0292_31e0]),
+        (WRAPPER, [0x0292_3230, 0x0292_3290]),
         (MANAGER, [0x0081_da20, 0x0081_db40]),
         (MANAGER_INTERFACE, [0x0081_e1e0, 0x0081_db40]),
         (PLAYER, [0x0082_60b0, 0x0082_6160]),
@@ -186,7 +186,7 @@ pub(crate) fn verify_profile(m: &impl Memory) -> Result<()> {
         for (index, method) in methods.into_iter().enumerate() {
             ensure!(
                 dq(&bytes, index * 8) == at(m, method)?,
-                "Scaler class-table signature differs"
+                "Scaler class-table signature differs at {rva:08X} slot {index}"
             );
         }
     }
@@ -197,7 +197,7 @@ pub(crate) fn verify_profile(m: &impl Memory) -> Result<()> {
     ] {
         ensure!(
             q(m, at(m, rva)?)? == at(m, expected)?,
-            "Scaler virtual method differs"
+            "Scaler virtual method differs at {rva:08X}"
         );
     }
     m.checkpoint()

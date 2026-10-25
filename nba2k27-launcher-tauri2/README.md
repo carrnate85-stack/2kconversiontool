@@ -1,5 +1,3 @@
-> Current source checkpoint: **QA084**. See [README-GITHUB.md](README-GITHUB.md) for build instructions and current limitations. The milestones below are historical.
-
 # 2k Launcher — Rust / Tauri 2 QA
 
 **Current separate QA 0.44.0:** open `Builds/0.44.0/Portable/App/2k Launcher Rust Prototype.exe` only after closing the game and other launchers normally. Main is not replaced. This QA has its own portable data; no running library was copied into it. Keep the whole Portable folder together. Do not copy session receipts or recovery journals between builds.

@@ -1,0 +1,42 @@
+QA131 curated download library — 2026-10-24
+DEV ONLY. Version 0.53.35. No install, promotion, activation, game launch/stop, or computer use.
+
+Delivered:
+- Downloads page: Startup videos and Playlists; 6 MP4 videos and 5 playlists discovered from the user's two public MediaFire folders.
+- Both sections have matching cover-art cards, descriptions, sizes, ordering, search, Download & Add, progress, cancel, and Added status.
+- Read-only MediaFire API listings supply native-only file identities, size and SHA256. Renderer never supplies download URLs or hashes. Bounded HTTPS transport validates redirects, rejects HTML/premium failure pages, verifies exact length/hash, and stages in an owned temporary directory.
+- Existing MP4 importer and native playlist API perform the final import, without changing active selections. Existing identical MP4s are recognized by hash. Download receipts persist separately; failures do not mark items added. Completed/failed temporary payloads are cleaned, with no recursive user-data deletion.
+- GitHub editorial catalog controls titles, descriptions, order, artwork and hidden entries. No download/hash overrides. Fixed URL: https://raw.githubusercontent.com/carrnate85-stack/2kconversiontool/main/launcher-downloads/catalog.json
+- Remote catalog is currently unpublished. 404 falls back to the included catalog with an explicit notice. Other refresh failures preserve the prior listing. No startup networking.
+- Dev-only Curator edits BOTH collections, previews locally, uploads replacement PNG/JPG/WebP art to GitHub, and publishes via the installed GitHub CLI identity. Explicit user clicks required; no GitHub writes were made during this task. Catalog PUT carries the loaded file SHA to reject concurrent edits. Helpers run hidden in kill-on-close Windows jobs with deadlines and shutdown cancellation; no tokens exposed to UI.
+- Added 8 actual game cover images used across all 11 cards. Source pages/URLs retained in download-catalog/ART-SOURCES.txt. Original generic SVG seed artwork retained but no longer selected by catalog.
+- MediaFire video/playlist uploading remains on its website; authenticated upload from launcher is not implemented. Upload there, Refresh, reopen Curator to customize new entries.
+- Curator drafts currently remain in memory; leaving the page discards unpublished edits. README explains this.
+
+Build separation:
+THIS DEV EXE includes dev-wnba-categories,dev-debug-menus,dev-curator.
+Future sharing/main builds MUST OMIT dev-curator. Normal consumers need no GitHub CLI; curator commands/UI are native-gated by that separate feature.
+
+Validation:
+- TypeScript,252 frontend tests/48 files,Vite,release native compile passed.
+- 17 isolated catalog/transport/metadata/MP4 tests passed;3 opt-in tests ignored by default.
+- Explicit live MediaFire fixture: NBA 2K12 MP4 downloaded, exact SHA256/size checked, production MP4 inspector passed. Fixture did not publish to a real video library.
+- Explicit GitHub read-only curator fixture passed, exercising owned CLI process and catalog fallback. No write/publish test was performed against GitHub.
+- Narrow standalone production Jukebox API fixture passed: picker bypass, valid import, selected playlist preservation, invalid payload rejection.
+- Hosted Tony Hawk playlist (SHA256950d4d9645a66b04f3ad285289ce5e195afc9624d64e32ed3575b69ba02a399b) verified then imported through production API into an isolated artifact library:14songs; active selection preserved. Other four hosted playlist imports are not yet individually tested.
+- Existing broader jukebox-api-harness test compilation was stale (missing modules and runtime test wiring); used a standalone fixture of the production API, with game-loader route explicitly disabled. No full harness pass claimed.
+- No live game acceptance or actual installed-app UI acceptance claimed. QA073 natural Rust test AV, QA078 Clang fixture crash and QA106 Season History assertion remain unresolved and unchanged.
+
+Candidate: C:\Users\carrn\CodexProjects\2kconversiontool\nba2k27-launcher-tauri2\Dev\Pending\QA131\launcher.exe
+SHA256: B6A479E21710916B4875FC7FCB095F0BAA352DD6AE86D2E1824146F4F4DDD593
+Bytes: 48902656
+PDB SHA256: 0AE3AF36529AFFCE4EFF047CC173D4668F50B1B0558DF71CDD2547AB5571FD14
+Starter: Open QA131 Dev.lnk / Start QA131 Dev.ps1.
+Current dev launcher was open; left untouched. Starter rejects activation until game/launcher closes normally, verifies hash, backs up prior dev and durably copies only to Dev/Portable/App.
+Main/Share remain QA129 0.53.33 SHA2561D1BBAD3843001D5A08581FBBC05FBA10E8571215D8A82966A0A8FAEA1123E60.
+Backups: Backups/qa131-download-library-20261024. Reports/fixtures: artifacts/qa131-download-library.
+
+Next user test: Close current dev launcher, start QA131, Downloads > Refresh library; inspect both cover-card tabs. Download an item not already added, then choose it in Presentation/Jukebox. Curator > edit > Preview locally. Publish to GitHub only when ready to publish catalog/art (not application). Initial publish uploads included referenced covers then catalog; subsequent Refresh loads public metadata. Raw GitHub CDN may briefly retain an older catalog after publication.
+
+Final starter CheckOnly passed after the earlier dev process closed: exact staged hash verified; game/launcher closed; no activation performed.
+

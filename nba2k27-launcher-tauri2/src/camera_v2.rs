@@ -20,10 +20,10 @@ pub(crate) const MODES: u64 = 0x0992C6B0;
 pub(crate) const LABELS: u64 = 0x06C27DC0;
 pub(crate) const STATIC_AVAILABILITY: u64 = 0x06C27EE0;
 pub(crate) const RUNTIME_AVAILABILITY: u64 = 0x0A67C430;
-pub(crate) const IMAGE_BYTES: u64 = 0x35BDE000;
+pub(crate) const IMAGE_BYTES: u64 = 0x36532000;
 const PREFERRED: u64 = 0x140000000;
 const SLOT_STRIDE: usize = 0xB000;
-const SHA: &str = "29A96471C55909FC2BCEA6C699C59238656A501C19B50C74ED64B0D842E576A1";
+const SHA: &str = "B673EB04593D6D5A4DFB9E270178E04C017BD9F277514D256EA98FFB792ED27B";
 // Independent instruction-boundary proofs: ID*64 registry, ID*16 modes,
 // ID*4 labels, byte eligibility, and both native runtime-availability loops.
 pub(crate) const ANCHORS: &[(u64, &[u8])] = &[
@@ -189,7 +189,7 @@ fn header(bytes: &[u8], loaded_base: u64) -> Result<Vec<Section>> {
             && &bytes[pe..pe + 4] == b"PE\0\0"
             && &bytes[pe + 4..pe + 6] == [0x64, 0x86]
             && &bytes[pe + 24..pe + 26] == [0x0b, 0x02]
-            && d(bytes, pe + 8) == 0x6AC53765
+            && d(bytes, pe + 8) == 0x6AD2E48C
             && d(bytes, pe + 80) == IMAGE_BYTES as u32
             // The loader can rewrite this header field to the relocated base.
             // Accept only the disk preference or this retained process's base,
@@ -871,7 +871,7 @@ impl Plan {
 /// process. The caller retains its read/share-only file handle for the session.
 pub(crate) fn verify_disk(file: &mut File) -> Result<Capture> {
     ensure!(
-        file.metadata()?.len() == 870_548_760,
+        file.metadata()?.len() == 880_329_496,
         "Unexpected Version 2 camera image size"
     );
     file.seek(SeekFrom::Start(0))?;

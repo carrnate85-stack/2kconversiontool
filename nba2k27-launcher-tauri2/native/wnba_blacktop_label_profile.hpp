@@ -1,7 +1,7 @@
 #pragma once
 // Pure bounded label resolution only. No process API or address adoption.
-// Native lookup3045970 binary-searches647 unsigned IDs at ACFA610, stride16.
-// Native sort3045CE0 sorts those records before setting ready byte ACFD610.
+// Native lookup3045A20 binary-searches647 unsigned IDs at ACFA610, stride16.
+// Native sort3045D90 sorts those records before setting ready byte ACFD610.
 // Initializer3119780 writes Euro into an UNSORTED slot; that slot is not stable.
 #include <cstddef>
 #include <cstdint>
@@ -17,9 +17,9 @@ inline constexpr std::uint32_t kId=kEuroId;
 inline constexpr std::uint64_t kWomen=0x0F39A44C3426C962;
 struct Method {std::uintptr_t rva;std::size_t bytes;const char* hash;};
 inline constexpr Method kMethods[]={
- {0x3045970,113,"C517E5EDE4831A689C9CADD8ACF49526839E57466F9B5230DBF2803F04A0B228"},
- {0x3045CE0,118,"17A62562A8F48FABFDC1B7D13E069D227D462FB73019AC8385FFF7058876EE8A"},
- {0x3045D60,13,"035D7061D87454287CB59A9844570ADBC5E87194DBE64EB3C71C7574E8588D5F"},
+ {0x3045A20,113,"B61368D68710835D0392B0E035259C02DF56EE0D3AFE97748E8AF675531D665A"},
+ {0x3045D90,118,"0818DCD90416DF31BC61C2EC625BE19B126BAF37C9479A30F822314600BEB6E9"},
+ {0x3045E10,13,"035D7061D87454287CB59A9844570ADBC5E87194DBE64EB3C71C7574E8588D5F"},
 };
 struct Resolved {
  std::size_t index{};

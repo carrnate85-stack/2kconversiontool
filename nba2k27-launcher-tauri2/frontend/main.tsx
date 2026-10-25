@@ -1,25 +1,14 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
-import { App } from "./App";
-import { StartupIntro } from "./StartupIntro";
-import { StartupDecodeProbe } from "./StartupDecodeProbe";
-import "./style.css";
 const intro = location.search === "?startupIntro=1";
-// The main window wears the WPF launcher's own stylesheets; the overlay and
-// the startup windows keep style.css only.
-const mainWindow =
-  !intro &&
-  !window.__startupVideoDecodeProbe &&
-  !new URLSearchParams(location.search).has("overlay");
-if (mainWindow) document.documentElement.classList.add("wpf-ui");
-(mainWindow ? import("./wpf/launcher-styles") : Promise.resolve()).then(() =>
-  createRoot(document.getElementById("root")!).render(
-    intro ? (
-      <StartupIntro />
-    ) : window.__startupVideoDecodeProbe ? (
-      <StartupDecodeProbe />
-    ) : (
-      <App />
-    ),
-  ),
-);
+const decode = !!window.__startupVideoDecodeProbe;
+const mainWindow = !intro && !decode && !new URLSearchParams(location.search).has("overlay");
+async function mount() {
+  const root=createRoot(document.getElementById("root")!);
+  if(intro) { const {StartupIntro}=await import("./StartupIntro"); root.render(<StartupIntro/>); return; }
+  if(decode) { const {StartupDecodeProbe}=await import("./StartupDecodeProbe"); root.render(<StartupDecodeProbe/>); return; }
+  if(mainWindow)document.documentElement.classList.add("wpf-ui");
+  const [{App}]=await Promise.all([import("./App"),import("./style.css"),import("./ux-polish.css"),mainWindow?import("./wpf/launcher-styles"):Promise.resolve()]);
+  root.render(<App/>);
+}
+void mount();

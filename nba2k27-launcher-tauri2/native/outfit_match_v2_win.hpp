@@ -143,13 +143,13 @@ inline bool hash_executable(const std::wstring& path) {
         FILE_FLAG_OPEN_REPARSE_POINT|FILE_FLAG_SEQUENTIAL_SCAN,nullptr));
     StableId id{}; FILE_STANDARD_INFO st{};
     if(!file || !file_id(file.value,false,id) || !GetFileInformationByHandleEx(file.value,FileStandardInfo,&st,sizeof st) ||
-        st.EndOfFile.QuadPart!=870548760) return false;
+        st.EndOfFile.QuadPart!=880329496) return false;
     Hash h; std::array<unsigned char,65536> buffer{}; DWORD got{};
     while(true) { if(!ReadFile(file.value,buffer.data(),DWORD(buffer.size()),&got,nullptr)) return false;
         if(!got) break; if(!h.update(buffer.data(),got)) return false; }
     StableId after{};
     return file_id(file.value,false,after) && after==id &&
-        h.finish()=="29A96471C55909FC2BCEA6C699C59238656A501C19B50C74ED64B0D842E576A1";
+        h.finish()=="B673EB04593D6D5A4DFB9E270178E04C017BD9F277514D256EA98FFB792ED27B";
 }
 inline bool read_memory(std::uintptr_t at,void* out,std::size_t count) {
     if (at<0x10000 || !count || count>65536 || at>0x7FFF00000000ull-count) return false;
@@ -182,8 +182,8 @@ inline bool profile(std::uintptr_t base) {
     if(pe<64 || pe>3500 || std::memcmp(header.data()+pe,"PE\0\0",4) ||
         *reinterpret_cast<const unsigned short*>(header.data()+pe+4)!=0x8664 ||
         *reinterpret_cast<const unsigned short*>(header.data()+pe+24)!=0x20B ||
-        *reinterpret_cast<const unsigned*>(header.data()+pe+8)!=0x6AC53765 ||
-        *reinterpret_cast<const unsigned*>(header.data()+pe+80)!=0x35BDE000) return false;
+        *reinterpret_cast<const unsigned*>(header.data()+pe+8)!=0x6AD2E48C ||
+        *reinterpret_cast<const unsigned*>(header.data()+pe+80)!=0x36532000) return false;
     for(const auto& proof:kMethods) {
         std::vector<unsigned char> b(proof.bytes);
         if(!read_memory(base+proof.rva,b.data(),b.size()) || digest(b)!=proof.sha256) return false;
@@ -195,27 +195,27 @@ inline bool profile(std::uintptr_t base) {
     for(const auto& proof:kVirtuals) if(q(base+proof.table+proof.slot)!=base+proof.method) return false;
     if(q(base+kSecondary+0xA0)!=base+0x6FD8C0) return false;
     struct Anchor {std::uintptr_t at,target;std::array<unsigned char,3> prefix;};
-    constexpr Anchor anchors[]={{0x3457D80,kRootTag,{0x48,0x8D,0x05}},
-        {0x3457D87,kRoot,{0x48,0x89,0x05}},{0x25AA3D0,kOwner,{0x48,0x8B,0x05}},
-        {0x308C649,kModes,{0x48,0x8D,0x05}},{0x308C650,kAlternate,{0x48,0x63,0x0D}},
-        {0x300D703,kCurrent,{0x48,0x63,0x05}}};
+    constexpr Anchor anchors[]={{0x3457F00,kRootTag,{0x48,0x8D,0x05}},
+        {0x3457F07,kRoot,{0x48,0x89,0x05}},{0x25AA480,kOwner,{0x48,0x8B,0x05}},
+        {0x308C6F9,kModes,{0x48,0x8D,0x05}},{0x308C700,kAlternate,{0x48,0x63,0x0D}},
+        {0x300D7B3,kCurrent,{0x48,0x63,0x05}}};
     for(const auto& a:anchors) {std::array<unsigned char,7> b{};std::int32_t disp{};
         if(!read_memory(base+a.at,b.data(),b.size()) || !std::equal(a.prefix.begin(),a.prefix.end(),b.begin())) return false;
         std::memcpy(&disp,b.data()+3,4); if(std::int64_t(a.at)+7+disp!=std::int64_t(a.target)) return false; }
-    for(const auto& [at,target]:{std::pair<std::uintptr_t,std::uintptr_t>{0x32F799A,kLineup+4},{0x32F79A0,kLineup+8}}) {
+    for(const auto& [at,target]:{std::pair<std::uintptr_t,std::uintptr_t>{0x32F7B1A,kLineup+4},{0x32F7B20,kLineup+8}}) {
         std::array<unsigned char,6> code{};std::int32_t displacement{};
         if(!read_memory(base+at,code.data(),code.size()) || code[0]!=0x89 || code[1]!=0x05) return false;
         std::memcpy(&displacement,code.data()+2,4);
         if(std::int64_t(at)+6+displacement!=std::int64_t(target)) return false;
     }
     const unsigned char stage[]={0x8B,0x81,0xA8,0x0E,0,0};
-    const unsigned char active[]={0x80,0x3D,0xC4,0x58,0x66,0x08,0};
-    const unsigned char mode[]={0x48,0x8B,0x05,0xC9,0x79,0x66,0x08,0x8B,0x80,0x04,0x0A,0,0,0xC3};
+    const unsigned char active[]={0x80,0x3D,0x14,0x58,0x66,0x08,0};
+    const unsigned char mode[]={0x48,0x8B,0x05,0x19,0x79,0x66,0x08,0x8B,0x80,0x04,0x0A,0,0,0xC3};
     std::array<unsigned char,14> b{};
-    return read_memory(base+0x32FB9B6,b.data(),sizeof stage) && !std::memcmp(b.data(),stage,sizeof stage) &&
-        read_memory(base+0x24F7EC5,b.data(),sizeof active) && !std::memcmp(b.data(),active,sizeof active) &&
-        read_memory(base+0x24F5450,b.data(),sizeof mode) && !std::memcmp(b.data(),mode,sizeof mode) &&
-        q(base+kRootTag)==base+0x23120 && q(base+kRootTag+8)==base+0x346B350;
+    return read_memory(base+0x32FBB36,b.data(),sizeof stage) && !std::memcmp(b.data(),stage,sizeof stage) &&
+        read_memory(base+0x24F7F75,b.data(),sizeof active) && !std::memcmp(b.data(),active,sizeof active) &&
+        read_memory(base+0x24F5500,b.data(),sizeof mode) && !std::memcmp(b.data(),mode,sizeof mode) &&
+        q(base+kRootTag)==base+0x23120 && q(base+kRootTag+8)==base+0x346B4D0;
 }
 struct TrustedBinding {
     DWORD game_pid{},owner_pid{};

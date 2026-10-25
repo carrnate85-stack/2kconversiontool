@@ -11,6 +11,7 @@ import { orderCatalogGroups } from "./overlay-catalog-cache";
 import type { Settings } from "./types";
 import "./BlacktopCatalog.css";
 import { BallThumbnail } from "./BallThumbnail";
+import { CustomBlacktopImport } from "./CustomBlacktopImport";
 
 export type CatalogRow = {
   id: string;
@@ -94,13 +95,20 @@ export function BlacktopCatalog({
   settings,
   change,
   onClose,
+  customArenas = false,
 }: {
   kind: CatalogFeature;
   settings: Settings;
   change: (p: Partial<Settings>) => void;
   onClose: () => void;
+  customArenas?: boolean;
 }) {
   const dialog = useRef<HTMLDialogElement>(null);
+  const [importing, setImporting] = useState(false), [revision, setRevision] = useState(0);
+  const [editId, setEditId] = useState<string>();
+  const [menu, setMenu] = useState<{ row: CatalogRow; x: number; y: number } | null>(null);
+  const menuButton = useRef<HTMLButtonElement>(null);
+  useEffect(() => { if (menu) menuButton.current?.focus(); }, [menu]);
   const control = useNativeArena(true, settings.gameRoot, kind, true);
   const [query, setQuery] = useState(""),
     [group, setGroup] = useState("All"),
@@ -136,7 +144,7 @@ export function BlacktopCatalog({
       alive = false;
       clearTimeout(timer);
     };
-  }, [kind, query, group, offset, group === "Favorites" && favorites]);
+  }, [kind, query, group, offset, revision, group === "Favorites" && favorites]);
   async function toggleFavorite(id: string) {
     if (favorites === null || favoriteBusy) return;
     setFavoriteBusy(true);
@@ -167,8 +175,8 @@ export function BlacktopCatalog({
   const title = `${kind[0].toUpperCase()}${kind.slice(1)} catalog`;
   const footer =
     control.error ||
-    control.unavailable ||
     message ||
+    control.unavailable ||
     (control.eligible ? control.status?.message : "") ||
     catalogSavedMessage(kind, settings);
   return (
@@ -179,8 +187,11 @@ export function BlacktopCatalog({
       aria-label={title}
       onCancel={(e) => {
         e.preventDefault();
-        onClose();
+        if (menu) setMenu(null);
+        else if (importing) setImporting(false);
+        else onClose();
       }}
+      onPointerDown={e => { if (!(e.target as HTMLElement).closest('.custom-arena-menu')) setMenu(null); }}
     >
       <header className="blacktop-catalog-header">
         <div>
@@ -218,21 +229,37 @@ export function BlacktopCatalog({
             </button>
           ))}
         </div>
+        {kind === "arena" && customArenas && <button type="button" onClick={() => { setGroup("Custom"); setEditId(undefined); setImporting(true); }}>Add from mods</button>}
       </section>
-      <section className="blacktop-catalog-grid">
+      {importing ? <CustomBlacktopImport key={editId ?? "new"} editId={editId} onCancel={() => setImporting(false)} onAdded={saved => {
+        setImporting(false); setGroup("Custom"); setQuery(""); setOffset(0); setRevision(r => r + 1);
+        if (saved.previousId && settings.arenaId === saved.previousId) change(catalogChoicePatch("arena", saved));
+        if (saved.previousId && favorites?.includes(saved.previousId)) {
+          void call<string[]>("arena-favorite", { id: saved.id, favorite: true })
+            .then(() => call<string[]>("arena-favorite", { id: saved.previousId, favorite: false }))
+            .then(setFavorites).catch(e => setMessage(String(e)));
+        }
+        setMessage(`${saved.name} saved. Select its card at Blacktop player selection to use it.`);
+      }} /> : <section className="blacktop-catalog-grid">
         {page.items.map((row) => {
           const starred = favorites?.includes(row.id) ?? false;
           const image = row.imagePath
             ? convertFileSrc(row.imagePath)
             : row.image;
           return (
-            <div className="blacktop-catalog-entry" key={row.id}>
+            <div className="blacktop-catalog-entry" key={row.id}
+              onContextMenu={e => {
+                if (kind !== "arena" || !customArenas || row.group !== "Custom") return;
+                e.preventDefault();
+                const rect = e.currentTarget.getBoundingClientRect();
+                setMenu({ row, x: Math.max(8, Math.min(e.clientX || rect.left + 12, window.innerWidth - 190)), y: Math.max(8, Math.min(e.clientY || rect.top + 12, window.innerHeight - 60)) });
+              }}>
               <button
                 type="button"
                 className="blacktop-catalog-item"
                 aria-pressed={catalogSelected(kind, settings, row)}
                 disabled={control.busy || row.disabled === true}
-                title={kind === "ball" ? row.note : undefined}
+                title={row.note || undefined}
                 onClick={() => void choose(row)}
               >
                 {kind === "scoreboard" && (
@@ -249,6 +276,7 @@ export function BlacktopCatalog({
                 {kind === "ball" && <BallThumbnail id={row.id} gameRoot={settings.gameRoot} image={image} />}
                 <strong>{catalogLabel(row.name)}</strong>
                 <small>{row.group}</small>
+                {row.group === "Custom" && row.note && <small>{row.note}</small>}
                 {kind === "scoreboard" && (
                   <small className="blacktop-scoreboard-caption">
                     {row.caption || "Preview unavailable"}
@@ -276,9 +304,12 @@ export function BlacktopCatalog({
         {page.total === 0 && (
           <div className="blacktop-catalog-empty">{catalogEmptyText(group)}</div>
         )}
-      </section>
+      </section>}
+      {menu && <div className="custom-arena-menu" role="menu" aria-label={`${menu.row.name} actions`} style={{ left: menu.x, top: menu.y }}>
+        <button ref={menuButton} type="button" role="menuitem" onClick={() => { setEditId(menu.row.id); setImporting(true); setMenu(null); }}>Edit custom arena</button>
+      </div>}
       <footer className="blacktop-catalog-footer">
-        <span role="status">{footer}</span>
+        {control.error ? <ActionError text={control.error} /> : <span role="status">{footer}</span>}
         <div>
           <button
             type="button"
@@ -300,3 +331,4 @@ export function BlacktopCatalog({
     </dialog>
   );
 }
+import { ActionError } from "./UxFeedback";

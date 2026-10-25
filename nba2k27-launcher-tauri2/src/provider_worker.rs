@@ -102,6 +102,10 @@ pub fn run() -> Result<()> {
         boot.schema == SCHEMA && boot.parent.pid == parent_pid()?,
         "Unexpected provider parent"
     );
+    if let Some(owner) = &boot.launch_owner {
+        // A damaged/missing unused catalog never prevents ordinary mod loading.
+        let _ = crate::custom_blacktop::load(&owner.portable);
+    }
     boot.features.validate()?;
     ensure!(
         boot.launch_owner.is_some() || !boot.features.enabled(),
@@ -116,6 +120,9 @@ pub fn run() -> Result<()> {
         &boot.mutable_aliases,
         Arc::new(AtomicBool::new(false)),
     )?);
+    if let Some(owner) = &boot.launch_owner {
+        let _ = crate::custom_blacktop::publish(&owner.portable, &boot.mods_root, &assets, None);
+    }
     let (indexed, aliases, _) = assets.counts()?;
     let index_ms = index_clock.elapsed().as_millis().min(u64::MAX as u128) as u64;
     let launch_context = boot

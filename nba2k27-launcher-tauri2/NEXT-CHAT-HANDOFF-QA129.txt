@@ -1,0 +1,17 @@
+QA129 FINAL - version0.53.33 installed and sharing EXE ready.
+Main: C:\Program Files (x86)\Steam\steamapps\common\NBA 2K27\2k Launcher\App\2k Launcher Rust.exe
+Share: C:\Users\carrn\CodexProjects\2kconversiontool\nba2k27-launcher-tauri2\Builds\0.53.33\Share-QA129-Play-Startup\NBA 2K27 Launcher 0.53.33.exe
+SHA256 (both): 1D1BBAD3843001D5A08581FBBC05FBA10E8571215D8A82966A0A8FAEA1123E60
+Bytes: 59580416
+Recovery: C:\Program Files (x86)\Steam\steamapps\common\NBA 2K27\2k Launcher\Recovery\App-before-QA129-20261024-080958-4057
+Receipt: C:\Users\carrn\CodexProjects\2kconversiontool\nba2k27-launcher-tauri2\artifacts\qa129-main-promotion-20261024-080958-4057.json
+185 Data files and484 Library files verified unchanged; previous App backup verified. No game or launcher started during promotion.
+
+Startup video now begins from Play after selected-file validation/media readiness, before game dispatch. It uses the launcher display immediately and later attaches audio only to the exact native launched process. No replay after skip. The media readiness ceiling is3seconds, with no fixed delay; failure skips optional video and continues Play. Fullscreen sizing remains corrected.
+Startup route loads approximately64percent less JS and98percent less CSS. Final isolated UI bootstrap341ms includes native initialization10.53ms; this is not a controlled before/after speedup estimate.
+245 frontend tests and87 startup lifecycle tests passed;1 native test ignored. Exact sharing EXE video fixture decoded its first frame at513ms and verified full viewport layout. Exact UI smoke loaded and passed13 checks before the known QA106 Season History persistence assertion; full smoke not passed. Live game video/audio acceptance pending.
+QA073 natural Rust AV and QA078 Clang fixture crash remain unresolved, with evidence preserved.
+Read REPORT.txt, source.diff, source-hashes.json and probe-final/ui-smoke-final reports for implementation and validation details.
+
+Detailed report: C:\Users\carrn\CodexProjects\2kconversiontool\nba2k27-launcher-tauri2\artifacts\qa129-play-start\REPORT.txt
+Main is now QA129; do not treat older QA128/dev-only boundaries as current. User explicitly authorized this promotion.

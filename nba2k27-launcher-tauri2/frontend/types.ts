@@ -40,7 +40,13 @@ export type Bootstrap = {
   gameFound: boolean;
   runtime: string;
   liveGameEnabled: false;
-  capabilities?: { wnbaBlacktop?: boolean };
+  capabilities?: {
+    wnbaBlacktop?: boolean;
+    debugMenus?: boolean;
+    developerTools?: boolean;
+    modelPreview?: boolean;
+    customBlacktop?: boolean;
+  };
   startupMs: number;
 };
 export type Media = {
@@ -115,5 +121,7 @@ declare global {
     __overlayProbe?: boolean;
     __nativeOverlayProbe?: boolean;
     __startupVideoDecodeProbe?: boolean;
+    /** Exact launch-owned bootstrap injected only into the startup-intro view. */
+    __startupIntroBootstrap?: unknown;
   }
 }

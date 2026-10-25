@@ -1,0 +1,53 @@
+QA087 PATCHED-GAME REMAP DEV CANDIDATE - 2026-10-21
+
+Scope
+- Dev-only. Nothing installed or promoted.
+- Game was not launched. Static installed-EXE and disk audits were read-only.
+- NBA 2K27 Steam build 26004539, PE 6AD2E48C:36532000.
+- NBA2K27.exe SHA256 B673EB04593D6D5A4DFB9E270178E04C017BD9F277514D256EA98FFB792ED27B.
+
+Delivered mapping
+- Mapped: mod provider, shared observer, rules, roster identity, cameras, scaler,
+  Freestyle/WNBA, arena, ball, scoreboard, presentation, outfits and jukebox.
+- Full roster/team field writes remain fail-closed: nativeWritesMapped=false.
+- Unknown future builds cannot admit zero-proof hash/native features as re-derived.
+- QA087 outfit payload SHA256
+  0B0A8A42708EA6F1D9EBC796FEC77F0BB6C9F67E17CC5FE9A6905BB15BDBD7A0.
+
+Validation
+- Native QA087 fixtures and version-proxy smoke: PASS.
+- Feature relocation regressions: 5 PASS; installed inventory exact audit PASS.
+- Outfit match: 27 PASS. Outfit selection: 8 PASS, 1 manual ignored.
+- Installed jukebox disk audit: PASS, 164 tracks.
+- TypeScript/Vite production build: PASS.
+- Frontend: 44 files / 232 tests PASS.
+- Release compile: PASS.
+- Staged starter CheckOnly: PASS; game and launcher closed.
+- Owned overlay smoke fixture: PASS, 15 checks.
+- Whole UI smoke later failed in unrelated season editor assertion:
+  "Season totals/awards edits were not persisted". Keep this visible.
+
+Dev candidate
+- Start QA087 Dev.vbs
+- Dev/Pending/QA087/launcher.exe
+- Size 46661120 bytes
+- SHA256 2FEEE6BA77203695B0BA392B50D7B2EC8301A5A861A2AB23819B721929914BFF
+- Not activated, installed or promoted.
+
+Required live acceptance
+- Normal Play launch on patched build.
+- WNBA category in Freestyle and Blacktop, including both toggles together.
+- Random All streetwear uniqueness and near-immediate match carry-over.
+- F8 focus/visibility and match-start dismissal.
+- Camera/scaler timing, arena, ball, scoreboard and presentation changes.
+- Jukebox playback/restore.
+- Full roster/team field writes are intentionally unavailable.
+
+Preserved unresolved evidence
+- QA073 natural Rust test access violation remains unresolved; exact prior EXE/PDB
+  evidence stays preserved.
+- QA078 Clang fixture crash remains unexplained.
+- Offline validation does not prove live gameplay behavior.
+
+Detailed receipt: artifacts/qa086-remap-20261021/final-validation.json
+Report: artifacts/qa086-remap-20261021/final-remap.md

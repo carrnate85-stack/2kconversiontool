@@ -18,6 +18,83 @@ use std::{
     time::{Duration, SystemTime, UNIX_EPOCH},
 };
 
+#[derive(Debug)]
+struct TransientProviderStatusIo(std::io::Error);
+impl std::fmt::Display for TransientProviderStatusIo {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "Provider status read unavailable: {}", self.0)
+    }
+}
+impl std::error::Error for TransientProviderStatusIo {}
+fn provider_status_observation(result: Result<Value>) -> Result<Option<Value>> {
+    match result {
+        Ok(value) => Ok(Some(value)),
+        Err(error) if error.is::<TransientProviderStatusIo>() => Ok(None),
+        Err(error) => Err(error),
+    }
+}
+pub(crate) fn cleanup_step(
+    errors: &mut Vec<String>,
+    name: &str,
+    action: impl FnOnce() -> Result<()>,
+) {
+    if let Err(error) = action() {
+        errors.push(format!("{name}: {error:#}"));
+    }
+}
+pub(crate) fn cleanup_result(errors: Vec<String>) -> Result<()> {
+    ensure!(
+        errors.is_empty(),
+        "Owned recovery remains pending: {}",
+        errors.join("; ")
+    );
+    Ok(())
+}
+fn recovery_root(
+    portable: &Path,
+    session: &str,
+    profile: Option<PathBuf>,
+    game: &Path,
+    errors: &mut Vec<String>,
+) -> Result<PathBuf> {
+    let mut roots: Vec<PathBuf> = profile.into_iter().collect();
+    for (name, result) in [
+        (
+            "selector root",
+            crate::selector_files::Store::recorded_root(portable, session),
+        ),
+        (
+            "camera root",
+            crate::camera_name_files::Store::recorded_root(portable, session),
+        ),
+        (
+            "player root",
+            crate::player_folders::Store::recorded_root(portable, session),
+        ),
+        (
+            "Jukebox root",
+            crate::jukebox_files::Store::recorded_root(portable, session),
+        ),
+    ] {
+        match result {
+            Ok(Some(root)) => roots.push(root),
+            Ok(None) => {}
+            Err(error) => errors.push(format!("{name}: {error:#}")),
+        }
+    }
+    root_consensus(&roots, game)
+}
+fn root_consensus(roots: &[PathBuf], game: &Path) -> Result<PathBuf> {
+    let selected = roots.first().cloned().unwrap_or_else(|| game.join("mods"));
+    ensure!(
+        roots
+            .iter()
+            .all(|root| same_path(&root.to_string_lossy(), &selected)),
+        "Owned recovery receipts disagree on their physical Mods root"
+    );
+    Ok(selected)
+}
+
 fn now_ms() -> u64 {
     SystemTime::now()
         .duration_since(UNIX_EPOCH)
@@ -229,6 +306,9 @@ impl Controller {
         json!({"phase": if self.error.is_some(){"needs-review"}else{match self.journal.as_ref().map(|j| &j.phase){Some(Phase::Waiting)=>"waiting-for-game",Some(Phase::Running)=>"game-running",Some(Phase::Closed)=>"closed",Some(Phase::CleanupPending)=>"needs-review",None=>"idle"}},"message":self.message,"error":self.error,"session":self.journal.as_ref().map(|j| &j.session),"game":self.journal.as_ref().and_then(|j| j.game.as_ref()),"steamOnly":!self.journal.as_ref().is_some_and(modded),"nativeProvider":self.provider_view().unwrap_or_else(|e|json!({"phase":"unknown","error":format!("{e:#}")})),"automaticFeaturesEnabled":false,"verifiedRuleWrites":self.rule_writes,"gameStoppedByLauncher":false})
     }
     fn provider_view(&self) -> Result<Value> {
+        self.provider_view_with_live_status(true)
+    }
+    fn provider_view_with_live_status(&self, live: bool) -> Result<Value> {
         let Some(j) = self.journal.as_ref().filter(|j| modded(j)) else {
             return Ok(Value::Null);
         };
@@ -250,7 +330,8 @@ impl Controller {
         // Authenticated, read-only status sees the outfit queue immediately.
         // The durable snapshot may lag while the provider handles other work.
         // Retain the file fallback for cleanup/recovery or unavailable transport.
-        if j.phase == Phase::Running
+        if live
+            && j.phase == Phase::Running
             && let Some(worker) = &self.provider
             && let Ok(status) = worker.control(json!({"operation":"modded-status"}))
         {
@@ -267,17 +348,20 @@ impl Controller {
             Err(e) if e.kind() == std::io::ErrorKind::NotFound => {
                 return Ok(json!({"phase":"queued","message":"Waiting for the native provider"}));
             }
-            Err(e) => return Err(e.into()),
+            Err(e) => return Err(TransientProviderStatusIo(e).into()),
         };
         use std::io::Read;
         use std::os::windows::fs::MetadataExt;
-        let meta = file.metadata()?;
+        let meta = file.metadata().map_err(TransientProviderStatusIo)?;
         ensure!(
             meta.is_file() && meta.len() <= 65536 && meta.file_attributes() & 0x400 == 0,
             "Invalid provider session status"
         );
         let mut bytes = Vec::new();
-        (&mut file).take(65537).read_to_end(&mut bytes)?;
+        (&mut file)
+            .take(65537)
+            .read_to_end(&mut bytes)
+            .map_err(TransientProviderStatusIo)?;
         ensure!(bytes.len() <= 65536, "Provider status exceeds bounds");
         let v: Value = serde_json::from_slice(&bytes)?;
         validate(&v)?;
@@ -365,6 +449,15 @@ impl Controller {
                 self.commit(j)?;
                 self.message =
                     format!("Native provider could not start; Steam was not dispatched: {e:#}");
+                let _ = backend::atomic_json(
+                    &self.root.join("Data/launch-last-error.json"),
+                    &json!({
+                        "recordedMs": now_ms(),
+                        "stage": "provider-bootstrap",
+                        "message": self.message,
+                        "steamDispatched": false
+                    }),
+                );
                 return Err(e);
             }
         };
@@ -691,7 +784,10 @@ impl Controller {
             "NBA 2K27 observed with an anti-cheat process. All native game access is blocked."
                 .into()
         } else if self.journal.as_ref().is_some_and(modded) {
-            let view = self.provider_view()?;
+            let Some(view) = provider_status_observation(self.provider_view())? else {
+                self.message = "Provider status temporarily unreadable; waiting for a fresh validated observation.".into();
+                return Ok(());
+            };
             view["message"]
                 .as_str()
                 .unwrap_or("Native provider is preparing the modded session")
@@ -840,58 +936,89 @@ impl Controller {
                 !(old_loader && crate::outfit_worker_v2_loader::pending(&self.root)?),
                 "Original and Version 2 outfit loader receipts collide; neither was changed"
             );
-            if let Some(mut store) = crate::loader_files::Store::recover(&self.root, game)? {
-                ensure!(
-                    store.session() == j.session,
-                    "Loader recovery belongs to another session"
-                );
-                store.restore(&closed)?;
+            let mut physical_errors = Vec::new();
+            cleanup_step(&mut physical_errors, "loader", || {
+                if let Some(mut store) = crate::loader_files::Store::recover(&self.root, game)? {
+                    ensure!(
+                        store.session() == j.session,
+                        "Loader recovery belongs to another session"
+                    );
+                    store.restore(&closed)?;
+                }
+                Ok(())
+            });
+            cleanup_step(&mut physical_errors, "V2 loader", || {
+                if let Some(mut store) =
+                    crate::outfit_worker_v2_loader::Store::recover(&self.root, game)?
+                {
+                    ensure!(
+                        store.session() == j.session,
+                        "Version 2 outfit loader belongs to another session"
+                    );
+                    store.restore(&closed)?;
+                }
+                Ok(())
+            });
+            let mut profile = None;
+            cleanup_step(&mut physical_errors, "profile receipt", || {
+                let recovered = crate::mod_profile::Store::recover(&self.root, game)?;
+                if let Some(store) = &recovered {
+                    ensure!(
+                        store.session() == j.session,
+                        "Profile recovery belongs to another session"
+                    );
+                }
+                profile = recovered;
+                Ok(())
+            });
+            let selected = recovery_root(
+                &self.root,
+                &j.session,
+                profile.as_ref().map(|s| s.selected_root().to_path_buf()),
+                game,
+                &mut physical_errors,
+            );
+            if let Ok(selected) = &selected {
+                cleanup_step(&mut physical_errors, "selectors", || {
+                    if let Some(mut store) =
+                        crate::selector_files::Store::recover(&self.root, selected, &j.session)?
+                    {
+                        store.restore(&closed)?;
+                    }
+                    Ok(())
+                });
+                cleanup_step(&mut physical_errors, "camera labels", || {
+                    if let Some(mut store) =
+                        crate::camera_name_files::Store::recover(&self.root, selected, &j.session)?
+                    {
+                        store.restore(&closed)?;
+                    }
+                    Ok(())
+                });
+                cleanup_step(&mut physical_errors, "player links", || {
+                    if let Some(mut store) =
+                        crate::player_folders::Store::recover(&self.root, selected, &j.session)?
+                    {
+                        store.restore(&closed)?;
+                    }
+                    Ok(())
+                });
+                cleanup_step(&mut physical_errors, "Jukebox", || {
+                    crate::jukebox_launch::recover_ended(
+                        &self.root, selected, &j.session, &closed,
+                    )?;
+                    Ok(())
+                });
+            } else if let Err(error) = selected {
+                physical_errors.push(format!("physical root: {error:#}"));
             }
-            if let Some(mut store) =
-                crate::outfit_worker_v2_loader::Store::recover(&self.root, game)?
-            {
-                ensure!(
-                    store.session() == j.session,
-                    "Version 2 outfit loader belongs to another session"
-                );
-                store.restore(&closed)?;
-            }
-            let mut profile = crate::mod_profile::Store::recover(&self.root, game)?;
-            if let Some(store) = &profile {
-                ensure!(
-                    store.session() == j.session,
-                    "Profile recovery belongs to another session"
-                );
-            }
-            // Player links live in the selected root, which is independently
-            // bound by the still-retained profile receipt (or game's ordinary
-            // mods folder). Restore links BEFORE removing that profile receipt.
-            let selected = profile
-                .as_ref()
-                .map(|s| s.selected_root().to_path_buf())
-                .unwrap_or_else(|| game.join("mods"));
-            if let Some(mut store) =
-                crate::selector_files::Store::recover(&self.root, &selected, &j.session)?
-            {
-                store.restore(&closed)?;
-            }
-            if let Some(mut store) =
-                crate::camera_name_files::Store::recover(&self.root, &selected, &j.session)?
-            {
-                store.restore(&closed)?;
-            }
-            if let Some(mut store) =
-                crate::player_folders::Store::recover(&self.root, &selected, &j.session)?
-            {
-                store.restore(&closed)?;
-            }
-            // The exact provider has exited and its pinned audio handles are
-            // gone. Recover through the still-owned physical selected root,
-            // before removing the mod-profile junction or its receipt.
-            crate::jukebox_launch::recover_ended(&self.root, &selected, &j.session, &closed)?;
-            if let Some(store) = &mut profile {
-                store.restore(&closed)?;
-            }
+            cleanup_step(&mut physical_errors, "profile junction", || {
+                if let Some(store) = &mut profile {
+                    store.restore(&closed)?;
+                }
+                Ok(())
+            });
+            cleanup_result(physical_errors)?;
             // Ended memory receipts are independent of the exact-owned files.
             // Their validation can hold final recovery without stranding DLLs
             // or a mod-profile junction that can already be restored safely.
@@ -1224,6 +1351,29 @@ impl Service {
             inner,
             worker: Mutex::new(Some(worker)),
         })
+    }
+    /// Best-effort metadata snapshot for the exact launch's intro. Never wait
+    /// behind startup work, contact the provider, or read game memory for a bar.
+    pub(crate) fn intro_progress(&self, session: &str) -> Result<Option<Value>> {
+        let Ok(c) = self.inner.controller.try_lock() else {
+            return Ok(None);
+        };
+        let Some(j) = c.journal.as_ref().filter(|j| j.session == session) else {
+            return Ok(None);
+        };
+        let phase = if c.error.is_some() {
+            "needs-review"
+        } else {
+            match j.phase {
+                Phase::Waiting => "waiting-for-game",
+                Phase::Running => "game-running",
+                Phase::Closed => "closed",
+                Phase::CleanupPending => "needs-review",
+            }
+        };
+        Ok(Some(
+            json!({"session":session,"phase":phase,"error":c.error,"steamOnly":!modded(j),"nativeProvider":c.provider_view_with_live_status(false)?}),
+        ))
     }
     pub fn status(&self) -> Result<Value> {
         if self.inner.launching.load(Ordering::Acquire) {
@@ -2279,5 +2429,61 @@ mod tests {
         );
         drop(service);
         fs::remove_dir_all(root).unwrap();
+    }
+
+    #[test]
+    fn transient_status_reads_retry_but_corrupt_owner_and_persistence_errors_stay_terminal() {
+        let transient =
+            TransientProviderStatusIo(std::io::Error::from(std::io::ErrorKind::PermissionDenied));
+        assert!(
+            provider_status_observation(Err(transient.into()))
+                .unwrap()
+                .is_none()
+        );
+        for error in [
+            anyhow::anyhow!("Provider status owner differs"),
+            anyhow::anyhow!("corrupt JSON"),
+            anyhow::Error::from(std::io::Error::from(std::io::ErrorKind::PermissionDenied)),
+        ] {
+            assert!(provider_status_observation(Err(error)).is_err());
+        }
+        assert_eq!(
+            provider_status_observation(Ok(json!({"phase":"ready"})))
+                .unwrap()
+                .unwrap()["phase"],
+            "ready"
+        );
+    }
+    #[test]
+    fn independent_cleanup_preserves_all_errors_and_does_not_skip_later_owned_stores() {
+        let mut errors = Vec::new();
+        let calls = std::cell::RefCell::new(Vec::new());
+        cleanup_step(&mut errors, "loader", || {
+            calls.borrow_mut().push("loader");
+            anyhow::bail!("held loader")
+        });
+        cleanup_step(&mut errors, "player", || {
+            calls.borrow_mut().push("player");
+            anyhow::bail!("missing source")
+        });
+        cleanup_step(&mut errors, "junction", || {
+            calls.borrow_mut().push("junction");
+            Ok(())
+        });
+        assert_eq!(*calls.borrow(), vec!["loader", "player", "junction"]);
+        let error = format!("{:#}", cleanup_result(errors).unwrap_err());
+        assert!(error.contains("held loader") && error.contains("missing source"));
+    }
+
+    #[test]
+    fn physical_receipt_root_consensus_never_adopts_disagreeing_roots_after_profile_removal() {
+        let game = PathBuf::from(r"C:\Game");
+        assert_eq!(root_consensus(&[], &game).unwrap(), game.join("mods"));
+        let selected = PathBuf::from(r"D:\SelectedProfile");
+        assert_eq!(
+            root_consensus(&[selected.clone(), selected.clone()], &game).unwrap(),
+            selected
+        );
+        assert!(root_consensus(&[selected, PathBuf::from(r"D:\ForeignProfile")], &game).is_err());
     }
 }

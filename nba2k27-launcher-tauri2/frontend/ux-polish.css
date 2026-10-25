@@ -1,0 +1,40 @@
+.action-error { margin: 10px 0; padding: 12px; border: 1px solid var(--danger, #b75d68); border-radius: 7px; }
+.action-error p { margin: 0 0 8px; }
+.action-error pre { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 200px; overflow: auto; user-select: text; font-size: 12px; }
+.action-error summary, .launch-details summary { cursor: pointer; }
+.action-error button { margin-right: 10px; }
+.draft-notice, .mod-recovery { padding: 12px; margin: 10px 0; border: 1px solid var(--line, #294452); border-radius: 7px; }
+.mod-recovery > div { padding: 8px 0; display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.launch-details { text-align: left; margin: 14px 0; font-size: 12px; }
+.wpf-ui .camera-order-buttons button,
+.wpf-ui #page-jukebox .jukebox-row-actions button,
+.wpf-ui dialog button.secondary,
+.wpf-ui .juke-modal button.secondary,
+.wpf-ui .action-error button,
+.wpf-ui .mod-recovery button {
+  background: var(--panel, #132530); color: var(--text, #e3eef6);
+  border: 1px solid var(--line, #294452); border-radius: 6px;
+  min-height: 32px; padding: 6px 10px; font: inherit; font-size: 12px; font-weight: 600;
+}
+.wpf-ui #page-jukebox .jukebox-row-actions { flex-wrap: nowrap; align-items: center; gap: 6px; }
+.wpf-ui #page-jukebox .jukebox-row-actions button { flex: 0 0 auto; white-space: nowrap; font-size: 11px; }
+.wpf-ui #page-jukebox .jukebox-row-actions :is(.jukebox-order-button, .jukebox-position-button) {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 32px; min-width: 32px; height: 32px; padding: 0;
+  background: color-mix(in srgb, #123247 46%, var(--panel-2));
+  border-color: color-mix(in srgb, #4b7890 58%, var(--line));
+}
+.wpf-ui #page-jukebox .jukebox-row-actions .jukebox-position-button { font-size: 18px; letter-spacing: 1px; }
+.wpf-ui #page-jukebox .jukebox-row-actions button:hover:not(:disabled) {
+  border-color: color-mix(in srgb, var(--court) 72%, #4b7890);
+  background: color-mix(in srgb, var(--court) 13%, var(--panel-2));
+}
+.wpf-ui #page-jukebox .jukebox-row-actions button:disabled { opacity: .45; cursor: not-allowed; }
+.wpf-ui :is(#page-presentation, #page-cameras) .camera-order-buttons button {
+  display: inline-flex; align-items: center; justify-content: center;
+  flex: 0 0 28px; width: 28px; height: 29px; min-height: 29px; padding: 0;
+}
+.wpf-ui .camera-order-buttons .nav-icon { width: 15px; height: 15px; flex: 0 0 15px; }
+.wpf-ui button:focus-visible { outline: 2px solid var(--court, #71bded); outline-offset: 3px; }
+.wpf-ui #page-jukebox .jukebox-remove-button { color: var(--danger, #ed8992); }
+@media (prefers-reduced-motion: reduce) { .launch-spinner, .launch-spinner span { animation: none !important; } .launch-progress span { transition: none !important; } }

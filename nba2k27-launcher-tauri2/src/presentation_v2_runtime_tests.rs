@@ -42,6 +42,7 @@ struct Faults {
     foreign_after_intent: Cell<bool>,
     capture_wait: Cell<bool>,
     drift_after_capture: Cell<usize>,
+    transition_on_failed_write: Cell<bool>,
     events: RefCell<Vec<String>>,
 }
 struct Fake {
@@ -99,10 +100,15 @@ impl Access for Fake {
             .borrow_mut()
             .push(format!("write:{:?}:{parent_required}", p.change.kind));
         apply_to(&mut self.state.borrow_mut(), &p.change)?;
-        ensure!(
-            self.faults.fail_write.get() != n,
-            "Reported partial-operation failure"
-        );
+        if self.faults.fail_write.get() == n {
+            if self.faults.transition_on_failed_write.get() {
+                let mut state = self.state.borrow_mut();
+                state.context.current = 0xB4D37B22;
+                state.context.alternate = 0xB4D37B22;
+                state.context.stage = 1;
+            }
+            anyhow::bail!("Reported partial-operation failure");
+        }
         Ok(())
     }
 }
@@ -623,6 +629,76 @@ fn presentation_every_blacktop_visit_reapplies_after_the_games_own_match_end_res
     settle(&mut e, &a, &mut l, true).unwrap();
     assert!(!e.held && removed(&a));
     assert_eq!(e.visits, 2);
+}
+#[test]
+fn presentation_interrupted_quick_play_restore_rearms_only_after_fresh_selection_proof() {
+    let all = Options {
+        remove_drone: true,
+        remove_dj: true,
+        remove_mc: true,
+        remove_crowd: true,
+    };
+    let (mut e, a, mut l, f) = fixture(all);
+    settle(&mut e, &a, &mut l, true).unwrap();
+    assert_eq!(e.visits, 1);
+
+    menu(&a, 0x079964C0);
+    // The global restore completes, then the game leaves Quick Play after the
+    // first standing-crowd byte is published.
+    f.fail_write.set(f.writes.get() + 2);
+    f.transition_on_failed_write.set(true);
+    settle(&mut e, &a, &mut l, true).unwrap();
+    assert!(!e.held && e.restore_rearm_pending && e.crowd.is_some());
+    let interrupted_writes = f.writes.get();
+    assert!(
+        e.status()["message"]
+            .as_str()
+            .unwrap()
+            .contains("waiting for a stable Blacktop selection")
+    );
+
+    game_match_end_reset(&a);
+    selection(&a);
+    settle(&mut e, &a, &mut l, true).unwrap();
+    assert!(!e.held && !e.restore_rearm_pending && e.prepared_selection);
+    assert!(f.writes.get() > interrupted_writes);
+    let s = a.state.borrow();
+    assert_eq!(s.window[1], 0);
+    assert!([6, 7, 8, 11].iter().all(|i| s.window[*i] == 1));
+    assert!(s.sources.iter().all(|row| row.front[8] == 0));
+}
+#[test]
+fn presentation_interrupted_restore_foreign_neighbor_holds_before_reentry_writes() {
+    let (mut e, a, mut l, f) = fixture(Options {
+        remove_crowd: true,
+        remove_dj: true,
+        ..Options::default()
+    });
+    settle(&mut e, &a, &mut l, true).unwrap();
+    menu(&a, 0x079964C0);
+    f.fail_write.set(f.writes.get() + 2);
+    f.transition_on_failed_write.set(true);
+    settle(&mut e, &a, &mut l, true).unwrap();
+    assert!(e.restore_rearm_pending && !e.held);
+    a.state.borrow_mut().window[4] ^= 1;
+    game_match_end_reset(&a);
+    selection(&a);
+    let writes = f.writes.get();
+    assert!(settle(&mut e, &a, &mut l, true).is_err());
+    assert!(e.held);
+    assert_eq!(f.writes.get(), writes);
+}
+#[test]
+fn presentation_restore_failure_at_same_boundary_remains_a_hard_hold() {
+    let (mut e, a, mut l, f) = fixture(Options {
+        remove_crowd: true,
+        ..Options::default()
+    });
+    settle(&mut e, &a, &mut l, true).unwrap();
+    menu(&a, 0x079964C0);
+    f.fail_write.set(f.writes.get() + 2);
+    assert!(settle(&mut e, &a, &mut l, true).is_err());
+    assert!(e.held && !e.restore_rearm_pending && e.crowd.is_some());
 }
 #[test]
 fn presentation_foreign_window_neighbor_after_reset_still_holds() {

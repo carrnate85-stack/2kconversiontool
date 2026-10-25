@@ -1,0 +1,32 @@
+QA133 — Downloads Curator links and layout — 2026-10-24
+DEV ONLY 0.53.37. No install, promotion, activation, GitHub publication, game access, or computer use.
+
+Delivered:
+- Downloads automatically refreshes on first open when native listing is empty. Populated listings are reused on return. Failed requests are not retried every poll. Manual Refresh remains.
+- Refresh and Curator grouped at right; short Refresh label. Presentation and other shared headers now have the same explicit height/flex behavior. Source/compile checks only; visual acceptance pending.
+- Card uses one button in both states: Download & Add -> Added to library. Removed second Open Presentation/Jukebox/Blacktop button to preserve card size.
+- Dev Curator has editable MediaFire download link for every item. Check link uses native public MediaFire file/get_info metadata. Accepts MP4/.2kplaylist/ZIP by kind; limits 2GB, public/no password, approved HTTPS host/path, SHA256, safe filenames. UI blocks Preview/Publish while edited link is unchecked.
+- Catalog stores optional validated download descriptor. Existing catalogs remain compatible. Replacements keep editorial identity and survive original file removal. Automatic duplicate listing of replacement file suppressed. Old launcher versions need updating before consuming new download fields.
+- Publisher re-resolves descriptors before any GitHub writes, retaining existing GitHub SHA conflict protection. Check does not download entire media; actual download checks exact size/hash and existing importers validate content. User must explicitly Publish; no remote changes made by agent.
+- Preview downloads now accept catalog-pinned descriptor through native service, retaining import serialization, cancellation, copy rehash, validation, and old manifest preservation. Installed detection compares current catalog pin. Legacy Settings downloader remains pinned to prior complete pack.
+
+New user URL investigation:
+https://www.mediafire.com/file_premium/tjl35b7c57a5yvt/blacktoppreviewpack.zip/file
+Downloaded to isolated verified-preview.zip:614685202 bytes SHA25675b3cc03e2b7bda4f59e41f156706ad96d69dd780893aceb7866ce87063a9e55. Native transport verified full bytes. Python ZIP CRC passed all20946entries.
+Contains20939 accessory thumbnails and7catalog/document files, no other clothing categories. Current importer intentionally rejects documents; a replacement also removes other categories. User explicitly chose to upload a complete replacement, not add-on support. ORIGINAL complete pack URL/hash retained. Do not activate this accessory archive. No user Library writes.
+
+Validation:
+- TypeScript,252frontend tests/48files,Vite passed.
+- Isolated native harness now includes actual preview importer;25tests passed,5opt-in ignored. Includes dynamic preview pin success/mismatch with preserved manifest, normal importer persistence/cancel, replacement identity/type/size/host checks.
+- Live new-archive transport test passed separately; CRC scan passed. This is not application library import or GUI acceptance.
+- Dev release compiled successfully. Existing compiler warnings unchanged in unrelated modules.
+- Main/Share SHA unchanged:1D1BBAD3843001D5A08581FBBC05FBA10E8571215D8A82966A0A8FAEA1123E60.
+- QA073 natural Rust test AV,QA078 Clang fixture crash,QA106 Season History assertion remain unresolved. No broad main test suite or live gameplay acceptance claimed.
+
+Candidate:C:\Users\carrn\CodexProjects\2kconversiontool\nba2k27-launcher-tauri2\Dev\Pending\QA133\launcher.exe
+SHA256:61B7B4FA059BCE3EE6ACB44AD793E3A3F4AE9732822625B09DF8ADA713A90AA8
+Bytes:48974336
+PDB SHA256:42DB5D966C56D385BCDBCFBF356FDE5EFD95A60F24104BA4EC52135FDBFC3DCA
+Starter:Open QA133 Dev.lnk / Start QA133 Dev.ps1. Exact-hash/idle guard retained. User should close current dev normally before starting.
+DO NOT promote curator EXE. Future Main/Share builds omit dev-curator.
+Pending: user uploads complete preview ZIP, then can edit link in Curator. Manual visual checks of header/toolbar/card size and curator publication remain pending. No further test prompts sent.

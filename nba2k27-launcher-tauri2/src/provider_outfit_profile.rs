@@ -6,28 +6,28 @@ use anyhow::Context;
 use serde::Deserialize;
 use sha2::{Digest, Sha256};
 
-const GAME_SHA: &str = "29A96471C55909FC2BCEA6C699C59238656A501C19B50C74ED64B0D842E576A1";
-const GAME_BYTES: u64 = 870548760;
-const DLL_SHA: &str = "2E921A4E8B408996C20DEAD7412835A9197D67B83C05CE840130300A903120DD";
-const DLL: &[u8] = include_bytes!("../assets/native/version-outfits-v2-qa084.dll");
+const GAME_SHA: &str = "B673EB04593D6D5A4DFB9E270178E04C017BD9F277514D256EA98FFB792ED27B";
+const GAME_BYTES: u64 = 880329496;
+const DLL_SHA: &str = "163155C504DBC2DD50FD19EC50AB330243D179916DF4B4028EAEAFB906979D67";
+const DLL: &[u8] = include_bytes!("../assets/native/version-roster-measurements-20261025.dll");
 const EXTRA_METHODS: &[(u32, usize, &str)] = &[
     (
         0x6FD8C0,
         407,
-        "D6CE042EEFA908FBFE444AB6823486A91910A8E3BF9162CE347C4BCAFA72FD43",
+        "7644386D2028754D931BB578F9DE63518E15995D974F9D4D616DA0141B3C4EAB",
     ),
     (
         0x72A390,
         374,
-        "98B4448E448857EA1D91695AB206648C7482510030DE0483716ECA821D438056",
+        "FFB67766D8844FCB177F2442AD1840745B1E5669E61D0CC7FFBF3C5587BCC5AF",
     ),
     (
-        0x4B75FA0,
+        0x4B76220,
         197,
-        "4C0597E56C15618F95ED43722FF76EAAEBFBFC3C61584331F56DD204462D36D6",
+        "A73B3A343890F48B78921527171C1283C26C6B054F01E38BA4189600806B4740",
     ),
     (
-        0x4B76210,
+        0x4B76490,
         16,
         "1CD5757FEA907C28D91E7AC693D732A0ED987DD2512B59996D19FF26E32726AB",
     ),
@@ -67,8 +67,8 @@ fn profile() -> Result<Profile> {
     ensure!(
         p.schema == "nba2k27-v2-outfit-match-method-profile-v1"
             && p.sha256 == GAME_SHA
-            && p.timestamp == "6AC53765"
-            && p.image_bytes == "35BDE000"
+            && p.timestamp == "6AD2E48C"
+            && p.image_bytes == "36532000"
             && p.methods.len() == 25
             && p.virtual_tables.len() == 10
             && p.virtual_tables
@@ -140,8 +140,8 @@ fn header(h: &[u8; 4096], pe: usize, len: u64) -> Result<()> {
             && &h[pe..pe + 4] == b"PE\0\0"
             && u16::from_le_bytes(h[pe + 4..pe + 6].try_into()?) == 0x8664
             && u16::from_le_bytes(h[pe + 24..pe + 26].try_into()?) == 0x20b
-            && u32::from_le_bytes(h[pe + 8..pe + 12].try_into()?) == 0x6AC53765
-            && u32::from_le_bytes(h[pe + 80..pe + 84].try_into()?) == 0x35BDE000
+            && u32::from_le_bytes(h[pe + 8..pe + 12].try_into()?) == 0x6AD2E48C
+            && u32::from_le_bytes(h[pe + 80..pe + 84].try_into()?) == 0x36532000
             && u64::from_le_bytes(h[pe + 48..pe + 56].try_into()?) == BASE
             && len == GAME_BYTES,
         "Manual outfit support is not verified for this complete game build"
@@ -310,8 +310,8 @@ mod tests {
         h[pe..pe + 4].copy_from_slice(b"PE\0\0");
         h[pe + 4..pe + 6].copy_from_slice(&0x8664u16.to_le_bytes());
         h[pe + 24..pe + 26].copy_from_slice(&0x20bu16.to_le_bytes());
-        h[pe + 8..pe + 12].copy_from_slice(&0x6AC53765u32.to_le_bytes());
-        h[pe + 80..pe + 84].copy_from_slice(&0x35BDE000u32.to_le_bytes());
+        h[pe + 8..pe + 12].copy_from_slice(&0x6AD2E48Cu32.to_le_bytes());
+        h[pe + 80..pe + 84].copy_from_slice(&0x36532000u32.to_le_bytes());
         h[pe + 48..pe + 56].copy_from_slice(&BASE.to_le_bytes());
         header(&h, pe, GAME_BYTES).unwrap();
         for at in [0, pe, pe + 4, pe + 8, pe + 24, pe + 48, pe + 80] {

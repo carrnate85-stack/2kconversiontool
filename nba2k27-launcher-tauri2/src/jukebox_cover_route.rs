@@ -102,7 +102,10 @@ pub(crate) fn texture_path(path: &str) -> bool {
         return false;
     };
     let pieces = leaf.split('.').collect::<Vec<_>>();
-    let hex = |s: &str| s.bytes().all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b));
+    let hex = |s: &str| {
+        s.bytes()
+            .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b))
+    };
     *shared == "shared"
         && folder.len() == 2
         && hex(folder)
@@ -296,10 +299,7 @@ impl Oodle {
                 0,
             )
         };
-        ensure!(
-            n > 0 && n as usize <= out.len(),
-            "Oodle compression failed"
-        );
+        ensure!(n > 0 && n as usize <= out.len(), "Oodle compression failed");
         out.truncate(n as usize);
         Ok(out)
     }
@@ -365,8 +365,16 @@ fn members(data: &[u8]) -> Result<Vec<Member>> {
             "Bad cover container directory entry"
         );
         let (flags, method) = (le16(data, at + 8)?, le16(data, at + 10)?);
-        let (crc, packed, size) = (le32(data, at + 16)?, le32(data, at + 20)?, le32(data, at + 24)?);
-        let (n, extra, comment) = (le16(data, at + 28)?, le16(data, at + 30)?, le16(data, at + 32)?);
+        let (crc, packed, size) = (
+            le32(data, at + 16)?,
+            le32(data, at + 20)?,
+            le32(data, at + 24)?,
+        );
+        let (n, extra, comment) = (
+            le16(data, at + 28)?,
+            le16(data, at + 30)?,
+            le16(data, at + 32)?,
+        );
         let local = le32(data, at + 42)? as usize;
         let name = std::str::from_utf8(data.get(at + 46..at + 46 + n).context("Truncated name")?)?;
         ensure!(
@@ -378,7 +386,8 @@ fn members(data: &[u8]) -> Result<Vec<Member>> {
                 && le16(data, local + 6)? & 0x9 == 0
                 && le16(data, local + 8)? == 0
                 && le32(data, local + 14)? == crc
-                && data.get(local + 30..local + 30 + le16(data, local + 26)?) == Some(name.as_bytes()),
+                && data.get(local + 30..local + 30 + le16(data, local + 26)?)
+                    == Some(name.as_bytes()),
             "Cover container local header differs"
         );
         let start = local + 30 + le16(data, local + 26)? + le16(data, local + 28)?;
@@ -443,7 +452,10 @@ fn txtr(data: &[u8]) -> Result<Txtr> {
         .and_then(|r| r.strip_suffix(".tld"))
         .context("Cover TXTR Binary leaf does not match its name")?;
     ensure!(
-        hash.len() == 16 && hash.bytes().all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b)),
+        hash.len() == 16
+            && hash
+                .bytes()
+                .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b)),
         "Cover TXTR Binary hash is invalid"
     );
     Ok(Txtr {
@@ -473,7 +485,10 @@ impl Container {
                 "Duplicate cover TXTR"
             );
         }
-        ensure!(!covers.is_empty(), "Cover container has no TXTR descriptors");
+        ensure!(
+            !covers.is_empty(),
+            "Cover container has no TXTR descriptors"
+        );
         Ok(Self {
             bytes,
             members,
@@ -496,10 +511,16 @@ impl Container {
     /// Same-size rewrite of the 16 hash digits, then that member's CRCs.
     pub fn retarget(&mut self, name: &str, hash: &str) -> Result<()> {
         ensure!(
-            hash.len() == 16 && hash.bytes().all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b)),
+            hash.len() == 16
+                && hash
+                    .bytes()
+                    .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b)),
             "Cover hash must be 16 lowercase hex digits"
         );
-        let (i, t) = self.covers.get(name).context("Cover slot is not in the container")?;
+        let (i, t) = self
+            .covers
+            .get(name)
+            .context("Cover slot is not in the container")?;
         let m = &self.members[*i];
         let at = m.start + t.hash_at;
         self.bytes[at..at + 16].copy_from_slice(hash.as_bytes());
@@ -560,7 +581,10 @@ fn scan_manifest(
             "Stock manifest exceeds bounds"
         );
         let text = String::from_utf8_lossy(&line);
-        let fields = text.trim_end_matches(['\r', '\n']).split(',').collect::<Vec<_>>();
+        let fields = text
+            .trim_end_matches(['\r', '\n'])
+            .split(',')
+            .collect::<Vec<_>>();
         let Some(path) = fields.first() else { continue };
         let path = path.replace('\\', "/").to_ascii_lowercase();
         if path == CONTAINER {
@@ -571,7 +595,10 @@ fn scan_manifest(
                 "Invalid stock cover container row"
             );
             let found = (fields[1].to_owned(), fields[2].parse()?, fields[3].parse()?);
-            ensure!(row.replace(found).is_none(), "Ambiguous stock cover container");
+            ensure!(
+                row.replace(found).is_none(),
+                "Ambiguous stock cover container"
+            );
         } else if let Some(leaf) = path.strip_prefix("shared/").and_then(|p| p.get(3..)) {
             if leaf
                 .split('.')
@@ -593,7 +620,9 @@ fn read_container(game: &Path, row: &(String, u64, usize), oodle: &Oodle) -> Res
     let mut f = plain(&game.join(archive))?;
     let before = f.metadata()?;
     ensure!(
-        offset.checked_add(*size as u64).is_some_and(|end| end <= before.len()),
+        offset
+            .checked_add(*size as u64)
+            .is_some_and(|end| end <= before.len()),
         "Stock cover container range exceeds its archive"
     );
     f.seek(SeekFrom::Start(*offset))?;
@@ -635,7 +664,10 @@ pub(crate) fn choose(
     art: &[bool],
     slot: impl Fn(&str) -> bool,
 ) -> Result<Vec<Option<String>>> {
-    ensure!(art.len() == music.tracks.len(), "Cover art list differs from the playlist");
+    ensure!(
+        art.len() == music.tracks.len(),
+        "Cover art list differs from the playlist"
+    );
     let published = music
         .tracks
         .iter()
@@ -670,9 +702,9 @@ pub(crate) fn choose(
                 slot(c) && !preserved.contains(&c.to_ascii_lowercase()) && !used.contains(c)
             });
         let chosen = own.or_else(|| {
-            spare.by_ref().find(|c| {
-                !preserved.contains(&c.to_ascii_lowercase()) && !used.contains(c)
-            })
+            spare
+                .by_ref()
+                .find(|c| !preserved.contains(&c.to_ascii_lowercase()) && !used.contains(c))
         });
         if let Some(c) = &chosen {
             used.insert(c.clone());
@@ -691,7 +723,10 @@ pub(crate) fn plan(
     art: &[Option<Vec<u8>>],
     check: &dyn Fn() -> Result<()>,
 ) -> Result<Option<Route>> {
-    ensure!(art.len() == music.tracks.len(), "Cover art list differs from the playlist");
+    ensure!(
+        art.len() == music.tracks.len(),
+        "Cover art list differs from the playlist"
+    );
     if art.iter().all(Option::is_none) {
         return Ok(None);
     }
@@ -732,7 +767,10 @@ pub(crate) fn plan(
         return Ok(None);
     }
     let container = container.finish()?;
-    ensure!(container.len() <= MAX_CONTAINER, "Cover container exceeds bounds");
+    ensure!(
+        container.len() <= MAX_CONTAINER,
+        "Cover container exceeds bounds"
+    );
     Ok(Some(Route {
         container,
         textures,
@@ -749,7 +787,10 @@ pub(crate) fn fixture_files() -> Vec<(String, Vec<u8>)> {
     texture.extend_from_slice(&3u32.to_le_bytes());
     texture.extend_from_slice(&[0x8c, 0x0c, 0]);
     vec![
-        (CONTAINER.into(), tests::container(&[("001_helicopter", 256)])),
+        (
+            CONTAINER.into(),
+            tests::container(&[("001_helicopter", 256)]),
+        ),
         (texture_logical("001_helicopter", &texture), texture),
     ]
 }

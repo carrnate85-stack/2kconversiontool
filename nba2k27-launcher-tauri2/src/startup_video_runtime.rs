@@ -16,6 +16,15 @@ pub(crate) trait Port {
         Ok(false)
     }
     fn create_hidden(&mut self, window: OwnedWindow, volume: Volume) -> Result<()>;
+    fn create_owner(&mut self, _owner: u64, _volume: Volume) -> Result<()> {
+        anyhow::bail!("Owner playback unavailable")
+    }
+    fn bind_game(&mut self, _game: crate::startup_video_native::ExpectedGame) -> Result<()> {
+        anyhow::bail!("Late game binding unavailable")
+    }
+    fn focus_owner(&mut self, _owner: u64) -> Result<()> {
+        Ok(())
+    }
     fn start_audio(&mut self) -> Result<()>;
     fn poll_audio(&mut self) -> Result<Option<Notice>>;
     fn set_volume(&mut self, volume: Volume) -> Result<()>;
@@ -72,6 +81,62 @@ impl<P: Port> Engine<P> {
             last_now: now,
         })
     }
+    pub fn launch(token: u64, owner: u64, port: P, now: u64) -> Result<Self> {
+        let (session, effects) = policy::Session::preview(token, owner, now)?;
+        let mut engine = Self {
+            session,
+            token,
+            port,
+            window: None,
+            audio_started: false,
+            audio_waiting: false,
+            media_ready: false,
+            audio_ready: false,
+            silence_pending: false,
+            stop_after_silence: false,
+            restored_after_silence: false,
+            destroy_pending: false,
+            prepared_at: None,
+            last_observe: None,
+            last_now: now,
+        };
+        engine.effects(effects, now)?;
+        // No game exists yet: use quiet fallback, without starting any guardian.
+        engine.event(token, Event::AudioReady(Volume::fallback()), now)?;
+        Ok(engine)
+    }
+    pub fn bind_launched_game(
+        &mut self,
+        game: crate::startup_video_native::ExpectedGame,
+        now: u64,
+    ) -> Result<()> {
+        if !matches!(self.phase(), Phase::Preparing | Phase::Playing) {
+            return Ok(());
+        }
+        self.session.bind_launched_game(game.key)?;
+        self.port.bind_game(game)?;
+        self.audio_waiting = true;
+        if self.media_ready {
+            self.begin_audio(now)?;
+        }
+        Ok(())
+    }
+    fn begin_audio(&mut self, now: u64) -> Result<()> {
+        if self.audio_waiting && !self.audio_started {
+            match self.port.start_audio() {
+                Ok(()) => {
+                    self.audio_started = true;
+                    self.audio_waiting = false;
+                }
+                Err(error) => {
+                    self.port
+                        .diagnostic(&format!("Intro audio guardian could not start: {error:#}"));
+                    self.event(self.token, Event::Finish(Reason::AudioFailed), now)?;
+                }
+            }
+        }
+        Ok(())
+    }
     pub fn phase(&self) -> Phase {
         if self.destroy_pending {
             Phase::RestorationPending
@@ -98,6 +163,19 @@ impl<P: Port> Engine<P> {
                     initial_volume,
                 } => {
                     self.prepared_at = Some(now);
+                    if let policy::MonitorTarget::OwnerWindow(owner) = monitor {
+                        if let Err(error) = self.port.create_owner(owner, initial_volume) {
+                            self.port
+                                .diagnostic(&format!("Intro owner preparation failed: {error:#}"));
+                            pending.clear();
+                            pending.extend(self.session.handle(
+                                self.token,
+                                Event::Finish(Reason::Error),
+                                now,
+                            )?);
+                        }
+                        continue;
+                    }
                     let window = self.window.filter(|w| matches!(monitor, policy::MonitorTarget::GameWindow(h) if h == w.window.hwnd));
                     match window {
                         Some(w) => self.port.create_hidden(w, initial_volume),
@@ -105,13 +183,10 @@ impl<P: Port> Engine<P> {
                     }
                 }
                 Effect::StartAudioGuardian { game, duck_game } => {
-                    ensure!(
-                        game.is_some() && duck_game,
-                        "Launch-time intro requires the owned game audio guardian"
-                    );
+                    ensure!(game.is_some() == duck_game, "Invalid intro audio ownership");
                     // Hidden WebView loading is not consent to mute the game.
                     // The exact intro must ACK decodable canplay first.
-                    self.audio_waiting = true;
+                    self.audio_waiting = game.is_some();
                     Ok(())
                 }
                 Effect::SetVideoVolume(volume) => self.port.set_volume(volume),
@@ -176,9 +251,7 @@ impl<P: Port> Engine<P> {
                         self.port.return_focus_if_owned(game)
                     }
                 }
-                Effect::FocusOwnerWindow(_) => Err(anyhow::anyhow!(
-                    "Game intro cannot focus an arbitrary owner"
-                )),
+                Effect::FocusOwnerWindow(owner) => self.port.focus_owner(owner),
             };
             if let Err(error) = result {
                 self.port
@@ -200,20 +273,7 @@ impl<P: Port> Engine<P> {
         }
         if matches!(event, Event::VideoPrepared) && self.phase() == Phase::Preparing {
             self.media_ready = true;
-            if self.audio_waiting && !self.audio_started {
-                match self.port.start_audio() {
-                    Ok(()) => {
-                        self.audio_started = true;
-                        self.audio_waiting = false;
-                    }
-                    Err(error) => {
-                        self.port.diagnostic(&format!(
-                            "Intro audio guardian could not start: {error:#}"
-                        ));
-                        return self.event(token, Event::Finish(Reason::AudioFailed), now);
-                    }
-                }
-            }
+            self.begin_audio(now)?;
         }
         let effects = self.session.handle(token, event, now)?;
         self.effects(effects, now)
@@ -284,7 +344,15 @@ impl<P: Port> Engine<P> {
                     let volume = volume.unwrap_or_else(Volume::fallback);
                     if !self.audio_ready {
                         self.audio_ready = true;
-                        self.event(self.token, Event::AudioReady(volume), now)?;
+                        self.event(
+                            self.token,
+                            if self.phase() == Phase::Playing {
+                                Event::MixerChanged(volume)
+                            } else {
+                                Event::AudioReady(volume)
+                            },
+                            now,
+                        )?;
                     } else {
                         self.event(self.token, Event::MixerChanged(volume), now)?;
                     }
@@ -334,6 +402,11 @@ impl<P: Port> Engine<P> {
         }
         if self.phase() == Phase::Preparing && self.prepared_at.is_some_and(|at| now - at >= 15_000)
         {
+            self.port.diagnostic(if !self.media_ready {
+                "Startup video timed out waiting for the intro page to acknowledge decodable media"
+            } else {
+                "Startup video media is ready, but its audio guardian did not become ready"
+            });
             self.event(self.token, Event::Finish(Reason::Timeout), now)?;
         }
         if self.phase() == Phase::Playing {

@@ -1,0 +1,58 @@
+NBA 2K27 Rust/Tauri launcher handoff - QA097 - 2026-10-21
+
+QA097 was promoted to the Steam-side Main launcher on 2026-10-21. The separate
+dev slot remains QA096; QA097 was not activated there.
+
+Delivered:
+- WPF-style session-only experimental Debug Menus toggle.
+- Exact current-game mapping for the three registered Boolean feature IDs.
+- Immediate post-ARMED scheduling, independent of player-load timing.
+- Double-sampled, all-or-nothing publication with durable apply and reverse
+  intents, one-byte fixed-address writes, guarded rollback and no replay.
+- Native status is shown as Debug menus in the Play session.
+- Cargo fingerprinting excludes runtime/QA/dependency caches so inaccessible
+  diagnostic package folders no longer block builds.
+
+Validation:
+- Python mapping tests 9/9.
+- Rust debug 2/2, plan 13/13, journal 4/4, runtime 37/37, provider 23/23
+  with one intentional read-only scan ignored.
+- TypeScript passed; frontend 44 files / 233 tests passed.
+- Optimized offline locked release build passed.
+- No active owned game lease was available for the final read-only probe, so
+  live menu visibility and interaction remain pending.
+
+Dev candidate:
+- Start QA097 Dev.vbs
+- Dev/Pending/QA097/launcher.exe
+- 46705664 bytes
+- SHA-256 049C1B68B24330AED0A3C3602E9C3C2F583865B82C64B32406E7E14A282AC570
+
+Share candidate:
+- Builds/0.53.1/Share-QA097-Debug-Menus/NBA 2K27 Launcher 0.53.1.exe
+- same exact bytes and hash as the dev candidate
+
+Active dev remains QA096:
+- SHA-256 2443F7E4E3F927CA58ACD1408AAF01AEBCA621850C1693682768529F240CC18A
+
+Installed Main:
+- C:\Program Files (x86)\Steam\steamapps\common\NBA 2K27\2k Launcher\App\2k Launcher Rust.exe
+- version 0.53.1
+- SHA-256 049C1B68B24330AED0A3C3602E9C3C2F583865B82C64B32406E7E14A282AC570
+- prior App backup: C:\Program Files (x86)\Steam\steamapps\common\NBA 2K27\2k Launcher\Recovery\App-before-QA097-20261021-151725-1526
+- receipt: artifacts/qa097-main-promotion-20261021-151725-1526.json
+- Data and Library inventories were unchanged; game and launcher stayed closed.
+
+Suggested live check:
+1. Close the current game and launcher normally.
+2. Run Start QA097 Dev.vbs.
+3. In Unlocks, enable Debug Menus and accept the warning.
+4. Put Steam in Offline Mode, use normal Play and confirm the Debug menus
+   status becomes active before entering a player picker.
+5. Confirm the built-in debug/restricted menu items are visible and usable.
+6. Close the game normally and confirm a fresh launcher start shows the toggle
+   off again.
+
+Do not replace this Main build again without explicit user approval. Preserve
+user Data/Library and all QA096 backups/journals. QA073's natural Rust access
+violation and QA078's Clang fixture 0xC0000409 remain unresolved.

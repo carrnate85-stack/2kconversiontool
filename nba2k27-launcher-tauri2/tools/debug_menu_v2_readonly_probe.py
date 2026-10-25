@@ -27,15 +27,16 @@ def capture(read, span, base):
         if not selected:
             raise ValueError('Canonical feature manager has not initialized')
         kind = 'static-fallback' if selected == base+0xA1F1260 else 'registered-private'
-        span(selected, 0x114, 'image' if kind == 'static-fallback' else 'private')
+        storage = 'image' if kind == 'static-fallback' else 'private'
+        span(selected, 0x114, storage)
         table, count = number(selected+0xF8), number(selected+0x110, 4)
         if not 1 <= count <= 100000:
             raise ValueError('Feature pointer count outside native metadata bounds')
-        span(table, count*8, 'private')
-        return default, override, selected, kind, table, count
+        span(table, count*8, storage)
+        return default, override, selected, kind, storage, table, count
 
     before = headers()
-    table, count = before[-2:]
+    storage, table, count = before[-3:]
     observations, traces = [], []
     for name, wanted, _initializer, obj, vtable in FEATURES:
         span(base+obj, 24, 'image')
@@ -45,7 +46,7 @@ def capture(read, span, base):
 
         def metadata(index):
             pointer = number(table+8*index)
-            span(pointer, 9, 'private')
+            span(pointer, 9, storage)
             key = number(pointer, 4)
             path.append((index, pointer, key))
             return pointer, key

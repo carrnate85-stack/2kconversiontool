@@ -35,42 +35,42 @@ pub(crate) const ROTATION_FLAG: usize = 0x154C;
 
 /// Exact V2 code bytes for the structures these services touch.
 const ANCHORS: &[(u64, &str)] = &[
-    (0x02F1_8C26, "4180fc20"),                         // 32 team staff slots
-    (0x02F1_8C35, "4a8b94e0700f0000"),                 // team+0xF70+slot*8
-    (0x02F1_8C4B, "41b8c8010000"),                     // staff record 0x1C8
-    (0x02F1_8C7D, "0fb6868201000083e01f"),             // slot = staff+0x182 & 0x1F
-    (0x02F1_15ED, "4c39a4d0700f0000"),                 // team slot points back to staff
-    (0x02F1_164E, "498b4424180fb780200f0000"),         // staff+0x18 -> team, team id +0xF20
-    (0x02F0_B6C7, "83bec001000000740c488bb6c8010000"), // season pool kind/pool
-    (0x02F0_6306, "48638ed00100004885c97e4d48c1e106"), // owner+0x1D0 count, 64-byte records
+    (0x2f18cd6, "4180fc20"),                         // 32 team staff slots
+    (0x2f18ce5, "4a8b94e0700f0000"),                 // team+0xF70+slot*8
+    (0x2f18cfb, "41b8c8010000"),                     // staff record 0x1C8
+    (0x2f18d2d, "0fb6868201000083e01f"),             // slot = staff+0x182 & 0x1F
+    (0x2f1169d, "4c39a4d0700f0000"),                 // team slot points back to staff
+    (0x2f116fe, "498b4424180fb780200f0000"),         // staff+0x18 -> team, team id +0xF20
+    (0x2f0b777, "83bec001000000740c488bb6c8010000"), // season pool kind/pool
+    (0x2f063b6, "48638ed00100004885c97e4d48c1e106"), // owner+0x1D0 count, 64-byte records
     (
-        0x02ED_BBC1,
+        0x2edbc71,
         "3b9180010000731589d04869c0c801000048038188010000",
     ), // owner+0x180/0x1C8
-    (0x02E0_A881, "3b91d0010000731289d048c1e006480381d8010000"), // owner+0x1D0/0x40
-    (0x02F2_7B00, "488d8f60130000488d8660130000"),     // rotations team+0x1360 block
-    (0x02F2_7B84, "483de0010000"),                     // 0x1E0 bytes = 48 x 5 u16
-    (0x02F8_6CF0, "0fb6814c1500002401c3"),             // has advanced rotation = +0x154C & 1
+    (0x2e0a931, "3b91d0010000731289d048c1e006480381d8010000"), // owner+0x1D0/0x40
+    (0x2f27bb0, "488d8f60130000488d8660130000"),     // rotations team+0x1360 block
+    (0x2f27c34, "483de0010000"),                     // 0x1E0 bytes = 48 x 5 u16
+    (0x2f86da0, "0fb6814c1500002401c3"),             // has advanced rotation = +0x154C & 1
 ];
 /// The functions WPF pinned, remapped to V2 with identical lengths.
 const SPANS: &[(u64, usize, &str)] = &[
     (
-        0x006B_BA00,
+        0x6bba00,
         17580,
-        "0e3862ab359db3ff7fbb8b703771e4d94588d4e05219cf96563c38b8fc19a18b",
+        "ece8e2e6fef903eb501f0b6582f1b6d0a0ff9180fa1c877a9ca8393542618c2f",
     ), // StaffData serializer
     (
-        0x02E0_6FC0,
+        0x2e07070,
         561,
-        "a96012670f64ed289939de9a1df3eddd577afacf46e8671dd7477123d8de54fb",
+        "16611177ce615333caecdc1d61124f7070d75612cd759993fd3a7c6582d11365",
     ), // PlayerStatData_Get
     (
-        0x02E0_7200,
+        0x2e072b0,
         577,
-        "9d4d451aef5dcde9b7b65b74a227803ab16c2693335580287fe36d4d87ce03be",
+        "e0b1c149c0fe9cbdbe2cb87cca3c27c4d111fad36d206695feb528d23a31d654",
     ), // PLAYERSTATDATA::GetByIndex
     (
-        0x02E5_B470,
+        0x2e5b520,
         10,
         "e6cb9c82fe8d5804d4ac471688bdb7a91c150b7efe7f46b1845545aa605feb09",
     ), // PLAYERSTATDATA::GetYear

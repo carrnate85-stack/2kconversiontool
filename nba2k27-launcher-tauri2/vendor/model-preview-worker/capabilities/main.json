@@ -1,0 +1,6 @@
+{
+  "identifier": "main",
+  "description": "Local exporter UI only. No shell, filesystem or remote-content plugins.",
+  "windows": ["main"],
+  "permissions": ["allow-exporter-invoke", "allow-smoke-result", "core:event:allow-listen", "core:event:allow-unlisten"]
+}

@@ -4,6 +4,104 @@ use crate::{
     rules_v2::tests::{Fake as RulesFake, fixture as rules_fixture},
 };
 use std::cell::Cell;
+#[test]
+#[cfg(feature = "dev-model-preview")]
+fn custom_blacktop_catalog_import_provider_aliases_plan_and_restore() {
+    use crate::{backend, custom_blacktop as custom, provider_assets::Service};
+    use std::{fs, sync::{Arc, atomic::AtomicBool}};
+    let root = std::env::temp_dir().join(format!("c27-custom-arena-{}", backend::unique_id()));
+    let mods = root.join("Mods");
+    fs::create_dir_all(mods.join("levels/Arena pack")).unwrap();
+    let original = b"fixture arena source bytes";
+    fs::write(mods.join("levels/Arena pack/arena_test.iff"), original).unwrap();
+    fs::write(mods.join("levels/Arena pack/floor_test.iff"), b"fixture court").unwrap();
+    fs::create_dir_all(mods.join("players")).unwrap();
+    fs::write(mods.join("players/png0123.iff"), b"player fixture").unwrap();
+    fs::write(mods.join("arena_outside.iff"), b"outside levels fixture").unwrap();
+    let sources = custom::request(&root, &mods, &serde_json::json!({"action":"sources"})).unwrap();
+    assert_eq!(sources["files"], serde_json::json!(["levels/Arena pack/arena_test.iff", "levels/Arena pack/floor_test.iff"]));
+    assert_eq!(sources["levelsRoot"], serde_json::json!(mods.join("levels")));
+    let empty_mods = root.join("Empty mods");
+    fs::create_dir(&empty_mods).unwrap();
+    assert_eq!(custom::request(&root, &empty_mods, &serde_json::json!({"action":"sources"})).unwrap()["files"], serde_json::json!([]));
+    let request = serde_json::json!({"action":"add","name":"My custom arena","baseId":"blacktop-stock","arenaSource":"levels/Arena pack/arena_test.iff","floorSource":"levels/Arena pack/floor_test.iff"});
+    let mut outside = request.clone(); outside["arenaSource"] = serde_json::json!("arena_outside.iff");
+    assert!(custom::request(&root, &mods, &outside).is_err(), "manual requests must not bypass the levels restriction");
+    let added = custom::request(&root, &mods, &request).unwrap();
+    let id = added["id"].as_str().unwrap();
+    let selected = arena::choice(id).unwrap();
+    let mut settings = backend::Settings::default();
+    settings.arena_id = id.into(); settings.arena = "My custom arena".into();
+    assert_eq!(crate::feature_plan::Plan::freeze(&settings, &crate::library::Library::default()).unwrap().arena.as_deref(), Some(id));
+    assert!(custom::request(&root, &mods, &request).is_err(), "duplicate names must not create ambiguous selections");
+    assert_eq!(selected.arena_id, Some(700));
+    assert!(prepare(&fixture(), id, &STOCK, None).is_err(), "unpublished sources cannot authorize native changes");
+    let assets = Service::open(&mods, &[], &[], Arc::new(AtomicBool::new(false))).unwrap();
+    custom::publish(&root, &mods, &assets, Some(id)).unwrap();
+    let alias = format!("levels/{}.iff", selected.file.as_deref().unwrap());
+    let (_, bytes) = assets.read(&alias, 0, original.len() as u32).unwrap();
+    assert_eq!(bytes, original);
+    let (_, bytes) = assets.read(alias.strip_prefix("levels/").unwrap(), 0, original.len() as u32).unwrap();
+    assert_eq!(bytes, original, "filename-only game requests must reach the same mod");
+    let mut f = fixture();
+    let p = prepare(&f, id, &STOCK, None).unwrap();
+    assert!(arena::valid_template_fields(p.snapshot.record.as_ref().unwrap(), p.template.as_deref().unwrap()));
+    let mut forged = selected.clone(); forged.file = Some("arena_other_int".into());
+    assert!(capture(&f, &forged, &STOCK).is_err());
+    let edits = p.edits().unwrap();
+    assert_eq!(edits.len(), 2);
+    for (i, edit) in edits.iter().enumerate() { p.verify_step(&f, i).unwrap(); apply(&mut f, edit); p.verify_step(&f, i + 1).unwrap(); }
+    // Replacing/removing a mod disables future application but cannot prevent
+    // restoring the already-owned in-memory names and mapping.
+    fs::remove_file(mods.join("levels/Arena pack/floor_test.iff")).unwrap();
+    assert!(custom::verify_assets(&selected).is_err());
+    assert_eq!(custom::rows(&root, &mods).unwrap()[0]["disabled"], true);
+    for edit in p.restore(&f).unwrap() { apply(&mut f, &edit); }
+    p.verify_step(&f, 0).unwrap();
+    assert_eq!(read(&f, f.base() + MAPPING, 20).unwrap(), STOCK);
+    assert_eq!(fs::read(mods.join("levels/Arena pack/arena_test.iff")).unwrap(), original);
+    assert!(custom::source(&mods, "../outside.iff").is_err());
+    assert!(custom::source(&mods, "C:/outside.iff").is_err());
+    assert!(custom::request(&root, &mods, &request).is_err());
+    // Court-only imports retain a chosen stock arena shell, and persistence
+    // uses the same catalog ID when reopened.
+    fs::write(mods.join("levels/Arena pack/floor_test.iff"), b"fixture court").unwrap();
+    let court = custom::request(&root, &mods, &serde_json::json!({"action":"add","name":"Court only","baseId":"arena_594_int","arenaSource":null,"floorSource":"levels/Arena pack/floor_test.iff"})).unwrap();
+    let court_id = court["id"].as_str().unwrap();
+    custom::load(&root).unwrap();
+    custom::publish(&root, &mods, &assets, Some(court_id)).unwrap();
+    let court_choice = arena::choice(court_id).unwrap();
+    assert_eq!(court_choice.file.as_deref(), Some("arena_594_int"));
+    assert!(prepare(&f, court_id, &STOCK, None).is_ok());
+    assert!(custom::publish(&root, &root.join("Other mods"), &assets, Some(court_id)).is_err());
+    assert_ne!(selected.file, court_choice.floor_file.as_ref().map(|s| s.trim_end_matches("_floor").to_string()), "rapid imports must have distinct aliases");
+    // Editing replaces the visible card but retains the exact identity/fields
+    // of an active session, including after reloading the persistent store.
+    let mut edit = request.clone();
+    edit["action"] = serde_json::json!("edit"); edit["id"] = serde_json::json!(id);
+    edit["name"] = serde_json::json!("Renamed court"); edit["arenaSource"] = serde_json::Value::Null;
+    let edited = custom::request(&root, &mods, &edit).unwrap();
+    let edited_id = edited["id"].as_str().unwrap();
+    assert_ne!(edited_id, id);
+    assert_eq!(edited["previousId"], id);
+    assert_eq!(custom::rows(&root, &mods).unwrap().len(), 2);
+    assert!(!custom::rows(&root, &mods).unwrap().iter().any(|e| e["id"] == id));
+    custom::load(&root).unwrap();
+    assert_eq!(custom::resolve(id).unwrap(), selected);
+    assert!(custom::known_fields(&arena::choice_fields(&selected).unwrap()));
+    assert!(custom::request(&root, &mods, &edit).is_err(), "a stale editor cannot overwrite a later edit");
+    let saved = custom::request(&root, &mods, &serde_json::json!({"action":"get","id":edited_id})).unwrap();
+    assert_eq!(saved["name"], "Renamed court"); assert!(saved["arenaSource"].is_null());
+    custom::publish(&root, &mods, &assets, Some(edited_id)).unwrap();
+    assert!(prepare(&f, edited_id, &STOCK, None).is_ok());
+    let mut invalid_edit = edit.clone(); invalid_edit["id"] = serde_json::json!(edited_id);
+    invalid_edit["arenaSource"] = serde_json::json!("arena_outside.iff");
+    assert!(custom::request(&root, &mods, &invalid_edit).is_err());
+    invalid_edit["arenaSource"] = serde_json::Value::Null; invalid_edit["name"] = serde_json::json!("Court only");
+    assert!(custom::request(&root, &mods, &invalid_edit).is_err(), "edits enforce unique names");
+    drop(assets);
+    fs::remove_dir_all(root).unwrap();
+}
 const ROOT: u64 = 0x50000000000;
 const ALLOCATION: u64 = 0x60000000000;
 const OWNER: u64 = ALLOCATION + 0x50;
@@ -79,8 +177,8 @@ pub(crate) fn fixture() -> Fake {
     for &(rva, b) in roster::FIELD_ANCHORS {
         inner.put(base + rva, b);
     }
-    inner.q(roster::ROOT_CLASS, base + 0x024E65F0);
-    inner.q(roster::ROOT_CLASS + 8, base + 0x024E6660);
+    inner.q(roster::ROOT_CLASS, base + 0x024E66A0);
+    inner.q(roster::ROOT_CLASS + 8, base + 0x024E6710);
     for anchor in anchors().unwrap()["anchors"].as_array().unwrap() {
         inner.put(
             base + anchor["rva"].as_u64().unwrap(),

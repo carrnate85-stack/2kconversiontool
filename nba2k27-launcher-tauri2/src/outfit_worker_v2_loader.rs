@@ -19,13 +19,27 @@ use std::{
     path::{Component, Path, PathBuf},
 };
 use windows::Win32::{Foundation::HANDLE, Storage::FileSystem::*};
-pub const PROXY_SHA: &str = "2E921A4E8B408996C20DEAD7412835A9197D67B83C05CE840130300A903120DD";
-const PROXY: &[u8] = include_bytes!("../assets/native/version-outfits-v2-qa084.dll");
+pub const PROXY_SHA: &str = "163155C504DBC2DD50FD19EC50AB330243D179916DF4B4028EAEAFB906979D67";
+const PROXY: &[u8] = include_bytes!("../assets/native/version-roster-measurements-20261025.dll");
 // Recovery-only admission for the previous exact owned payload. Updating the
 // embedded DLL must not make an interrupted 0.53.1 session unrecoverable.
 // New publication below still accepts ONLY PROXY/PROXY_SHA.
 fn known_recovery_payload(sha: &str, size: u64) -> bool {
     (sha == PROXY_SHA && size == PROXY.len() as u64)
+        || (sha == "26D383436BA324BB0149815242FF5D0E1950440F4D5954B00FA8A83AB1048733"
+            && size == 1_967_616)
+        || (sha == "3458EB62C21EA3687BF8926D378B16C67982C240AF2A9B31A366041021544878"
+            && size == 1_966_592)
+        || (sha == "AE510886572ECB00D7B0A293EED196FB7D4719B969165FAD041EB495A8B0D7C5"
+            && size == 1_966_080)
+        || (sha == "009674489CB0C3A5CBAE193DFA9D0747D4E7C6F823193407612E15C48E8587C4"
+            && size == 1_966_080)
+        || (sha == "1A6DAD61915869BF2E56636A910563D27BFE967052DC5BD3E2D243505F7BBB00"
+            && size == 1_966_080)
+        || (sha == "0B0A8A42708EA6F1D9EBC796FEC77F0BB6C9F67E17CC5FE9A6905BB15BDBD7A0"
+            && size == 1_966_080)
+        || (sha == "2E921A4E8B408996C20DEAD7412835A9197D67B83C05CE840130300A903120DD"
+            && size == 1_966_080)
         || (sha == "83AF5D0613D1E90D51933F382C22D215F766A61A198CAFEB41E80606A1722518"
             && size == 1_215_488)
         || (sha == "1E3A0E67030D0D2421C75797659AC7E6F390115921228F14A18CC84D0B5E0EB1"
@@ -671,6 +685,22 @@ mod payload_compatibility_tests {
             super::PROXY_SHA,
             super::PROXY.len() as u64
         ));
+        let qa094 = "3458EB62C21EA3687BF8926D378B16C67982C240AF2A9B31A366041021544878";
+        assert!(super::known_recovery_payload(qa094, 1_966_592));
+        assert!(!super::known_recovery_payload(qa094, 1_966_591));
+        assert!(!super::known_recovery_payload(qa094, 1_966_593));
+        let qa093 = "AE510886572ECB00D7B0A293EED196FB7D4719B969165FAD041EB495A8B0D7C5";
+        assert!(super::known_recovery_payload(qa093, 1_966_080));
+        assert!(!super::known_recovery_payload(qa093, 1_966_079));
+        assert!(!super::known_recovery_payload(qa093, 1_966_081));
+        let qa092 = "009674489CB0C3A5CBAE193DFA9D0747D4E7C6F823193407612E15C48E8587C4";
+        assert!(super::known_recovery_payload(qa092, 1_966_080));
+        assert!(!super::known_recovery_payload(qa092, 1_966_079));
+        assert!(!super::known_recovery_payload(qa092, 1_966_081));
+        let qa088 = "1A6DAD61915869BF2E56636A910563D27BFE967052DC5BD3E2D243505F7BBB00";
+        assert!(super::known_recovery_payload(qa088, 1_966_080));
+        assert!(!super::known_recovery_payload(qa088, 1_966_079));
+        assert!(!super::known_recovery_payload(qa088, 1_966_081));
         let qa077 = "1E3A0E67030D0D2421C75797659AC7E6F390115921228F14A18CC84D0B5E0EB1";
         assert!(super::known_recovery_payload(qa077, 1_194_496));
         assert!(!super::known_recovery_payload(qa077, 1_194_495));

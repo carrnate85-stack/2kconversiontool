@@ -31,7 +31,7 @@ const PREVIEW_JS: &str = r#"(() => {
       if(kind==='player')previewPlayerEditorLayout();
       else {
         openTeamEditor({source:'layout-preview',name:'76ers',cityName:'Philadelphia',cityShort:'PHI',stateShort:'PA',teamId:0,recordIndex:0,rosterTypeId:0});
-        document.getElementById('teamEditBoundary').textContent='Layout preview Ã‚Â· Sample data only. Nothing is read from or saved to the game.';
+        document.getElementById('teamEditBoundary').textContent='Layout preview · Sample data only. Nothing is read from or saved to the game.';
       }
     }
   },50);
@@ -190,7 +190,7 @@ fn read_request(stream: &mut TcpStream, stop: &AtomicBool) -> Result<Request> {
     let mut bytes = Vec::new();
     let (end, method, target, headers, length) = loop {
         ensure!(
-            !stop.load(Ordering::Acquire) && start.elapsed() < Duration::from_secs(3),
+            !stop.load(Ordering::Acquire) && start.elapsed() < Duration::from_millis(200),
             "Browser request expired"
         );
         if let Some(end) = bytes
@@ -409,6 +409,7 @@ fn rpc(body: &[u8], services: &Services, tab: &str) -> Result<Value> {
             services.team_dna.as_ref().context(UNPORTED)?(tab, &call.args[0])?
         }
         "teamStaff"
+        | "playerMeasurements"
         | "cloneArena"
         | "customArenaProfiles"
         | "saveTeamStaff"
@@ -1195,6 +1196,23 @@ mod tests {
         }
     }
     #[test]
+    fn player_measurements_use_authenticated_editor_route() {
+        let owner = "0f8f6a3c-1d2e-4b5a-9c7d-123456789abc";
+        let services = Services {
+            editor: Some(Arc::new(move |method, tab, input| {
+                assert_eq!(method, "playerMeasurements");
+                assert_eq!(tab, owner);
+                assert_eq!(input["recordIndex"], 7);
+                Ok(json!({"heightCm":205.74,"wingspanCm":218.44}))
+            })),
+            ..Services::default()
+        };
+        let body = br#"{"method":"playerMeasurements","args":[{"recordIndex":7}]}"#;
+        assert_eq!(rpc(body, &services, owner).unwrap()["heightCm"], 205.74);
+        assert!(rpc(body, &services, "wrong-tab").is_err());
+        assert!(rpc(br#"{"method":"playerMeasurements","args":[]}"#, &services, owner).is_err());
+    }
+    #[test]
     fn team_dna_file_route_keeps_auth_tab_and_argument_boundary() {
         use std::sync::atomic::AtomicUsize;
         let count = Arc::new(AtomicUsize::new(0));
@@ -1427,5 +1445,19 @@ mod tests {
             thread::sleep(Duration::from_millis(200));
         }
         runtime.shutdown();
+    }
+}
+
+#[cfg(test)]
+mod qa085_http_tests {
+    use super::*;
+    #[test]
+    fn idle_headers_release_worker_within_one_second() {
+        let listener = TcpListener::bind(("127.0.0.1", 0)).unwrap();
+        let _client = TcpStream::connect(listener.local_addr().unwrap()).unwrap();
+        let (mut stream, _) = listener.accept().unwrap();
+        let started = Instant::now();
+        assert!(read_request(&mut stream, &AtomicBool::new(false)).is_err());
+        assert!(started.elapsed() < Duration::from_secs(1));
     }
 }

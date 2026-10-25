@@ -75,7 +75,12 @@ pub(super) fn container(names: &[(&str, u32)]) -> Vec<u8> {
     stored_zip(
         &names
             .iter()
-            .map(|(n, side)| (format!("{n}.TXTR"), txtr_bytes(n, *side, "0123456789abcdef")))
+            .map(|(n, side)| {
+                (
+                    format!("{n}.TXTR"),
+                    txtr_bytes(n, *side, "0123456789abcdef"),
+                )
+            })
             .collect::<Vec<_>>(),
     )
 }
@@ -120,7 +125,10 @@ fn texture_paths_are_exact_content_hash_names() {
     let logical = texture_logical("001_helicopter", &texture);
     assert!(texture_path(&logical));
     let hash = format!("{:016x}", crc64_xz(&texture));
-    assert_eq!(logical, format!("shared/{}/001_helicopter.{hash}.tld", &hash[..2]));
+    assert_eq!(
+        logical,
+        format!("shared/{}/001_helicopter.{hash}.tld", &hash[..2])
+    );
     for bad in [
         "shared/71/001_helicopter.711a66d148d9d178.dds",
         "shared/72/001_helicopter.711a66d148d9d178.tld",
@@ -130,11 +138,17 @@ fn texture_paths_are_exact_content_hash_names() {
     ] {
         assert!(!texture_path(bad), "{bad}");
     }
-    assert!(texture_path("shared/71/001_helicopter.711a66d148d9d178.tld"));
+    assert!(texture_path(
+        "shared/71/001_helicopter.711a66d148d9d178.tld"
+    ));
 }
 #[test]
 fn container_retarget_changes_only_hash_and_crcs() {
-    let bytes = container(&[("001_helicopter", 256), ("071_ruff_ryders_anthem", 256), ("2k27_playlistart_season2", 1024)]);
+    let bytes = container(&[
+        ("001_helicopter", 256),
+        ("071_ruff_ryders_anthem", 256),
+        ("2k27_playlistart_season2", 1024),
+    ]);
     let mut c = Container::parse(bytes.clone()).unwrap();
     assert!(c.slot("001_helicopter"));
     assert!(!c.slot("071_ruff_ryders_anthem"));
@@ -150,7 +164,10 @@ fn container_retarget_changes_only_hash_and_crcs() {
     // CRCs are rewritten: the strict parser accepts it, a raw edit is refused.
     Container::parse(out.clone()).unwrap();
     let mut tampered = bytes.clone();
-    let at = tampered.windows(16).position(|w| w == b"0123456789abcdef").unwrap();
+    let at = tampered
+        .windows(16)
+        .position(|w| w == b"0123456789abcdef")
+        .unwrap();
     tampered[at] = b'f';
     assert!(Container::parse(tampered).is_err());
 }
@@ -175,9 +192,16 @@ fn slot_choice_follows_wpf_own_cover_and_preserved_name_rules() {
         track(3, "003_three"),
         track(4, "004_four"),
     ]);
-    let names = ["001_helicopter", "002_two", "003_three", "004_four", "051_2ksoundeffects", "071_ruff_ryders_anthem"]
-        .map(String::from)
-        .to_vec();
+    let names = [
+        "001_helicopter",
+        "002_two",
+        "003_three",
+        "004_four",
+        "051_2ksoundeffects",
+        "071_ruff_ryders_anthem",
+    ]
+    .map(String::from)
+    .to_vec();
     let slot = |n: &str| n != "071_ruff_ryders_anthem";
     // Bank 1 custom with art takes its own bank's cover. Bank 2 custom with
     // art finds 002 still shown by a song without art, so it takes a spare.
@@ -206,8 +230,13 @@ fn actual_version2_cover_route_plan() {
         std::env::var("NBA2K27_GAME_ROOT")
             .unwrap_or_else(|_| r"C:\Program Files (x86)\Steam\steamapps\common\NBA 2K27".into()),
     );
-    assert_eq!(std::env::var("NBA2K27_ACTUAL_DISK_AUDIT").as_deref(), Ok("1"));
-    let stock = crate::jukebox_v2_resources::read_stock(&game, || Ok(())).unwrap().music;
+    assert_eq!(
+        std::env::var("NBA2K27_ACTUAL_DISK_AUDIT").as_deref(),
+        Ok("1")
+    );
+    let stock = crate::jukebox_v2_resources::read_stock(&game, || Ok(()))
+        .unwrap()
+        .music;
     let mut native = vec![0u8; 32800];
     native[..4].copy_from_slice(b"TLD ");
     native[8..12].copy_from_slice(&[5, 33, 71, 1]);
@@ -220,7 +249,11 @@ fn actual_version2_cover_route_plan() {
         block[2..4].copy_from_slice(&0x001fu16.to_le_bytes());
         block[4..].copy_from_slice(&(i as u32).wrapping_mul(2654435761).to_le_bytes());
     }
-    let first = stock.tracks.iter().find(|t| t.collection == 1 && t.bank == 1).unwrap();
+    let first = stock
+        .tracks
+        .iter()
+        .find(|t| t.collection == 1 && t.bank == 1)
+        .unwrap();
     let mut published = music(vec![first.clone(), {
         let mut t = first.clone();
         t.bank = 2;
@@ -228,9 +261,15 @@ fn actual_version2_cover_route_plan() {
         t.cover = "custom".into();
         t
     }]);
-    let route = plan(&game, &stock, &mut published, &[None, Some(native)], &|| Ok(()))
-        .unwrap()
-        .unwrap();
+    let route = plan(
+        &game,
+        &stock,
+        &mut published,
+        &[None, Some(native)],
+        &|| Ok(()),
+    )
+    .unwrap()
+    .unwrap();
     assert_eq!(route.textures.len(), 1);
     let (logical, texture) = &route.textures[0];
     assert!(texture_path(logical));
@@ -239,8 +278,15 @@ fn actual_version2_cover_route_plan() {
     assert_eq!(parsed.covers.len(), 103);
     let slot = &published.tracks[1].cover;
     assert!(logical.contains(&format!("/{slot}.")));
-    assert_eq!(parsed.hash(slot).unwrap(), format!("{:016x}", crc64_xz(texture)));
+    assert_eq!(
+        parsed.hash(slot).unwrap(),
+        format!("{:016x}", crc64_xz(texture))
+    );
     // The bank-2 stock cover is the slot; the bank-1 stock song keeps its own.
     assert_eq!(published.tracks[0].cover, first.cover);
-    println!("PASS actual V2 cover route: {logical} ({} bytes), container {} bytes", texture.len(), route.container.len());
+    println!(
+        "PASS actual V2 cover route: {logical} ({} bytes), container {} bytes",
+        texture.len(),
+        route.container.len()
+    );
 }

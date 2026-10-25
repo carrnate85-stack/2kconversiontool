@@ -16,7 +16,7 @@
 
 namespace wnba_blacktop_category {
 inline constexpr std::uintptr_t kTable=0x7425F4C, kEntry=kTable+12;
-inline constexpr std::uintptr_t kStockCase=0x230BEA4, kContinue=0x230BE2B;
+inline constexpr std::uintptr_t kStockCase=0x230BF54, kContinue=0x230BEDB;
 // Initializer location only; runtime sorting moves this record. Session takes
 // the separately resolved, validated record RVA instead of writing this slot.
 inline constexpr std::uintptr_t kLabel=0xACFC4D0;
@@ -82,7 +82,7 @@ inline bool displacement(std::uintptr_t target,std::uintptr_t origin,std::int32_
     out=std::int32_t(n);return true;
 }
 inline bool bridge_plan(std::uintptr_t base,std::uintptr_t bridge,Code& code,std::int32_t& dispatch) {
-    if(base<0x10000 || base>0x7FFF00000000ull-0x35BDE000 ||
+    if(base<0x10000 || base>0x7FFF00000000ull-0x36532000 ||
         bridge<0x10000 || bridge>0x7FFF00000000ull-code.size())return false;
     std::int32_t jump{};
     if(!displacement(bridge,base+kTable,dispatch) ||
@@ -165,7 +165,11 @@ class Session {
         Route a{},b{};
         if(!h.read_route(a)||!h.read_route(b)||a!=b)return {false,false,true};
         if(a==after)return {true,h.journal_applied(binding_,change)&&written,false};
-        if(a==before)return {};
+        // A durable intent whose guarded CAS made no change must receive its
+        // own durable closure before an already-owned prefix can be restored.
+        // Otherwise the host's pending intent blocks the rollback journal and
+        // strands the WNBA label after a known no-effect dispatch failure.
+        if(a==before)return {false,false,!h.journal_not_applied(binding_,change)};
         return {false,false,true};
     }
     template<class Host> bool restore(Host& h) {

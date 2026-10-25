@@ -311,7 +311,10 @@ fn cover_route_files_publish_and_restore_with_created_folders() {
     .unwrap();
     assert_eq!(
         s.cover_targets(),
-        vec![crate::jukebox_cover_route::CONTAINER.to_string(), texture.clone()]
+        vec![
+            crate::jukebox_cover_route::CONTAINER.to_string(),
+            texture.clone()
+        ]
     );
     s.activate(|| Ok(())).unwrap();
     for (logical, bytes) in &covers {
@@ -319,7 +322,9 @@ fn cover_route_files_publish_and_restore_with_created_folders() {
     }
     drop(s);
     // Crash: recovery adopts the receipt and removes files AND new folders.
-    let s = Store::recover(&f.portable, &f.mods, &session).unwrap().unwrap();
+    let s = Store::recover(&f.portable, &f.mods, &session)
+        .unwrap()
+        .unwrap();
     s.restore(|| Ok(())).unwrap();
     assert!(!f.mods.join(crate::jukebox_cover_route::CONTAINER).exists());
     assert!(!f.mods.join(&texture).exists());
@@ -344,7 +349,14 @@ fn cover_route_keeps_a_users_existing_shared_folder_and_refuses_foreign_files() 
     )]);
     let session = "a".repeat(48);
     let s = Store::create_with_covers(
-        &f.portable, &f.mods, &session, &p, &sources, &covers, || Ok(()), &Default::default(),
+        &f.portable,
+        &f.mods,
+        &session,
+        &p,
+        &sources,
+        &covers,
+        || Ok(()),
+        &Default::default(),
     )
     .unwrap();
     s.activate(|| Ok(())).unwrap();
@@ -354,10 +366,19 @@ fn cover_route_keeps_a_users_existing_shared_folder_and_refuses_foreign_files() 
     // A container that is not a valid cover container is refused before intent.
     let mut bad = covers.clone();
     bad[0].1 = b"not a zip".to_vec();
-    assert!(Store::create_with_covers(
-        &f.portable, &f.mods, &session, &p, &sources, &bad, || Ok(()), &Default::default(),
-    )
-    .is_err());
+    assert!(
+        Store::create_with_covers(
+            &f.portable,
+            &f.mods,
+            &session,
+            &p,
+            &sources,
+            &bad,
+            || Ok(()),
+            &Default::default(),
+        )
+        .is_err()
+    );
     assert!(!f.portable.join("Data").join(MARKER).exists());
 }
 #[test]
@@ -407,7 +428,10 @@ fn any_staging_failure_removes_its_receipt_and_stages_so_launch_is_not_blocked()
         );
         let mut left = Vec::new();
         files(&f.mods, &mut left);
-        assert!(left.is_empty(), "stage stranded at checkpoint {fail_at}: {left:?}");
+        assert!(
+            left.is_empty(),
+            "stage stranded at checkpoint {fail_at}: {left:?}"
+        );
         assert!(
             Store::recover(&f.portable, &f.mods, &"a".repeat(48))
                 .unwrap()
@@ -415,4 +439,17 @@ fn any_staging_failure_removes_its_receipt_and_stages_so_launch_is_not_blocked()
         );
     }
     panic!("create() never completed");
+}
+
+#[test]
+fn recorded_jukebox_root_requires_exact_session_and_existing_directory_proofs() {
+    let f = Fixture::new();
+    let _store = f.create();
+    assert_eq!(
+        Store::recorded_root(&f.portable, &"a".repeat(48))
+            .unwrap()
+            .unwrap(),
+        f.mods.canonicalize().unwrap()
+    );
+    assert!(Store::recorded_root(&f.portable, &"b".repeat(48)).is_err());
 }

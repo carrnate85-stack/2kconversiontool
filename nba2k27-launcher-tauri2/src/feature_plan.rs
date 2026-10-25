@@ -5,6 +5,13 @@ use anyhow::{Result, ensure};
 use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, BTreeSet};
 
+pub(crate) const fn dev_wnba_categories() -> bool {
+    cfg!(any(debug_assertions, feature = "dev-wnba-categories"))
+}
+pub(crate) const fn dev_debug_menus() -> bool {
+    cfg!(any(debug_assertions, feature = "dev-debug-menus"))
+}
+
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub(crate) struct Camera {
@@ -36,6 +43,10 @@ pub(crate) struct Plan {
     /// two-entry source and independent Blacktop category permission.
     #[serde(default)]
     pub wnba_blacktop_categories: bool,
+    /// Session-only UI choice. It is injected into this immutable launch plan
+    /// and is never read from or written to persistent Settings.
+    #[serde(default)]
+    pub debug_menus: bool,
     #[serde(default)]
     pub presentation: crate::presentation_v2_runtime::Options,
     #[serde(default)]
@@ -62,8 +73,9 @@ impl Plan {
             // (or capture a roster key) merely because an old test left it on.
             wnba_freestyle: false,
             wnba_mixed: None,
-            wnba_priority_categories: cfg!(debug_assertions) && settings.unlock_wnba_freestyle,
-            wnba_blacktop_categories: cfg!(debug_assertions) && settings.unlock_wnba,
+            wnba_priority_categories: dev_wnba_categories() && settings.unlock_wnba_freestyle,
+            wnba_blacktop_categories: dev_wnba_categories() && settings.unlock_wnba,
+            debug_menus: false,
             freestyle_playlist: settings.use_playlist_in_freestyle,
             presentation: crate::presentation_v2_runtime::Options {
                 remove_drone: settings.remove_drone,
@@ -113,8 +125,12 @@ impl Plan {
     pub fn validate(&self) -> Result<()> {
         ensure!(
             !(self.wnba_priority_categories || self.wnba_blacktop_categories)
-                || (cfg!(debug_assertions) && !self.wnba_freestyle && self.wnba_mixed.is_none()),
+                || (dev_wnba_categories() && !self.wnba_freestyle && self.wnba_mixed.is_none()),
             "Priority WNBA categories require the isolated dev mode; legacy roster routes must stay off"
+        );
+        ensure!(
+            !self.debug_menus || dev_debug_menus(),
+            "Debug menus require the isolated dev build"
         );
         ensure!(
             self.cameras.len() <= 7,
@@ -161,6 +177,7 @@ impl Plan {
         self.camera_scaler_freestyle_enabled()
             || self.presentation.enabled()
             || self.jukebox.enabled()
+            || self.debug_menus
     }
     pub fn camera_scaler_freestyle_enabled(&self) -> bool {
         !self.cameras.is_empty()
@@ -197,6 +214,9 @@ impl Plan {
 /// Settings keep the visible name; the id disambiguates repeated names. A
 /// stale, unknown, disabled or ambiguous choice is not guessed: no request.
 fn saved_arena(id: &str, label: &str) -> Option<String> {
+    if id.starts_with("custom-") {
+        return crate::blacktop_arena::choice(id).ok().filter(|c| c.label == label).map(|c| c.id);
+    }
     let rows = crate::blacktop_arena::choices();
     let id = if rows.iter().any(|c| c.id == id && c.label == label) {
         id
@@ -231,15 +251,35 @@ fn saved_scoreboard(id: &str, label: &str) -> Option<String> {
 mod tests {
     use super::*;
     #[test]
+    fn debug_menu_choice_is_session_only_and_old_plans_default_off() {
+        let old: Plan = serde_json::from_value(serde_json::json!({
+            "cameras":[], "lockCamera":false, "scalerPercent":null,
+            "wnbaFreestyle":false
+        }))
+        .unwrap();
+        assert!(!old.debug_menus && !old.enabled());
+        let mut armed = old;
+        armed.debug_menus = true;
+        assert_eq!(armed.validate().is_ok(), dev_debug_menus());
+        assert_eq!(armed.enabled(), dev_debug_menus());
+        // It is intentionally outside Settings/Plan::freeze; only the exact
+        // launch request may inject this in-memory choice.
+        assert!(
+            !Plan::freeze(&Settings::default(), &Library::default())
+                .unwrap()
+                .debug_menus
+        );
+    }
+    #[test]
     fn priority_category_dev_mode_is_separate_from_all_roster_loading() {
         let mut plan = Plan {
-            wnba_priority_categories: cfg!(debug_assertions),
+            wnba_priority_categories: dev_wnba_categories(),
             ..Plan::default()
         };
         plan.validate().unwrap();
         assert!(plan.stock_overrides().is_empty());
         assert!(!plan.wnba_freestyle && plan.wnba_mixed.is_none());
-        if cfg!(debug_assertions) {
+        if dev_wnba_categories() {
             plan.wnba_freestyle = true;
             assert!(plan.validate().is_err());
             plan.wnba_freestyle = false;
@@ -276,10 +316,10 @@ mod tests {
         let plan = Plan::freeze(&settings, &Library::default()).unwrap();
         assert_eq!(plan.wnba_mixed, None);
         assert!(!plan.wnba_freestyle, "the withdrawn loader route stays off");
-        assert_eq!(plan.enabled(), cfg!(debug_assertions));
+        assert_eq!(plan.enabled(), dev_wnba_categories());
         assert_eq!(
             plan.camera_scaler_freestyle_enabled(),
-            cfg!(debug_assertions)
+            dev_wnba_categories()
         );
         assert!(plan.stock_overrides().is_empty());
         settings.wnba_freestyle_variant = "national".into();
@@ -308,7 +348,7 @@ mod tests {
         settings.unlock_wnba_freestyle = true;
         let on = Plan::freeze(&settings, &Library::default()).unwrap();
         settings.unlock_wnba_freestyle = false;
-        assert_eq!(on.wnba_priority_categories, cfg!(debug_assertions));
+        assert_eq!(on.wnba_priority_categories, dev_wnba_categories());
         assert!(!on.wnba_freestyle && on.wnba_mixed.is_none());
         assert!(on.stock_overrides().is_empty());
         let next = Plan::freeze(&settings, &Library::default()).unwrap();
@@ -325,15 +365,15 @@ mod tests {
             settings.unlock_wnba = false;
             assert_eq!(
                 frozen.wnba_priority_categories,
-                cfg!(debug_assertions) && freestyle
+                dev_wnba_categories() && freestyle
             );
             assert_eq!(
                 frozen.wnba_blacktop_categories,
-                cfg!(debug_assertions) && blacktop
+                dev_wnba_categories() && blacktop
             );
             assert_eq!(
                 frozen.enabled(),
-                cfg!(debug_assertions) && (freestyle || blacktop)
+                dev_wnba_categories() && (freestyle || blacktop)
             );
             assert!(!frozen.wnba_freestyle && frozen.wnba_mixed.is_none());
             assert!(frozen.stock_overrides().is_empty());

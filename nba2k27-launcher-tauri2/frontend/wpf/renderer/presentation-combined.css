@@ -49,7 +49,14 @@
 #page-presentation .video-library-identity { gap:9px; }
 #page-presentation .video-library-name { font-size:12px; }
 #page-presentation .video-library-actions button { min-height:29px; padding:4px 7px; font-size:11px; }
+#page-presentation :is(.presentation-table-head,.video-library-row) { grid-template-columns:minmax(0,1fr) 105px 285px; gap:12px; }
+#page-presentation .video-library-actions { gap:6px; flex-wrap:wrap; align-items:center; }
+#page-presentation #presentationLibrary .video-library-actions button { flex:0 0 auto; width:auto; min-width:max-content; white-space:nowrap; }
+@media(max-width:760px) {
+  #page-presentation :is(.presentation-table-head,.video-library-row) { grid-template-columns:minmax(0,1fr) 105px; }
+  #page-presentation .video-library-actions { grid-column:1/-1; justify-content:flex-start; }
+}
 #page-presentation .presentation-library-footer { padding:7px 12px; }
 #page-presentation .presentation-library-buttons button { min-height:30px; padding:5px 9px; font-size:11px; }
-@media(max-width:900px) { #page-presentation .camera-grid { grid-template-columns:1fr; } #page-presentation .camera-side-stack { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+@media(max-width:900px) { #page-presentation .camera-grid { grid-template-columns:1fr; } #page-presentation .camera-side-stack { grid-template-columns:1fr; } }
 @media(max-width:700px) { #page-presentation .presentation-fold-copy { display:block; } #page-presentation .presentation-fold-copy small { display:block; margin-top:3px; } #page-presentation .camera-side-stack { grid-template-columns:1fr; } #page-presentation .camera-list { overflow:auto; } #page-presentation .camera-list-head,#page-presentation .camera-row { min-width:560px; } }

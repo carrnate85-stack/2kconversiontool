@@ -1,3 +1,6 @@
+import { SettingsSaver } from "./settings-save";
+import { DownloadLibrary } from "./DownloadLibrary";
+import { ActionError } from "./UxFeedback";
 import React, { useEffect, useRef, useState } from "react";
 import { invoke, convertFileSrc } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
@@ -100,6 +103,7 @@ const pages = [
   "Mod library",
   "Jukebox",
   "Presentation",
+  "Downloads",
   "Roster Editor",
   "Team Editor",
   "Blacktop",
@@ -113,6 +117,7 @@ const icons: Record<string, string> = {
   "Mod library": "grid",
   Jukebox: "music",
   Presentation: "screen",
+  Downloads: "folder",
   "Roster Editor": "person",
   "Team Editor": "team",
   Blacktop: "court",
@@ -127,6 +132,7 @@ const pageDescriptions: Record<string, string> = {
   "Mod library": "Search, tag, and organize the files in your mod profile.",
   Jukebox: "Build, manage, and preview your custom NBA 2K27 soundtrack.",
   Presentation: "Manage cameras and startup videos for your next session.",
+  Downloads: "Browse curated startup videos and Jukebox playlists.",
   "Roster Editor": "Edit and transfer player data with guarded verification.",
   "Team Editor": "Edit team identity, staff, strategy, and presentation data.",
   Blacktop: "Customize your streetball setup, presentation, and outfits.",
@@ -323,11 +329,7 @@ function Empty({ text }: { text: string }) {
   );
 }
 function ErrorBox({ text }: { text: string }) {
-  return text ? (
-    <div className="error" role="alert">
-      {text}
-    </div>
-  ) : null;
+  return <ActionError text={text} />;
 }
 const outfitSlots = [
   "top",
@@ -519,7 +521,10 @@ function Overlay({
         applyMany: async (items) => {
           // Marked before the write: an uncertain result never re-applies.
           for (const item of items) autoRandom.current.mark(item.playerBinding);
-          const revision = await clothingRef.current.queueMany(items, automatic);
+          const revision = await clothingRef.current.queueMany(
+            items,
+            automatic,
+          );
           // Refused before queueing: nothing was written, so a later
           // automatic pass may try these players again.
           if (revision === null)
@@ -595,7 +600,10 @@ function Overlay({
   // WPF autoRandomSelection parity: on an eligible game,
   // each new lineup player without a manual choice gets one random fit once
   // the same lineup has been read twice. Lineup reads are read-only.
-  const autoOn = live && settings.autoRandomOutfits !== false && automaticOutfitsSupported(clothing.status);
+  const autoOn =
+    live &&
+    settings.autoRandomOutfits !== false &&
+    automaticOutfitsSupported(clothing.status);
   useEffect(() => {
     if (!autoOn || !clothing.eligible || randomRunning || clothing.busy) return;
     const s = clothing.status,
@@ -1374,10 +1382,19 @@ function Overlay({
                       {panel === "ball" && o.id === "current" ? (
                         <span className="tile-current">CURRENT</span>
                       ) : panel === "ball" ? (
-                        <BallThumbnail id={o.id} gameRoot={settings.gameRoot}
-                          image={o.imagePath ? convertFileSrc(o.imagePath) : o.image}
+                        <BallThumbnail
+                          id={o.id}
+                          gameRoot={settings.gameRoot}
+                          image={
+                            o.imagePath ? convertFileSrc(o.imagePath) : o.image
+                          }
                           imageClassName=""
-                          placeholder={<span className="tile-symbol"><Icon name="ball" size={40} /></span>} />
+                          placeholder={
+                            <span className="tile-symbol">
+                              <Icon name="ball" size={40} />
+                            </span>
+                          }
+                        />
                       ) : o.imagePath || o.image ? (
                         <img
                           src={
@@ -1782,7 +1799,11 @@ function SeasonTable({ records }: { records: any[] }) {
   );
 }
 export function App() {
+  const [downloadTab, setDownloadTab] = useState<"playlists" | "videos" | "previews">("playlists");
   const [overlayPanel, setOverlayPanel] = useState<string | null>(null);
+  // WPF parity: debug menus are an in-memory, per-launch choice. Never route
+  // this value through SettingsSaver or persisted launcher settings.
+  const [debugMenus, setDebugMenus] = useState(false);
   const [library, setLibrary] = useState<Library | null>(null);
   const libraryRef = useRef<Library | null>(null),
     libraryQueue = useRef(Promise.resolve());
@@ -1826,10 +1847,30 @@ export function App() {
   const standalone = new URLSearchParams(location.search).has("overlay");
   const settingsRef = useRef<Settings | null>(null),
     saveQueue = useRef(Promise.resolve()),
+    settingsSaveFailure = useRef<unknown | null>(null),
     modsScanRevision = useRef(0),
     modsRootSeen = useRef<string | null>(null),
     smokeStarted = useRef(false),
     probeStarted = useRef(false);
+  const settingsSaver = useRef(
+    new SettingsSaver<Settings>({
+      publish: (value) => {
+        settingsRef.current = value;
+        setSettings(value);
+      },
+      save: (patch) => call("save-settings", patch),
+      load: async () => (await call<Bootstrap>("bootstrap")).settings,
+      saved: () => {
+        settingsSaveFailure.current = null;
+        setStatus("Saved");
+      },
+      failed: (error) => {
+        settingsSaveFailure.current = error;
+        setError(String(error));
+        setStatus("Settings not saved");
+      },
+    }),
+  );
   useEffect(() => {
     Promise.all([
       call<Bootstrap>("bootstrap"),
@@ -1839,8 +1880,7 @@ export function App() {
     ])
       .then(([b, m, o, l]) => {
         setBoot(b);
-        setSettings(b.settings);
-        settingsRef.current = b.settings;
+        settingsSaver.current.accept(b.settings);
         setMedia(m);
         setLibrary(l);
         libraryRef.current = l;
@@ -1861,8 +1901,7 @@ export function App() {
         .catch((e) => setError(String(e)));
     register(
       listen<Settings>("settings-changed", (e) => {
-        settingsRef.current = e.payload;
-        setSettings(e.payload);
+        settingsSaver.current.accept(e.payload);
       }),
     );
     register(listen<Outfit>("outfit-changed", (e) => setOutfit(e.payload)));
@@ -1909,20 +1948,21 @@ export function App() {
     };
   }, []);
   function change(p: Partial<Settings>) {
-    const current = settingsRef.current;
-    if (!current) return;
-    const next = { ...current, ...p };
-    settingsRef.current = next;
-    setSettings(next);
-    saveQueue.current = saveQueue.current
-      .then(async () => {
-        await call("save-settings", p);
-        setStatus("Saved");
-      })
-      .catch((e) => {
-        setError(String(e));
-        setStatus("Settings not saved");
-      });
+    if (!settingsRef.current) return;
+    saveQueue.current = settingsSaver.current.save(p);
+  }
+  async function waitForSettings() {
+    // A choice made while an earlier choice is still saving joins the same
+    // barrier. Play snapshots settings only after that stream is stable.
+    for (;;) {
+      const queued = saveQueue.current;
+      await queued;
+      if (queued === saveQueue.current) break;
+    }
+    if (settingsSaveFailure.current)
+      throw new Error(
+        `Your latest session choices were not saved. Play was not started. ${String(settingsSaveFailure.current)}`,
+      );
   }
   async function task(fn: () => Promise<void>) {
     if (busy) return;
@@ -2308,7 +2348,7 @@ export function App() {
           setError("");
         }}
         providerReady={boot.gameFound}
-        providerLabel={boot.gameFound ? "Version 2" : "Not configured"}
+        providerLabel={boot.gameFound ? "Game found" : "Not configured"}
         theme={settings.theme}
         onTheme={(theme) => {
           if (theme !== settings.theme) change({ theme });
@@ -2327,6 +2367,8 @@ export function App() {
               gameRoot={settings.gameRoot}
               modsRoot={settings.modsRoot}
               gameFound={boot.gameFound}
+              debugMenus={debugMenus}
+              waitForSettings={waitForSettings}
             >
               <div
                 className="card home-session-picks"
@@ -2335,11 +2377,11 @@ export function App() {
                 <label>
                   <span className="home-field-label" data-ui-icon="mods">
                     <UiIcon name="mods" />
-                    Mod profile
+                    Mod Profile
                   </span>
                   <select
                     id="homeModProfile"
-                    aria-label="Mod profile"
+                    aria-label="Mod Profile"
                     value={settings.profile}
                     onChange={(e) => {
                       const p = library.profiles.find(
@@ -2367,7 +2409,7 @@ export function App() {
                       data-ui-icon="presentation"
                     >
                       <UiIcon name="presentation" />
-                      Startup video
+                      Startup Video
                     </span>
                     <input
                       id="startupVideoEnabled"
@@ -2394,6 +2436,11 @@ export function App() {
                         </option>
                       ))}
                   </select>
+                  {!(settings.startupVideo && settings.video) && <small className="home-startup-video-status">
+                    {settings.startupVideo
+                      ? "Choose a video for the next Play session."
+                      : "Off for the next Play session."}
+                  </small>}
                 </div>
               </div>
             </LaunchReadiness>
@@ -2419,10 +2466,12 @@ export function App() {
               scan={() => scan(true)}
               scanned={modsScanned}
               scanError={modsError}
+              modelPreview={boot.capabilities?.modelPreview === true}
             />
           )}
           {page === "Jukebox" && (
             <Jukebox
+              onDownloadPlaylists={() => { setDownloadTab("playlists"); setPage("Downloads"); }}
               library={library}
               save={saveLibrary}
               settings={settings}
@@ -2434,6 +2483,7 @@ export function App() {
           )}
           {page === "Presentation" && (
             <Presentation
+              onDownloadVideos={() => { setDownloadTab("videos"); setPage("Downloads"); }}
               library={library}
               save={saveLibrary}
               settings={settings}
@@ -2443,6 +2493,7 @@ export function App() {
               setMedia={setMedia}
             />
           )}
+          {page === "Downloads" && <DownloadLibrary navigate={setPage} initialTab={downloadTab} />}
           {page === "Roster Editor" && <Roster setStatus={setStatus} />}
           {page === "Team Editor" && (
             <>
@@ -2479,6 +2530,8 @@ export function App() {
           )}
           {page === "Blacktop" && (
             <Blacktop
+              customArenas={boot.capabilities?.customBlacktop === true}
+              onDownloadPreviews={() => { setDownloadTab("previews"); setPage("Downloads"); }}
               library={library}
               save={saveLibrary}
               settings={settings}
@@ -2500,7 +2553,7 @@ export function App() {
           {page === "Unlocks" && (
             <UnlocksPanel
               blacktop={settings.unlockWnba}
-                blacktopAvailable={blacktopUnlockAvailable(boot)}
+              blacktopAvailable={blacktopUnlockAvailable(boot)}
               onBlacktopChange={(unlockWnba) => change({ unlockWnba })}
               freestyle={settings.unlockWnbaFreestyle === true}
               onFreestyleChange={(unlockWnbaFreestyle) =>
@@ -2509,6 +2562,17 @@ export function App() {
               freestyleMessage={freestyleUnlockMessage(
                 settings.unlockWnbaFreestyle === true,
               )}
+              debugMenus={debugMenus}
+              debugMenusAvailable={boot.capabilities?.debugMenus === true}
+              onDebugMenusChange={(enabled) => {
+                if (
+                  !enabled ||
+                  window.confirm(
+                    "Enable experimental debug menus for the next Play session?\n\nSteam must be in Offline Mode. Debug menus may cause instability or affect saves. Use a backup or test roster.",
+                  )
+                )
+                  setDebugMenus(enabled);
+              }}
             />
           )}
           {page === "Scaler" && (
@@ -2531,8 +2595,6 @@ export function App() {
           )}
           {page === "Settings" && (
             <div className="settings-page-layout settings-workspace">
-              <LauncherUpdatesCard setStatus={setStatus} />
-              <LauncherHealthCard setStatus={setStatus} />
               <article className="card settings-path-card">
                 <div className="settings-card-heading">
                   <strong>Game installation</strong>
@@ -2624,6 +2686,9 @@ export function App() {
                   <small id="launcherStoragePath">{boot.root}</small>
                 </div>
               </article>
+              {boot.capabilities?.developerTools && <>
+                <LauncherUpdatesCard setStatus={setStatus} />
+                <LauncherHealthCard setStatus={setStatus} />
               <div className="settings-preferences-grid">
                 <WpfImportCard setStatus={setStatus} />
                 <article className="card settings-option-card settings-support-card">
@@ -2669,7 +2734,7 @@ export function App() {
                       Nothing is sent automatically.
                     </small>
                   </div>
-                  <div className="settings-support-actions">
+                  {boot.capabilities?.developerTools && <><div className="settings-support-actions">
                     <button
                       className="secondary"
                       id="captureGameHang"
@@ -2710,13 +2775,14 @@ export function App() {
                     memory. Stored locally in Logs/game-captures; never uploaded
                     or included in support exports. Keeps three sessions, up to
                     three snapshots each.
-                  </small>
+                  </small></>}
                 </article>
               </div>
-              <DeveloperTools setStatus={setStatus} />
+              <GameBuildCompatibility />
+              </>}
+              {boot.capabilities?.developerTools && <><DeveloperTools setStatus={setStatus} />
               <details className="card settings-advanced">
                 <summary>Advanced · Runtime and feature readiness</summary>
-                <GameBuildCompatibility />
                 <Card title="Portable storage">
                   <p className="path-line">{boot.root}</p>
                   <div className="storage-grid">
@@ -2776,7 +2842,7 @@ export function App() {
                     ))}
                   </div>
                 </Card>
-              </details>
+              </details></>}
             </div>
           )}
         </section>

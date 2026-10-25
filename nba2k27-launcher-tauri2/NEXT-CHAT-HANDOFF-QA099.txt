@@ -1,0 +1,36 @@
+NBA 2K27 Rust/Tauri launcher handoff - QA099 - 2026-10-21
+
+QA099 corrects the Jukebox Up/Down playlist-ordering buttons to match the
+provided Mod Library Open/Folder reference. It preserves QA098 scrolling and
+was promoted to Main on 2026-10-21.
+
+Delivered:
+- Replaced text arrows with real line-arrow SVG icons.
+- Added dark outlined rectangular action buttons with bold Up/Down labels.
+- Matched Mod Library sizing, spacing, border, background, hover/focus and
+  disabled treatments.
+- Bumped the single-file portable build to version 0.53.3.
+
+Validation:
+- Built bundle contains the new SVG paths and high-specificity button rules.
+- Jukebox tests: 40/40 passed.
+- Full frontend: 44 files / 233 tests passed.
+- TypeScript strict check and Vite production build passed.
+- Optimized offline locked release build passed.
+- Exact packaged no-game smoke exited cleanly and reproduced the older QA087
+  Season History assertion after 13 checks. No game writes occurred; do not
+  call the complete smoke suite passed.
+
+Candidate:
+- Start QA099 Dev.vbs
+- Dev/Pending/QA099/launcher.exe
+- Builds/0.53.3/Share-QA099-Jukebox-Buttons/NBA 2K27 Launcher 0.53.3.exe
+- 46706176 bytes
+- SHA-256 6A34A4E0CE9E41E6BD250B34A7E56972EF36DC1B572D894D7B3CE645022F2DF0
+
+Installed Main is version 0.53.3 with SHA-256
+6A34A4E0CE9E41E6BD250B34A7E56972EF36DC1B572D894D7B3CE645022F2DF0.
+The prior QA098 App backup is `C:\Program Files (x86)\Steam\steamapps\common\NBA 2K27\2k Launcher\Recovery\App-before-QA099-20261021-163751-5471`.
+Receipt: `artifacts/qa099-main-promotion-20261021-163751-5471.json`.
+Active dev remains QA096. Preserve user Data/Library, backups and journals.
+QA073 and QA078 remain unresolved.

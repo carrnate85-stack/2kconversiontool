@@ -11,7 +11,7 @@ use anyhow::{Context, Result, ensure};
 
 pub(crate) const MAPPING: u64 = 0x078EA630;
 const STRIDE: u64 = 0x1278;
-const SHA: &str = "29A96471C55909FC2BCEA6C699C59238656A501C19B50C74ED64B0D842E576A1";
+const SHA: &str = "B673EB04593D6D5A4DFB9E270178E04C017BD9F277514D256EA98FFB792ED27B";
 fn at(m: &impl Memory, offset: u64) -> Result<u64> {
     m.base().checked_add(offset).context("Arena RVA overflow")
 }
@@ -158,7 +158,7 @@ pub(crate) fn revalidate(m: &impl Inspect, r: &Record, expected: &[u8]) -> Resul
 }
 pub(crate) fn capture(m: &impl Inspect, c: &Choice, expected: &[u8; 20]) -> Result<Snapshot> {
     ensure!(
-        arena::choice(&c.id)? == c,
+        arena::choice(&c.id)? == *c,
         "Arena differs from the exact embedded choice"
     );
     verify_profile(m)?;
@@ -271,9 +271,12 @@ pub(crate) struct Plan {
 }
 pub(crate) fn verify_assets(c: &Choice, manifest: Option<&[u8]>) -> Result<()> {
     ensure!(
-        arena::choice(&c.id)? == c,
+        arena::choice(&c.id)? == *c,
         "Arena differs from the exact bundled choice"
     );
+    if c.id.starts_with("custom-") {
+        return crate::custom_blacktop::verify_assets(c);
+    }
     if c.template_arena_id.is_none() {
         return Ok(());
     }
@@ -302,13 +305,10 @@ pub(crate) fn prepare(
     manifest: Option<&[u8]>,
 ) -> Result<Plan> {
     let c = arena::choice(id)?;
-    verify_assets(c, manifest)?;
-    let snapshot = capture(m, c, expected)?;
+    verify_assets(&c, manifest)?;
+    let snapshot = capture(m, &c, expected)?;
     let template = if c.template_arena_id.is_some() {
-        Some(arena::template_fields(
-            c.file.as_deref().unwrap(),
-            c.floor_file.as_deref().unwrap(),
-        )?)
+        Some(arena::choice_fields(&c)?)
     } else {
         None
     };
@@ -340,10 +340,7 @@ impl Plan {
                             && ascii(&r.fields[..38])? == "arena_700_int"
                             && ascii(&r.fields[38..])? == "arena_700_int_floor"
                             && template.as_ref()
-                                == Some(&arena::template_fields(
-                                    c.file.as_deref().unwrap(),
-                                    c.floor_file.as_deref().unwrap()
-                                )?),
+                                == Some(&arena::choice_fields(&c)?),
                         "Arena template plan differs from the exact bundled fields"
                     );
                 } else {
@@ -388,7 +385,7 @@ impl Plan {
             "Invalid arena plan phase/image"
         );
         if applied == 0 {
-            let fresh = capture(m, arena::choice(&self.selected)?, &self.snapshot.mapping)?;
+            let fresh = capture(m, &arena::choice(&self.selected)?, &self.snapshot.mapping)?;
             ensure!(
                 fresh.context == self.snapshot.context && fresh.record == self.snapshot.record,
                 "Arena complete preparation changed before its first write"

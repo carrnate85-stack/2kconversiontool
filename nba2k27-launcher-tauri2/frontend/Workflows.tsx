@@ -1,3 +1,5 @@
+import { finishModInstall } from "./mod-install-feedback";
+import { ActionError, useRetainedDraft } from "./UxFeedback";
 import { Fragment, useEffect, useRef, useState, type ReactNode } from "react";
 import { convertFileSrc } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
@@ -8,6 +10,7 @@ import type { Library, Settings, Media, Mod, Outfit, Garment } from "./types";
 import { formatBytes, formatVideoLength, initialOutfit, label } from "./state";
 import {
   filterModGroups,
+  isModelPreviewCandidate,
   modGroups,
   move,
   normalizeModTags,
@@ -18,7 +21,6 @@ import {
   type ModSortKey,
 } from "./library-state";
 import { JukeboxNative } from "./JukeboxNative";
-import { CameraLiveStatus } from "./CameraLiveStatus";
 import {
   initialModDecisions,
   modInstallArgs,
@@ -60,6 +62,7 @@ import {
 } from "./profiles-state";
 import { ModalDialog, OutfitItemIcon, UiIcon } from "./wpf/WpfShell";
 import { FitPreviewDialog } from "./FitPreview";
+import { ModelPreviewDialog } from "./ModelPreviewDialog";
 import { GarmentImg, useClothingCache } from "./PreviewCache";
 import { outfitAccessorySlots, outfitPieceSlots } from "./OverlayOutfitEditor";
 import "./ModLibrary.css";
@@ -112,11 +115,7 @@ function useActions(status: (text: string) => void) {
   return { run, busy, error };
 }
 function Feedback({ error }: { error: string }) {
-  return error ? (
-    <p className="error" role="alert">
-      {error}
-    </p>
-  ) : null;
+  return <ActionError text={error} />;
 }
 // WPF Profiles page: a radio list where choosing a row makes it the active
 // profile, a picker-first New profile dialog, an Edit dialog, and Remove for
@@ -578,6 +577,43 @@ const MOD_SORTS: [ModSortKey, string, string][] = [
 ];
 // WPF lists the first 5,000 matching entries.
 const MOD_PAGE = 5000;
+export function ModRemoveDialog(p: {
+  group: ModGroup;
+  busy: boolean;
+  error: string;
+  cancel: () => void;
+  confirm: () => void;
+}) {
+  return (
+    <ModalDialog className="mod-remove-dialog" labelledBy="modRemoveTitle" onCancel={p.cancel}>
+      <h2 id="modRemoveTitle">Remove this mod?</h2>
+      <ActionError text={p.error} />
+      <p>
+        <strong>{p.group.title}</strong>
+        {p.group.files.length > 1
+          ? ` includes ${p.group.files.length} bundled files.`
+          : " is one file."}
+      </p>
+      <p>
+        The selected file{p.group.files.length === 1 ? "" : "s"} will be moved out of the configured mods folder and into the Windows Recycle Bin. You can restore them from there.
+      </p>
+      <div className="mod-remove-file-list mono">
+        {p.group.files.slice(0, 6).map((file) => (
+          <span key={file.path}>{file.path.replaceAll("\\", "/")}</span>
+        ))}
+        {p.group.files.length > 6 && <span>…and {p.group.files.length - 6} more</span>}
+      </div>
+      <footer>
+        <button className="secondary" disabled={p.busy} onClick={p.cancel}>
+          Cancel
+        </button>
+        <button className="primary mod-remove-confirm" disabled={p.busy} onClick={p.confirm}>
+          {p.busy ? "Moving…" : "Move to Recycle Bin"}
+        </button>
+      </footer>
+    </ModalDialog>
+  );
+}
 export function Mods(
   p: Shared & {
     mods: Mod[];
@@ -585,6 +621,7 @@ export function Mods(
     scan: () => Promise<void>;
     scanned?: boolean;
     scanError?: string;
+    modelPreview?: boolean;
   },
 ) {
   const [query, setQuery] = useState(""),
@@ -597,8 +634,12 @@ export function Mods(
     [draft, setDraft] = useState(""),
     [limit, setLimit] = useState(MOD_PAGE),
     [install, setInstall] = useState<ModInstallState | null>(null);
+  const [modelPreview, setModelPreview] = useState<{ mod: Mod; title: string } | null>(null);
+  const [removal, setRemoval] = useState<ModGroup | null>(null);
   const a = useActions(p.status);
   const tagInput = useRef<HTMLInputElement>(null);
+  const [recoveries, setRecoveries] = useState<{id:string; files:number; updatedMs:number}[] | null>(null);
+  const [restoreId, setRestoreId] = useState<string | null>(null);
   const tableBody = useRef<HTMLDivElement>(null);
   // WPF list-view-state: a new search, sort or profile starts at the top;
   // re-renders in the same context keep the scroll position.
@@ -606,10 +647,19 @@ export function Mods(
     tableBody.current?.scrollTo?.({ top: 0, left: 0 });
   }, [query, sort.key, sort.direction, p.settings.modsRoot]);
   const root = p.settings.modsRoot;
+  // The exporter has its game catalog ready before Preview is clicked. Warm
+  // the identical dev-only worker while the Mod Library is being browsed so
+  // loose-mod previews get the same fast first-click path.
+  useEffect(() => {
+    if (!p.modelPreview) return;
+    void call("model-preview-prepare").catch(() => undefined);
+  }, [p.modelPreview, p.settings.gameRoot]);
   useEffect(() => {
     setExpanded(new Set());
     setLimit(MOD_PAGE);
     setEditing(null);
+    setRecoveries(null);
+    setRestoreId(null);
   }, [root]);
   useEffect(() => {
     if (!editing) return;
@@ -629,6 +679,14 @@ export function Mods(
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   });
+  useEffect(() => {
+    if (!removal) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && !a.busy) setRemoval(null);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [removal, a.busy]);
   // WPF mods:install: choose files/archives or one folder, route every file
   // through the stock manifest, then review conflicts before anything is
   // replaced. Plans with routing issues install nothing.
@@ -669,8 +727,7 @@ export function Mods(
       "mod-install-commit",
       modInstallArgs(plan, decisions),
     ).finally(() => setInstall(null));
-    await p.scan();
-    p.status(modInstallSummary(result));
+    await finishModInstall(modInstallSummary(result), p.scan, p.status);
   }
   const groups = sortModGroups(
     modGroups(p.mods, p.library.tags, root),
@@ -706,8 +763,43 @@ export function Mods(
       setEditing(null);
       p.status("Mod tags saved.");
     });
-  const actions = (mod: Mod) => (
+  const recycle = (group: ModGroup) =>
+    void a.run(async () => {
+      const result = await call<{ removed: number; recycled: true }>(
+        "recycle-mod-items",
+        { paths: group.files.map((file) => file.path) },
+      );
+      setRemoval(null);
+      setExpanded((old) => {
+        const next = new Set(old);
+        next.delete(group.id);
+        return next;
+      });
+      await p.scan();
+      p.status(
+        `${result.removed} mod file${result.removed === 1 ? "" : "s"} moved to the Recycle Bin.`,
+      );
+    });
+  const actions = (
+    mod: Mod,
+    title = mod.path.replaceAll("\\", "/"),
+    removable?: ModGroup,
+  ) => (
     <div className="mod-file-actions">
+      {p.modelPreview && isModelPreviewCandidate(mod) && (
+        <button
+          type="button"
+          className="secondary small model-preview-button"
+          title="Open a read-only 3D preview in the test-build renderer"
+          aria-label={`3D preview: ${mod.path}`}
+          onClick={(event) => {
+            event.stopPropagation();
+            setModelPreview({ mod, title });
+          }}
+        >
+          3D Preview
+        </button>
+      )}
       {(
         [
           ["file", "Open", "Open this mod file", "file"],
@@ -729,12 +821,59 @@ export function Mods(
           {text}
         </button>
       ))}
+      {removable && (
+        <button
+          type="button"
+          className="secondary small mod-remove-button"
+          title="Move this mod to the Windows Recycle Bin"
+          aria-label={`Remove mod: ${removable.title}`}
+          disabled={scanning}
+          onClick={(event) => {
+            event.stopPropagation();
+            setRemoval(removable);
+          }}
+        >
+          <UiIcon name="trash" />
+          Remove
+        </button>
+      )}
     </div>
   );
   return (
     <>
       <Feedback error={a.error} />
       <section className="card mod-library-controls" aria-label="Mod library controls">
+        {p.modelPreview && (
+          <div className="model-preview-dev-notice" role="note">
+            <strong>3D Model Preview · Test Build</strong>
+            <span>Staged in this dev build for testing before release. 3D previews never modify mod or game files.</span>
+          </div>
+        )}
+        {removal && (
+          <ModRemoveDialog
+            group={removal}
+            busy={a.busy}
+            error={a.error}
+            cancel={() => { if (!a.busy) setRemoval(null); }}
+            confirm={() => recycle(removal)}
+          />
+        )}
+        {restoreId && <ModalDialog className="mod-install-dialog" onCancel={() => { if (!a.busy) setRestoreId(null); }}>
+          <h2>Restore previous mod files?</h2>
+          <ActionError text={a.error} />
+          <p>Restores only files replaced by this installation. Newly added files stay in place. Restore stops if a file has changed since installation.</p>
+          <button className="secondary" disabled={a.busy} onClick={() => setRestoreId(null)}>Cancel</button>
+          <button className="primary" disabled={a.busy} onClick={() => void a.run(async () => {
+            await call("mod-install-restore", { id:restoreId }); setRestoreId(null);
+            setRecoveries(await call("mod-install-history")); p.scan(); p.status("Previous mod files restored.");
+          })}>Restore previous files</button>
+        </ModalDialog>}
+        <details className="mod-recovery"><summary>Installation recovery</summary>
+          <p>Backups are retained for replacements installed with this version. Close the game to review or restore them.</p>
+          <button className="secondary" disabled={a.busy || !root} onClick={() => void a.run(async () => setRecoveries(await call("mod-install-history")))}>Load backups for this profile</button>
+          {recoveries?.length === 0 && <p>No replacement backups for this profile.</p>}
+          {recoveries?.map(r => <div key={r.id}><span>{new Date(r.updatedMs).toLocaleString()} · {r.files} replaced files </span><button className="secondary" disabled={a.busy} onClick={() => setRestoreId(r.id)}>Restore previous files…</button></div>)}
+        </details>
         <div className="mod-folder-toolbar">
           <span className="mod-folder-label" data-ui-icon="profiles">
             <UiIcon name="profiles" />
@@ -917,7 +1056,7 @@ export function Mods(
                     {group.tags.length ? group.tags.join(", ") : "Add tags"}
                   </button>
                   <span className="size">{formatBytes(group.bytes)}</span>
-                  {actions(group.base)}
+                  {actions(group.base, group.title, group)}
                 </div>
                 {bundle &&
                   open &&
@@ -1053,6 +1192,13 @@ export function Mods(
             </div>
           </section>
         </div>
+      )}
+      {modelPreview && (
+        <ModelPreviewDialog
+          mod={modelPreview.mod}
+          title={modelPreview.title}
+          onClose={() => setModelPreview(null)}
+        />
       )}
       {install && (
         <div
@@ -1285,8 +1431,8 @@ export function ModInstallDialog(p: {
         {error}
         <div className="notice">
           The package was routed from its verified folder structure, the stock
-          manifest, and safe player-file rules. Replaced files cannot be
-          recovered by the launcher.{skipped}
+          manifest, and safe player-file rules. Previous versions of replaced
+          files are backed up. Use Installation recovery to restore them.{skipped}
         </div>
       </div>
       <footer>
@@ -1315,10 +1461,11 @@ export function ModInstallDialog(p: {
   );
 }
 export function Jukebox(
-  p: Shared & { media: Media[]; setMedia: (m: Media[]) => void },
+  p: Shared & { media: Media[]; setMedia: (m: Media[]) => void; onDownloadPlaylists?: () => void },
 ) {
   return (
     <JukeboxNative
+      onDownloadPlaylists={p.onDownloadPlaylists}
       status={p.status}
       freestylePlaylist={p.settings.usePlaylistInFreestyle !== false}
       onFreestylePlaylist={(on) => {
@@ -1333,9 +1480,9 @@ export function Jukebox(
   );
 }
 export function Presentation(
-  p: Shared & { media: Media[]; setMedia: (m: Media[]) => void },
+  p: Shared & { media: Media[]; setMedia: (m: Media[]) => void; onDownloadVideos?: () => void },
 ) {
-  const [cameras, setCameras] = useState(p.library.cameras),
+  const [cameras, setCameras] = useRetainedDraft("camera-setup-draft", p.library.cameras),
     [playing, setPlaying] = useState<Media | null>(null),
     [videoImport, setVideoImport] = useState<StartupVideoImportProgress | null>(
       null,
@@ -1352,7 +1499,7 @@ export function Presentation(
   const acceptVideoImportEvents = useRef(false);
   const videoImportId = useRef("");
   const a = useActions(p.status);
-  useEffect(() => setCameras(p.library.cameras), [p.library.cameras]);
+  const camerasChanged = JSON.stringify(cameras) !== JSON.stringify(p.library.cameras);
   useEffect(() => {
     let disposed = false;
     let off: (() => void) | undefined;
@@ -1653,23 +1800,35 @@ export function Presentation(
                         <button
                           data-move="up"
                           aria-label={`Move ${camera.name} up`}
+                          title="Move up"
                           disabled={i === 0}
                           onClick={() => setCameras(move(cameras, i, -1))}
                         >
-                          ↑
+                          <UiIcon name="arrow-up" />
                         </button>
                         <button
                           data-move="down"
                           aria-label={`Move ${camera.name} down`}
+                          title="Move down"
                           disabled={i === cameras.length - 1}
                           onClick={() => setCameras(move(cameras, i, 1))}
                         >
-                          ↓
+                          <UiIcon name="arrow-down" />
                         </button>
                       </div>
                     </div>
                   );
                 })}
+              </div>
+              <div className="presentation-library-footer">
+                <div className="presentation-library-buttons">
+                  <button className="secondary small" type="button" disabled
+                    style={{ opacity: 0.5, cursor: "default" }}
+                    title="No camera downloads available yet"
+                    aria-label="Download cameras — no downloads available yet">
+                    Download cameras
+                  </button>
+                </div>
               </div>
             </article>
             <div className="camera-side-stack">
@@ -1739,8 +1898,11 @@ export function Presentation(
                 >
                   Save camera setup
                 </button>
+                {camerasChanged && <div className="draft-notice" role="status">
+                  <p>Unsaved camera changes. Your draft stays here when you switch pages. Save before Play.</p>
+                  <button className="secondary" onClick={() => setCameras(p.library.cameras)}>Discard changes</button>
+                </div>}
               </article>
-              <CameraLiveStatus gameRoot={p.settings.gameRoot} />
             </div>
           </div>
         </div>
@@ -1846,18 +2008,19 @@ export function Presentation(
                             )
                           }
                         >
-                          Preview
+                          {playing?.path === video.path ? "Close" : "Preview"}
                         </button>
                         <button
                           className="secondary small"
-                          disabled={videoLocked || p.settings.video === id}
+                          disabled={videoLocked || (p.settings.video === id && p.settings.startupVideo)}
                           aria-pressed={p.settings.video === id}
                           onClick={() =>
                             p.change({ video: id, startupVideo: true })
                           }
                         >
-                          {p.settings.video === id ? "Selected" : "Use"}
+                          {p.settings.video === id ? p.settings.startupVideo ? "Selected" : "Enable" : "Use"}
                         </button>
+                        {p.settings.video === id && !p.settings.startupVideo && <small>Selected · Off</small>}
                         {(["rename", "remove"] as const).map((action) => (
                           <button
                             key={action}
@@ -1887,6 +2050,8 @@ export function Presentation(
                 >
                   {videoImportBusy ? "Importing MP4…" : "+ Add MP4"}
                 </button>
+                <button className="secondary small" disabled={videoLocked || !p.onDownloadVideos}
+                  onClick={p.onDownloadVideos}>Download videos</button>
               </div>
               <p>
                 Fullscreen MP4 playback · Click or Xbox A/B to skip · H.264, AV1
@@ -1905,8 +2070,8 @@ export function Presentation(
             />
           )}
           <p id="presentationMovieDetail" role="status">
-            Videos stay in Library / Videos. Playback does not replace or patch
-            the game’s startup movies.
+            Preview plays inside the launcher. On Play, your enabled video opens
+            in a separate fullscreen window over the game.
           </p>
         </div>
       </details>
@@ -1943,6 +2108,8 @@ export function Blacktop(
     setOutfit: (o: Outfit) => void;
     preview: (panel?: string) => void;
     topPreview: () => void;
+    customArenas?: boolean;
+    onDownloadPreviews?: () => void;
   },
 ) {
   const a = useActions(p.status);
@@ -1969,6 +2136,51 @@ export function Blacktop(
       phase: string;
     } | null>(null),
     [packRevision, setPackRevision] = useState(0);
+  const [previewDownload, setPreviewDownload] = useState({
+    active: false,
+    done: 0,
+    total: 1,
+    phase: "",
+    error: null as string | null,
+  });
+  const [previewCancelRequested, setPreviewCancelRequested] = useState(false);
+  useEffect(() => {
+    let alive = true,
+      polling = false,
+      wasActive = false;
+    async function poll() {
+      if (polling) return;
+      polling = true;
+      try {
+        const next = await call<typeof previewDownload>(
+          "preview-download-status",
+        );
+        if (!alive) return;
+        setPreviewDownload(next);
+        if (next.active) setProgress(next);
+        if (wasActive && !next.active) {
+          setProgress(null);
+          setPreviewCancelRequested(false);
+          const current = await call<typeof pack>("preview-status");
+          if (alive) {
+            setPack(current);
+            setPackRevision((x) => x + 1);
+          }
+        }
+        wasActive = next.active;
+      } catch {
+        /* Offline fixture/older host: local ZIP import remains available. */
+      } finally {
+        polling = false;
+      }
+    }
+    void poll();
+    const timer = setInterval(() => void poll(), 1000);
+    return () => {
+      alive = false;
+      clearInterval(timer);
+    };
+  }, []);
   const [variants, setVariants] = useState<
     { id: string; original: string[]; layers: string[]; manualOnly: boolean }[]
   >([]);
@@ -2259,6 +2471,7 @@ export function Blacktop(
           {catalog && (
             <BlacktopCatalog
               kind={catalog}
+              customArenas={p.customArenas}
               settings={p.settings}
               change={p.change}
               onClose={() => setCatalog(null)}
@@ -2279,10 +2492,20 @@ export function Blacktop(
             <div className="settings-switch-list">
               {(
                 [
-                  ["removeDrone", "Remove drone", "drone", "blacktopRemoveDrone"],
+                  [
+                    "removeDrone",
+                    "Remove drone",
+                    "drone",
+                    "blacktopRemoveDrone",
+                  ],
                   ["removeDj", "Remove DJ", "jukebox", "blacktopRemoveDj"],
                   ["removeMc", "Remove MC", "microphone", "blacktopRemoveMc"],
-                  ["removeCrowd", "Remove crowd", "blacktop", "blacktopCrowdEnabled"],
+                  [
+                    "removeCrowd",
+                    "Remove crowd",
+                    "blacktop",
+                    "blacktopCrowdEnabled",
+                  ],
                 ] as const
               ).map(([key, text, icon, id]) => (
                 <label className="settings-switch-row" key={key}>
@@ -2660,12 +2883,24 @@ export function Blacktop(
                     ? `Preview pack unavailable: ${pack.error}. Import a replacement ZIP.`
                     : pack
                       ? `${pack.count.toLocaleString()} renders · ${pack.name}`
-                      : "Optional rendered previews can be imported from a ZIP."}
+                      : "Optional rendered previews: download the 1 GB pack or import your ZIP."}
                 </small>
+                {previewDownload.error && !a.error && (
+                  <small role="alert">{previewDownload.error}</small>
+                )}
+                {progress && (
+                  <small role="status">
+                    {previewCancelRequested ? "Cancelling…" : progress.phase} ·{" "}
+                    {Math.round(
+                      (progress.done / Math.max(1, progress.total)) * 100,
+                    )}
+                    %
+                  </small>
+                )}
                 {progress && (
                   <progress
                     id="clothingCacheProgress"
-                    aria-label="Wardrobe preview caching progress"
+                    aria-label="Preview pack progress"
                     max={progress.total || 1}
                     value={progress.done}
                     title={`${progress.phase} · ${Math.round((progress.done / Math.max(1, progress.total)) * 100)}%`}
@@ -2683,9 +2918,35 @@ export function Blacktop(
               </button>
               <button
                 className="secondary small"
+                id="downloadPreviewPack"
+                type="button"
+                disabled={a.busy || !p.onDownloadPreviews}
+                title="Browse Blacktop preview packs in Downloads"
+                onClick={p.onDownloadPreviews}
+              >
+                Download previews
+              </button>
+              {previewDownload.active && (
+                <button
+                  className="secondary small"
+                  type="button"
+                  disabled={previewCancelRequested}
+                  onClick={() => {
+                    setPreviewCancelRequested(true);
+                    void call("cancel-preview-download").catch((e) => {
+                      setPreviewCancelRequested(false);
+                      p.status(String(e));
+                    });
+                  }}
+                >
+                  {previewCancelRequested ? "Cancelling…" : "Cancel download"}
+                </button>
+              )}
+              <button
+                className="secondary small"
                 id="importPreviewPack"
                 type="button"
-                disabled={a.busy}
+                disabled={a.busy || previewDownload.active}
                 onClick={() =>
                   void a.run(async () => {
                     setProgress({

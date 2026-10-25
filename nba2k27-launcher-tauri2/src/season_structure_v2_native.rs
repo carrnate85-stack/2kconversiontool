@@ -21,79 +21,79 @@ const OWNER_BYTES: usize = 0x3d0;
 const METHODS: &[(u64, usize, &str)] = &[
     // Current optional origin/name dictionary extent evidence, same as clone.
     (
-        48107120,
+        0x2de0f20,
         83,
-        "6e367717cee6608cea195c8c55ac7bc18f875dfc15d351f88712e4f9f1d62e10",
+        "848714bafbbe2b9ba09d6d990839e84949789f65072c52fe89ecf0476bf57193",
     ),
     (
-        48107264,
+        0x2de0fb0,
         214,
-        "31454249e561831d510e9d2f7264292faac6009922484c2ef094a16c00d6132a",
+        "f9c2d79f1f1e86d729cd682ba73c6cd4a1aa2fe37e825a491e109a5dbeba6942",
     ),
     (
-        0x2d398d0,
+        0x2d39980,
         691,
-        "80b070e3a2d6433a7d29ea157d3d375e1d4d9ebd6b1381e5683117d8863994da",
+        "e78286b15fc41a433c8894e2100cd68df23b1d960096e4f82604d41f70e89ae8",
     ),
     (
-        0x2d3a3c0,
+        0x2d3a470,
         624,
-        "39212171afba42d7ad5927cd1954b34e3fdbe673c7da37ff7d72b41e1c669a1d",
+        "f33808d81c2b47c5b5285f85e18f03504569bc6d34d94856aaaac12afa0b44ec",
     ),
     // Complete PERSONDATA enumerator and APPEARANCEDATA pool getter;
     // same read-only alias evidence as appearance-v2-production-proof.json.
     (
-        0x2ca82d0,
+        0x2ca8380,
         1775,
-        "a38c4a0d4fda75ddb9e26ab36973c2a1a58c03221a82f1f2e3b75d3f9f04cf08",
+        "93484610c79cd7015ee6e4b636036c62f8e2eecbeef36f425771dde3dbc3d6a9",
     ),
     (
-        0x2eddb00,
+        0x2eddbb0,
         180,
-        "ab970e1b3ac8eedaacf380421b299f34e79cecf3d36b0718dd8ca5b19c461f49",
+        "6617084f97b5cb3ce9f6d6162f8824e570362ab0ba4c597c7a4cb81783fb4119",
     ),
     (
-        0x2e58120,
+        0x2e581d0,
         180,
-        "3151b876511aeded1369b806f3fab51e396f0b21b50b4f8bdae6836497b07b11",
+        "041b010cdb3fe1d006a2608b92875246f041a0ceebdcc7cf34ea37c3cf26ba91",
     ),
     (
-        0x2e59050,
+        0x2e59100,
         607,
-        "af2fccdbf45187bf559f1dfa301059ce916a46166ae7f56cbd573c8127b4decc",
+        "e94455d0dfe696ff4f837614248e732feab76852619fd090062539dbe4a5b7dd",
     ),
     (
-        0x2e5bc20,
+        0x2e5bcd0,
         594,
-        "73b2abbd713886b293519d610477b526929f7561c2fb8f1c3cf49b049544a1a3",
+        "fc4f78f1e43560d67b0db7639057a6728b85d86b71de1bd8ccaf62fc20198e92",
     ),
     (
-        0x2ddcf30,
+        0x2ddcfe0,
         1126,
-        "fef46200454646570eec38759a26d391c3dc50fe1369b304a680133209c7928a",
+        "f507fb1884787c53d3e6b6334d95e1704c5a66abd885337dae0ec9f2fcc509c7",
     ),
     (
-        0x2eeb780,
+        0x2eeb830,
         225,
-        "c5f0362eb5e94626efe90a29cb4fbd6f4bad5153dd60b480e077c98933b1774c",
+        "f9c56b48c73d8957ab00e701c0f96a74ca28bb54ec1d21640306605ad3ac104e",
     ),
     (
-        0x2eeb980,
+        0x2eeba30,
         211,
-        "a8ae048d5087c06ee54e3a9184d2342dafb1741766764969e5a646ee51351c9c",
+        "2fdad2c59df754c9c4439f52c4d71a813f2cc18bad6938f7bc7e5f74b58306fc",
     ),
     (
-        0x2eeb950,
+        0x2eeba00,
         39,
-        "95564949fb3e503b977e169944cdbf37b285f7b77e374ddb0d7ff442c57170b2",
+        "d4a34e066b0928dc04bf9487090ed06cdc84896bfb31d99427fd669e2dce5eb4",
     ),
     (
-        0x2fd0870,
+        0x2fd0920,
         232,
-        "62c65a65214862392c14e3aee85690ba899c05bdc258d9bbcba2d70f52a2b546",
+        "ffb15e6bb0ff45eea3309e2ff0074db48aa238a8acd88b77f13b9fb935ba3a4e",
     ),
     (
-        0x2fd0830,
+        0x2fd08e0,
         60,
         "52ad9d8b2c3282f0d6fa8ca3c4c4a8624282cb9fadf65190015babb2caf99cc0",
     ),
@@ -260,7 +260,7 @@ fn d(v: &[u8], i: usize) -> usize {
 fn digest(v: &[u8]) -> String {
     format!("{:x}", Sha256::digest(v))
 }
-fn proof(m: &impl Memory) -> Result<()> {
+pub(super) fn proof(m: &impl Memory) -> Result<()> {
     profile::verify_identity_profile(m)?;
     services::verify_profile(m)?;
     crate::rules_v2::verify_profile(m)?;
@@ -560,10 +560,10 @@ fn capture(
     let read = || -> Result<Captured> {
         let manager = bytes(m, manager, graph::MANAGER_BYTES)?;
         for (offset, rva) in [
-            (0x18, 0x2eeb980),
-            (0x20, 0x2eeb950),
-            (0x28, 0x2fd0870),
-            (0x30, 0x2fd0830),
+            (0x18, 0x2eeba30),
+            (0x20, 0x2eeba00),
+            (0x28, 0x2fd0920),
+            (0x30, 0x2fd08e0),
         ] {
             ensure!(
                 q(&manager, offset) == m.base() + rva,
@@ -1022,6 +1022,76 @@ pub(super) fn pending(root: &Path) -> Result<bool> {
     }
     Ok(false)
 }
+/// Retire only this process's authenticated watchdog completion. Disk receipts
+/// alone cannot reach this path, grant authority, or authorize replay on restart.
+fn archive_current_verified(root: &Path, game: &Identity, session: &str) -> Result<()> {
+    archive_current_verified_with(
+        root,
+        game,
+        session,
+        &crate::owned_transaction::verified_intent,
+        &crate::owned_transaction::forget_verified,
+    )
+}
+fn archive_current_verified_with(
+    root: &Path,
+    game: &Identity,
+    session: &str,
+    proof: &dyn Fn(&Identity, &str, &str) -> bool,
+    forget: &dyn Fn(&Identity, &str, &str) -> Result<()>,
+) -> Result<()> {
+    for path in inventory(root)? {
+        let (file, raw, meta, _) = read_pending(&path, true)?;
+        let sha = digest(&raw);
+        if &meta.game != game || meta.session != session || !proof(game, session, &sha) {
+            continue;
+        }
+        let receipt_path = path.with_extension("verified");
+        let mut receipt_file = OpenOptions::new()
+            .read(true)
+            .share_mode(1)
+            .custom_flags(0x0020_0000)
+            .open(&receipt_path)?;
+        use std::os::windows::fs::MetadataExt;
+        let metadata = receipt_file.metadata()?;
+        ensure!(
+            metadata.is_file() && metadata.file_attributes() & 0x400 == 0 && metadata.len() <= 8192,
+            "Invalid structural completion receipt"
+        );
+        let mut bytes = Vec::new();
+        Read::by_ref(&mut receipt_file)
+            .take(8193)
+            .read_to_end(&mut bytes)?;
+        ensure!(
+            bytes.len() as u64 == metadata.len()
+                && receipt_file.metadata()?.len() == metadata.len(),
+            "Structural completion receipt changed"
+        );
+        let receipt: Value = serde_json::from_slice(&bytes)?;
+        ensure!(
+            receipt.as_object().is_some_and(|v| v.len() == 6)
+                && receipt["schema"] == "nba2k27-season-structure-verified-v1"
+                && receipt["game"] == serde_json::to_value(game)?
+                && receipt["session"] == session
+                && receipt["intentSha256"] == sha
+                && receipt["transaction"] == meta.transaction
+                && matches!(
+                    receipt["status"].as_str(),
+                    Some("before" | "after" | "no-effect")
+                ),
+            "Structural completion receipt identity mismatch"
+        );
+        // DELETE access is held on the exact immutable intent, so namespace replacement
+        // cannot redirect the rename. Archive is evidence only, never a new live permit.
+        crate::owned_transaction::archive_intent(&file, &path.with_extension("completed"))?;
+        // Rename needs no byte mutation/write access. If filesystem metadata is
+        // lost on a crash, the immutable pending intent conservatively reappears;
+        // disk completion still cannot authorize live recovery after restart.
+        forget(game, session, &sha)?;
+    }
+    Ok(())
+}
+
 pub(super) fn resolve_ended(root: &Path, rows: &[Process]) -> Result<()> {
     ensure!(
         !rows
@@ -1140,6 +1210,7 @@ pub(super) fn execute_inside(ctx: &mut Transaction, spec: &Value) -> Result<Valu
     if let Err(original) = outcome {
         live.reverse = true;
         let rollback = (|| -> Result<()> {
+            live.access.begin_recovery()?;
             let observed = capture(
                 &live,
                 &live.access,
@@ -1382,6 +1453,7 @@ pub(super) fn editor(capture: &mut NativeCapture, request: &Editor<'_>) -> Resul
     capture.seasons.clear();
     capture.prepared_seasons.clear();
     capture.stale = true;
+    archive_current_verified(request.root, &b.game, &b.session)?;
     result.and_then(verified_completion)
 }
 pub(super) fn available(access: &Access) -> bool {
@@ -1721,6 +1793,7 @@ fn import_editor(tab: &mut NativeCapture, request: &Editor<'_>) -> Result<Value>
     tab.seasons.clear();
     tab.prepared_seasons.clear();
     tab.stale = true;
+    archive_current_verified(request.root, &b.game, &b.session)?;
     result.and_then(verified_completion)
 }
 

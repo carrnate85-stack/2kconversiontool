@@ -38,6 +38,16 @@ test('actual PlayerDNA staging excludes unsupported audio/dimensions from review
  const f=playerPage();assert.equal(await f.window.stageCatalogPlayerDna({name:'Source',info:{firstName:'New',fullNameId:25,heightCm:220,wingspanCm:230},fields:{A:2}}),true);
  assert.deepEqual(JSON.parse(JSON.stringify(f.reviews[0].info)),{firstName:'New'});assert.equal(f.doc.getElementById('playerAudioFullName').value,'10');assert.equal(f.doc.getElementById('playerEditFirstName').value,'New');assert.equal(f.staged.length,1);
 });
+test('verified measurement capabilities stage decimal height and wingspan through review',async()=>{
+ const f=playerPage(),written=[];
+ for(const key of ['heightCm','wingspanCm'])f.player.editCapabilities[key]=true;
+ for(const id of ['playerEditHeight','playerEditWingspan'])f.doc.getElementById(id).disabled=false;
+ f.window.playerMeasurements.writeHeight=(feet,inches,value)=>written.push(['heightCm',value]);
+ f.window.playerMeasurements.writeWingspan=(input,value)=>written.push(['wingspanCm',value]);
+ await f.window.stageCatalogPlayerDna({name:'Source',info:{heightCm:205.74,wingspanCm:218.44},fields:{}});
+ assert.deepEqual(written,[['heightCm',205.74],['wingspanCm',218.44]]);
+ assert.equal(f.reviews[0].info.heightCm,205.74);assert.equal(f.reviews[0].info.wingspanCm,218.44);
+});
 test('PlayerDNA same-object close/reopen or draft edit during review cannot stage late reply',async()=>{
  for(const kind of ['visit','commit','draft']){const f=playerPage();let resolve;f.setApprove(()=>new Promise(r=>resolve=r));const pending=f.window.stageCatalogPlayerDna({name:'S',info:{firstName:'New'},fields:{A:2}});await Promise.resolve();if(kind==='visit'){f.window.dispatchEvent({type:'player-editor:closed'});f.open();}else if(kind==='commit')f.window.dispatchEvent({type:'player-editor:committed',detail:{player:{...f.player}}});else f.doc.getElementById('playerEditFirstName').value='User draft';resolve(true);if(kind!=='draft')assert.equal(await pending,false);else await assert.rejects(pending,/Destination edits changed/);assert.equal(f.staged.length,0);}
 });
