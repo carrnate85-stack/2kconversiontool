@@ -1,3 +1,4 @@
+import { SettingsSaver } from "./settings-save";
 import React, { useEffect, useRef, useState } from "react";
 import { invoke, convertFileSrc } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
@@ -1830,6 +1831,13 @@ export function App() {
     modsRootSeen = useRef<string | null>(null),
     smokeStarted = useRef(false),
     probeStarted = useRef(false);
+  const settingsSaver = useRef(new SettingsSaver<Settings>({
+    publish: (value) => { settingsRef.current = value; setSettings(value); },
+    save: (patch) => call("save-settings", patch),
+    load: async () => (await call<Bootstrap>("bootstrap")).settings,
+    saved: () => setStatus("Saved"),
+    failed: (error) => { setError(String(error)); setStatus("Settings not saved"); },
+  }));
   useEffect(() => {
     Promise.all([
       call<Bootstrap>("bootstrap"),
@@ -1839,8 +1847,7 @@ export function App() {
     ])
       .then(([b, m, o, l]) => {
         setBoot(b);
-        setSettings(b.settings);
-        settingsRef.current = b.settings;
+        settingsSaver.current.accept(b.settings);
         setMedia(m);
         setLibrary(l);
         libraryRef.current = l;
@@ -1861,8 +1868,7 @@ export function App() {
         .catch((e) => setError(String(e)));
     register(
       listen<Settings>("settings-changed", (e) => {
-        settingsRef.current = e.payload;
-        setSettings(e.payload);
+        settingsSaver.current.accept(e.payload);
       }),
     );
     register(listen<Outfit>("outfit-changed", (e) => setOutfit(e.payload)));
@@ -1909,20 +1915,8 @@ export function App() {
     };
   }, []);
   function change(p: Partial<Settings>) {
-    const current = settingsRef.current;
-    if (!current) return;
-    const next = { ...current, ...p };
-    settingsRef.current = next;
-    setSettings(next);
-    saveQueue.current = saveQueue.current
-      .then(async () => {
-        await call("save-settings", p);
-        setStatus("Saved");
-      })
-      .catch((e) => {
-        setError(String(e));
-        setStatus("Settings not saved");
-      });
+    if (!settingsRef.current) return;
+    saveQueue.current = settingsSaver.current.save(p);
   }
   async function task(fn: () => Promise<void>) {
     if (busy) return;

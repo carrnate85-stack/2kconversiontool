@@ -470,8 +470,14 @@ fn final_rotation_membership_refusal_rolls_back_before_verified_completion() {
         owner: w::Owner,
         raw: RefCell<Vec<u8>>,
         writes: Cell<usize>,
+        recovery: Cell<bool>,
+        recovery_checks: Cell<usize>,
     }
     impl w::Access for F {
+        fn begin_recovery(&self) -> Result<()> {
+            anyhow::ensure!(!self.recovery.replace(true), "Recovery cannot be renewed");
+            Ok(())
+        }
         fn owner(&self) -> Result<w::Owner> {
             Ok(self.owner.clone())
         }
@@ -479,11 +485,20 @@ fn final_rotation_membership_refusal_rolls_back_before_verified_completion() {
             Ok(self.raw.borrow().clone())
         }
         fn write(&self, at: usize, b: &[u8]) -> Result<()> {
+            if self.recovery.get() {
+                let n = self.recovery_checks.get() + 1;
+                self.recovery_checks.set(n);
+                anyhow::ensure!(n <= 64, "Fixture reverse budget expired");
+            }
             self.raw.borrow_mut()[at..at + b.len()].copy_from_slice(b);
             self.writes.set(self.writes.get() + 1);
             Ok(())
         }
         fn checkpoint(&self) -> Result<()> {
+            anyhow::ensure!(
+                !self.recovery.get(),
+                "Forward checkpoint forbidden during recovery"
+            );
             Ok(())
         }
     }
@@ -491,6 +506,8 @@ fn final_rotation_membership_refusal_rolls_back_before_verified_completion() {
         owner: owner.clone(),
         raw: RefCell::new(raw.clone()),
         writes: Cell::new(0),
+        recovery: Cell::new(false),
+        recovery_checks: Cell::new(0),
     };
     let mut moved = players.clone();
     moved[0x60..0x68].copy_from_slice(&(team + 0x1550).to_le_bytes());
@@ -513,6 +530,8 @@ fn final_rotation_membership_refusal_rolls_back_before_verified_completion() {
     assert_eq!(final_checks.get(), 1);
     assert_eq!(*fake.raw.borrow(), raw);
     assert!(fake.writes.get() >= 2);
+    assert!(fake.recovery.get() && fake.recovery_checks.get() > 0);
+    assert!(w::Access::checkpoint(&fake).is_err());
     assert!(
         !completed
             .borrow()

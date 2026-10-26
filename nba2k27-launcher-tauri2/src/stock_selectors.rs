@@ -249,32 +249,16 @@ type Decode = unsafe extern "C" fn(
     i32,
 ) -> i64;
 pub(crate) struct Decoder {
-    _library: libloading::Library,
+    _library: crate::trusted_oodle::Library,
     decode: Decode,
-    _pins: Directories,
-    _file: File,
 }
 impl Decoder {
     pub fn load(root: &Path) -> Result<Self> {
-        let path = root.join("data/oodle/oo2core_9_win64.dll");
-        let pins = Directories::pin(path.parent().unwrap())?;
-        let file = open_plain(&path)?;
-        let path = path.canonicalize()?;
-        // Use only this absolute, pinned installed-game DLL. Dependency search
-        // is limited to its directory and System32, never the current directory.
-        let library: libloading::Library = unsafe {
-            libloading::os::windows::Library::load_with_flags(
-                path.as_os_str(),
-                0x00000100 | 0x00000800,
-            )?
-        }
-        .into();
+        let library = crate::trusted_oodle::load(root, crate::trusted_oodle::Runtime::Core)?;
         let decode = *unsafe { library.get::<Decode>(b"OodleLZ_Decompress\0") }?;
         Ok(Self {
             _library: library,
             decode,
-            _pins: pins,
-            _file: file,
         })
     }
     pub fn decode(&self, bytes: &[u8], check: impl Fn() -> Result<()>) -> Result<Vec<u8>> {

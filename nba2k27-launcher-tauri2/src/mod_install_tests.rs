@@ -901,3 +901,74 @@ fn zips_with_other_compression_go_to_windows_tar_like_wpf() {
     }
     no_escape(&f);
 }
+
+#[test]
+fn superscript_and_console_devices_are_rejected() {
+    for name in [
+        "COM¹.iff",
+        "COM².iff",
+        "COM³",
+        "LPT¹",
+        "LPT².txt",
+        "LPT³",
+        "CONIN$",
+        "CONOUT$.iff",
+    ] {
+        assert!(safe_entry(name).is_none(), "Accepted Windows device {name}");
+    }
+    assert!(safe_entry("COM12.iff").is_some());
+}
+#[test]
+fn owned_atomic_replace_never_removes_destination_before_replacement() {
+    let f = Fixture::new();
+    let target = f.mods.join("atomic.iff");
+    fs::write(&target, b"old").unwrap();
+    let stage = f.mods.join(".mod-install-atomic.tmp");
+    let mut owned = create_owned(&stage).unwrap();
+    owned.write_all(b"new").unwrap();
+    owned.sync_all().unwrap();
+    assert!(
+        fs::remove_file(&stage).is_err(),
+        "Retained stage can be removed by another handle"
+    );
+    rename_owned(&owned, &target, true).unwrap();
+    assert_eq!(fs::read(&target).unwrap(), b"new");
+    assert!(!stage.exists());
+    crate::loader_files::unlink(&owned).unwrap();
+    drop(owned);
+    assert!(!target.exists());
+}
+#[test]
+fn new_destination_has_no_replacement_authority() {
+    let f = Fixture::new();
+    let target = f.mods.join("atomic-foreign.iff");
+    fs::write(&target, b"foreign").unwrap();
+    let stage = f.mods.join(".mod-install-new.tmp");
+    let owned = create_owned(&stage).unwrap();
+    assert!(rename_owned(&owned, &target, false).is_err());
+    assert_eq!(fs::read(&target).unwrap(), b"foreign");
+    crate::loader_files::unlink(&owned).unwrap();
+}
+
+#[test]
+fn atomic_replace_retains_original_read_handle_and_write_exclusion() {
+    let f = Fixture::new();
+    let target = f.mods.join("retained-original.iff");
+    fs::write(&target, b"original").unwrap();
+    let original = fs::OpenOptions::new()
+        .read(true)
+        .share_mode(5)
+        .open(&target)
+        .unwrap();
+    let stage = f.mods.join(".mod-install-retained.tmp");
+    let mut file = create_owned(&stage).unwrap();
+    file.write_all(b"replacement").unwrap();
+    file.sync_all().unwrap();
+    assert!(fs::OpenOptions::new().write(true).open(&target).is_err());
+    rename_owned(&file, &target, true).unwrap();
+    assert_eq!(fs::read(&target).unwrap(), b"replacement");
+    let mut bytes = Vec::new();
+    (&original).read_to_end(&mut bytes).unwrap();
+    assert_eq!(bytes, b"original");
+    crate::loader_files::unlink(&file).unwrap();
+}

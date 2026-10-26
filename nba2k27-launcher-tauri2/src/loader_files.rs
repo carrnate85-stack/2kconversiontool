@@ -411,10 +411,27 @@ impl Store {
                 if missing(&path)? {
                     continue;
                 }
+                if !entry.published && name == &entry.name {
+                    let meta = fs::symlink_metadata(&path)?;
+                    if !meta.is_file()
+                        || meta.file_attributes() & 0x400 != 0
+                        || meta.len() != entry.size
+                    {
+                        continue;
+                    }
+                }
+                // A failed publication may have renamed the stage before its
+                // published bit became durable. Exact bytes still own that
+                // target; an unpublished mismatching target is foreign.
                 let mut file = open_owned(&path)?;
                 let content = bytes(&mut file, 64 * 1024 * 1024)?;
+                let matches =
+                    content.len() as u64 == entry.size && digest(&content) == entry.sha256;
+                if !entry.published && name == &entry.name && !matches {
+                    continue;
+                }
                 ensure!(
-                    content.len() as u64 == entry.size && digest(&content) == entry.sha256,
+                    matches,
                     "Loader recovery found changed/foreign bytes; left untouched: {name}"
                 );
                 closed()?;
@@ -863,7 +880,12 @@ mod tests {
             fs::read(f.game.join(NAMES[0])).unwrap(),
             b"foreign after intent"
         );
-        assert!(s.restore(|| Ok(())).is_err());
+        s.restore(|| Ok(())).unwrap();
+        assert_eq!(
+            fs::read(f.game.join(NAMES[0])).unwrap(),
+            b"foreign after intent"
+        );
+        assert!(!s.path().exists());
     }
     #[test]
     fn partially_written_or_foreign_staging_file_is_not_deleted_by_recovery() {
@@ -887,5 +909,22 @@ mod tests {
         assert!(record.validate(&f.game).is_err());
         assert!(fs::rename(&f.game, f.root.join("moved")).is_err());
         drop(s);
+    }
+
+    #[test]
+    fn unpublished_flag_does_not_adopt_foreign_stage_or_strand_exact_renamed_payload() {
+        let f = Fixture::new();
+        let mut s = f.store();
+        fs::write(f.game.join(NAMES[0]), PROXY).unwrap();
+        s.restore(|| Ok(())).unwrap();
+        assert!(!f.game.join(NAMES[0]).exists());
+        let mut s = f.store();
+        fs::write(f.game.join(NAMES[0]), b"foreign").unwrap();
+        let stage = f.game.join(&s.record.entries[0].staged);
+        fs::write(&stage, b"foreign stage").unwrap();
+        assert!(s.restore(|| Ok(())).is_err());
+        assert_eq!(fs::read(&stage).unwrap(), b"foreign stage");
+        assert!(s.path().exists());
+        assert_eq!(fs::read(f.game.join(NAMES[0])).unwrap(), b"foreign");
     }
 }

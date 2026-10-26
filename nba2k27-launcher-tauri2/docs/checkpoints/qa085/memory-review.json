@@ -1,0 +1,253 @@
+{
+  "schema": "qa085-memory-source-freeze-v2",
+  "atUtc": "2026-10-19T19:59:10.548372+00:00",
+  "productionFrozen": true,
+  "files": [
+    {
+      "path": "src\\game_write_gate.rs",
+      "sha256": "ABC0B23AEB0D1216051322296FD89EAADD12371B5D27FBCC6DC47D4143FF36E9",
+      "bytes": 6002
+    },
+    {
+      "path": "src\\session_safety.rs",
+      "sha256": "3459AC1542F6AD5F038BDF82FBC382AED64CD04A8E3F890D09B76683A401BFEF",
+      "bytes": 88772
+    },
+    {
+      "path": "src\\owned_transaction.rs",
+      "sha256": "F36D3B02FDE942E961CA770D26D34A3F6004817FF3F53C715ABE57FAA22C2D50",
+      "bytes": 9661
+    },
+    {
+      "path": "src\\owned_transaction_win.rs",
+      "sha256": "583204CDABAEBF6ABFCAE8FC2FC34C11D4511102AAAFA698BB443B11E81F099A",
+      "bytes": 50221
+    },
+    {
+      "path": "src\\owned_transaction_tests.rs",
+      "sha256": "5FAF87833753D7A82853D2497B1A336D846095FE3B7F5421B0C9636FBDA23E27",
+      "bytes": 9958
+    },
+    {
+      "path": "src\\season_structure_v2_native.rs",
+      "sha256": "525313460D96BF99943E7DCA8F3468A1BB64B6147415D6FCF42E7FC2855D1FE6",
+      "bytes": 64255
+    },
+    {
+      "path": "src\\season_structure_v2_native_tests.rs",
+      "sha256": "D4819DEEE4AA6ED5872FAB8667A15DC1F590F5FAC535E4FE79D734AEE494B706",
+      "bytes": 21966
+    },
+    {
+      "path": "src\\roster_v2_write.rs",
+      "sha256": "96B38FB0721637C5BAB9736799A5CB7AD1F4D473F6F2E11F7F174CC2C984484A",
+      "bytes": 67602
+    },
+    {
+      "path": "src\\roster_v2_write_tests.rs",
+      "sha256": "106F7F58218F61721DD1DAFDDF861ED769BAD27AA308A56A20536E77E84E11A7",
+      "bytes": 70763
+    },
+    {
+      "path": "src\\roster_native.rs",
+      "sha256": "0D2DB0D7166D4167CB4A8CDE0CC71B310AE806DC76BD4EFA177B9E14445D42F8",
+      "bytes": 106972
+    },
+    {
+      "path": "src\\rules_v2_access.rs",
+      "sha256": "32086828E60B53337E362A955F4D4EE8E028A85002D21DB91E425F74A80B1107",
+      "bytes": 23177
+    },
+    {
+      "path": "src\\rules_v2_access_tests.rs",
+      "sha256": "6C15E05E24F7FD62B4CC34CC4AF1434288FADBAC25B60E1DE27BC9E8E2E88CCF",
+      "bytes": 18005
+    },
+    {
+      "path": "src\\ball_gameplay_runtime.rs",
+      "sha256": "1C14B595F551DC3671015FDEB14A587FF020591667EB2EE29003BFC12DA872A4",
+      "bytes": 29976
+    },
+    {
+      "path": "src\\roster_v2_arena_clone_access.rs",
+      "sha256": "84EC590BE2AD1AE90A51E2BA029D66DDC950277CB99665E2B12FED909B6766A6",
+      "bytes": 40198
+    },
+    {
+      "path": "src\\custom_arena_profiles.rs",
+      "sha256": "FA6A2BC91EA591DC38FD1D9C06B384EA581B2832F79D1E5542F7EFA196269A5D",
+      "bytes": 17310
+    },
+    {
+      "path": "src\\custom_arena_profiles_launch_tests.rs",
+      "sha256": "1E652254A675790C8E127396375D88DB2E790B94BF15D25BAE529EE3A7E3928D",
+      "bytes": 7562
+    },
+    {
+      "path": "test\\qa085-game-write-gate-self-fixture.rs",
+      "sha256": "A0226DD49AAABEF03CEA41D6035B821628E211D19AD03528AB08D152057A3B3E",
+      "bytes": 2939
+    },
+    {
+      "path": "test\\qa085-owned-transaction-self-fixture.rs",
+      "sha256": "C25B2A1B560F80D6BF9EE1A9A026FB67F1CA1C72219C28368A9BA3190075EA38",
+      "bytes": 19885
+    },
+    {
+      "path": "test\\qa085-owned-transaction-large-intent-self-fixture.rs",
+      "sha256": "B107AC5F02F84D93A7717676ABD7ECA57B19B344DF3ED9373DA9FE1AE688EE83",
+      "bytes": 11780
+    },
+    {
+      "path": "src\\roster_v2_services_tests.rs",
+      "sha256": "CDFDF5CB787500B3B60E2719B0D6750E523EF447A5593D7A163AFA5C500311C0",
+      "bytes": 19351
+    }
+  ],
+  "compiledFixtureInputs": [
+    {
+      "name": "qa085-owned-unit-v2",
+      "executable": {
+        "path": "artifacts\\qa085-memory-review\\qa085-owned-unit-v2.exe",
+        "sha256": "8E13ACAD020E707C7B9192732584C63F3C14B690976EF7E0792AD60C3FC292DA",
+        "bytes": 1341440
+      },
+      "pdb": {
+        "path": "artifacts\\qa085-memory-review\\qa085-owned-unit-v2.pdb",
+        "sha256": "21878F34F84AA2FC46C52B2FA94ED53C09A22506A272116F6A76E0B194A3E7A8",
+        "bytes": 20246528
+      },
+      "sourceInputs": [
+        {
+          "path": "src\\owned_transaction.rs",
+          "sha256": "F36D3B02FDE942E961CA770D26D34A3F6004817FF3F53C715ABE57FAA22C2D50",
+          "bytes": 9661
+        },
+        {
+          "path": "src\\owned_transaction_win.rs",
+          "sha256": "583204CDABAEBF6ABFCAE8FC2FC34C11D4511102AAAFA698BB443B11E81F099A",
+          "bytes": 50221
+        },
+        {
+          "path": "src\\owned_transaction_tests.rs",
+          "sha256": "5FAF87833753D7A82853D2497B1A336D846095FE3B7F5421B0C9636FBDA23E27",
+          "bytes": 9958
+        },
+        {
+          "path": "src\\game_write_gate.rs",
+          "sha256": "ABC0B23AEB0D1216051322296FD89EAADD12371B5D27FBCC6DC47D4143FF36E9",
+          "bytes": 6002
+        }
+      ]
+    },
+    {
+      "name": "qa085-owned-transaction-self-fixture-v2",
+      "executable": {
+        "path": "artifacts\\qa085-memory-review\\qa085-owned-transaction-self-fixture-v2.exe",
+        "sha256": "1C0B81126E6CC4A5867BACBFF1A82B5D53EB5A9DF4832C8C97F05E09A318F70D",
+        "bytes": 1535488
+      },
+      "pdb": {
+        "path": "artifacts\\qa085-memory-review\\qa085-owned-transaction-self-fixture-v2.pdb",
+        "sha256": "A821AC3A0EE35ADE2A4F0519DE38A10558C43078F599B54C3D9DBC062F85024F",
+        "bytes": 19943424
+      },
+      "sourceInputs": [
+        {
+          "path": "src\\owned_transaction.rs",
+          "sha256": "F36D3B02FDE942E961CA770D26D34A3F6004817FF3F53C715ABE57FAA22C2D50",
+          "bytes": 9661
+        },
+        {
+          "path": "src\\owned_transaction_win.rs",
+          "sha256": "583204CDABAEBF6ABFCAE8FC2FC34C11D4511102AAAFA698BB443B11E81F099A",
+          "bytes": 50221
+        },
+        {
+          "path": "src\\owned_transaction_tests.rs",
+          "sha256": "5FAF87833753D7A82853D2497B1A336D846095FE3B7F5421B0C9636FBDA23E27",
+          "bytes": 9958
+        },
+        {
+          "path": "src\\game_write_gate.rs",
+          "sha256": "ABC0B23AEB0D1216051322296FD89EAADD12371B5D27FBCC6DC47D4143FF36E9",
+          "bytes": 6002
+        }
+      ]
+    },
+    {
+      "name": "qa085-owned-transaction-large-intent-self-fixture-v2",
+      "executable": {
+        "path": "artifacts\\qa085-memory-review\\qa085-owned-transaction-large-intent-self-fixture-v2.exe",
+        "sha256": "E83FD9ED66EB4C33C3DD80331B4AE491C899CEEE0DDEC2587820C6922B85839A",
+        "bytes": 1442304
+      },
+      "pdb": {
+        "path": "artifacts\\qa085-memory-review\\qa085-owned-transaction-large-intent-self-fixture-v2.pdb",
+        "sha256": "D9AB51056417428AB1FE8317C6BB37A7F10EA2AC035414F079A7174F678FF051",
+        "bytes": 19845120
+      },
+      "sourceInputs": [
+        {
+          "path": "src\\owned_transaction.rs",
+          "sha256": "F36D3B02FDE942E961CA770D26D34A3F6004817FF3F53C715ABE57FAA22C2D50",
+          "bytes": 9661
+        },
+        {
+          "path": "src\\owned_transaction_win.rs",
+          "sha256": "583204CDABAEBF6ABFCAE8FC2FC34C11D4511102AAAFA698BB443B11E81F099A",
+          "bytes": 50221
+        },
+        {
+          "path": "src\\owned_transaction_tests.rs",
+          "sha256": "5FAF87833753D7A82853D2497B1A336D846095FE3B7F5421B0C9636FBDA23E27",
+          "bytes": 9958
+        },
+        {
+          "path": "src\\game_write_gate.rs",
+          "sha256": "ABC0B23AEB0D1216051322296FD89EAADD12371B5D27FBCC6DC47D4143FF36E9",
+          "bytes": 6002
+        }
+      ]
+    }
+  ],
+  "results": {
+    "kernelGate": "PASS actual two-process serialization/nonblocking try/abandonment poison; gate-run.log",
+    "units": "PASS15 unit-v2-run.log including32exactrename filename-length boundaries",
+    "lifecycle": "v2 actual source rerun in progress lifecycle-v2-run-1/results.json; previous14PASS retained historical",
+    "largeIntent": "v2PASS52forward+52reverse large-intent-v2-run-1/results.json",
+    "sharedTests": "Pending root: M2 recovery, L24 archive140/no disk authority, M14 availability seam, rules typedguard integration"
+  },
+  "verdicts": {
+    "M2": "Confirmed: explicit separately bounded8s retained-identity recovery, no forward reentry, all original owner/prefix/profile checks retained. Root Access hook independently reviewed.",
+    "M10": "Confirmed: bootstrap30s separately bounded; watchdog10s starts authenticated freeze ack; forward5s/reverse8s unchanged.",
+    "M11": "Perprocess scope gap confirmed, real unsafe overlap not claimed reproduced. Actual typed local+named mutex guard serializes launcher/provider;60s bounded lock/nonblocking try; abandoned mutex released then shared poison denies further forward. Not memory authority.",
+    "M14": "Unknown OS portability remains deliberately unsupported; production exact Win11build26200/wholeNTDLL SHA unchanged. Host-independent preference tests inject availability, production diagnostic actionable.",
+    "L14": "Three legacy saves now check any_pending(allV2domains) under real gate before legacy writer opens.",
+    "L24": "Current private watchdog proof+exact bounded durable receipt required before exact-handle completed rename.140 sequential completion test. Forget private registry only afterrename. No restart receipt adoption/replay/live authority.",
+    "L25": "Three bounded original bootstrap-authenticated handle termination attempts; no rawPID or freshidentity retry loop. On kernel refusal retain passive freeze safetykeeper rather than release unknown partial graph.",
+    "L26": "At most2 whole read-only admission snapshots only known exited/recycled TID; unknown query/suspension errors refuse. No-effect wording never claims fresh graph verified."
+  },
+  "qualifications": [
+    "No NBA/game/memory/UI access, install/promote/activation or native payload change; only same-image owned synthetic children.",
+    "L24 crash before archive or rename metadata loss may conservatively leave pending until closed-game resolution; disk receipts are evidence only.",
+    "L25 OS refusing all exact-handle termination can still require passive frozen safety keeper; universal bounded UI return cannot be safely promised.",
+    "Gate tests use separate exacttestimage names; production namespace not exercised/poisoned.",
+    "QA084 evidence/images untouched. lifecycle-run-1 was a retained harmless relative-output-path setup refusal beforetransaction."
+  ],
+  "rootOwnedRecoveryInput": {
+    "path": "src\\roster_v2_access.rs",
+    "sha256": "71E015D34CBC067EB95212BD473C1FC983FC821F259CD3E4E170EE583766846D",
+    "bytes": 115401
+  },
+  "priorFreeze": {
+    "path": "artifacts/qa085-memory-review/source-freeze.json",
+    "sha256": "F631A523D5B5304479329E92C3FB7BC8FF2646368311D93CBCCC6E0B492D7797"
+  },
+  "twoFailureCorrections": {
+    "preservation": "Root exact failingimage/PDB/source zip6DBE4B50...BDA2B3; extra preimages memory-before/final-two-failures",
+    "L24": "Observed actual `.completed` filename had3trailinggarbageUTF16 chars. Explicit NUL in FILE_RENAME_INFO filename with bytecount excludingNUL fixes Win32 path normalization boundary. Exacttarget existence checked beforeforgetting privateproof.",
+    "rotationFixture": "Existing services fake inherited new defaultdeny recovery hook. Added explicit boundedreverse state, denied forward afterrecovery, preserved fulloriginalbytes/noverifiedreceipt/assertions.",
+    "officialApiReference": "https://learn.microsoft.com/en-us/windows/win32/api/winbase/ns-winbase-file_rename_info"
+  }
+}

@@ -204,22 +204,61 @@ fn enabling_requires_explicit_native_consent_and_remains_future_launch_only() {
     .unwrap();
     let prompts = Cell::new(0);
     assert!(
-        s.request(&r, &json!({"action":"enable","id":p.id}), &|_| {
-            prompts.set(prompts.get() + 1);
-            false
-        })
+        s.request_with_available(
+            &r,
+            &json!({"action":"enable","id":p.id}),
+            &|_| {
+                prompts.set(prompts.get() + 1);
+                false
+            },
+            &|| Ok(())
+        )
         .is_err()
     );
     assert!(!read(&r).unwrap().profiles[0].enabled);
     assert!(s.launch.lock().unwrap().is_none());
-    s.request(&r, &json!({"action":"enable","id":p.id}), &|text| {
-        prompts.set(prompts.get() + 1);
-        assert!(text.contains("future Play"));
-        assert!(text.contains("close"));
-        true
-    })
+    s.request_with_available(
+        &r,
+        &json!({"action":"enable","id":p.id}),
+        &|text| {
+            prompts.set(prompts.get() + 1);
+            assert!(text.contains("future Play"));
+            assert!(text.contains("close"));
+            true
+        },
+        &|| Ok(()),
+    )
     .unwrap();
     assert_eq!(prompts.get(), 2);
     assert!(read(&r).unwrap().profiles[0].enabled);
+    assert!(s.launch.lock().unwrap().is_none());
+}
+
+#[test]
+fn unavailable_kernel_profile_enable_does_not_prompt_save_or_arm() {
+    let r = root();
+    let s = Service::default();
+    let mut p = profile();
+    p.enabled = false;
+    save(
+        &r,
+        &Store {
+            schema: SCHEMA.into(),
+            profiles: vec![p.clone()],
+        },
+    )
+    .unwrap();
+    let before = std::fs::read(path(&r)).unwrap();
+    assert!(
+        s.request_with_available(
+            &r,
+            &json!({"action":"enable","id":p.id}),
+            &|_| panic!("unavailable must not prompt"),
+            &|| anyhow::bail!("unvalidated kernel profile")
+        )
+        .is_err()
+    );
+    assert_eq!(std::fs::read(path(&r)).unwrap(), before);
+    assert!(!read(&r).unwrap().profiles[0].enabled);
     assert!(s.launch.lock().unwrap().is_none());
 }

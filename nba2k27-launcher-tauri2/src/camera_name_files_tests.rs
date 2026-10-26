@@ -599,3 +599,28 @@ fn absent_receipt_never_requires_an_already_restored_or_deleted_selected_root() 
     assert!(f.marker().exists());
     f.preserved();
 }
+
+#[test]
+fn inprocess_cancel_before_camera_identity_commit_removes_exact_created_stage() {
+    let f = Fixture::new();
+    let mut s = f.store();
+    let checks = Cell::new(0);
+    assert!(
+        s.activate(&f.prepared, || {
+            checks.set(checks.get() + 1);
+            ensure!(checks.get() != 3, "cancel after create_new");
+            Ok(())
+        })
+        .is_err()
+    );
+    assert!(!s.stage().exists());
+    assert!(f.marker().exists());
+    assert_eq!(
+        Store::recorded_root(&f.portable, &f.session)
+            .unwrap()
+            .unwrap(),
+        f.mods.canonicalize().unwrap()
+    );
+    s.restore(|| Ok(())).unwrap();
+    assert!(!f.marker().exists());
+}

@@ -213,33 +213,19 @@ type ReadHeader = unsafe extern "C" fn(*const u8, *mut i64, *mut i64) -> i64;
 type Scratch = unsafe extern "C" fn(i64) -> i64;
 type Bc7 = unsafe extern "C" fn(*mut u8, i64, *const u8, i64, *const u8, i32, *mut u8, i64) -> i64;
 struct Oodle {
-    _core: libloading::Library,
-    _texture: libloading::Library,
+    _core: crate::trusted_oodle::Library,
+    _texture: crate::trusted_oodle::Library,
     step: Step,
     decode: Decode,
     header: ReadHeader,
     scratch: Scratch,
     bc7: Bc7,
 }
-fn load_game_dll(path: &Path) -> Result<libloading::Library> {
-    let file = open_plain(path)?;
-    drop(file);
-    let path = path.canonicalize()?;
-    // Absolute installed-game DLL only; dependencies from its directory and
-    // System32, never the current directory (same flags as stock_selectors).
-    Ok(unsafe {
-        libloading::os::windows::Library::load_with_flags(
-            path.as_os_str(),
-            0x00000100 | 0x00000800,
-        )?
-    }
-    .into())
-}
 impl Oodle {
     fn load(root: &Path) -> Result<Self> {
-        let core = load_game_dll(&root.join("data/oodle/oo2core_9_win64.dll"))
+        let core = crate::trusted_oodle::load(root, crate::trusted_oodle::Runtime::Core)
             .context("Could not load NBA 2K27's Oodle DLL")?;
-        let texture = load_game_dll(&root.join("data/oodle/oo2texrt_9_win64.dll"))
+        let texture = crate::trusted_oodle::load(root, crate::trusted_oodle::Runtime::Texture)
             .context("Could not load NBA 2K27's Oodle Texture runtime")?;
         unsafe {
             Ok(Self {

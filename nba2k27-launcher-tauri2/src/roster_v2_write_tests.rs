@@ -43,6 +43,10 @@ struct Fake {
     foreign: bool,
     change_owner: bool,
     cancel_at: Option<usize>,
+    expired_at: Option<usize>,
+    recovering: Cell<bool>,
+    recovery_checks: Cell<usize>,
+    recovery_limit: Option<usize>,
 }
 impl Fake {
     fn new(owner: &Owner, raw: &[u8]) -> Self {
@@ -58,22 +62,56 @@ impl Fake {
             foreign: false,
             change_owner: false,
             cancel_at: None,
+            expired_at: None,
+            recovering: Cell::new(false),
+            recovery_checks: Cell::new(0),
+            recovery_limit: None,
         }
     }
 }
+impl Fake {
+    fn retained_check(&self) -> Result<()> {
+        if self.recovering.get() {
+            let n = self.recovery_checks.get() + 1;
+            self.recovery_checks.set(n);
+            ensure!(
+                self.recovery_limit.is_none_or(|limit| n <= limit),
+                "Synthetic recovery deadline expired"
+            );
+        } else {
+            ensure!(
+                self.cancel_at.is_none_or(|n| self.writes.get() < n),
+                "Synthetic close cancellation"
+            );
+            ensure!(
+                self.expired_at.is_none_or(|n| self.writes.get() < n),
+                "Synthetic forward budget expired"
+            );
+        }
+        Ok(())
+    }
+}
 impl Access for Fake {
+    fn begin_recovery(&self) -> Result<()> {
+        ensure!(!self.recovering.replace(true), "Recovery cannotrenew");
+        Ok(())
+    }
+
     fn owner(&self) -> Result<Owner> {
+        self.retained_check()?;
         let mut o = self.owner.borrow().clone();
         o.identity = identity(o.kind, &self.raw.borrow())?;
         Ok(o)
     }
     fn capture(&self) -> Result<Vec<u8>> {
+        self.retained_check()?;
         let n = self.reads.get() + 1;
         self.reads.set(n);
         ensure!(self.fail_read_at != Some(n), "Synthetic read-back failure");
         Ok(self.raw.borrow().clone())
     }
     fn write(&self, offset: usize, bytes: &[u8]) -> Result<()> {
+        self.retained_check()?;
         let n = self.writes.get() + 1;
         self.writes.set(n);
         let fail = self.fail_at == Some(n);
@@ -102,6 +140,11 @@ impl Access for Fake {
         Ok(())
     }
     fn checkpoint(&self) -> Result<()> {
+        ensure!(
+            !self.recovering.get(),
+            "Recovery neverallowsnewforwardwrites"
+        );
+        self.retained_check()?;
         ensure!(
             self.cancel_at.is_none_or(|n| self.writes.get() < n),
             "Synthetic close cancellation"
@@ -1737,4 +1780,44 @@ fn native_origin_preserves_intent_before_effect_exact_rollback_and_legacy_exclus
     m.raw.borrow_mut()[0xB0] ^= 1;
     assert!(apply(&m, &owner, &ordinary, |_| Ok(())).is_err());
     assert_eq!(m.writes.get(), 0);
+}
+
+#[test]
+fn cancellation_and_budget_expiry_enter_separate_bounded_reverse_only_mode() {
+    let (p, o) = player_plan();
+    for expiry in [false, true] {
+        let mut m = Fake::new(&o, &p.before);
+        if expiry {
+            m.expired_at = Some(1)
+        } else {
+            m.cancel_at = Some(1)
+        };
+        let last = RefCell::new(None);
+        assert!(
+            apply(&m, &o, &p, |i| {
+                *last.borrow_mut() = Some(i.clone());
+                Ok(())
+            })
+            .is_err()
+        );
+        assert!(m.recovering.get());
+        assert!(m.recovery_checks.get() > 0);
+        assert_eq!(*m.raw.borrow(), p.before);
+        assert!(!last.borrow().as_ref().unwrap().pending);
+        assert!(m.checkpoint().is_err());
+    }
+    let mut m = Fake::new(&o, &p.before);
+    m.expired_at = Some(1);
+    m.recovery_limit = Some(0);
+    let last = RefCell::new(None);
+    assert!(
+        apply(&m, &o, &p, |i| {
+            *last.borrow_mut() = Some(i.clone());
+            Ok(())
+        })
+        .is_err()
+    );
+    assert_eq!(m.writes.get(), 1);
+    assert!(last.borrow().as_ref().unwrap().pending);
+    assert!(m.checkpoint().is_err());
 }

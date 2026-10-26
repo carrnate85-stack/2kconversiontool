@@ -1,0 +1,87 @@
+{
+  "createdUtc": "2026-10-19T19:41:59.045348+00:00",
+  "state": "SOURCE FROZEN; focused Rust tests added, no compilation/execution by agent; parent owns shared compile",
+  "files": [
+    {
+      "path": "src/jukebox_package.rs",
+      "sha256": "1D14742EBADD361EA29184B1410E1103B30ABBB48261491C55A2F26768927E90",
+      "bytes": 48176
+    },
+    {
+      "path": "src/jukebox_api.rs",
+      "sha256": "86D56C4C40F0661A1C50E030904A1120C93BA26F5C4A0AB50F3F2CE98F8B3845",
+      "bytes": 71061
+    },
+    {
+      "path": "src/jukebox_local.rs",
+      "sha256": "12B001A4513588F608D7C22E65858542464D72982D75D7B175CCD981D8506D0E",
+      "bytes": 24499
+    },
+    {
+      "path": "src/jukebox_http.rs",
+      "sha256": "292C6D23D6CE528831F52BDC2A7793CC64302ADDFF81DB5AF64587DA8C7AD92C",
+      "bytes": 15148
+    },
+    {
+      "path": "src/animation_codec.rs",
+      "sha256": "75C4F0ECEEAE720A3483015E88038B4C870A1560FB51B945295DAE3CEAFD9439",
+      "bytes": 63744
+    },
+    {
+      "path": "src/jukebox_decode_worker.rs",
+      "sha256": "115E68226DEC7BD13F13FA4D1F315D1055251F72F767B1AEA6D9C8343F465163",
+      "bytes": 25393
+    }
+  ],
+  "backup": "Backups/qa085-claude-review-20261019/media-before",
+  "verdicts": {
+    "H1": {
+      "verdict": "Agree",
+      "fix": "Case-insensitive repeated audio-member rejection + all-song prospective native/audio/art/preview preflight BEFOREoutput/decode/copies.320MiB budget carries acrosscontainersegments, sameAPIlimit. Unknown-totalFLAC compatibility preserved via explicitmanifestPCM bound in private workerprotocol."
+    },
+    "L2-jukebox-half": {
+      "verdict": "Agree availability",
+      "fix": "Acceptloop dispatches bounded8workerpermits;200msabsolute headerbudget; alloldtoken/Host/Origin/Range gates retained. DoesnotclaimimmunitytosustainedlocalconnectionDoS."
+    },
+    "L4": {
+      "verdict": "Agree; research-only assigned",
+      "status": "No artworkcode edited. Separate l4-image-worker-research.json gives explicitownedchild normalizedRGBA contract; nativeWIC remains inprocess until futureapprovedimplementation."
+    },
+    "L5": {
+      "verdict": "Agree",
+      "fix": "Import preflight validates PNGsignature/IHDR/dim256/max4MiB using samepolicy ascache_art before anyaudiooutputallocation."
+    },
+    "L6": {
+      "verdict": "Agree",
+      "fix": "Newfreshstage work wrapper removes exactcreatedhandle on error onlybefore successfulpublication. Afterrename handlepublication flag preventsdeletingpublishedtarget onlateverificationerror. CreateNew failure neverdeletesexistingname; cleanup neverusesRemoveFile/path. Crashsweepingnotincluded."
+    },
+    "L7": {
+      "verdict": "Agree explicit hardening; originalZIPbehavior not independentlyasserted",
+      "fix": "Bothanimation member readers use take(MAX_MEMBER+1), rejectexpanded/declaredsize mismatch; no eager declaredcapacity allocation. Addedtiny fakeReader overrun/truncation/exactlength fixture."
+    },
+    "L8": {
+      "verdict": "Agree avoidablecopies; exact1.2GiBpeak Needsmeasurement",
+      "fix": "Drop fullencodedinput oncePCMdecode returns before nativeallocation. FLAC hashWAV dropped before creatingnativePCM, avoiding simultaneousthirdfullbuffer. Writerthread inputcopy remains to preserveboundedpipe/cancel/drop lifetime; no totalpeakclaim."
+    }
+  },
+  "workerChanges": [
+    "Private Request optionaloutput_limit carries expectedmanifestPCM; validates4..MAX/4alignment. Bothchildprogress/result and parentComplete-beforevecallocation enforce effective min(declaredSTREAMINFO ifknown,requestedlimit).",
+    "Samples0FLAC remainsaccepted; package passes explicitPCMbudget, validunknown-total regression verifiesdecoderexpected4bytes.",
+    "Completionwait samplescancel andoriginal130sdeadline, preservingkill/reap-beforejoin ownership. No new subprocessauthority/gamehandles or inprocessfallback."
+  ],
+  "testsAdded": [
+    "jukebox_package::tests::preflight_refuses_repeated_audio_and_aggregate_before_decoder (includes budget boundary/no decoder/invalidPNG/unknown-totalFLAC)",
+    "jukebox_local::tests::failed_stages_delete_only_the_exact_unpublished_owned_handle (partialwrite,foreigncollision,renamecollision,publishedlatefailure)",
+    "jukebox_http::tests::connection_budget_is_bounded_and_released_on_drop + existingrealHTTPtest idleconnection",
+    "animation_codec::tests::archive_member_reads_cap_expansion_and_reject_declared_size_drift",
+    "jukebox_decode_worker::tests::flac_declared_size_bounds_output_before_allocating_pcm + existingtests updated privateprotocol"
+  ],
+  "staticValidation": "Explicit ownedfile rustfmt parsing PASS for5files; animation_codec existingformat preserved, narrowhelper/tests only. No Cargo/testbinary run.",
+  "remaining": [
+    "L4 actual imageworker implementation notin assignededit scope.",
+    "No automaticorphanstage crashsweeper; exact-handle inprocesscleanup only.",
+    "Inputtransfer copy retained; no exactpeak memory benchmark yet.",
+    "Legacy samplecount0 preserved; malformedunknownFLAC stillboundedbyexplicitpackagePCM andisolatedworker globalframeslimit.",
+    "No staging/activation/install/promote/game/desktop/GitHubactions. QA084 artifacts andhistoricalAV preserved."
+  ]
+}

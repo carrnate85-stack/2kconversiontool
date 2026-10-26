@@ -158,6 +158,7 @@ mod team_dna;
 mod team_transaction;
 #[cfg(all(test, windows, target_arch = "x86_64"))]
 mod test_crash_capture;
+mod trusted_oodle;
 mod uniform_changes;
 mod uniform_transaction;
 mod vcblowfish;
@@ -273,6 +274,66 @@ fn trusted(w: &WebviewWindow) -> Result<()> {
         "Only bundled prototype windows can invoke commands"
     );
     Ok(())
+}
+/// Explicit window authority before any dispatcher fallthrough. Overlays can
+/// operate their catalogs, never settings paths, installers or update services.
+fn channel_allowed(label: &str, channel: &str, args: &Value, smoke: bool) -> bool {
+    if label == "main" {
+        return true;
+    }
+    if !matches!(label, "overlay" | "live-overlay") {
+        return false;
+    }
+    if channel == "save-settings" {
+        return args.as_object().is_some_and(|p| {
+            p.keys().all(|k| {
+                matches!(
+                    k.as_str(),
+                    "arena" | "arenaId" | "ball" | "scoreboard" | "scoreboardId"
+                )
+            })
+        }) || (smoke && label == "overlay");
+    }
+    if matches!(
+        channel,
+        "bootstrap"
+            | "media"
+            | "library"
+            | "outfit"
+            | "choices"
+            | "wardrobe"
+            | "outfit-pieces"
+            | "outfit-for-pool"
+            | "random-outfit"
+            | "select-outfit-piece"
+            | "save-outfit"
+            | "arena-favorites"
+            | "arena-favorite"
+    ) {
+        return true;
+    }
+    if label == "overlay" {
+        return channel == "overlay-close";
+    }
+    matches!(
+        channel,
+        "native-session-status"
+            | "native-overlay-status"
+            | "native-overlay-heartbeat"
+            | "native-overlay-layout"
+            | "native-overlay-hide"
+            | "native-rules-read"
+            | "native-rules-apply"
+            | "native-arena-select"
+            | "native-ball-select"
+            | "native-scoreboard-select"
+            | "native-outfit-command"
+            | "previews:ball-thumbnail"
+    ) || (smoke
+        && matches!(
+            channel,
+            "smoke-native-overlay-metrics" | "smoke-native-overlay-result"
+        ))
 }
 fn preview_window_allowed(label: &str, channel: &str) -> bool {
     (label == "main" && channel.starts_with("previews:"))
@@ -535,6 +596,9 @@ async fn launcher(
     args: Value,
 ) -> std::result::Result<Value, String> {
     trusted(&window).map_err(|e| e.to_string())?;
+    if !channel_allowed(window.label(), &channel, &args, state.smoke) {
+        return Err("This command requires the main launcher window".into());
+    }
     if channel.len() > 60
         || serde_json::to_vec(&args).map_err(|e| e.to_string())?.len() > 2 * 1024 * 1024
     {
@@ -2327,6 +2391,52 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn overlay_authority_excludes_installers_paths_and_unrelated_writes() {
+        for label in ["overlay", "live-overlay"] {
+            for channel in [
+                "mod-install-commit",
+                "launcher-update-apply",
+                "save-library",
+                "open-external",
+                "native-launch-modded",
+                "unknown",
+            ] {
+                assert!(!channel_allowed(label, channel, &json!({}), false));
+            }
+            assert!(!channel_allowed(
+                label,
+                "save-settings",
+                &json!({"gameRoot":"C:/foreign"}),
+                false
+            ));
+            assert!(channel_allowed(
+                label,
+                "save-settings",
+                &json!({"ball":"Current installed"}),
+                false
+            ));
+            assert!(channel_allowed(label, "bootstrap", &Value::Null, false));
+        }
+        assert!(!channel_allowed(
+            "overlay",
+            "native-outfit-command",
+            &Value::Null,
+            false
+        ));
+        assert!(channel_allowed(
+            "live-overlay",
+            "native-outfit-command",
+            &Value::Null,
+            false
+        ));
+        assert!(!channel_allowed(
+            "foreign",
+            "bootstrap",
+            &Value::Null,
+            false
+        ));
+    }
     #[test]
     fn overlay_preview_permission_is_only_read_only_ball_thumbnail() {
         assert!(preview_window_allowed("main", "previews:thumbnail"));

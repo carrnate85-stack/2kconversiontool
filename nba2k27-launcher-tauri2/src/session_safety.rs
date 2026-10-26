@@ -18,13 +18,16 @@ use windows::{
     },
     core::PWSTR,
 };
-// Serialize explicit native data writes and recovery completion across the
-// independent browser and F8 services. Their journals must not race each other.
-static GAME_WRITE_GATE: std::sync::Mutex<()> = std::sync::Mutex::new(());
-pub(crate) fn write_gate() -> Result<std::sync::MutexGuard<'static, ()>> {
-    GAME_WRITE_GATE.lock().map_err(|_| {
-        anyhow::anyhow!("Native transaction gate failed; restart the launcher before another write")
-    })
+// Named kernel serialization spans launcher+provider processes. Identity,
+// native ownership and durable journals remain separate required proof gates.
+#[path = "game_write_gate.rs"]
+mod game_write_gate;
+pub(crate) use game_write_gate::WriteGuard;
+pub(crate) fn write_gate() -> Result<WriteGuard> {
+    game_write_gate::lock()
+}
+pub(crate) fn try_write_gate() -> Result<Option<WriteGuard>> {
+    game_write_gate::try_lock()
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]

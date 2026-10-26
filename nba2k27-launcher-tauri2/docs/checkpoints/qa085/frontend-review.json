@@ -1,0 +1,131 @@
+{
+  "utc": "2026-10-19T19:48:35.373096+00:00",
+  "scope": "QA085 frontend-only source freeze. No Rust/shared edits, no game/desktop/install/promote/activate.",
+  "backup": "Backups/qa085-claude-review-20261019/frontend-before",
+  "verdicts": {
+    "M8": {
+      "verdict": "Agree",
+      "fix": "Serialized settings saver reloads authoritative persisted settings after failure; pending newer patches stay layered, backend change events cannot overwrite them. Reload failure remains explicit and retains last confirmed UI baseline."
+    },
+    "M9": {
+      "verdict": "Agree",
+      "fix": "Successful commit summary published before rescan; refresh error is separately identified and commit is not retried/reported failed."
+    },
+    "L17": {
+      "verdict": "Agree",
+      "fix": "Separate transient poll error in all three cited components clears only on successful current poll; action errors stay separate."
+    },
+    "L18": {
+      "verdict": "Needs info",
+      "fix": "No polling redesign. Multiple status calls exist, but no measured cost establishes a safe worthwhile shared-poller rewrite; preserve existing F8 cadence/generation/pending semantics."
+    },
+    "L19": {
+      "verdict": "Agree",
+      "fix": "Single pending piece pick with revision + exact captured outfit/picker/player binding; close/unmount invalidates, current draft drift rejects stale replies. Picker tiles disabled while pending. Dead App pickAsset left unchanged."
+    },
+    "L20": {
+      "verdict": "Agree",
+      "fix": "Visible local wardrobe load error, clears on successful later query; query generation invalidated on cleanup/unmount."
+    },
+    "L21": {
+      "verdict": "Agree",
+      "fix": "Retain last build info on refresh error and show separate error. Initial failure renders retry card rather than vanishing."
+    },
+    "L22": {
+      "verdict": "Agree",
+      "fix": "Legacy online null/canceled result replaces opening feedback with canceled/no-write message; stale owner remains ignored. New isolated online override unaffected."
+    },
+    "L23": {
+      "verdict": "Agree",
+      "fix": "Year and integer totals now use existing buffered SeasonNumber; empty/nonfinite input never Number(\"\") into draft; range/integer validation on blur; invalid legacy year labels explicit."
+    },
+    "L13": {
+      "verdict": "Agree display failure; deferred safe implementation. Disagree staff20unit refusal is accidental WPF regression.",
+      "fix": "No decoder/writer loosening. Required native readonly marker +Access projection/copy/import/dependency guards documented in L13-safe-display-proposal.json; parent agreed defer."
+    },
+    "M3-cross-review": {
+      "verdict": "Independent source review found no new blocker",
+      "fix": "Atomic handle replace leaves original destination in place until commit and retained backup supports guarded reverse; FileID test then rename is not cross-process CAS. Parent owns backend implementation. Frontend now surfaces returned cleanupWarnings while retaining successful install status."
+    }
+  },
+  "validation": {
+    "TypeScript": "PASS tsc --noEmit using existing linked dependencies; no downloads",
+    "Vitest": "23 PASS: qa085-frontend-review7, native-arena9, ModInstallDialog3, mod-install4",
+    "Node": "9 PASS: new legacy cancel1 plus existing bulk-capability8",
+    "limitations": "Hook harness drives actual components/handlers with controlled effects; no desktop/browser/game automation or live acceptance."
+  },
+  "files": [
+    {
+      "path": "frontend/App.tsx",
+      "sha256": "857B5EF1FFFE55F9946568682BDD51CAB48B6C0A422833300E1637E76807A2D8"
+    },
+    {
+      "path": "frontend/Workflows.tsx",
+      "sha256": "80107C71CE95453C3088E1AC6372D4AF51B89C9E5B6AD9A722EE031F91F4A101"
+    },
+    {
+      "path": "frontend/SettingsTools.tsx",
+      "sha256": "EB66AD31151692425437AFCEA01B332114CA0228B3F02C0BC2BB01AEBBA9C95A"
+    },
+    {
+      "path": "frontend/LaunchReadiness.tsx",
+      "sha256": "7E33136B607FA41513A780F20EC89BBCDBFDFC1854FB1FFEC130A11C099249B4"
+    },
+    {
+      "path": "frontend/NativeArena.tsx",
+      "sha256": "D79047DFCDA2943619CAE17A1856689EFDC0696DC34586394B210821A41E4E17"
+    },
+    {
+      "path": "frontend/NativeOverlay.tsx",
+      "sha256": "195F4937EAC6D26D1DB6607C701D073C96C6F239DC29FFCC418A382F1316D280"
+    },
+    {
+      "path": "frontend/OverlayOutfitEditor.tsx",
+      "sha256": "116AE9A68DA8B9AC3B06A333AB0A6627B6C35FA9CDAD2EA5440247E4C07CEA5C"
+    },
+    {
+      "path": "frontend/SeasonHistory.tsx",
+      "sha256": "BCAF6735ACA9CB0D068D2A71C2762F166F29A258B0B9C8D4B633AE7E99623137"
+    },
+    {
+      "path": "browser-overrides/player-dna.js",
+      "sha256": "801BAA5222E39350B90A6B7915176AAFC3E931839E348F9E57FE2BFAAF9539D3"
+    },
+    {
+      "path": "frontend/settings-save.ts",
+      "sha256": "7ACB189EECFBC573490452ED2C56C042F4EBEF2A15B3D62C74B0430A2C155367"
+    },
+    {
+      "path": "frontend/mod-install-feedback.ts",
+      "sha256": "D29CFC9A32393CE641DBC6AF59687D719DD000AD044190995FB8E7BEC146C8B1"
+    },
+    {
+      "path": "frontend/qa085-frontend-review.test.tsx",
+      "sha256": "D5AA51044381452342B99693810AE778EE13096D2C39D4CB4E2A272FA5EDCFF2"
+    },
+    {
+      "path": "scripts/test-qa085-player-dna-cancel.mjs",
+      "sha256": "C51624AFD274B45079ED1F8E6F5F21AE55B18B344B64B27101888B9C9773689B"
+    },
+    {
+      "path": "frontend/mod-install.ts",
+      "sha256": "E3518556B7797DF9F54B82FFAA98D51697EACD4E90E101DA5D4579CFC801BB4D"
+    },
+    {
+      "path": "frontend/mod-install.test.ts",
+      "sha256": "16CA098D129E281793494F874314F611C0D4038A408ADDFDD12BB4248256D31B"
+    }
+  ],
+  "revision": 2,
+  "additionalLane": {
+    "manifest": "artifacts/qa085-session-review/source-freeze.json",
+    "sha256": "0C04836AA925E9CFC3BA640E4AB11874AAB2FBB97D54FB8DCCB166A7B6211E1E",
+    "status": "Rust source syntax parsed; parent compile/execution pending",
+    "verdicts": [
+      "M1 Agree minimal independent physical cleanup +retained per-entry holds/root consensus",
+      "M6 Agree exact retained create_new handle cleanup only",
+      "M12 narrower Agree typed provider-status read I/O; process snapshot already transient",
+      "L9 Agree with lagging-publication qualification"
+    ]
+  }
+}

@@ -139,6 +139,7 @@ export function useNativeArena(
   const [busy, setBusy] = useState(false);
   const [pendingId, setPendingId] = useState("");
   const [error, setError] = useState("");
+  const [pollError, setPollError] = useState("");
   const pending = useRef(false),
     generation = useRef(0),
     sessionRef = useRef<string | undefined>(undefined);
@@ -151,6 +152,7 @@ export function useNativeArena(
     sessionRef.current = undefined;
     setStatus(null);
     setError("");
+    setPollError("");
     pending.current = false;
     setBusy(false);
     setPendingId("");
@@ -163,6 +165,7 @@ export function useNativeArena(
         const next = await call<ArenaSession>("native-session-status");
         if (g === generation.current) {
           setSession(next);
+          setPollError("");
           const sameSession = next.session === sessionRef.current;
           setStatus((old) => {
             const incoming = next.nativeProvider?.[feature] ?? null;
@@ -173,7 +176,7 @@ export function useNativeArena(
           sessionRef.current = next.session;
         }
       } catch (e) {
-        if (g === generation.current) setError(String(e));
+        if (g === generation.current) setPollError(String(e));
       } finally {
         polling = false;
       }
@@ -271,7 +274,7 @@ export function useNativeArena(
     busy,
     pendingId,
     error:
-      error ||
+      error || pollError ||
       (live &&
       session?.nativeProvider?.phase === "loader-active" &&
       !arenaBuildMapped(session.nativeProvider.build, feature)

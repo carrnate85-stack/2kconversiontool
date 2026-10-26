@@ -591,6 +591,11 @@ pub struct Archive {
     multiple: HashMap<u32, String>,
 }
 const MAX_MEMBER: u64 = 64 * 1024 * 1024;
+fn read_member_bounded(member: impl Read, expected:u64, limit:u64)->Result<Vec<u8>> {
+    ensure!(limit<=MAX_MEMBER && expected<=limit,"Animation member exceeds its byte budget");
+    let mut bytes=Vec::new();member.take(limit+1).read_to_end(&mut bytes)?;
+    ensure!(bytes.len() as u64==expected && bytes.len() as u64<=limit,"Animation member expanded size differs");Ok(bytes)
+}
 impl Archive {
     pub fn open(path: &Path) -> Result<Self> {
         let zip = zip::ZipArchive::new(BufReader::new(File::open(path)?))?;
@@ -599,9 +604,8 @@ impl Archive {
     pub fn read(&mut self, name: &str) -> Result<Vec<u8>> {
         let mut member = self.zip.by_name(name).with_context(|| format!("Animation member is missing: {name}"))?;
         ensure!(member.size() <= MAX_MEMBER, "Animation member exceeds its byte budget");
-        let mut bytes = Vec::with_capacity(member.size() as usize);
-        member.read_to_end(&mut bytes)?;
-        Ok(bytes)
+        let expected=member.size();
+        read_member_bounded(member,expected,MAX_MEMBER)
     }
     /// archive_cache Entry.index: motion headers keyed by stored ID.
     pub fn index(&mut self, cancelled: &dyn Fn() -> bool) -> Result<usize> {
@@ -1125,9 +1129,8 @@ pub fn read_character(path: &Path) -> Result<Character> {
     let mut read = |name: &str| -> Result<Vec<u8>> {
         let mut member = archive.by_name(name)?;
         ensure!(member.size() <= MAX_MEMBER, "Character member exceeds its byte budget");
-        let mut out = Vec::new();
-        member.read_to_end(&mut out)?;
-        Ok(out)
+        let expected=member.size();
+        read_member_bounded(member,expected,MAX_MEMBER)
     };
     let raw = read(&scene)?;
     let text = String::from_utf8(raw)?;
@@ -1380,6 +1383,14 @@ pub fn character_payload(source: &Character) -> Result<Value> {
 
 #[cfg(test)]
 mod tests {
+    #[test]
+    fn archive_member_reads_cap_expansion_and_reject_declared_size_drift() {
+        use super::read_member_bounded;
+        assert_eq!(read_member_bounded(&b"abc"[..],3,4).unwrap(),b"abc");
+        assert!(read_member_bounded(&b"abc"[..],2,4).is_err());
+        assert!(read_member_bounded(&b"a"[..],2,4).is_err());
+        let mut source=std::io::Cursor::new([0;12]);assert!(read_member_bounded(&mut source,4,4).is_err());assert_eq!(source.position(),5);
+    }
     use super::*;
     #[test]
     fn rotation_words_are_unit_quaternions() {

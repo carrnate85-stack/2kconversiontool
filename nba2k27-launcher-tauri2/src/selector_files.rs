@@ -256,25 +256,45 @@ impl Store {
                 "Generated selector plan/destination changed"
             );
         }
-        let mut identities = Vec::new();
-        for (entry, data) in self.record.entries.iter().zip(&prepared.bytes) {
+        let mut stages = Vec::new();
+        let preparation = (|| -> Result<()> {
+            let mut identities = Vec::new();
+            for (entry, data) in self.record.entries.iter().zip(&prepared.bytes) {
+                closed()?;
+                let file = fs::OpenOptions::new()
+                    .read(true)
+                    .write(true)
+                    .access_mode(0x80000000 | 0x40000000 | 0x10000)
+                    .create_new(true)
+                    .share_mode(1)
+                    .custom_flags(FILE_FLAG_OPEN_REPARSE_POINT.0)
+                    .open(self.stage(entry))?;
+                stages.push(file);
+                let file = stages.last_mut().unwrap();
+                file.write_all(data)?;
+                file.sync_all()?;
+                identities.push(identity(file)?);
+            }
+            for (entry, id) in self.record.entries.iter_mut().zip(identities) {
+                entry.identity = Some(id);
+            }
+            self.record.publishing = true;
             closed()?;
-            let mut file = fs::OpenOptions::new()
-                .read(true)
-                .write(true)
-                .create_new(true)
-                .share_mode(1)
-                .open(self.stage(entry))?;
-            file.write_all(data)?;
-            file.sync_all()?;
-            identities.push(identity(&file)?);
+            self.commit()?;
+            Ok(())
+        })();
+        if let Err(error) = preparation {
+            let failures: Vec<_> = stages
+                .iter()
+                .filter_map(|file| loader_files::unlink(file).err())
+                .collect();
+            ensure!(
+                failures.is_empty(),
+                "{error:#}; owned selector stage cleanup failed: {failures:?}"
+            );
+            return Err(error);
         }
-        for (entry, id) in self.record.entries.iter_mut().zip(identities) {
-            entry.identity = Some(id);
-        }
-        self.record.publishing = true;
-        closed()?;
-        self.commit()?;
+        drop(stages);
         for entry in &self.record.entries {
             closed()?;
             let mut file = open(&self.stage(entry), true)?;
@@ -312,6 +332,20 @@ impl Store {
             self.verify(&mut open(&self.target(entry), false)?, entry)?;
         }
         Ok(())
+    }
+    /// Recover root authority only from this bounded exact-session receipt,
+    /// followed by its existing actual directory-identity validation.
+    pub(crate) fn recorded_root(portable: &Path, session: &str) -> Result<Option<PathBuf>> {
+        let _portable = Directories::pin(portable)?;
+        let _data = Directories::pin(&portable.join("Data"))?;
+        let marker = portable.join("Data").join(MARKER);
+        if missing(&marker)? {
+            return Ok(None);
+        }
+        let record =
+            serde_json::from_slice::<Record>(&bytes(&mut open(&marker, false)?, 64 * 1024)?)?;
+        let store = Self::recover(portable, &record.root, session)?;
+        Ok(store.map(|s| s.record.root.clone()))
     }
     pub fn recover(portable: &Path, mods: &Path, session: &str) -> Result<Option<Self>> {
         let marker = portable.join("Data").join(MARKER);
@@ -670,5 +704,27 @@ mod tests {
         }
         assert!(store.marker().is_file() && preserved.is_file());
         assert_eq!(fs::read(target).unwrap(), f.prepared.bytes[0]);
+    }
+
+    #[test]
+    fn inprocess_cancel_cleans_only_retained_created_stages_before_identity_commit() {
+        let f = Fixture::new();
+        let mut s = f.store();
+        let checks = std::cell::Cell::new(0);
+        assert!(
+            s.activate(&f.prepared, || {
+                checks.set(checks.get() + 1);
+                ensure!(checks.get() != 2, "cancel after first stage");
+                Ok(())
+            })
+            .is_err()
+        );
+        assert!(s.record.entries.iter().all(|e| !s.stage(e).exists()));
+        let root = Store::recorded_root(&f.portable, &f.session)
+            .unwrap()
+            .unwrap();
+        assert_eq!(root, f.mods.canonicalize().unwrap());
+        s.restore(|| Ok(())).unwrap();
+        assert!(!s.marker().exists());
     }
 }
