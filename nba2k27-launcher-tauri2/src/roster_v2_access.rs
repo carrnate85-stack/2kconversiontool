@@ -15,6 +15,7 @@ use anyhow::{Context, Result, ensure};
 use serde_json::{Value, json};
 use sha2::Digest;
 use std::{
+    cell::Cell,
     collections::BTreeMap,
     mem::size_of,
     path::{Path, PathBuf},
@@ -348,6 +349,7 @@ pub(crate) struct Access {
     binding: Binding,
     stop: Arc<AtomicBool>,
     started: Instant,
+    recovery: Cell<bool>,
 }
 impl Access {
     pub fn open(binding: &Binding, stop: Arc<AtomicBool>) -> Result<Self> {
@@ -367,6 +369,7 @@ impl Access {
             binding: binding.clone(),
             stop,
             started: Instant::now(),
+            recovery: Cell::new(false),
         };
         model::verify_profile(&access)?;
         access.finish()?;
@@ -472,14 +475,16 @@ impl Memory for Access {
         Ok(value)
     }
     fn checkpoint(&self) -> Result<()> {
-        ensure!(
-            !self.stop.load(Ordering::Acquire),
-            "Read-only roster request cancelled"
-        );
-        ensure!(
-            self.started.elapsed() < BUDGET,
-            "Read-only roster request exceeded12-second budget"
-        );
+        if !self.recovery.get() {
+            ensure!(
+                !self.stop.load(Ordering::Acquire),
+                "Read-only roster request cancelled"
+            );
+            ensure!(
+                self.started.elapsed() < BUDGET,
+                "Read-only roster request exceeded12-second budget"
+            );
+        }
         handle_matches(self.query.0, &self.binding.game)
     }
 }
@@ -1165,6 +1170,9 @@ impl writer::Access for WriteLease<'_> {
     }
     fn checkpoint(&self) -> Result<()> {
         self.access.checkpoint()
+    }
+    fn recovery(&self, active: bool) {
+        self.access.recovery.set(active);
     }
 }
 fn request_index(input: &Value, max: f64) -> Result<usize> {

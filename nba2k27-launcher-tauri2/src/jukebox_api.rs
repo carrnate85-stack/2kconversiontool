@@ -36,7 +36,6 @@ use windows::Win32::{
 };
 
 const MAX_BATCH: usize = 100;
-const MAX_PACKAGE_NATIVE: usize = 320 * 1024 * 1024;
 const MAX_PREVIEW_TOTAL: usize = 256 * 1024 * 1024;
 const PREVIEW_TTL: Duration = Duration::from_secs(30 * 60);
 pub(crate) use jukebox_decode_worker::admission;
@@ -298,7 +297,11 @@ pub(crate) fn names_from_filename(stem: &str) -> (String, String) {
             }
         }
     }
-    let title = if stem.is_empty() { "Custom Song".into() } else { stem };
+    let title = if stem.is_empty() {
+        "Custom Song".into()
+    } else {
+        stem
+    };
     ("Custom".into(), title)
 }
 fn cancelled(cancel: &AtomicBool) -> Result<()> {
@@ -1206,83 +1209,83 @@ fn run_job(
                 for (i, path) in paths.iter().enumerate() {
                     cancelled(cancel)?;
                     let one = (|| -> Result<()> {
-                    shared.progress(
-                        "reading",
-                        format!("Reading song {} of {}", i + 1, paths.len()),
-                        Some(i),
-                        Some(paths.len()),
-                        None,
-                    )?;
-                    ensure!(
-                        path.extension().and_then(|s| s.to_str()).is_some_and(|s| [
-                            "mp3", "wav", "m4a", "aac", "flac", "ogg", "opus"
-                        ]
-                        .iter()
-                        .any(|e| s.eq_ignore_ascii_case(e))),
-                        "Use MP3, WAV, M4A, AAC, FLAC, OGG or Opus audio; original retained"
-                    );
-                    let mut source = Source::open(path, audio::MAX_AUDIO as u64)?;
-                    let bytes = source.read_all(audio::MAX_AUDIO, cancel)?;
-                    let native = match audio::wrap(&bytes) {
-                        Ok(native) => native,
-                        Err(_) => {
-                            admitted.require_decoder()?;
-                            shared.host.decode_admission()?.require_decoder()?;
-                            shared.progress(
-                                "decoding",
-                                format!("Decoding song {} of {}", i + 1, paths.len()),
-                                Some(i),
-                                Some(paths.len()),
-                                Some(0),
-                            )?;
-                            let pcm = shared.host.decode(
-                                &bytes,
-                                &nonce()?,
-                                cancel.clone(),
-                                &mut |frames| {
-                                    cancelled(cancel)?;
-                                    shared.progress(
-                                        "decoding",
-                                        format!("Decoding song {} of {}", i + 1, paths.len()),
-                                        Some(i),
-                                        Some(paths.len()),
-                                        Some(frames),
-                                    )
-                                },
-                            )?;
-                            audio::native_pcm(&pcm)?
-                        }
-                    };
-                    let (artist, title) = names_from_filename(
-                        &path
-                            .file_stem()
-                            .context("Audio filename is missing")?
-                            .to_string_lossy(),
-                    );
-                    let title = options.title.as_deref().unwrap_or(&title);
-                    let artist = options.artist.as_deref().unwrap_or(&artist);
-                    shared.commit_boundary(
-                        cancel,
-                        "Saving validated native audio to the portable library.",
-                    )?;
-                    let mut service = lock(&shared.service)?;
-                    service.import_audio(
-                        playlist.context("Playlist is missing")?,
-                        title,
-                        artist,
-                        &native,
-                        &nonce()?,
-                    )?;
-                    shared.refresh(&service)?;
-                    drop(service);
-                    shared.progress(
-                        "reading",
-                        format!("Saved {} of {} songs", i + 1, paths.len()),
-                        Some(i + 1),
-                        Some(paths.len()),
-                        None,
-                    )?;
-                    Ok(())
+                        shared.progress(
+                            "reading",
+                            format!("Reading song {} of {}", i + 1, paths.len()),
+                            Some(i),
+                            Some(paths.len()),
+                            None,
+                        )?;
+                        ensure!(
+                            path.extension().and_then(|s| s.to_str()).is_some_and(|s| [
+                                "mp3", "wav", "m4a", "aac", "flac", "ogg", "opus"
+                            ]
+                            .iter()
+                            .any(|e| s.eq_ignore_ascii_case(e))),
+                            "Use MP3, WAV, M4A, AAC, FLAC, OGG or Opus audio; original retained"
+                        );
+                        let mut source = Source::open(path, audio::MAX_AUDIO as u64)?;
+                        let bytes = source.read_all(audio::MAX_AUDIO, cancel)?;
+                        let native = match audio::wrap(&bytes) {
+                            Ok(native) => native,
+                            Err(_) => {
+                                admitted.require_decoder()?;
+                                shared.host.decode_admission()?.require_decoder()?;
+                                shared.progress(
+                                    "decoding",
+                                    format!("Decoding song {} of {}", i + 1, paths.len()),
+                                    Some(i),
+                                    Some(paths.len()),
+                                    Some(0),
+                                )?;
+                                let pcm = shared.host.decode(
+                                    &bytes,
+                                    &nonce()?,
+                                    cancel.clone(),
+                                    &mut |frames| {
+                                        cancelled(cancel)?;
+                                        shared.progress(
+                                            "decoding",
+                                            format!("Decoding song {} of {}", i + 1, paths.len()),
+                                            Some(i),
+                                            Some(paths.len()),
+                                            Some(frames),
+                                        )
+                                    },
+                                )?;
+                                audio::native_pcm(&pcm)?
+                            }
+                        };
+                        let (artist, title) = names_from_filename(
+                            &path
+                                .file_stem()
+                                .context("Audio filename is missing")?
+                                .to_string_lossy(),
+                        );
+                        let title = options.title.as_deref().unwrap_or(&title);
+                        let artist = options.artist.as_deref().unwrap_or(&artist);
+                        shared.commit_boundary(
+                            cancel,
+                            "Saving validated native audio to the portable library.",
+                        )?;
+                        let mut service = lock(&shared.service)?;
+                        service.import_audio(
+                            playlist.context("Playlist is missing")?,
+                            title,
+                            artist,
+                            &native,
+                            &nonce()?,
+                        )?;
+                        shared.refresh(&service)?;
+                        drop(service);
+                        shared.progress(
+                            "reading",
+                            format!("Saved {} of {} songs", i + 1, paths.len()),
+                            Some(i + 1),
+                            Some(paths.len()),
+                            None,
+                        )?;
+                        Ok(())
                     })();
                     if let Err(error) = one {
                         cancelled(cancel)?;
@@ -1297,7 +1300,13 @@ fn run_job(
                     }
                 }
                 let added = paths.len() - failures.len();
-                ensure!(added > 0, "{}", failures.first().map_or("No songs were added", String::as_str));
+                ensure!(
+                    added > 0,
+                    "{}",
+                    failures
+                        .first()
+                        .map_or("No songs were added", String::as_str)
+                );
                 Ok(Some(if let Some(first) = failures.first() {
                     format!("Added {added} of {} songs. {first}", paths.len())
                 } else {
@@ -1357,11 +1366,12 @@ fn run_job(
                         cancel,
                     })?;
                     let title = container.manifest().name.clone();
-                    let (mut songs, mut size) = (vec![], 0usize);
-                    container.visit(&shared.stock, &mut decode, |song| { cancelled(cancel)?;
-                        size = size.checked_add(song_size(&song)?).context("Playlist import size overflow")?;
-                        ensure!(size <= MAX_PACKAGE_NATIVE, "This playlist exceeds the bounded320MiB native import staging limit; source and library retained");
-                        songs.push(song); Ok(()) })?;
+                    let mut songs = vec![];
+                    container.visit(&shared.stock, &mut decode, |song| {
+                        cancelled(cancel)?;
+                        songs.push(song);
+                        Ok(())
+                    })?;
                     package::Import {
                         name: title,
                         songs,
@@ -1369,18 +1379,7 @@ fn run_job(
                     }
                 } else {
                     let bytes = source.read_all(package::MAX_SEGMENT, cancel)?;
-                    let imported = package::import_segment(&bytes, &shared.stock, &mut decode)?;
-                    let total = imported.songs.iter().try_fold(0usize, |n, s| {
-                        Ok::<_, anyhow::Error>(
-                            n.checked_add(song_size(s)?)
-                                .context("Playlist import size overflow")?,
-                        )
-                    })?;
-                    ensure!(
-                        total <= MAX_PACKAGE_NATIVE,
-                        "This playlist exceeds the bounded320MiB native import staging limit; source and library retained"
-                    );
-                    imported
+                    package::import_segment(&bytes, &shared.stock, &mut decode)?
                 };
                 source.verify()?;
                 cancelled(cancel)?;
@@ -1515,14 +1514,6 @@ fn bundle_name(title: &str) -> String {
         "{}.2kplaylist",
         if safe.is_empty() { "Playlist" } else { safe }
     )
-}
-fn song_size(song: &package::ImportedSong) -> Result<usize> {
-    [&song.native_audio, &song.artwork, &song.artwork_preview]
-        .into_iter()
-        .try_fold(0usize, |sum, b| {
-            sum.checked_add(b.as_ref().map_or(0, Vec::len))
-                .context("Playlist native size overflow")
-        })
 }
 struct CheckedRead<'a> {
     file: &'a mut File,
