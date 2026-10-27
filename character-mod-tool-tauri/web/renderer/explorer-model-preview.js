@@ -976,6 +976,8 @@ function createDdsTexture(item) {
       const texture = new THREE.DataTexture(bytes, item.width, item.height, THREE.RGBAFormat);
       texture.name = item.name;
       texture.userData.range = item.range || null;
+      texture.userData.rangeColor = Boolean(item.range) && item.binding?.channel === 'color'
+        && /hair/i.test(item.binding?.target || '');
       texture.colorSpace = item.range || item.format === 'RGBA8_UNORM' ? THREE.NoColorSpace : THREE.SRGBColorSpace;
       texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
       texture.generateMipmaps = true;
@@ -990,6 +992,12 @@ function createDdsTexture(item) {
     const texture = new THREE.CompressedTexture(parsed.mipmaps, parsed.width, parsed.height, parsed.format);
     texture.name = item.name;
     texture.userData.range = item.range || null;
+    // Range-compressed maps upload raw (NoColorSpace) so the shader can decode the
+    // range. Hair and beard color maps then still hold sRGB values: linearising them
+    // matches the game's headshots (png00809, png01507). Skin evidence was mixed, so
+    // skin keeps the previous raw interpretation.
+    texture.userData.rangeColor = Boolean(item.range) && item.binding?.channel === 'color'
+      && /hair/i.test(item.binding?.target || '');
     const declaredFormat = String(item.format || '').toUpperCase();
     texture.colorSpace = item.range || (declaredFormat && declaredFormat !== 'DDS' && !declaredFormat.includes('SRGB'))
       ? THREE.NoColorSpace
@@ -1159,7 +1167,9 @@ function irisScale(value) {
 
 function configureTextureRange(material, texture) {
   const range = texture?.userData?.range || null;
+  const srgb = Boolean(range && texture.userData.rangeColor);
   material.userData.textureRange = range;
+  material.userData.textureRangeSrgb = srgb;
   // A color-map swap can reuse the same compiled shader. Keep its uniform
   // objects alive and update their values even when onBeforeCompile is skipped.
   const uniforms = material.userData.textureRangeUniforms ||= {
@@ -1188,11 +1198,12 @@ function configureTextureRange(material, texture) {
           #endif
           vec4 rangeDecodedColor = mix( mapRangeMin, mapRangeMax, sampledDiffuseColor );
           sampledDiffuseColor = mix( sampledDiffuseColor, rangeDecodedColor, mapRangeMask );
+          ${srgb ? 'sampledDiffuseColor = sRGBTransferEOTF( sampledDiffuseColor );' : ''}
           diffuseColor *= sampledDiffuseColor;
         #endif`,
       );
   } : () => {};
-  material.customProgramCacheKey = () => (range ? 'nba2k27-texture-range-v1' : '');
+  material.customProgramCacheKey = () => (range ? `nba2k27-texture-range-v1${srgb ? '-srgb' : ''}` : '');
 }
 
 function median(values) {
@@ -1270,11 +1281,14 @@ function sampleDecodedTexture(texture, uv) {
   const x = Math.min(decoded.size - 1, Math.floor(wrap(uv[0]) * decoded.size));
   const y = Math.min(decoded.size - 1, Math.floor(wrap(uv[1]) * decoded.size));
   const offset = (y * decoded.size + x) * 4;
+  // Seam responses compare colors in the same linear space the shader lights in.
+  const linear = (value) => (value <= 0.04045 ? value / 12.92 : Math.pow((value + 0.055) / 1.055, 2.4));
   return [0, 1, 2].map((channel) => {
     const sample = decoded.pixels[offset + channel] / 255;
-    return decoded.range.mask[channel]
+    const value = decoded.range.mask[channel]
       ? decoded.range.min[channel] + sample * (decoded.range.max[channel] - decoded.range.min[channel])
       : sample;
+    return texture.userData.rangeColor ? linear(value) : value;
   });
 }
 
@@ -1973,6 +1987,7 @@ const api = {
         skinScatter: Boolean(material.userData.skinScatter),
         eyeIris: Boolean(material.userData.eyeIris),
         rangeCompressed: Boolean(material.userData.textureRange),
+        rangeSrgb: Boolean(material.userData.textureRangeSrgb),
       }));
     }),
     renderer: renderer.capabilities.isWebGL2 ? 'WebGL 2' : 'WebGL 1',
