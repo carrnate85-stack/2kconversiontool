@@ -48,7 +48,7 @@ assert.ok(fiber.fragmentShader.includes('nbaStrandTangentDecoded'));
 assert.ok(fiber.fragmentShader.includes('nbaStrandResponse'));
 assert.ok(!fiber.fragmentShader.includes('diffuseColor.a *='));
 assert.ok(!fiber.fragmentShader.includes('diffuseColor.rgb *='));
-assert.equal(material.customProgramCacheKey(), 'range-base:nba-strand-lightmap-v2:nba-strand-tangent-range-v1:nba-strand-specular-v1');
+assert.equal(material.customProgramCacheKey(), 'range-base:nba-strand-lightmap-v2:nba-strand-tangent-range-v1:nba-strand-specular-v2');
 const untextured = { map: null, userData: {}, onBeforeCompile: () => {}, customProgramCacheKey: () => 'untextured' };
 configureStrandSpecular(untextured, true);
 assert.equal(untextured.userData.strandSpecularResponse, false);

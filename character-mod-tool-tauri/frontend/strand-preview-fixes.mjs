@@ -74,20 +74,29 @@ vec3 anisotropyPolar = mix(nbaStrandTangentSample, nbaStrandTangentDecoded, nbaS
   material.customProgramCacheKey = () => previousKey + ':nba-strand-tangent-range-v1';
 }
 
-export function configureStrandSpecular(material, enabled) {
+// Fraction of uncolored (white) highlight kept on every strand. Real hair's
+// primary highlight is largely uncolored, so near-black hair still needs one to
+// show its form; the pigment-tinted remainder stops dark atlases flaring white.
+export const STRAND_SPECULAR_FLOOR = 0.5;
+
+export function configureStrandSpecular(material, enabled, floor = STRAND_SPECULAR_FLOOR) {
   material.userData.strandSpecularResponse = Boolean(enabled && material.map);
   if (!material.userData.strandSpecularResponse) return;
+  const uniforms = material.userData.strandSpecularUniforms ||= { nbaStrandSpecularFloor: { value: floor } };
+  uniforms.nbaStrandSpecularFloor.value = floor;
   const previous = material.onBeforeCompile;
   const previousKey = material.customProgramCacheKey();
   material.onBeforeCompile = shader => {
     previous(shader);
+    Object.assign(shader.uniforms, uniforms);
+    shader.fragmentShader = 'uniform float nbaStrandSpecularFloor;\n' + shader.fragmentShader;
     // A fiber response keeps dark atlases from reflecting as white solid cards.
     shader.fragmentShader = shader.fragmentShader.replace('#include <lights_fragment_end>', `#include <lights_fragment_end>
-vec3 nbaStrandSpecularTint = sqrt(clamp(diffuseColor.rgb, 0.0, 1.0));
+vec3 nbaStrandSpecularTint = mix(sqrt(clamp(diffuseColor.rgb, 0.0, 1.0)), vec3(1.0), nbaStrandSpecularFloor);
 reflectedLight.directSpecular *= nbaStrandSpecularTint;
 reflectedLight.indirectSpecular *= nbaStrandSpecularTint;`);
   };
-  material.customProgramCacheKey = () => previousKey + ':nba-strand-specular-v1';
+  material.customProgramCacheKey = () => previousKey + ':nba-strand-specular-v2';
 }
 
 export function configureStrandCoverage(material, enabled, multisampled) {

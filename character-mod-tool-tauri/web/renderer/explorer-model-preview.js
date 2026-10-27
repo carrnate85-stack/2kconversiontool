@@ -1401,6 +1401,12 @@ function applyAutomaticTextures() {
         irisColor(currentPayload?.player?.irisColor), irisScale(currentPayload?.player?.irisSize));
       const profile = applyPreviewMaterialProfile(material, normalTexture);
       configureSkinShading(material, profile?.role === 'skin');
+      // Strand cards without a color/alpha map (e.g. armpit hair) can only draw
+      // as solid placeholder-colored blobs; hide them until a texture binds.
+      const untexturedStrand = profile?.role === 'strand' && !colorTexture;
+      if (untexturedStrand) material.visible = false;
+      else if (material.userData.untexturedStrand) material.visible = true;
+      material.userData.untexturedStrand = untexturedStrand;
       material.transparent = profile?.role === 'glass'
         || Boolean(colorTexture) && (targetName === 'eyelash' || strandMaterial);
       material.alphaTest = targetName === 'eyelash' || strandMaterial ? profile?.alphaTest || 0 : 0;
@@ -1416,6 +1422,25 @@ function applyAutomaticTextures() {
       material.needsUpdate = true;
     });
   });
+}
+
+// A cold load compiles every material program inside the first render, which
+// blocked the UI for ~0.5 s per player. compileAsync lets KHR_parallel_shader_compile
+// do that work off the main thread; the render then reuses the programs.
+async function compilePrograms(generation) {
+  if (typeof renderer.compileAsync !== 'function') return;
+  try {
+    await renderer.compileAsync(scene, camera);
+  } catch {
+    // The next render compiles synchronously instead.
+  }
+  if (generation !== loadGeneration) throw new Error('Preview cancelled.');
+}
+
+function collapsedPositions(positions) {
+  if (!positions?.length) return true;
+  for (let index = 0; index < positions.length; index++) if (positions[index] !== 0) return false;
+  return true;
 }
 
 function setVectorAttribute(geometry, name, values, size) {
@@ -1469,6 +1494,7 @@ async function load(payload, onProgress = () => {}, options = {}) {
     if (next) retainedTextures.set(next, texture);
   }
   let reusedGeometry = 0;
+  const skippedMeshes = [];
   try {
   currentPayload = payload;
   materialMetadataByName = new Map();
@@ -1488,6 +1514,19 @@ async function load(payload, onProgress = () => {}, options = {}) {
     const reuse = retained.get(meshKey(item));
     if (reuse) {
       retained.delete(meshKey(item)); modelRoot.add(reuse); reusedGeometry++;
+      continue;
+    }
+    // Tangent-space companions that were not projected onto a face arrive with
+    // every position at the origin: nothing to draw, but they skew the bounds.
+    // Callers pair modelRoot.children with payload.meshes by index, so keep an
+    // empty placeholder (no geometry or material) in this slot.
+    if (item.tangentSpaceAttachment && !item.tangentProjected && collapsedPositions(item.positions)) {
+      const placeholder = new THREE.Object3D();
+      placeholder.name = item.name;
+      placeholder.userData.previewModel = item.name;
+      placeholder.userData.collapsedTangentSpace = true;
+      modelRoot.add(placeholder);
+      skippedMeshes.push(item.sourceName || item.name);
       continue;
     }
     const neutralFacialHairFitBase = item.sourceKind === 'facialhair-fit-base';
@@ -1598,10 +1637,13 @@ async function load(payload, onProgress = () => {}, options = {}) {
   if (generation !== loadGeneration) throw new Error('Preview cancelled.');
   if (!options.deferRender) {
     setEyelashesVisible(false, false);
-    if (isPlacedArena(payload)) { fitCamera(false); setArenaCourtView(); }
-    else fitCamera();
+    // Fit first: studio lights decide the shadow variants the programs compile with.
+    fitCamera(false);
+    await compilePrograms(generation);
+    if (isPlacedArena(payload)) setArenaCourtView();
+    else updateCamera();
   }
-  return { decodedTextures: textureCache.filter(Boolean).length, reusedGeometry };
+  return { decodedTextures: textureCache.filter(Boolean).length, reusedGeometry, skippedMeshes };
   } finally {
     for (const object of retained.values()) {
       object.geometry.dispose();
