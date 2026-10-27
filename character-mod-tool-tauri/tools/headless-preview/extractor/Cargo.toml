@@ -6,6 +6,8 @@ edition = "2024"
 [dependencies]
 anyhow = "1"
 regex = "1"
+serde_json = "1"
+flate2 = "1"
 nba2k-assets = { path = "../../../../shared/nba2k-assets" }
 
 # Standalone developer tool; not part of the application build.

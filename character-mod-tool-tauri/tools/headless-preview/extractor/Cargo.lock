@@ -166,8 +166,10 @@ name = "player-extract"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "flate2",
  "nba2k-assets",
  "regex",
+ "serde_json",
 ]
 
 [[package]]

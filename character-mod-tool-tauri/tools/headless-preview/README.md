@@ -59,6 +59,18 @@ lighting.
 `player` prints the player's gender, skin tone and iris color, so you know what
 you extracted.
 
+To look inside any manifest IFF, `members` lists its members (optionally filtered
+by a regex), `member` prints one as JSON (TXTR, SCNE and other trees), and
+`buffer` writes a scene vertex or index buffer decompressed to its SCNE `Size`:
+
+```bash
+tools/headless-preview/extractor/target/release/player-extract members "$GAME" char/fpglobal.iff 'normal_avg'
+```
+
+```bash
+tools/headless-preview/extractor/target/release/player-extract member "$GAME" char/fpglobal.iff chest_normal_avg_ripped.TXTR
+```
+
 `decode-player.cjs` options, also settable as environment variables:
 `--game` / `NBA2K27_ROOT`, `--exe` / `CMT_EXE` (default
 `target/release/character-mod-tool-tauri.exe`) and `--data` / `CMT_TEST_DATA`
@@ -91,8 +103,8 @@ renderer, pass that commit as `--baseline`. Once your changes are committed,
 
 - If `cl.exe` fails with `0xc0000017` while building, `PATH` is too long (over
   ~32K characters). Build from a shell with a de-duplicated `PATH`.
-- These previews skip facial morphs (the decoder reports the morph targets and
-  shows the neutral base face), the wrapper's jersey/bust fit morphs, and the
-  default config's accessories.
+- These previews show the neutral rest pose: the scene's morph targets are
+  facial expressions and pose correctives, all zero at rest. They also skip the
+  wrapper's jersey/bust fit morphs and the default config's accessories.
 - Everything this writes (`work/`, `harness/players/`, the assembled renderers)
   is game-derived or generated and is git-ignored.
