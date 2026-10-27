@@ -80,13 +80,21 @@ vm.createContext(sandbox);
 vm.runInContext(fs.readFileSync(path.join(app, 'frontend/preview-worker.bundle.js'), 'utf8'), sandbox,
   { filename: 'preview-worker.bundle.js' });
 
-// Typed arrays become tagged base64; harness/app.mjs rebuilds them.
-function encode(value) {
+// Typed arrays go to a sidecar <player>.bin (8-byte aligned) and the JSON keeps
+// { __typed, offset, length } in their place; harness/payload.mjs rebuilds them.
+// Base64 in the JSON took the harness 4-6 s to decode per player.
+function encode(value, chunks) {
   if (ArrayBuffer.isView(value)) {
-    return { __typed: value.constructor.name, base64: Buffer.from(value.buffer, value.byteOffset, value.byteLength).toString('base64') };
+    const offset = chunks.size;
+    const bytes = Buffer.from(value.buffer, value.byteOffset, value.byteLength);
+    chunks.parts.push(bytes);
+    const padding = (8 - (bytes.length % 8)) % 8;
+    if (padding) chunks.parts.push(Buffer.alloc(padding));
+    chunks.size += bytes.length + padding;
+    return { __typed: value.constructor.name, offset, length: bytes.length };
   }
-  if (Array.isArray(value)) return value.map(encode);
-  if (value && typeof value === 'object') return Object.fromEntries(Object.entries(value).map(([key, item]) => [key, encode(item)]));
+  if (Array.isArray(value)) return value.map((item) => encode(item, chunks));
+  if (value && typeof value === 'object') return Object.fromEntries(Object.entries(value).map(([key, item]) => [key, encode(item, chunks)]));
   return value;
 }
 
@@ -102,7 +110,9 @@ function encode(value) {
   Object.assign(preview, { player: resources.player, name: resources.name, activeItems: resources.activeItems,
     companionNames: resources.options.companionPaths.map((item) => item.name) });
   preview.skipped.push(...resources.warnings);
-  fs.writeFileSync(outFile, JSON.stringify(encode(preview)));
+  const chunks = { parts: [], size: 0 };
+  fs.writeFileSync(outFile, JSON.stringify(encode(preview, chunks)));
+  fs.writeFileSync(outFile.replace(/\.json$/i, '') + '.bin', Buffer.concat(chunks.parts));
   console.log(`${path.relative(process.cwd(), outFile)}: ${preview.meshes.length} meshes, ${preview.textures.length} textures, `
     + `${preview.stats.triangles} triangles in ${Date.now() - started} ms`);
   for (const note of preview.skipped) console.log(`  note: ${note}`);

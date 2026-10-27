@@ -1,20 +1,12 @@
 // Before/after renderer harness: the baseline (old/) and working-tree (new/) explorer
 // renderers load the same payload side by side. See ../README.md for URL parameters.
+import { loadPlayer } from './payload.mjs';
+
 const params = new URLSearchParams(location.search);
 const log = (...args) => { document.getElementById('log').textContent += args.join(' ') + '\n'; console.log(...args); };
 
-// Players come from decode-player.cjs, where typed arrays are tagged base64.
-async function playerPayload(name) {
-  const decode = (value) => {
-    if (Array.isArray(value)) return value.map(decode);
-    if (!value || typeof value !== 'object') return value;
-    if (value.__typed) return new globalThis[value.__typed](Uint8Array.from(atob(value.base64), (c) => c.charCodeAt(0)).buffer);
-    return Object.fromEntries(Object.entries(value).map(([key, item]) => [key, decode(item)]));
-  };
-  const response = await fetch(`players/${encodeURIComponent(name)}.json`);
-  if (!response.ok) throw new Error(`players/${name}.json not found; run decode-player.cjs first`);
-  return decode(await response.json());
-}
+// Players come from decode-player.cjs (JSON plus a binary sidecar).
+const playerPayload = (name) => loadPlayer(name);
 
 // Without ?player=, a synthetic head: face/chest groups split by a duplicated seam
 // ring, two eyes and generated textures. Needs no game files.

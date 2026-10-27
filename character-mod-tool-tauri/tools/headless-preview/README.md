@@ -80,7 +80,9 @@ tools/headless-preview/extractor/target/release/player-extract member "$GAME" ch
 data folder, so your real app settings are never used. `--config <name>` picks
 an accessory configuration, such as `flat_top`, which loads that hair. The config
 names are the `png#####_config_<name>.iff` files the extractor wrote. Output
-defaults to `harness/players/<player>[-<config>].json`.
+defaults to `harness/players/<player>[-<config>].json`, with its typed arrays
+(geometry and texture bytes) in a `.bin` file beside it; `harness/payload.mjs`
+loads the pair in well under a second.
 
 Rerun `prepare.cjs` after editing `web/renderer/`. To compare against an older
 renderer, pass that commit as `--baseline`. Once your changes are committed,
