@@ -80,6 +80,12 @@ const skinBoundaryPairs = new Map();
 let materialMetadataByName = new Map();
 let cameraRenderFrame = 0;
 let textureSampler = null;
+// Materials removed by the previous disposeRoot. three.js deletes a shader program
+// when its last material is disposed, so disposing a model's materials before the
+// next model compiles threw away ~30 identical programs per model (1-1.5 s of
+// compile stalls per portrait). They are disposed one model later instead, once
+// the replacement materials hold the same programs.
+let retiredMaterials = new Set();
 
 function invalidateShadows() {
   // Static geometry/light rigs do not need another shadow pass just because
@@ -296,7 +302,8 @@ function disposeRoot(keepTextures = new Set()) {
     });
   }
   geometries.forEach((geometry) => geometry.dispose());
-  materialsToDispose.forEach((material) => material.dispose());
+  retiredMaterials.forEach((material) => { if (!materialsToDispose.has(material)) material.dispose(); });
+  retiredMaterials = materialsToDispose;
   textureCache.forEach((texture) => { if (!keepTextures.has(texture)) texture?.dispose(); });
   textureCache = [];
   textureItems = [];
