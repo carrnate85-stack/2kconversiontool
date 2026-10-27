@@ -8,7 +8,7 @@ import { captureBasketFrame, catalogOverheadTarget, captureCreatedWoodTint } fro
 import { materialProfile, previewLightingProfile } from './render-profiles.mjs';
 import { skinBoundaryResponse, skinLuminanceResponse } from '../skin-response.mjs';
 import { configureStrandLightmap, configureStrandTangentRange, configureStrandSpecular, configureStrandCoverage } from '../strand-preview-fixes.mjs';
-import { createStudioEnvironment, studioLightBalance, seamSmoothedNormals, vertexTangents, cardTextureUvs, configureEyeIris, configureSkinShading, configureTearFilm } from '../studio-shading.mjs';
+import { createStudioEnvironment, studioLightBalance, seamSmoothedNormals, vertexTangents, cardTextureUvs, configureEyeIris, configureSkinShading, configureTearFilm, configureEyewearLens } from '../studio-shading.mjs';
 
 
 export function createExplorerRenderer(options = {}) {
@@ -47,6 +47,14 @@ const grid = new THREE.GridHelper(10000, 40, 0x4c5665, 0x20262f);
 grid.material.opacity = 0.32;
 grid.material.transparent = true;
 scene.add(grid);
+
+// Shadow-only floor for studio previews; outside modelRoot so fitting, picking
+// and the children/payload pairing never see it.
+const groundShadow = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.ShadowMaterial({ opacity: 0.34, depthWrite: false }));
+groundShadow.rotation.x = -Math.PI / 2;
+groundShadow.receiveShadow = true;
+groundShadow.visible = false;
+scene.add(groundShadow);
 
 const modelRoot = new THREE.Group();
 // The decoder deliberately emits the workspace Blender import basis (Z-up).
@@ -119,6 +127,7 @@ function configurePreviewLighting(payload = currentPayload) {
   captureEnvironment?.dispose();
   captureEnvironment = null;
   renderer.shadowMap.enabled = false;
+  groundShadow.visible = false;
   renderer.localClippingEnabled = false;
   renderer.shadowMap.autoUpdate = true;
   invalidateShadows();
@@ -183,7 +192,8 @@ function configureStudioLights(bounds) {
   keyLight.shadow.bias = -0.0002;
   keyLight.shadow.normalBias = radius * 0.0006;
   const shadowCamera = keyLight.shadow.camera;
-  const extent = radius * 0.72;
+  // Wide enough to hold the shadow the model throws across the ground plane.
+  const extent = radius * 1.15;
   shadowCamera.left = shadowCamera.bottom = -extent;
   shadowCamera.right = shadowCamera.top = extent;
   shadowCamera.near = Math.max(0.01, radius * 0.05);
@@ -195,6 +205,10 @@ function configureStudioLights(bounds) {
     object.castShadow = materials.some((material) => material && !material.transparent);
     object.receiveShadow = true;
   });
+  // Contact shadow at the model's base so it stands on the floor instead of floating.
+  groundShadow.position.set(center.x, bounds.min.y + radius * 0.0005, center.z);
+  groundShadow.scale.setScalar(radius * 3);
+  groundShadow.visible = renderer.shadowMap.enabled;
 }
 
 function colorFor(name) {
@@ -1063,6 +1077,18 @@ function boundTexture(targetName, channel) {
   return index >= 0 ? textureCache[index] : null;
 }
 
+// Accessory textures (goggles, glasses, ...) arrive without a region target, so
+// region lookups never bind them and the accessory drew as a placeholder blob.
+// Pair them with a region-less material whose name contains the texture's
+// leading word: goggles_color_o -> goggles_custom_shader.
+function boundAccessoryTexture(materialName, channel) {
+  const tokens = new Set(String(materialName || '').toLowerCase().split(/[^a-z0-9]+/).filter(Boolean));
+  const index = textureItems.findIndex((item, itemIndex) => textureCache[itemIndex]
+    && item.binding && !item.binding.target && item.binding.channel === channel
+    && tokens.has(String(item.name || '').toLowerCase().split(/[_.]/)[0]));
+  return index >= 0 ? textureCache[index] : null;
+}
+
 function boundTextureMatching(targetName, channel, pattern) {
   const index = textureItems.findIndex((item, itemIndex) => textureCache[itemIndex]
     && item.binding?.target === targetName && item.binding?.channel === channel
@@ -1370,13 +1396,13 @@ function applyAutomaticTextures() {
       const targetName = materialTextureTarget(material.name);
       const boundColorTexture = boundArenaTexture(material.name, 'color') || (targetName
         ? boundTexture(targetName, 'color')
-        : null);
+        : boundAccessoryTexture(material.name, 'color'));
       const colorTexture = targetName === 'eye'
         ? eyeWhiteTexture(boundColorTexture, material)
         : boundColorTexture;
       const normalTexture = boundArenaTexture(material.name, 'normal') || (targetName
         ? boundTexture(targetName, 'normal')
-        : null);
+        : boundAccessoryTexture(material.name, 'normal'));
       const strandMaterial = targetName === 'hair' || targetName === 'facialhair';
       const tangentTexture = strandMaterial
         ? boundStrandTangent(material.name, targetName)
@@ -1413,6 +1439,7 @@ function applyAutomaticTextures() {
       material.depthWrite = targetName !== 'eyelash' && profile?.role !== 'glass';
       material.forceSinglePass = strandMaterial;
       configureStrandCoverage(material, strandMaterial, renderer.getContext().getContextAttributes()?.antialias);
+      configureEyewearLens(material, !targetName && /goggle|glasses|lens|visor/i.test(material.name) && Boolean(colorTexture));
       material.color.copy(colorTexture && targetName !== 'eyelash'
         ? materialResponses.get(targetName) || new THREE.Color(0xffffff)
         : colorFor(material.name));

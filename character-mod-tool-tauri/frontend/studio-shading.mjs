@@ -265,6 +265,34 @@ export function configureTearFilm(material) {
   return true;
 }
 
+// Eyewear (goggles, glasses) color maps carry an opacity mask: frame opaque,
+// lens transparent. A flat material opacity either hid the eyes behind solid
+// lenses or, multiplied with the mask, erased the lenses. Use the mask with a
+// minimum lens opacity and a glossy surface so lenses read as clear plastic.
+export const EYEWEAR_LENS = Object.freeze({ minimumOpacity: 0.22, roughness: 0.12 });
+
+export function configureEyewearLens(material, enabled) {
+  material.userData.eyewearLens = Boolean(enabled && material.map);
+  if (!material.userData.eyewearLens) return false;
+  material.transparent = true;
+  material.opacity = 1;
+  material.depthWrite = true;
+  if ('roughness' in material) material.roughness = EYEWEAR_LENS.roughness;
+  if ('metalness' in material) material.metalness = 0;
+  const uniforms = material.userData.eyewearLensUniforms ||= { nbaLensMinimumOpacity: { value: EYEWEAR_LENS.minimumOpacity } };
+  const previous = material.onBeforeCompile;
+  const previousKey = material.customProgramCacheKey();
+  material.onBeforeCompile = (shader) => {
+    previous(shader);
+    Object.assign(shader.uniforms, uniforms);
+    shader.fragmentShader = 'uniform float nbaLensMinimumOpacity;\n' + shader.fragmentShader;
+    shader.fragmentShader = shader.fragmentShader.replace('#include <alphamap_fragment>',
+      'diffuseColor.a = max( diffuseColor.a, nbaLensMinimumOpacity );\n#include <alphamap_fragment>');
+  };
+  material.customProgramCacheKey = () => previousKey + ':nba-eyewear-lens-v1';
+  return true;
+}
+
 // Skin: sheen for the peach-fuzz rim, a lower dielectric F0, and wrapped,
 // red-shifted diffuse past the terminator as a cheap subsurface stand-in.
 export const SKIN_SHADING = Object.freeze({

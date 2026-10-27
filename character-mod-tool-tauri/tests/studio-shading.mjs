@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { studioLightBalance, STUDIO_ENVIRONMENT, seamSmoothedNormals, vertexTangents, cardTextureUvs, configureEyeIris, configureSkinShading, configureTearFilm } from '../web/renderer/studio-shading.mjs';
+import { studioLightBalance, STUDIO_ENVIRONMENT, seamSmoothedNormals, vertexTangents, cardTextureUvs, configureEyeIris, configureSkinShading, configureTearFilm, configureEyewearLens, EYEWEAR_LENS } from '../web/renderer/studio-shading.mjs';
 
 const balance = studioLightBalance({ ambient: 0.4, hemisphere: 0.8 });
 assert.ok(Math.abs(balance.ambient - 0.4 * STUDIO_ENVIRONMENT.ambientScale) < 1e-12);
@@ -90,6 +90,19 @@ assert.equal(cardTextureUvs(attachmentLayout, cardUvs, cardIndices), cardUvs, 'S
 assert.equal(cardTextureUvs(cardUvs, attachmentLayout, cardIndices), cardUvs, 'Correct labels are kept');
 assert.equal(cardTextureUvs(cardUvs, null, cardIndices), cardUvs, 'Meshes without a second set are untouched');
 assert.equal(cardTextureUvs(cardUvs, cardUvs.map(value => value * 0.8), cardIndices), cardUvs, 'Similar sets need a clear margin to switch');
+
+// Eyewear keeps its texture mask with a minimum lens opacity, chained after earlier hooks.
+const goggles = hookMaterial({ transparent: false, opacity: 0.28, depthWrite: false, roughness: 0.72, metalness: 0.03 });
+assert.equal(configureEyewearLens(goggles, true), true);
+assert.ok(goggles.transparent && goggles.opacity === 1 && goggles.depthWrite && goggles.roughness < 0.2 && goggles.metalness === 0);
+const lensShader = { uniforms: {}, fragmentShader: '#include <color_fragment>\n#include <alphamap_fragment>' };
+goggles.onBeforeCompile(lensShader);
+assert.equal(lensShader.basePreserved, true);
+assert.ok(lensShader.fragmentShader.indexOf('max( diffuseColor.a, nbaLensMinimumOpacity )') < lensShader.fragmentShader.indexOf('#include <alphamap_fragment>'));
+assert.equal(lensShader.uniforms.nbaLensMinimumOpacity.value, EYEWEAR_LENS.minimumOpacity);
+assert.equal(goggles.customProgramCacheKey(), 'range-base:nba-eyewear-lens-v1');
+const plainLens = hookMaterial({ map: null });
+assert.equal(configureEyewearLens(plainLens, true), false, 'Untextured eyewear is left alone');
 
 // The tear line becomes a translucent film; the caruncle and other parts are untouched.
 const tearLine = { name: 'teartube_shader', color: { setRGB(...rgb) { this.rgb = rgb; } }, transparent: false, opacity: 1, depthWrite: true, roughness: 0.7, metalness: 0.03, userData: {} };
