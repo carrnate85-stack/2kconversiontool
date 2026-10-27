@@ -100,6 +100,18 @@ fn skin_color(value: &Value) -> Option<i64> {
         .or_else(|| value.as_str().and_then(|s| s.parse().ok()))
         .filter(|n| (0..=99).contains(n))
 }
+/// Detail maps (lightmaps, strand tangents, occlusion, wrinkle and region maps)
+/// that a preview can render without; color and normal maps are never optional.
+fn auxiliary_texture(lower_name: &str) -> bool {
+    let leaf = lower_name.rsplit('/').next().unwrap_or(lower_name);
+    [
+        "lightmap", "_tangent", "occlusion", "bentnormal", "coneangle", "hairmask",
+        "wrinkle", "region_weights", "_rdmo",
+    ]
+    .iter()
+    .any(|marker| leaf.contains(marker))
+}
+
 fn expanded_dds<'a>(name: &str, members: &'a [Value]) -> Option<&'a Value> {
     if !name.to_ascii_lowercase().ends_with(".tld") {
         return None;
@@ -542,6 +554,12 @@ impl Assets {
                     Ok(bytes) => bytes,
                     Err(error) if garment => {
                         warnings.push(format!("Optional garment map skipped: {error:#}"));
+                        continue;
+                    }
+                    // Detail maps only refine shading; one unreadable lightmap or
+                    // tangent map must not fail the whole player preview.
+                    Err(error) if auxiliary_texture(&lower) => {
+                        warnings.push(format!("Optional detail map skipped: {error:#}"));
                         continue;
                     }
                     Err(error) => return Err(error),
@@ -1325,6 +1343,28 @@ mod tests {
         assert!(owned(&mut assets, &["shared"]).is_err());
         assets.release_resources(lease(&values[0]));
         assert!(owned(&mut assets, &["shared"]).is_ok());
+    }
+
+    #[test]
+    fn only_detail_maps_are_optional_preview_textures() {
+        for name in [
+            "shared/f2/strandshair_lightmap_o.f205f3ab21d1e563.tld",
+            "hair_tangent_o.45849c3e3580d940.tld",
+            "face_bentnormal_o.c5af17ae1ea08157.tld",
+            "face_wrinklecolor_o.eac435c5c39d6f52.tld",
+            "chest_region_weights.3366e90c356d95df.tld",
+            "goggles_rdmo_o.0146357b9f4d9270.tld",
+        ] {
+            assert!(super::auxiliary_texture(name), "{name} should be optional");
+        }
+        for name in [
+            "face_color_o.d4540db69a0b0202.tld",
+            "face_normal_o.c3b44e82da7964a3.tld",
+            "hair_color_o.d269c0cbe60555ea.tld",
+            "shared/ad/iris_normalheight1.ad144d47f7f5520f.tld",
+        ] {
+            assert!(!super::auxiliary_texture(name), "{name} must stay required");
+        }
     }
 
     #[test]
