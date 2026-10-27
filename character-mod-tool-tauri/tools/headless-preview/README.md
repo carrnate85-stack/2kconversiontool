@@ -61,7 +61,9 @@ you extracted.
 
 To look inside any manifest IFF, `members` lists its members (optionally filtered
 by a regex), `member` prints one as JSON (TXTR, SCNE and other trees), and
-`buffer` writes a scene vertex or index buffer decompressed to its SCNE `Size`:
+`buffer` writes a scene vertex or index buffer decompressed to its SCNE `Size`,
+and `dump` writes every member matching a regex (for example the vertex shaders
+in `asset_shaders.iff`, which `dxc -dumpbin` from the Windows SDK disassembles):
 
 ```bash
 tools/headless-preview/extractor/target/release/player-extract members "$GAME" char/fpglobal.iff 'normal_avg'
@@ -103,6 +105,13 @@ renderer, pass that commit as `--baseline`. Once your changes are committed,
 
 - If `cl.exe` fails with `0xc0000017` while building, `PATH` is too long (over
   ~32K characters). Build from a shell with a de-duplicated `PATH`.
+- `TANGENTFRAME0` (R10G10B10A2_UINT), as the game's vertex shaders decode it:
+  R/G hold an octahedral normal (`x = r·2/1023 − 1`, same for y). The low 2 bits
+  of B pick a reference axis (0: X, 1: Y, 2–3: Z). With `U = normalize(N × axis)`
+  and `V = N × U`, the tangent is `c·U ± √(1 − c²)·V`, where
+  `c = ((B >> 2) & 255)·2/255 − 1` and A bit 1 gives the sign. A bit 0 is the
+  bitangent sign (`tangent.w`). On the body these frames match the UV-derived
+  ones the renderer computes (tangent agreement 0.999).
 - These previews show the neutral rest pose: the scene's morph targets are
   facial expressions and pose correctives, all zero at rest. They also skip the
   wrapper's jersey/bust fit morphs and the default config's accessories.

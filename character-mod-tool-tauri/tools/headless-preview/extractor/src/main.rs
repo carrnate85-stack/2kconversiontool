@@ -6,6 +6,7 @@
 //   player-extract members <game-root> <manifest-path> [regex]
 //   player-extract member <game-root> <manifest-path> <member-name>
 //   player-extract buffer <game-root> <manifest-path> <member-name> <size> <out.bin>
+//   player-extract dump <game-root> <manifest-path> <regex> <out-dir>
 use anyhow::{Context, Result, bail, ensure};
 use nba2k_assets::{catalog::Catalog, codec};
 use std::{fs, path::Path, sync::atomic::AtomicBool};
@@ -136,7 +137,23 @@ fn main() -> Result<()> {
             fs::write(out, &bytes)?;
             println!("{} bytes -> {}", bytes.len(), out.display());
         }
-        other => bail!("Unknown mode {other}; use list, player, headshot, members, member or buffer"),
+        "dump" => {
+            // Every member of a manifest IFF whose name matches a regex, raw, into a folder.
+            let source = catalog.resolve(args.get(2).context("Missing manifest path")?)?;
+            let pattern = regex::Regex::new(&format!("(?i){}", args.get(3).context("Missing regex")?))?;
+            let out = Path::new(args.get(4).context("Missing output folder")?);
+            fs::create_dir_all(out)?;
+            let cancel = AtomicBool::new(false);
+            let decoded = codec::Oodle::load(root)?.archive(&codec::range(&catalog, source)?, &cancel)?;
+            let mut archive = codec::Archive::open(decoded)?;
+            for member in archive.names()? {
+                let name = member["name"].as_str().unwrap_or("").to_owned();
+                if pattern.is_match(&name) {
+                    fs::write(out.join(&name), archive.named(&name)?)?;
+                }
+            }
+        }
+        other => bail!("Unknown mode {other}; use list, player, headshot, members, member, buffer or dump"),
     }
     Ok(())
 }

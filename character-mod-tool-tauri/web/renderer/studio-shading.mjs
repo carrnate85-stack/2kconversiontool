@@ -348,8 +348,10 @@ export function strandTint(value) {
 
 // The male body's torso normal maps (fpglobal, every muscle type) carry the
 // opposite green (bitangent) direction to its chest maps, which left a zigzag
-// seam where the two materials meet. Female torso maps match their chest maps
-// (flipping them creates the seam); the child body's seam is unaffected by it.
+// seam where the two materials meet. The mesh's own TANGENTFRAME0 frames match
+// the UV-derived ones on every body material, so the flip is in the torso maps
+// themselves. Female torso maps match their chest maps (flipping them creates
+// the seam); the child body's seam is unaffected by it.
 export function flipsBodyNormalGreen(targetName, gender) {
   return targetName === 'torso' && gender === 'male';
 }
