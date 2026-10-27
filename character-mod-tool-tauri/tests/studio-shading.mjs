@@ -130,7 +130,7 @@ for (const unset of [null, undefined, [0, 0, 0], [0.5, 0.5], [0.5, NaN, 0.5], [1
 }
 
 assert.equal(flipsBodyNormalGreen('torso', 'male'), true);
-assert.equal(flipsBodyNormalGreen('torso', 'child'), false);
+assert.equal(flipsBodyNormalGreen('torso', 'child'), true, 'Child bodies use the male maps');
 assert.equal(flipsBodyNormalGreen('torso', 'female'), false, 'Female torso maps already match the chest');
 assert.equal(flipsBodyNormalGreen('chest', 'male'), false);
 assert.equal(flipsBodyNormalGreen('torso', undefined), false, 'Unknown bodies (catalog items) are left alone');

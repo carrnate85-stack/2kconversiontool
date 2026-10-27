@@ -1013,7 +1013,7 @@ function createDdsTexture(item) {
       texture.name = item.name;
       texture.userData.range = item.range || null;
       texture.userData.rangeColor = Boolean(item.range) && item.binding?.channel === 'color'
-        && /hair/i.test(item.binding?.target || '');
+        && /hair|jersey|shorts/i.test(item.binding?.target || '');
       texture.colorSpace = item.range || item.format === 'RGBA8_UNORM' ? THREE.NoColorSpace : THREE.SRGBColorSpace;
       texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
       texture.generateMipmaps = true;
@@ -1030,10 +1030,13 @@ function createDdsTexture(item) {
     texture.userData.range = item.range || null;
     // Range-compressed maps upload raw (NoColorSpace) so the shader can decode the
     // range. Hair and beard color maps then still hold sRGB values: linearising them
-    // matches the game's headshots (png00809, png01507). Skin evidence was mixed, so
-    // skin keeps the previous raw interpretation.
+    // matches the game's headshots (png00809, png01507). Uniform color maps are
+    // albedo the same way. Skin maps stay linear: read as sRGB, their chroma is far
+    // too saturated (dark-skinned png01013: G/R 0.25, B/R 0.13 vs 0.50/0.35 linear,
+    // against 0.49/0.34 for the ColorChecker dark-skin patch), and fair skin turns
+    // orange. Linear skin is somewhat bright, which the studio exposure absorbs.
     texture.userData.rangeColor = Boolean(item.range) && item.binding?.channel === 'color'
-      && /hair/i.test(item.binding?.target || '');
+      && /hair|jersey|shorts/i.test(item.binding?.target || '');
     const declaredFormat = String(item.format || '').toUpperCase();
     // Plain (non-range) hair, beard and eyelash color maps are declared *_UNORM
     // without an SRGB tag but hold sRGB color like their range-compressed siblings;
@@ -1067,6 +1070,10 @@ function materialTextureTarget(materialName) {
   if (/(?:^|_)(?:torso|body)(?:_|$)/.test(name)) return 'torso';
   if (/(?:^|_)(?:legs?|thigh|calf)(?:_|$)/.test(name)) return 'legs';
   if (/ball/.test(name)) return 'ball';
+  // Preview garments (jerseyreg_nike_v_mat, female_shortsreg_nike_mat, ...) take
+  // the preview uniform's baked maps.
+  if (/jerseyreg/.test(name)) return 'jersey';
+  if (/shortsreg/.test(name)) return 'shorts';
   return '';
 }
 
@@ -1218,11 +1225,18 @@ function irisScale(value) {
   return 0.54;
 }
 
-function configureTextureRange(material, texture) {
+// Scanned body color maps are pure black where clothing (e.g. a female player's
+// sports bra) is layered on in game, which drew as black holes with the jersey
+// hidden. Body maps fill those texels with a heather-gray athletic fabric.
+const GARMENT_CUTOUT_FILL = Object.freeze({ threshold: [0.02, 0.06], color: [0.1, 0.105, 0.115] });
+
+function configureTextureRange(material, texture, fillCutouts = false) {
   const range = texture?.userData?.range || null;
   const srgb = Boolean(range && texture.userData.rangeColor);
+  const fill = Boolean(range && fillCutouts);
   material.userData.textureRange = range;
   material.userData.textureRangeSrgb = srgb;
+  material.userData.garmentCutoutFill = fill;
   // A color-map swap can reuse the same compiled shader. Keep its uniform
   // objects alive and update their values even when onBeforeCompile is skipped.
   const uniforms = material.userData.textureRangeUniforms ||= {
@@ -1249,14 +1263,16 @@ function configureTextureRange(material, texture) {
           #ifdef DECODE_VIDEO_TEXTURE
             sampledDiffuseColor = sRGBTransferEOTF( sampledDiffuseColor );
           #endif
+          ${fill ? `float garmentCutout = 1.0 - smoothstep( ${GARMENT_CUTOUT_FILL.threshold.join(', ')}, max( max( sampledDiffuseColor.r, sampledDiffuseColor.g ), sampledDiffuseColor.b ) );` : ''}
           vec4 rangeDecodedColor = mix( mapRangeMin, mapRangeMax, sampledDiffuseColor );
           sampledDiffuseColor = mix( sampledDiffuseColor, rangeDecodedColor, mapRangeMask );
           ${srgb ? 'sampledDiffuseColor = sRGBTransferEOTF( sampledDiffuseColor );' : ''}
+          ${fill ? `sampledDiffuseColor.rgb = mix( sampledDiffuseColor.rgb, vec3( ${GARMENT_CUTOUT_FILL.color.join(', ')} ), garmentCutout );` : ''}
           diffuseColor *= sampledDiffuseColor;
         #endif`,
       );
   } : () => {};
-  material.customProgramCacheKey = () => (range ? `nba2k27-texture-range-v1${srgb ? '-srgb' : ''}` : '');
+  material.customProgramCacheKey = () => (range ? `nba2k27-texture-range-v1${srgb ? '-srgb' : ''}${fill ? '-cutout' : ''}` : '');
 }
 
 function median(values) {
@@ -1444,7 +1460,7 @@ function applyAutomaticTextures() {
         material.anisotropyMap = tangentTexture;
         material.anisotropy = tangentTexture ? previewMaterialProfile(material.name).anisotropy || 0 : 0;
       }
-      configureTextureRange(material, colorTexture);
+      configureTextureRange(material, colorTexture, ['chest', 'torso', 'legs'].includes(targetName));
       configureStrandLightmap(material, strandMaterial
         ? boundTextureMatching(targetName, 'auxiliary', /lightmap|occlusion/i) : null,
       object.geometry?.getAttribute('nbaStrandLightUv') ? 'nbaStrandLightUv' : null);
