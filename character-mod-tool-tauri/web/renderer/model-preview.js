@@ -61,8 +61,8 @@ function setCameraState(value) {
   draw();
 }
 
-function fitCamera(extraBounds = null) {
-  context.api.fitCamera();
+function fitCamera(extraBounds = null, drawAfter = true) {
+  context.api.fitCamera(drawAfter);
   if (extraBounds?.min?.length === 3 && extraBounds?.max?.length === 3) {
     const box = new THREE.Box3().setFromObject(modelRoot).union(new THREE.Box3(
       new THREE.Vector3(...extraBounds.min), new THREE.Vector3(...extraBounds.max)));
@@ -95,7 +95,7 @@ function setView(view) {
 }
 
 // Editor display modes surround Explorer's materials; skin decoding stays in Explorer.
-function applyEditorDisplay() {
+function applyEditorDisplay(drawAfter = true) {
   context.applyAutomaticTextures();
   modelRoot.traverse((object) => {
     if (object.userData.previewOccluder) {
@@ -125,10 +125,10 @@ function applyEditorDisplay() {
     }
   });
   context.invalidateShadows();
-  draw();
+  if (drawAfter) draw();
 }
 
-function setStudioLighting(value) {
+function setStudioLighting(value, drawAfter = true) {
   studioLighting = Boolean(value);
   context.configurePreviewLighting();
   if (studioLighting) context.configureStudioLights(new THREE.Box3().setFromObject(modelRoot));
@@ -143,17 +143,17 @@ function setStudioLighting(value) {
     context.keyLight.intensity = sourcePayload?.player ? 1.75 : 0.85;
     context.rimLight.intensity = sourcePayload?.player ? 0.4 : 0.22;
   }
-  applyEditorDisplay();
+  applyEditorDisplay(drawAfter);
 }
 
 function setClayMode(value) { clayMode = Boolean(value); applyEditorDisplay(); }
-function setGridVisible(value) { gridVisible = Boolean(value); context.grid.visible = gridVisible && !transparentBackground; draw(); }
-function setJerseyVisible(value) {
+function setGridVisible(value, drawAfter = true) { gridVisible = Boolean(value); context.grid.visible = gridVisible && !transparentBackground; if (drawAfter) draw(); }
+function setJerseyVisible(value, drawAfter = true) {
   for (const object of modelRoot.children) {
     if (object.userData.previewKind === 'preview-jersey') object.visible = Boolean(value);
   }
   context.invalidateShadows();
-  draw();
+  if (drawAfter) draw();
 }
 function setMaterialTargetVisible(targetName, value) {
   modelRoot.traverse((object) => {
@@ -234,12 +234,18 @@ async function load(payload, onProgress = () => {}) {
   }
   // Catalog heads and hair layers never use the body-fit editor.
   if (!String(payload.player?.mode || '').startsWith('hair-catalog-')) bodyEditor.initialize(prepared);
-  applyEditorDisplay();
-  context.api.setEyelashesVisible(false);
-  setJerseyVisible(false);
-  fitCamera();
-  setGridVisible(gridVisible);
-  if (!studioLighting) setStudioLighting(false);
+  // Configure everything that affects shader variants first, then compile them
+  // off the main thread: drawing straight away compiled every program
+  // synchronously and froze the UI for ~0.5 s on a cold load.
+  applyEditorDisplay(false);
+  context.api.setEyelashesVisible(false, false);
+  setJerseyVisible(false, false);
+  fitCamera(null, false);
+  setGridVisible(gridVisible, false);
+  if (!studioLighting) setStudioLighting(false, false);
+  try { await context.api.precompile?.(); } catch { /* a newer load superseded this one */ }
+  if (generation !== loadGeneration) return { cancelled: true };
+  draw();
   window.dispatchEvent(new CustomEvent('model-preview:loaded', { detail: { viewer: viewerGlobalName } }));
   return result;
   } catch (error) {

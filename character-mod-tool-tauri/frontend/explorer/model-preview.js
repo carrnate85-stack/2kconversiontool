@@ -2025,6 +2025,9 @@ const api = {
   colorHex: (name) => `#${colorFor(name).getHexString()}`,
   clearPick,
   fitCamera,
+  // For callers that load with deferRender and configure before their first
+  // draw: compiles the current material programs off the main thread.
+  precompile: () => compilePrograms(loadGeneration),
   load,
   loadArenaTextures,
   replaceModelColors,
