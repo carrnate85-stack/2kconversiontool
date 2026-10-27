@@ -1,5 +1,5 @@
 import { createExplorerRenderer } from './explorer/model-preview.js';
-import { GARMENT_LAYERING } from './studio-shading.mjs';
+import { GARMENT_LAYERING, previewGarmentKind } from './studio-shading.mjs';
 import { createBodyEditor } from './body-preview-editor.mjs';
 import { nearestSkinBoundaryPairs, normalPacking, configureNormalPacking } from './skin-preview-fixes.mjs';
 
@@ -152,7 +152,8 @@ function setClayMode(value) { clayMode = Boolean(value); applyEditorDisplay(); }
 function setGridVisible(value, drawAfter = true) { gridVisible = Boolean(value); context.grid.visible = gridVisible && !transparentBackground; if (drawAfter) draw(); }
 function setJerseyVisible(value, drawAfter = true) {
   for (const object of modelRoot.children) {
-    if (object.userData.previewKind === 'preview-jersey') object.visible = Boolean(value);
+    // Shoes and socks stay on; the toggle is the jersey and shorts.
+    if (object.userData.previewGarment === 'jersey') object.visible = Boolean(value);
   }
   context.api.setGarmentLayering?.(value ? GARMENT_LAYERING.depth : 0);
   context.invalidateShadows();
@@ -218,12 +219,15 @@ async function load(payload, onProgress = () => {}) {
   const prepared = preparePayload(payload);
   if (previous?.geometryKey && previous.geometryKey === payload.geometryKey) {
     context.payload = prepared;
+    const reuseStarted = performance.now();
     const result = previous.textureKey === payload.textureKey
       ? { decodedTextures: context.api.stats().decodedTextures ?? payload.textures?.length ?? 0 }
       : await context.api.loadArenaTextures(prepared.textures, onProgress);
     if (generation !== loadGeneration) return { cancelled: true };
     bodyEditor.setBodyFit(prepared.player?.bodyFit || {});
     applyEditorDisplay(); draw();
+    // Same geometry: only textures and body fit were refreshed.
+    wrapperLoadProfile = { reusedGeometry: true, totalMs: Math.round(performance.now() - reuseStarted) };
     sourcePayload = payload;
     return { ...result, reusedGeometry: prepared.meshes.length };
   }
@@ -236,6 +240,7 @@ async function load(payload, onProgress = () => {}) {
     const item = prepared.meshes[index], object = modelRoot.children[index];
     object.userData.previewKind = item.sourceKind || '';
     object.userData.previewSource = item.sourceName || '';
+    object.userData.previewGarment = previewGarmentKind(item);
   }
   // Catalog heads and hair layers never use the body-fit editor.
   if (!String(payload.player?.mode || '').startsWith('hair-catalog-')) bodyEditor.initialize(prepared);

@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { studioLightBalance, STUDIO_ENVIRONMENT, seamSmoothedNormals, vertexTangents, cardTextureUvs, configureEyeIris, configureSkinShading, configureTearFilm, configureEyewearLens, EYEWEAR_LENS, configureEyeSurface, EYE_SURFACE, strandTint, flipsBodyNormalGreen, configureDetailNormal, configureGarmentLayering, GARMENT_LAYERING, configureColorwayMask, SHOE_COLORWAY, configureOcclusionAlpha } from '../web/renderer/studio-shading.mjs';
+import { studioLightBalance, STUDIO_ENVIRONMENT, seamSmoothedNormals, vertexTangents, cardTextureUvs, configureEyeIris, configureSkinShading, configureTearFilm, configureEyewearLens, EYEWEAR_LENS, configureEyeSurface, EYE_SURFACE, strandTint, flipsBodyNormalGreen, configureDetailNormal, configureGarmentLayering, GARMENT_LAYERING, previewGarmentKind, garmentCoverWeights, configureColorwayMask, SHOE_COLORWAY, configureOcclusionAlpha } from '../web/renderer/studio-shading.mjs';
 
 const balance = studioLightBalance({ ambient: 0.4, hemisphere: 0.8 });
 assert.ok(Math.abs(balance.ambient - 0.4 * STUDIO_ENVIRONMENT.ambientScale) < 1e-12);
@@ -98,8 +98,9 @@ assert.equal(configureDetailNormal(noBase, { name: 'face_detailnormal_o' }), fal
 assert.equal(noBase.customProgramCacheKey(), 'range-base');
 
 // Garment layering pushes skin depth only, after three's projection, from one
-// shared uniform; materials it doesn't apply to are untouched.
-const layering = { value: GARMENT_LAYERING.depth };
+// shared vec2 uniform (jersey, footwear) weighted by per-vertex cover; materials
+// it doesn't apply to are untouched.
+const layering = { value: { x: GARMENT_LAYERING.depth, y: GARMENT_LAYERING.depth } };
 const skinUnderGarment = hookMaterial();
 assert.equal(configureGarmentLayering(skinUnderGarment, layering, true), true);
 const layeringShader = { uniforms: {}, vertexShader: '#include <project_vertex>\n#include <worldpos_vertex>', fragmentShader: '' };
@@ -108,10 +109,24 @@ assert.equal(layeringShader.basePreserved, true);
 assert.equal(layeringShader.uniforms.nbaGarmentDepth, layering, 'Shared uniform: toggling never recompiles');
 assert.ok(layeringShader.vertexShader.indexOf('gl_Position.z =') > layeringShader.vertexShader.indexOf('#include <project_vertex>'));
 assert.ok(!/gl_Position\.(?:xy|x|y)\s*=/.test(layeringShader.vertexShader), 'Only depth moves');
-assert.equal(skinUnderGarment.customProgramCacheKey(), 'range-base:nba-garment-layering-v1');
+assert.ok(layeringShader.vertexShader.includes('dot( nbaGarmentCover, nbaGarmentDepth )'), 'Only covered skin is pushed');
+assert.equal(skinUnderGarment.customProgramCacheKey(), 'range-base:nba-garment-layering-v2');
 const face = hookMaterial();
 assert.equal(configureGarmentLayering(face, layering, false), false);
 assert.equal(face.customProgramCacheKey(), 'range-base');
+const garment = (sourceName) => previewGarmentKind({ sourceKind: 'preview-jersey', sourceName });
+assert.equal(garment('clothing/geo/dynamic/shoes_special_twokgeneric_geo.iff'), 'footwear');
+assert.equal(garment('clothing/geo/simple/female_sock_crew_occluded_by_special_twokgeneric_geo.iff'), 'footwear');
+assert.equal(garment('char/jersey_nike_wishbone.iff'), 'jersey');
+assert.equal(garment('char/female_shorts_nike.iff'), 'jersey');
+assert.equal(previewGarmentKind({ sourceKind: 'main', sourceName: 'png00110.iff' }), null);
+// Torso skin next to the jersey is covered; an arm far from it is not, and a
+// foot near footwear gets only the footwear channel.
+const cover = garmentCoverWeights(new Float32Array([0, 0, 0, 40, 0, 0, 0, -90, 0]), [
+  { kind: 'jersey', positions: new Float32Array([1, 2, 1]) },
+  { kind: 'footwear', positions: new Float32Array([0, -88, 1]) },
+]);
+assert.deepEqual(Array.from(cover), [1, 0, 0, 0, 0, 1]);
 
 // A colorway mask recolors after the map step (which range decoding rewrites)
 // and before vertex colors; no map means nothing to recolor.
@@ -187,10 +202,9 @@ for (const unset of [null, undefined, [0, 0, 0], [0.5, 0.5], [0.5, NaN, 0.5], [1
   assert.equal(strandTint(unset), null, `${JSON.stringify(unset)} reads as no tint`);
 }
 
-assert.equal(flipsBodyNormalGreen('torso', 'male'), true);
-assert.equal(flipsBodyNormalGreen('torso', 'child'), true, 'Child bodies use the male maps');
-assert.equal(flipsBodyNormalGreen('torso', 'female'), false, 'Female torso maps already match the chest');
-assert.equal(flipsBodyNormalGreen('chest', 'male'), false);
-assert.equal(flipsBodyNormalGreen('torso', undefined), false, 'Unknown bodies (catalog items) are left alone');
+assert.equal(flipsBodyNormalGreen('torso', 'body normals (char/fpglobal.iff)'), true, 'Male/child maps from fpglobal');
+assert.equal(flipsBodyNormalGreen('torso', 'body normals (char/female_skin.iff)'), false, 'Female torso maps already match the chest');
+assert.equal(flipsBodyNormalGreen('chest', 'body normals (char/fpglobal.iff)'), false);
+assert.equal(flipsBodyNormalGreen('torso', undefined), false, 'Unknown sources are left alone');
 
 console.log('Studio shading: light balance, seam/crease normals, tangent handedness and repair, chained iris uniforms, skin scatter, strand tint, torso normal flip, face detail normal, garment layering, shoe colorway and occlusion alpha passed.');

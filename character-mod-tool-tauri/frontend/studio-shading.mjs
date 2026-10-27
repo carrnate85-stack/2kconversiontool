@@ -350,10 +350,12 @@ export function strandTint(value) {
 // opposite green (bitangent) direction to its chest maps, which left a zigzag
 // seam where the two materials meet. The mesh's own TANGENTFRAME0 frames match
 // the UV-derived ones on every body material, so the flip is in the torso maps
-// themselves. Child bodies share the male layout and maps. Female torso maps
-// match their chest maps (flipping them creates the seam).
-export function flipsBodyNormalGreen(targetName, gender) {
-  return targetName === 'torso' && (gender === 'male' || gender === 'child');
+// themselves. Child bodies share the male layout and take the same maps. The
+// flip follows the map's source (native prep labels it "body normals
+// (char/fpglobal.iff)"), not the player: female_skin torso maps match their
+// chest maps, and flipping them creates the seam.
+export function flipsBodyNormalGreen(targetName, textureSource) {
+  return targetName === 'torso' && /fpglobal/i.test(String(textureSource || ''));
 }
 
 // A player's face_normal_o is only 512x512; the pores and fine wrinkles live in
@@ -389,11 +391,63 @@ export function configureDetailNormal(material, texture, strength = DETAIL_NORMA
 
 // Preview garments are fitted at their vertices, so skin still bulges through
 // between them (a female player's bust through the jersey); the game hides body
-// faces under garments instead. While garments show, body skin is drawn as if
-// pushed this far back from the camera: depth only, so its screen position and
-// shading are unchanged and nothing opens a hole.
-export const GARMENT_LAYERING = Object.freeze({ depth: 2.5 });
+// faces under garments instead. Body skin within coverRadius of a garment is
+// drawn as if pushed `depth` further from the camera while that garment shows:
+// depth only, so its screen position and shading are unchanged and nothing opens
+// a hole. A per-vertex cover weight (jersey/shorts, footwear) keeps uncovered
+// skin, such as the arms, where it is.
+export const GARMENT_LAYERING = Object.freeze({ depth: 2.5, coverRadius: 6 });
 
+// Preview garments arrive as 'preview-jersey' companions; shoes and socks are
+// told apart by their source file (shoes_*, *_sock_*).
+export function previewGarmentKind(item) {
+  if (item?.sourceKind !== 'preview-jersey') return null;
+  const leaf = String(item.sourceName || '').split(/[\\/]/).pop().toLowerCase();
+  return /^(?:shoes_|(?:male_|female_|child_)?sock_)/.test(leaf) ? 'footwear' : 'jersey';
+}
+
+// Per body vertex: 1 when a jersey/shorts (x) or footwear (y) vertex lies within
+// coverRadius. Positions are model-space xyz arrays.
+export function garmentCoverWeights(bodyPositions, garments, radius = GARMENT_LAYERING.coverRadius) {
+  const cover = new Float32Array(bodyPositions.length / 3 * 2);
+  const grids = [new Map(), new Map()];
+  // Numeric cell keys (cells offset into 0..2047 per axis): string keys made this
+  // the slowest step of the load.
+  const cellKey = (cx, cy, cz) => ((cx + 1024) * 2048 + (cy + 1024)) * 2048 + (cz + 1024);
+  const key = (x, y, z) => cellKey(Math.floor(x / radius), Math.floor(y / radius), Math.floor(z / radius));
+  for (const { kind, positions } of garments) {
+    const grid = grids[kind === 'footwear' ? 1 : 0];
+    for (let i = 0; i < positions.length; i += 3) {
+      const cell = key(positions[i], positions[i + 1], positions[i + 2]);
+      let bucket = grid.get(cell);
+      if (!bucket) grid.set(cell, bucket = []);
+      bucket.push(positions[i], positions[i + 1], positions[i + 2]);
+    }
+  }
+  const squared = radius * radius;
+  for (let v = 0; v < bodyPositions.length / 3; v++) {
+    const x = bodyPositions[v * 3], y = bodyPositions[v * 3 + 1], z = bodyPositions[v * 3 + 2];
+    const cx = Math.floor(x / radius), cy = Math.floor(y / radius), cz = Math.floor(z / radius);
+    grids.forEach((grid, channel) => {
+      if (!grid.size) return;
+      for (let dx = -1; dx <= 1 && !cover[v * 2 + channel]; dx++) for (let dy = -1; dy <= 1 && !cover[v * 2 + channel]; dy++) for (let dz = -1; dz <= 1; dz++) {
+        const bucket = grid.get(cellKey(cx + dx, cy + dy, cz + dz));
+        if (!bucket) continue;
+        let hit = false;
+        for (let i = 0; i < bucket.length; i += 3) {
+          const ex = bucket[i] - x, ey = bucket[i + 1] - y, ez = bucket[i + 2] - z;
+          if (ex * ex + ey * ey + ez * ez <= squared) { hit = true; break; }
+        }
+        if (hit) { cover[v * 2 + channel] = 1; break; }
+      }
+    });
+  }
+  return cover;
+}
+
+// `uniform.value` is a vec2 of depths (jersey/shorts, footwear), shared by every
+// body material so toggling garments never recompiles; geometry supplies the
+// per-vertex nbaGarmentCover weights (missing means uncovered).
 export function configureGarmentLayering(material, uniform, enabled) {
   material.userData.garmentLayering = Boolean(enabled && uniform);
   if (!material.userData.garmentLayering) return false;
@@ -402,13 +456,14 @@ export function configureGarmentLayering(material, uniform, enabled) {
   material.onBeforeCompile = (shader) => {
     previous(shader);
     shader.uniforms.nbaGarmentDepth = uniform;
-    shader.vertexShader = 'uniform float nbaGarmentDepth;\n' + shader.vertexShader.replace('#include <project_vertex>', `#include <project_vertex>
-if ( nbaGarmentDepth > 0.0 ) {
-  vec4 nbaBehindGarment = projectionMatrix * ( mvPosition + vec4( 0.0, 0.0, - nbaGarmentDepth, 0.0 ) );
+    shader.vertexShader = 'uniform vec2 nbaGarmentDepth;\nattribute vec2 nbaGarmentCover;\n' + shader.vertexShader.replace('#include <project_vertex>', `#include <project_vertex>
+float nbaGarmentPush = dot( nbaGarmentCover, nbaGarmentDepth );
+if ( nbaGarmentPush > 0.0 ) {
+  vec4 nbaBehindGarment = projectionMatrix * ( mvPosition + vec4( 0.0, 0.0, - nbaGarmentPush, 0.0 ) );
   gl_Position.z = nbaBehindGarment.z / nbaBehindGarment.w * gl_Position.w;
 }`);
   };
-  material.customProgramCacheKey = () => `${previousKey}:nba-garment-layering-v1`;
+  material.customProgramCacheKey = () => `${previousKey}:nba-garment-layering-v2`;
   return true;
 }
 

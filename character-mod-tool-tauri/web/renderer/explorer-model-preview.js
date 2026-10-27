@@ -8,7 +8,7 @@ import { captureBasketFrame, catalogOverheadTarget, captureCreatedWoodTint } fro
 import { materialProfile, previewLightingProfile } from './render-profiles.mjs';
 import { skinBoundaryResponse, skinLuminanceResponse } from '../skin-response.mjs';
 import { configureStrandLightmap, configureStrandTangentRange, configureStrandSpecular, configureStrandCoverage } from '../strand-preview-fixes.mjs';
-import { createStudioEnvironment, studioLightBalance, seamSmoothedNormals, vertexTangents, cardTextureUvs, configureEyeIris, configureSkinShading, configureTearFilm, configureEyewearLens, configureEyeSurface, strandTint, flipsBodyNormalGreen, configureDetailNormal, configureGarmentLayering, configureColorwayMask, SHOE_COLORWAY, configureOcclusionAlpha } from '../studio-shading.mjs';
+import { createStudioEnvironment, studioLightBalance, seamSmoothedNormals, vertexTangents, cardTextureUvs, configureEyeIris, configureSkinShading, configureTearFilm, configureEyewearLens, configureEyeSurface, strandTint, flipsBodyNormalGreen, configureDetailNormal, configureGarmentLayering, configureColorwayMask, SHOE_COLORWAY, configureOcclusionAlpha, GARMENT_LAYERING, previewGarmentKind, garmentCoverWeights } from '../studio-shading.mjs';
 
 
 export function createExplorerRenderer(options = {}) {
@@ -1040,10 +1040,12 @@ function textureBytes(value) {
     : Uint8Array.from(atob(value), c => c.charCodeAt(0));
 }
 
-function sameTextureBytes(left, right) {
+// 2K texture names carry a content hash (name.<16 hex>.dds), so equal hashed
+// names with equal lengths are the same bytes; other names compare in full.
+function sameTextureBytes(left, right, name = '') {
   if (typeof left === 'string' || typeof right === 'string') return left === right;
   if (!ArrayBuffer.isView(left) || !ArrayBuffer.isView(right) || left.byteLength !== right.byteLength) return false;
-  if (left === right) return true;
+  if (left === right || /\.[0-9a-f]{16}\.dds$/i.test(name)) return true;
   // Word-wise when both views are 4-byte aligned (DDS payloads are), else bytewise.
   const words = left.byteOffset % 4 === 0 && right.byteOffset % 4 === 0 && left.byteLength % 4 === 0;
   const a = words ? new Uint32Array(left.buffer, left.byteOffset, left.byteLength / 4) : left;
@@ -1286,13 +1288,17 @@ function irisScale(value) {
 // sports bra) is layered on in game, which drew as black holes with the jersey
 // hidden. Body maps fill those texels with a heather-gray athletic fabric.
 // Shared by every body skin material, so toggling garments never recompiles.
-const garmentLayeringUniform = { value: 0 };
+// Depths for (jersey/shorts, footwear): footwear is always worn; the wrapper
+// switches the jersey depth with the jersey's visibility.
+const garmentLayeringUniform = { value: new THREE.Vector2(0, GARMENT_LAYERING.depth) };
 // The shadow pass gets the same push, or skin that sorts behind a garment still
 // shadows it (gray ovals on a female player's jersey over the bust).
 let garmentShadowDepth = null;
 function garmentShadowDepthMaterial() {
   if (!garmentShadowDepth) {
-    garmentShadowDepth = new THREE.MeshDepthMaterial({ depthPacking: THREE.RGBADepthPacking });
+    // Default packing, like three's own shadow depth material; three copies each
+    // material's map/alphaMap/alphaTest onto it, so cut-out cards still cut out.
+    garmentShadowDepth = new THREE.MeshDepthMaterial();
     configureGarmentLayering(garmentShadowDepth, garmentLayeringUniform, true);
   }
   return garmentShadowDepth;
@@ -1548,7 +1554,8 @@ function applyAutomaticTextures() {
       configureEyeIris(material, targetName === 'eye' && Boolean(colorTexture),
         irisColor(currentPayload?.player?.irisColor), irisScale(currentPayload?.player?.irisSize));
       const profile = applyPreviewMaterialProfile(material, normalTexture);
-      if (normalTexture && flipsBodyNormalGreen(targetName, currentPayload?.player?.gender)) material.normalScale.y *= -1;
+      const normalSource = normalTexture ? textureItems[textureCache.indexOf(normalTexture)]?.source : null;
+      if (normalTexture && flipsBodyNormalGreen(targetName, normalSource)) material.normalScale.y *= -1;
       configureEyeSurface(material);
       configureSkinShading(material, profile?.role === 'skin');
       configureDetailNormal(material, detailNormalTexture);
@@ -1650,7 +1657,7 @@ async function load(payload, onProgress = () => {}, options = {}) {
   for (let i = 0; i < textureItems.length; i++) {
     const old = textureItems[i], texture = textureCache[i];
     if (!texture) continue;
-    const next = (payload.textures || []).find(item => item.name === old.name && sameTextureBytes(item.bytes, old.bytes)
+    const next = (payload.textures || []).find(item => item.name === old.name && sameTextureBytes(item.bytes, old.bytes, item.name)
       && JSON.stringify(item.range) === JSON.stringify(old.range) && item.inputColorSpace === old.inputColorSpace);
     if (next) retainedTextures.set(next, texture);
   }
@@ -1780,6 +1787,7 @@ async function load(payload, onProgress = () => {}, options = {}) {
     }
   }
   profile.lap('meshes');
+  applyGarmentCover(items);
   try {
     prepareSurfaceFrames(payload);
   } catch {
@@ -2035,8 +2043,28 @@ function setWireframe(value) {
 }
 
 // Depth (model units) by which body skin sorts behind garments; 0 turns it off.
+// Depth (model units) by which covered skin sorts behind the jersey and shorts;
+// 0 turns it off. Footwear keeps its own depth.
 function setGarmentLayering(depth) {
-  garmentLayeringUniform.value = Math.max(0, Number(depth) || 0);
+  garmentLayeringUniform.value.x = Math.max(0, Number(depth) || 0);
+}
+
+// Marks body vertices covered by a preview garment (nbaGarmentCover), so only
+// that skin sorts behind garments.
+function applyGarmentCover(items) {
+  const garments = [];
+  items.forEach((item, index) => {
+    const kind = previewGarmentKind(item);
+    const positions = modelRoot.children[index]?.geometry?.getAttribute('position')?.array;
+    if (kind && positions) garments.push({ kind, positions });
+  });
+  items.forEach((item, index) => {
+    const geometry = modelRoot.children[index]?.geometry;
+    if (item.sourceKind !== 'main' || !geometry) return;
+    if (!garments.length) { geometry.deleteAttribute('nbaGarmentCover'); return; }
+    const cover = garmentCoverWeights(geometry.getAttribute('position').array, garments);
+    geometry.setAttribute('nbaGarmentCover', new THREE.BufferAttribute(cover, 2));
+  });
 }
 
 function setEyelashesVisible(value, draw = true) {

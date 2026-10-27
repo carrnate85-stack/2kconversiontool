@@ -530,7 +530,7 @@ impl Assets {
 
     /// The chest/torso normal maps for a muscle type (NORMAL, RIPPED, SUPERRIPPED,
     /// SOFT) as shared texture paths with their TXTR format and range.
-    fn body_normals(&self, iff: &str, muscle: &str) -> Result<Vec<(&'static str, String, String, Value)>> {
+    fn body_normals(&self, iff: &str, muscle: &str) -> Result<Vec<UniformTexture>> {
         let mut archive = self.archive(&Source::Manifest(iff.to_owned()))?;
         let variant = token(muscle);
         let mut normals = Vec::new();
@@ -539,23 +539,12 @@ impl Assets {
                 .iter()
                 .find_map(|v| archive.named(&format!("{region}_normal_avg_{v}.TXTR")).ok())
                 .with_context(|| format!("No {region} normal map in {iff}"))?;
-            let tree = codec::tree(&txtr)?;
-            let meta = tree
-                .as_object()
-                .and_then(|map| map.values().next())
-                .context("Empty TXTR")?;
-            let binary = meta["Binary"].as_str().context("TXTR without a texture")?;
-            let hash = binary
-                .split('.')
-                .nth(1)
-                .filter(|h| h.len() == 16 && h.chars().all(|c| c.is_ascii_hexdigit()))
-                .context("Unexpected shared texture name")?;
-            normals.push((
-                region,
-                format!("shared/{}/{binary}", &hash[..2]),
-                meta["Format"].as_str().unwrap_or("BC5_UNORM").to_owned(),
-                txtr_range(meta),
-            ));
+            // The source names the IFF: the renderer flips the torso green of the
+            // fpglobal set, whose torso maps disagree with their chest maps.
+            normals.push(
+                self.shared_texture(&txtr, format!("body normals ({iff})"), region, "normal")?
+                    .with_context(|| format!("{region} normal map not in the manifest"))?,
+            );
         }
         Ok(normals)
     }
@@ -1130,10 +1119,10 @@ impl Assets {
         let normals_iff = if gender == "female" { "char/female_skin.iff" } else { "char/fpglobal.iff" };
         match self.body_normals(normals_iff, muscle) {
             Ok(normals) => {
-                for (region, name, format, range) in normals {
-                    let leaf = name.rsplit('/').next().unwrap().trim_end_matches(".tld").to_owned() + ".dds";
-                    let uri = self.register(Source::Shared(name), &leaf)?;
-                    external.push(json!({"path":uri,"name":leaf,"source":"shared (native memory)","format":format,"range":range,"binding":{"target":region,"channel":"normal"}}));
+                for texture in normals {
+                    let leaf = texture.path.rsplit('/').next().unwrap().trim_end_matches(".tld").to_owned() + ".dds";
+                    let uri = self.register(Source::Shared(texture.path), &leaf)?;
+                    external.push(json!({"path":uri,"name":leaf,"source":texture.source,"format":texture.format,"range":texture.range,"binding":{"target":texture.target,"channel":texture.channel}}));
                 }
             }
             Err(error) => warnings.push(format!("Body normal maps unavailable: {error:#}")),

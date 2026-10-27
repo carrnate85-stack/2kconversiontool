@@ -1,4 +1,6 @@
 // Existing Character Mod Tool geometry editor, separated from rendering.
+import { previewGarmentKind } from './studio-shading.mjs';
+
 export function createBodyEditor(context) {
 const { THREE, modelRoot, renderer: sourceRenderer, scene, camera, materialTextureTarget, typed } = context;
 // Keep geometry calculations intact while invalidating shadows after deformation.
@@ -187,7 +189,8 @@ function bodyFitObjects(role) {
 // copied, fully sorted candidate list per jersey vertex made this the slowest
 // step of a player load (~0.4 s for a full body and jersey).
 function prepareJerseySurfaceBindings() {
-  if (!bodyFitContext?.bodyObjects.length || !bodyFitContext.jerseyObjects.length) return null;
+  const garmentObjects = [...(bodyFitContext?.jerseyObjects || []), ...(bodyFitContext?.footwearObjects || [])];
+  if (!bodyFitContext?.bodyObjects.length || !garmentObjects.length) return null;
   const cellSize = Math.max(0.5, bodyFitContext.height * 0.018, bodyFitContext.torsoHalfWidth * 0.18);
   const maxDistance = bodyFitContext.height * 0.12;
   const maxSquared = maxDistance * maxDistance;
@@ -216,14 +219,15 @@ function prepareJerseySurfaceBindings() {
   let boundJerseyVertices = 0;
   const candidates = [];
   const nearest = [], nearestDistance = [];
-  for (const object of bodyFitContext.jerseyObjects) {
+  for (const object of garmentObjects) {
+    const counted = object.userData.bodyFitRole === 'jersey';
     const base = object.userData.bodyFitBasePositions;
     const mask = object.userData.bodyFitMask;
     if (!base || !mask) continue;
     const bindings = new Array(mask.length).fill(null);
     for (let index = 0; index < mask.length; index += 1) {
       if (!mask[index]) continue;
-      jerseyVertices += 1;
+      if (counted) jerseyVertices += 1;
       const offset = index * 3;
       const x = base[offset], y = base[offset + 1], z = base[offset + 2];
       const cx = Math.floor(x / cellSize), cy = Math.floor(y / cellSize), cz = Math.floor(z / cellSize);
@@ -269,7 +273,7 @@ function prepareJerseySurfaceBindings() {
         index: sample.index,
         weight: rawWeights[slot] / total,
       }));
-      boundJerseyVertices += 1;
+      if (counted) boundJerseyVertices += 1;
     }
     object.userData.bodyFitBindings = bindings;
   }
@@ -323,6 +327,7 @@ function prepareBodyFitContext(baseValues = {}) {
   bodyFitContext = {
     bodyObjects,
     jerseyObjects: bodyFitObjects('jersey'),
+    footwearObjects: bodyFitObjects('footwear'),
     centerX,
     centerY,
     minZ,
@@ -598,6 +603,9 @@ function applyBodyFit(values = {}, drawAfter = true) {
   let nativeMorphTargets = 0;
   let appliedMorphTargets = 0;
   let fallbackMeshes = 0;
+  for (const object of bodyFitContext.footwearObjects) {
+    if (!applyBoundJerseyFit(object)) applyParametricBodyFit(object, new Map(), dimensionDeltas, dimensionChanges, 1);
+  }
   for (const object of bodyFitContext.jerseyObjects) {
     const bound = applyBoundJerseyFit(object);
     if (!bound) applyParametricBodyFit(object, new Map(), dimensionDeltas, dimensionChanges, 0.45);
@@ -846,8 +854,10 @@ function initialize(payload) {
     const indices = object.geometry.index.array;
     const mask = new Uint8Array(positions.length / 3);
     const chest = new Uint8Array(mask.length), torso = new Uint8Array(mask.length);
-    const role = item.sourceKind === 'preview-jersey' ? 'jersey' : 'body';
-    if (role === 'jersey') mask.fill(1);
+    // Shoes and socks follow the body like the jersey but stay out of the jersey's
+    // fit diagnostics, suggestions and chest correction.
+    const role = previewGarmentKind(item) || 'body';
+    if (role !== 'body') mask.fill(1);
     else for (const group of item.groups || []) {
       const target = materialTextureTarget(group.material);
       if (!['face', 'chest', 'torso', 'legs'].includes(target)) continue;
