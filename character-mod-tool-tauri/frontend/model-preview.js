@@ -134,8 +134,8 @@ function applyEditorDisplay() {
   draw();
 }
 
-// Optional overrides for research A/B (envIntensity, ambient, hemisphere).
-const portraitLightingSettings = Object.fromEntries(['environment', 'ambient', 'hemisphere']
+// Optional overrides for research A/B (envIntensity, ambient, hemisphere, jersey/shorts fabric).
+const portraitLightingSettings = Object.fromEntries(['environment', 'ambient', 'hemisphere', 'garmentRoughness', 'garmentReflections']
   .filter((key) => params.has(key)).map((key) => [key, Number(params.get(key))]));
 
 function setStudioLighting(value) {

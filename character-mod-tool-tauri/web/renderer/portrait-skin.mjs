@@ -119,9 +119,16 @@ float nbaNoise(vec2 p) { vec2 i = floor(p), f = fract(p); f = f * f * (3.0 - 2.0
 // Soft photo-studio image lighting from the same key/fill/rim directions as
 // the exporter's studio rig, replacing its flat ambient/hemisphere fill.
 // Generic portrait garments (preview-jersey companions): untextured fabric.
+// Environment reflection strength for preview garments (research override: garmentReflections).
+const garmentReflections = (material, settings) => {
+  const garment = GARMENT_MATERIALS.find(([pattern]) => pattern.test(material.name))?.[1];
+  return garment?.reflections ? settings.garmentReflections ?? garment.reflections : 1;
+};
 const GARMENT_MATERIALS = [
-  [/jersey/i, { color: 0x5b6472, roughness: 0.62 }],
-  [/shorts/i, { color: 0x5b6472, roughness: 0.66 }],
+  // Basketball uniforms are matte mesh knit: at 0.62 and full studio reflections
+  // they read as glossy next to the game's own store renders.
+  [/jersey/i, { color: 0x5b6472, roughness: 0.88, reflections: 0.45 }],
+  [/shorts/i, { color: 0x5b6472, roughness: 0.88, reflections: 0.45 }],
   [/polo/i, { color: 0x1c2333, roughness: 0.88 }],
   [/blazer/i, { color: 0x2b2e34, roughness: 0.8 }],
   [/bdshirt|shirt/i, { color: 0xe9e9ec, roughness: 0.72 }],
@@ -338,7 +345,7 @@ export function configurePortraitLighting(context, settings = {}) {
           // A payload tint (e.g. the team's primary uniform color) overrides the default.
           const tint = context.payload?.portraitGarmentColor;
           material.color.setHex(Number.isInteger(tint) && /jersey/i.test(material.name) ? tint : garment.color);
-          material.roughness = garment.roughness;
+          material.roughness = garment.reflections ? settings.garmentRoughness ?? garment.roughness : garment.roughness;
           material.metalness = 0;
           configureGarmentTextures(context, material);
           // Tucked: the jersey's tail ends inside the shorts' waistband.
@@ -348,7 +355,8 @@ export function configurePortraitLighting(context, settings = {}) {
         }
       }
       // Wet clearcoated eyes would otherwise mirror the whole studio over the iris.
-      if ('envMapIntensity' in material) material.envMapIntensity = material.userData.previewMaterialRole === 'eye' ? 0.6 : 1;
+      if ('envMapIntensity' in material) material.envMapIntensity = material.userData.previewMaterialRole === 'eye' ? 0.6
+        : object.userData.previewKind === 'preview-jersey' ? garmentReflections(material, settings) : 1;
       if (material.userData.previewMaterialRole === 'eye' && material.map) configurePortraitEye(material);
       const strand = material.userData.strandLightmapUniforms;
       const lightmap = strand?.nbaStrandLightmap.value;
