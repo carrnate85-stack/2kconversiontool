@@ -37,7 +37,10 @@ export function configurePortraitSkin(context, material) {
   // Per-character config maps precede male_skin's generic ones in binding order.
   const rough = context.boundTextureMatching(target, 'auxiliary', /roughcurvedense/i);
   const occlusion = context.boundTextureMatching(target, 'auxiliary', /bentnormal/i);
-  const detail = target === 'face' ? context.boundTextureMatching('face', 'normal', /detailnormal/i) : null;
+  // The explorer's studio shading adds the face detail normal itself
+  // (configureDetailNormal); then only the procedural pores are added here.
+  const pores = target === 'face';
+  const detail = pores && !material.userData.detailNormal ? context.boundTextureMatching('face', 'normal', /detailnormal/i) : null;
   material.userData.portraitSkin = { roughness: rough?.name || '', occlusion: occlusion?.name || '', detail: detail?.name || '', subsurface: true };
   const { THREE } = context;
   const directLine = 'reflectedLight.directDiffuse += irradiance * BRDF_Lambert( material.diffuseContribution );';
@@ -64,7 +67,7 @@ export function configurePortraitSkin(context, material) {
   }
   const previous = material.onBeforeCompile;
   const previousKey = material.customProgramCacheKey();
-  const flags = `${rough ? 'R' : ''}${occlusion ? 'O' : ''}${detail ? 'D' : ''}`;
+  const flags = `${rough ? 'R' : ''}${occlusion ? 'O' : ''}${detail ? 'D' : ''}${pores ? 'P' : ''}`;
   material.onBeforeCompile = (shader) => {
     previous(shader);
     Object.assign(shader.uniforms, uniforms);
@@ -78,7 +81,8 @@ ${skinChunk}`)
       .replace('#include <lights_fragment_begin>', 'nbaSmoothNormal = nonPerturbedNormal;\n#include <lights_fragment_begin>');
     shader.fragmentShader = `${rough ? 'uniform sampler2D nbaRoughMap; uniform vec4 nbaRoughMin, nbaRoughMax, nbaRoughMask;\n' : ''}`
       + `${occlusion ? 'uniform sampler2D nbaOcclusionMap; uniform vec4 nbaOcclusionMin, nbaOcclusionMax, nbaOcclusionMask; uniform float nbaDirectOcclusion;\n' : ''}`
-      + `${detail ? `uniform sampler2D nbaDetailMap; uniform vec4 nbaDetailMin, nbaDetailMax, nbaDetailMask; uniform float nbaDetailStrength, nbaPoreScale, nbaPoreStrength;
+      + `${detail ? 'uniform sampler2D nbaDetailMap; uniform vec4 nbaDetailMin, nbaDetailMax, nbaDetailMask; uniform float nbaDetailStrength;\n' : ''}`
+      + `${pores ? `uniform float nbaPoreScale, nbaPoreStrength;
 float nbaHash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
 float nbaNoise(vec2 p) { vec2 i = floor(p), f = fract(p); f = f * f * (3.0 - 2.0 * f);
   return mix(mix(nbaHash(i), nbaHash(i + vec2(1.0, 0.0)), f.x), mix(nbaHash(i + vec2(0.0, 1.0)), nbaHash(i + 1.0), f.x), f.y); }
@@ -89,12 +93,12 @@ float nbaNoise(vec2 p) { vec2 i = floor(p), f = fract(p); f = f * f * (3.0 - 2.0
         vec4 nbaRoughSample = texture2D( nbaRoughMap, vMapUv );
         roughnessFactor = clamp( ${decode('nbaRough')}.r, 0.2, 1.0 );`);
     }
-    if (detail) {
+    if (pores) {
       shader.fragmentShader = shader.fragmentShader.replace('#include <emissivemap_fragment>', `
         #ifdef USE_NORMALMAP_TANGENTSPACE
-          vec4 nbaDetailSample = texture2D( nbaDetailMap, vMapUv );
-          vec2 nbaDetailXY = ( ${decode('nbaDetail')}.xy * 2.0 - 1.0 ) * nbaDetailStrength;
-          normal = normalize( normal + tbn * vec3( nbaDetailXY, 0.0 ) );
+          ${detail ? `vec4 nbaDetailSample = texture2D( nbaDetailMap, vMapUv );
+          vec2 nbaPortraitDetailXY = ( ${decode('nbaDetail')}.xy * 2.0 - 1.0 ) * nbaDetailStrength;
+          normal = normalize( normal + tbn * vec3( nbaPortraitDetailXY, 0.0 ) );` : ''}
           vec2 nbaPore = vMapUv * nbaPoreScale;
           vec2 nbaPoreSlope = vec2( nbaNoise( nbaPore + vec2( 0.35, 0.0 ) ) - nbaNoise( nbaPore - vec2( 0.35, 0.0 ) ),
             nbaNoise( nbaPore + vec2( 0.0, 0.35 ) ) - nbaNoise( nbaPore - vec2( 0.0, 0.35 ) ) );

@@ -1,0 +1,8 @@
+# Extracted players, decoded payloads and test data are game-derived.
+/work/
+/harness/players/
+# Assembled by harness/prepare.cjs.
+/harness/old/
+/harness/new/
+/harness/skin-preview-fixes.mjs
+/extractor/target/

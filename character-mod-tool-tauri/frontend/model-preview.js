@@ -1,4 +1,5 @@
 import { createExplorerRenderer } from './explorer/model-preview.js';
+import { GARMENT_LAYERING, previewGarmentKind } from './studio-shading.mjs';
 import { createBodyEditor } from './body-preview-editor.mjs';
 import { nearestSkinBoundaryPairs, normalPacking, configureNormalPacking } from './skin-preview-fixes.mjs';
 import { configurePortraitSkin, configurePortraitLighting } from './portrait-skin.mjs';
@@ -20,6 +21,7 @@ let clayMode = false;
 let headOcclusionVisible = true;
 let wireframe = false;
 let gridVisible = !transparentBackground;
+let wrapperLoadProfile = null;
 
 function visibleHit(hit) {
   if (!hit.object.visible || !hit.object.parent?.visible) return false;
@@ -65,8 +67,8 @@ function setCameraState(value) {
   draw();
 }
 
-function fitCamera(extraBounds = null) {
-  context.api.fitCamera();
+function fitCamera(extraBounds = null, drawAfter = true) {
+  context.api.fitCamera(drawAfter);
   if (extraBounds?.min?.length === 3 && extraBounds?.max?.length === 3) {
     const box = new THREE.Box3().setFromObject(modelRoot).union(new THREE.Box3(
       new THREE.Vector3(...extraBounds.min), new THREE.Vector3(...extraBounds.max)));
@@ -99,7 +101,7 @@ function setView(view) {
 }
 
 // Editor display modes surround Explorer's materials; skin decoding stays in Explorer.
-function applyEditorDisplay() {
+function applyEditorDisplay(drawAfter = true) {
   context.applyAutomaticTextures();
   modelRoot.traverse((object) => {
     if (object.userData.previewOccluder) {
@@ -118,7 +120,7 @@ function applyEditorDisplay() {
     }
     if (!clayMode && !neutralHead) return;
     for (const material of materials.filter(Boolean)) {
-      material.map = material.normalMap = null;
+      material.map = material.normalMap = material.aoMap = null;
       if ('anisotropyMap' in material) material.anisotropyMap = null;
       material.color.setHex(0x8e959c);
       material.transparent = false;
@@ -131,14 +133,14 @@ function applyEditorDisplay() {
   });
   if (portraitMode && studioLighting) configurePortraitLighting(context, portraitLightingSettings);
   context.invalidateShadows();
-  draw();
+  if (drawAfter) draw();
 }
 
 // Optional overrides for research A/B (envIntensity, ambient, hemisphere, jersey/shorts roughness).
 const portraitLightingSettings = Object.fromEntries(['environment', 'ambient', 'hemisphere', 'garmentRoughness']
   .filter((key) => params.has(key)).map((key) => [key, Number(params.get(key))]));
 
-function setStudioLighting(value) {
+function setStudioLighting(value, drawAfter = true) {
   studioLighting = Boolean(value);
   context.configurePreviewLighting();
   if (studioLighting) context.configureStudioLights(new THREE.Box3().setFromObject(modelRoot));
@@ -146,22 +148,26 @@ function setStudioLighting(value) {
     renderer.toneMapping = THREE.NoToneMapping;
     renderer.toneMappingExposure = 1;
     renderer.shadowMap.enabled = context.keyLight.castShadow = false;
+    // Flat lighting is a reference view: no studio reflections either.
+    scene.environment = null;
     context.ambientLight.intensity = sourcePayload?.player ? 2.15 : 1;
     context.hemisphereLight.intensity = context.fillLight.intensity = 0;
     context.keyLight.intensity = sourcePayload?.player ? 1.75 : 0.85;
     context.rimLight.intensity = sourcePayload?.player ? 0.4 : 0.22;
   }
-  applyEditorDisplay();
+  applyEditorDisplay(drawAfter);
 }
 
 function setClayMode(value) { clayMode = Boolean(value); applyEditorDisplay(); }
-function setGridVisible(value) { gridVisible = Boolean(value); context.grid.visible = gridVisible && !transparentBackground; draw(); }
-function setJerseyVisible(value) {
+function setGridVisible(value, drawAfter = true) { gridVisible = Boolean(value); context.grid.visible = gridVisible && !transparentBackground; if (drawAfter) draw(); }
+function setJerseyVisible(value, drawAfter = true) {
   for (const object of modelRoot.children) {
-    if (object.userData.previewKind === 'preview-jersey') object.visible = Boolean(value);
+    // Shoes and socks stay on; the toggle is the jersey and shorts.
+    if (object.userData.previewGarment === 'jersey') object.visible = Boolean(value);
   }
+  context.api.setGarmentLayering?.(value ? GARMENT_LAYERING.depth : 0);
   context.invalidateShadows();
-  draw();
+  if (drawAfter) draw();
 }
 function setMaterialTargetVisible(targetName, value) {
   modelRoot.traverse((object) => {
@@ -223,31 +229,47 @@ async function load(payload, onProgress = () => {}) {
   const prepared = preparePayload(payload);
   if (previous?.geometryKey && previous.geometryKey === payload.geometryKey) {
     context.payload = prepared;
+    const reuseStarted = performance.now();
     const result = previous.textureKey === payload.textureKey
       ? { decodedTextures: context.api.stats().decodedTextures ?? payload.textures?.length ?? 0 }
       : await context.api.loadArenaTextures(prepared.textures, onProgress);
     if (generation !== loadGeneration) return { cancelled: true };
     bodyEditor.setBodyFit(prepared.player?.bodyFit || {});
     applyEditorDisplay(); draw();
+    // Same geometry: only textures and body fit were refreshed.
+    wrapperLoadProfile = { reusedGeometry: true, totalMs: Math.round(performance.now() - reuseStarted) };
     sourcePayload = payload;
     return { ...result, reusedGeometry: prepared.meshes.length };
   }
   const result = await context.api.load(prepared, onProgress, { deferRender: true, yieldPreparation: true });
   if (generation !== loadGeneration) return { cancelled: true };
+  let lapAt = performance.now();
+  const lap = () => { const now = performance.now(), elapsed = Math.round(now - lapAt); lapAt = now; return elapsed; };
   sourcePayload = payload;
   for (let index = 0; index < prepared.meshes.length; index++) {
     const item = prepared.meshes[index], object = modelRoot.children[index];
     object.userData.previewKind = item.sourceKind || '';
     object.userData.previewSource = item.sourceName || '';
+    object.userData.previewGarment = previewGarmentKind(item);
   }
   // Catalog heads and hair layers never use the body-fit editor.
   if (!String(payload.player?.mode || '').startsWith('hair-catalog-')) bodyEditor.initialize(prepared);
-  applyEditorDisplay();
-  context.api.setEyelashesVisible(false);
-  setJerseyVisible(false);
-  fitCamera();
-  setGridVisible(gridVisible);
-  if (!studioLighting) setStudioLighting(false);
+  const bodyEditorMs = lap();
+  // Configure everything that affects shader variants first, then compile them
+  // off the main thread: drawing straight away compiled every program
+  // synchronously and froze the UI for ~0.5 s on a cold load.
+  applyEditorDisplay(false);
+  context.api.setEyelashesVisible(false, false);
+  setJerseyVisible(false, false);
+  fitCamera(null, false);
+  setGridVisible(gridVisible, false);
+  if (!studioLighting) setStudioLighting(false, false);
+  const displayMs = lap();
+  try { await context.api.precompile?.(); } catch { /* a newer load superseded this one */ }
+  if (generation !== loadGeneration) return { cancelled: true };
+  const precompileMs = lap();
+  draw();
+  wrapperLoadProfile = { renderer: result.profile || null, bodyEditorMs, displayMs, precompileMs, firstDrawMs: lap() };
   window.dispatchEvent(new CustomEvent('model-preview:loaded', { detail: { viewer: viewerGlobalName } }));
   return result;
   } catch (error) {
@@ -312,6 +334,7 @@ window[viewerGlobalName] = {
         inputColorSpace: sourcePayload?.textures?.find(item => item.name === material.map)?.inputColorSpace || null,
       })),
       bodyFitJersey: bodyEditor.diagnostics(),
+      loadProfile: wrapperLoadProfile,
     };
   },
 };

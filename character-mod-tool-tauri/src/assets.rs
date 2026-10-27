@@ -100,6 +100,117 @@ fn skin_color(value: &Value) -> Option<i64> {
         .or_else(|| value.as_str().and_then(|s| s.parse().ok()))
         .filter(|n| (0..=99).contains(n))
 }
+/// The preview garment files (jersey_nike_wishbone, shorts_nike, ...) named by a
+/// uniform RDAT's JERSEY TYPE and SHORTS TYPE; the RDAT is a binary header
+/// followed by a JSON object.
+fn uniform_garments(rdat: &[u8]) -> Result<Vec<String>> {
+    let start = rdat.iter().position(|&b| b == b'{').context("Uniform RDAT without JSON")?;
+    let info: Value = serde_json::Deserializer::from_slice(&rdat[start..])
+        .into_iter::<Value>()
+        .next()
+        .context("Empty uniform RDAT")??;
+    let mut garments = Vec::new();
+    for (key, prefix) in [("JERSEY TYPE", "jerseyreg_"), ("SHORTS TYPE", "shortsreg_")] {
+        let kind = info[key].as_str().with_context(|| format!("Uniform without {key}"))?;
+        let style = kind.to_lowercase();
+        let style = style.strip_prefix(prefix).with_context(|| format!("Unexpected {key} {kind}"))?;
+        garments.push(format!("{}_{style}", prefix.trim_end_matches("reg_")));
+    }
+    Ok(garments)
+}
+
+struct UniformTexture {
+    path: String,
+    source: String,
+    format: String,
+    range: Value,
+    target: &'static str,
+    channel: &'static str,
+}
+
+struct PreviewUniform {
+    garments: Vec<String>,
+    textures: Vec<UniformTexture>,
+}
+
+/// A TXTR's per-channel range compression as {min, max, mask}, the shape the
+/// preview worker derives for textures read from an IFF; null when uncompressed.
+fn txtr_range(meta: &Value) -> Value {
+    let channels = |key: &str| -> Option<Vec<f64>> {
+        let values: Vec<f64> = meta[key].as_array()?.iter().take(4).filter_map(Value::as_f64).collect();
+        (values.len() == 4 && values.iter().all(|v| v.is_finite())).then_some(values)
+    };
+    let (Some(min), Some(max)) = (channels("Min"), channels("Max")) else {
+        return Value::Null;
+    };
+    let compress = meta["RangeCompress"].as_u64().unwrap_or(0);
+    let mask: Vec<u8> = (0..4)
+        .map(|c| {
+            let ranged = if compress != 0 {
+                compress & (1 << c) != 0
+            } else {
+                min[c].abs() > 1e-7 || (max[c] - 1.0).abs() > 1e-7
+            };
+            u8::from(ranged)
+        })
+        .collect();
+    if mask.iter().any(|&m| m == 1) {
+        json!({"min":min,"max":max,"mask":mask})
+    } else {
+        Value::Null
+    }
+}
+
+/// FxTweakables record ids (two name hashes) of the hair/beard color triple.
+const HAIR_COLOR_TWEAK: (u32, u32) = (0x8790_02a7, 0x10de_55c5);
+
+/// Reads an RGB parameter from an FxTweakables blob: records start at 0x50, each
+/// a type word, two name hashes, three padding words, then the value. Scalar
+/// records (0x48/0x88/0x8c) are 9 words; vector records (0x98-0x9a) 15 words
+/// holding value, minimum and maximum triples. Unknown layouts read as absent.
+fn fx_tweak_color(bytes: &[u8], id: (u32, u32)) -> Option<[f64; 3]> {
+    let mut offset = 0x50;
+    while offset + 12 <= bytes.len() {
+        let kind = codec::u32_at(bytes, offset).ok()?;
+        let words = match kind {
+            0x48 | 0x88 | 0x8c => 9,
+            0x98..=0x9a => 15,
+            _ => return None,
+        };
+        if offset + words * 4 > bytes.len() {
+            return None;
+        }
+        if words == 15
+            && codec::u32_at(bytes, offset + 4).ok()? == id.0
+            && codec::u32_at(bytes, offset + 8).ok()? == id.1
+        {
+            let channel = |slot: usize| {
+                let at = offset + 24 + slot * 4;
+                f32::from_le_bytes(bytes[at..at + 4].try_into().unwrap()) as f64
+            };
+            let color = [channel(0), channel(1), channel(2)];
+            return color
+                .iter()
+                .all(|value| value.is_finite() && (0.0..=1.0).contains(value))
+                .then_some(color);
+        }
+        offset += words * 4;
+    }
+    None
+}
+
+/// Detail maps (lightmaps, strand tangents, occlusion, wrinkle and region maps)
+/// that a preview can render without; color and normal maps are never optional.
+fn auxiliary_texture(lower_name: &str) -> bool {
+    let leaf = lower_name.rsplit('/').next().unwrap_or(lower_name);
+    [
+        "lightmap", "_tangent", "occlusion", "bentnormal", "coneangle", "hairmask",
+        "wrinkle", "region_weights", "_rdmo",
+    ]
+    .iter()
+    .any(|marker| leaf.contains(marker))
+}
+
 fn expanded_dds<'a>(name: &str, members: &'a [Value]) -> Option<&'a Value> {
     if !name.to_ascii_lowercase().ends_with(".tld") {
         return None;
@@ -361,6 +472,83 @@ impl Assets {
         self.sources.insert(uri.clone(), source);
         Ok(uri)
     }
+    /// The neutral rec-league uniform for male preview garments. Its RDAT names
+    /// the jersey/shorts cut; its TXTRs the baked color and normal maps.
+    fn preview_uniform(&self, name: &str) -> Result<PreviewUniform> {
+        let iff = format!("char/uniforms/{name}/{name}.iff");
+        let mut archive = self.archive(&Source::Manifest(iff.clone()))?;
+        let garments = uniform_garments(&archive.named(&format!("{name}.RDAT"))?)?;
+        let mut textures = Vec::new();
+        for (garment, channel) in [("jersey", "color"), ("jersey", "normal"), ("shorts", "color"), ("shorts", "normal")] {
+            let Ok(txtr) = archive.named(&format!("{garment}_{channel}.TXTR")) else {
+                continue;
+            };
+            textures.extend(self.shared_texture(&txtr, format!("uniform {name}"), garment, channel)?);
+        }
+        ensure!(!textures.is_empty(), "No uniform textures in {iff}");
+        Ok(PreviewUniform { garments, textures })
+    }
+
+    /// The generic 2K shoe's color and normal maps, for the preview shoes.
+    fn preview_shoe_textures(&self) -> Result<Vec<UniformTexture>> {
+        let mut textures = Vec::new();
+        for (iff, member, channel) in [
+            ("clothing/shoes_twokgeneric_color_tex.iff", "male/clothing/shoes_casual/shoes_twokgeneric/average/textures/shoes_twokgeneric_color.TXTR", "color"),
+            ("clothing/shoes_twokgeneric_tex.iff", "male/clothing/shoes_casual/shoes_twokgeneric/average/textures/shoes_twokgeneric_normal.TXTR", "normal"),
+        ] {
+            let txtr = self.archive(&Source::Manifest(iff.to_owned()))?.named(member)?;
+            textures.extend(self.shared_texture(&txtr, "generic shoes".to_owned(), "shoes", channel)?);
+        }
+        ensure!(!textures.is_empty(), "No generic shoe textures");
+        Ok(textures)
+    }
+
+    /// The shared texture a TXTR names (shared/<hash[..2]>/<Binary>), with its
+    /// format and range; None when the manifest doesn't carry it.
+    fn shared_texture(&self, txtr: &[u8], source: String, target: &'static str, channel: &'static str) -> Result<Option<UniformTexture>> {
+        let tree = codec::tree(txtr)?;
+        let meta = tree.as_object().and_then(|map| map.values().next()).context("Empty TXTR")?;
+        let binary = meta["Binary"].as_str().context("TXTR without a texture")?;
+        let hash = binary
+            .split('.')
+            .nth(1)
+            .filter(|h| h.len() == 16 && h.chars().all(|c| c.is_ascii_hexdigit()))
+            .context("Unexpected shared texture name")?;
+        let path = format!("shared/{}/{binary}", &hash[..2]);
+        if self.catalog.as_ref().unwrap().resolve(&path).is_err() {
+            return Ok(None);
+        }
+        Ok(Some(UniformTexture {
+            path,
+            source,
+            format: meta["Format"].as_str().unwrap_or("DDS").to_owned(),
+            range: txtr_range(meta),
+            target,
+            channel,
+        }))
+    }
+
+    /// The chest/torso normal maps for a muscle type (NORMAL, RIPPED, SUPERRIPPED,
+    /// SOFT) as shared texture paths with their TXTR format and range.
+    fn body_normals(&self, iff: &str, muscle: &str) -> Result<Vec<UniformTexture>> {
+        let mut archive = self.archive(&Source::Manifest(iff.to_owned()))?;
+        let variant = token(muscle);
+        let mut normals = Vec::new();
+        for region in ["chest", "torso"] {
+            let txtr = [variant.as_str(), "normal"]
+                .iter()
+                .find_map(|v| archive.named(&format!("{region}_normal_avg_{v}.TXTR")).ok())
+                .with_context(|| format!("No {region} normal map in {iff}"))?;
+            // The source names the IFF: the renderer flips the torso green of the
+            // fpglobal set, whose torso maps disagree with their chest maps.
+            normals.push(
+                self.shared_texture(&txtr, format!("body normals ({iff})"), region, "normal")?
+                    .with_context(|| format!("{region} normal map not in the manifest"))?,
+            );
+        }
+        Ok(normals)
+    }
+
     fn archive(&self, source: &Source) -> Result<Archive> {
         codec::cancelled(&self.cancel)?;
         let c = self
@@ -544,6 +732,12 @@ impl Assets {
                         warnings.push(format!("Optional garment map skipped: {error:#}"));
                         continue;
                     }
+                    // Detail maps only refine shading; one unreadable lightmap or
+                    // tangent map must not fail the whole player preview.
+                    Err(error) if auxiliary_texture(&lower) => {
+                        warnings.push(format!("Optional detail map skipped: {error:#}"));
+                        continue;
+                    }
                     Err(error) => return Err(error),
                 };
                 let decoded_name = if let Some(member) = expanded {
@@ -658,6 +852,18 @@ impl Assets {
             Err(_) => json!({}),
         };
         let body = appearance.get("appearance").unwrap_or(&appearance);
+        // Per-player hair and beard color from hair_####/beard_#### FxTweakables.
+        let tweak_names: Vec<String> = main
+            .names()
+            .map(|rows| rows.iter().filter_map(|row| row["name"].as_str().map(str::to_owned)).collect())
+            .unwrap_or_default();
+        let mut strand_tint = |prefix: &str| {
+            let pattern = regex::Regex::new(&format!(r"(?i)^{prefix}_\d+\.fxtweakables$")).ok()?;
+            let name = tweak_names.iter().find(|name| pattern.is_match(name))?;
+            fx_tweak_color(&main.named(name).ok()?, HAIR_COLOR_TWEAK)
+        };
+        let hair_tint = strand_tint("hair");
+        let beard_tint = strand_tint("beard");
         let accessories = &appearance["accessory_items"];
         let config = payload["config"]
             .as_str()
@@ -778,16 +984,51 @@ impl Assets {
                 }
             }
         }
-        for name in ["jersey_nike_v.iff", "shorts_nike.iff"] {
+        // The preview garments wear a neutral uniform's baked color/normal maps;
+        // its JERSEY/SHORTS TYPE picks the matching garment meshes.
+        let mut warnings = Vec::new();
+        let garment_prefix = if gender == "female" { "female_" } else { "" };
+        // Female rigs keep the plain garments. The only female-rig uniforms are WNBA
+        // ones typed for the male-rig *_wnba meshes, which the female body pokes
+        // through; on female_jersey_* their color maps are a neutral base the game
+        // tints at runtime (white with gray blocks), not a finished uniform.
+        let uniform_name = (gender == "male").then_some("u904rec_current_home");
+        let uniform = if let Some(uniform_name) = uniform_name {
+            match self.preview_uniform(uniform_name) {
+                Ok(uniform) => Some(uniform),
+                Err(error) => {
+                    warnings.push(format!("Preview uniform unavailable: {error:#}"));
+                    None
+                }
+            }
+        } else {
+            None
+        };
+        let garments = uniform
+            .as_ref()
+            .map(|u| u.garments.clone())
+            .unwrap_or_else(|| vec!["jersey_nike_v".to_owned(), "shorts_nike".to_owned()]);
+        for garment in garments {
+            let catalog = self.catalog.as_ref().unwrap();
+            let fallback = if garment.starts_with("jersey") { "jersey_nike_v" } else { "shorts_nike" };
+            // The rig's own cut, then an unprefixed one (WNBA *_wnba meshes), then the default.
+            let name = [format!("char/{garment_prefix}{garment}.iff"), format!("char/{garment}.iff")]
+                .into_iter()
+                .find(|name| catalog.resolve(name).is_ok())
+                .unwrap_or_else(|| format!("char/{garment_prefix}{fallback}.iff"));
+            requested.insert(name, "preview-jersey".to_owned());
+        }
+        // Generic 2K shoes over crew socks trimmed to sit inside them. They join the
+        // garments, so the wrapper's body fit binds them to the legs and the jersey
+        // toggle shows or hides them with the rest of the kit.
+        let shoes = gender == "male" || gender == "female";
+        if shoes {
+            requested.insert("clothing/geo/dynamic/shoes_special_twokgeneric_geo.iff".to_owned(), "preview-jersey".to_owned());
             requested.insert(
-                format!(
-                    "char/{}{name}",
-                    if gender == "female" { "female_" } else { "" }
-                ),
+                format!("clothing/geo/simple/{gender}_sock_crew_occluded_by_special_twokgeneric_geo.iff"),
                 "preview-jersey".to_owned(),
             );
         }
-        let mut warnings = Vec::new();
         for (name, kind) in requested {
             codec::cancelled(&self.cancel)?;
             if self.catalog.as_ref().unwrap().resolve(&name).is_err() {
@@ -866,6 +1107,39 @@ impl Assets {
             let uri = self.register(Source::Shared(name), &leaf)?;
             external.push(json!({"path":uri,"name":leaf,"source":"shared (native memory)","format":format,"binding":{"target":region,"channel":channel}}));
         }
+        // Chest and torso normal maps follow the muscle type. The male set is only
+        // listed in fpglobal; the female skin IFF carries its own. Child bodies share
+        // the male mesh layout, and child_skin's own torso map leaves a seam against
+        // its chest map in either green orientation, so they take the male set too.
+        let muscle = body
+            .get("muscle type")
+            .or_else(|| body.get("muscle_type"))
+            .and_then(Value::as_str)
+            .unwrap_or("NORMAL");
+        let normals_iff = if gender == "female" { "char/female_skin.iff" } else { "char/fpglobal.iff" };
+        match self.body_normals(normals_iff, muscle) {
+            Ok(normals) => {
+                for texture in normals {
+                    let leaf = texture.path.rsplit('/').next().unwrap().trim_end_matches(".tld").to_owned() + ".dds";
+                    let uri = self.register(Source::Shared(texture.path), &leaf)?;
+                    external.push(json!({"path":uri,"name":leaf,"source":texture.source,"format":texture.format,"range":texture.range,"binding":{"target":texture.target,"channel":texture.channel}}));
+                }
+            }
+            Err(error) => warnings.push(format!("Body normal maps unavailable: {error:#}")),
+        }
+        let shoe_textures = if shoes {
+            self.preview_shoe_textures().unwrap_or_else(|error| {
+                warnings.push(format!("Preview shoe textures unavailable: {error:#}"));
+                Vec::new()
+            })
+        } else {
+            Vec::new()
+        };
+        for texture in uniform.map(|u| u.textures).unwrap_or_default().into_iter().chain(shoe_textures) {
+            let leaf = texture.path.rsplit('/').next().unwrap().trim_end_matches(".tld").to_owned() + ".dds";
+            let uri = self.register(Source::Shared(texture.path), &leaf)?;
+            external.push(json!({"path":uri,"name":leaf,"source":texture.source,"format":texture.format,"range":texture.range,"binding":{"target":texture.target,"channel":texture.channel}}));
+        }
         let mut fit = BTreeMap::new();
         for container in [body, &appearance] {
             if let Some(map) = container["body_fit"].as_object() {
@@ -898,6 +1172,7 @@ impl Assets {
             "fingerprint":fingerprint,"native":true,
             "options":{"companionPaths":companions,"externalTextures":external,"projectTangent":"staged","preferHighestDetail":true},
             "player":{"mode":"staged-player","defaultConfig":config,"gender":gender,"skinColor":skin,"irisColor":body.get("iris color").and_then(Value::as_str).unwrap_or("BROWN"),"irisSize":body.get("iris size").and_then(Value::as_str).unwrap_or("REGULAR"),"bodyFit":fit,
+                "hairTint":hair_tint,"beardTint":beard_tint,
                 "companionsLoaded":companions.len(),"companionsRequested":companions.len(),"sharedTexturesLoaded":external.len(),
                 "stagedBodyTextures":companions.iter().filter(|c| c["kind"].as_str().is_some_and(|s| s.starts_with("body-")) && c["name"].as_str().is_some_and(|s| !s.starts_with("char/"))).count(),
                 "jerseyAvailable":companions.iter().any(|c| c["kind"] == "preview-jersey")}}),
@@ -1325,6 +1600,67 @@ mod tests {
         assert!(owned(&mut assets, &["shared"]).is_err());
         assets.release_resources(lease(&values[0]));
         assert!(owned(&mut assets, &["shared"]).is_ok());
+    }
+
+    #[test]
+    fn uniform_garments_follow_the_rdat_types() {
+        let mut rdat = b"4\x01\x00\x00\x8c\x1b".to_vec();
+        rdat.extend_from_slice(br#"{"JERSEY TYPE": "jerseyReg_nike_wishbone", "SHORTS TYPE": "shortsreg_nike", "RIG TYPE": "MALE"}"#);
+        rdat.extend_from_slice(b"\x00\x00trailing");
+        assert_eq!(super::uniform_garments(&rdat).unwrap(), ["jersey_nike_wishbone", "shorts_nike"]);
+        assert!(super::uniform_garments(br#"{"JERSEY TYPE": "tanktop"}"#).is_err());
+        assert!(super::uniform_garments(b"no json").is_err());
+    }
+
+    #[test]
+    fn txtr_range_matches_the_worker_mask() {
+        let ripped = json!({"Min":[0.0431372561,0.0,0.627451003,1.0],"Max":[0.996078491,0.882353008,1.0,1.0]});
+        assert_eq!(super::txtr_range(&ripped)["mask"], json!([1, 1, 1, 1]), "alpha Min 1 counts as ranged, as in the worker");
+        let explicit = json!({"Min":[0.2,0.0,0.0,1.0],"Max":[1.0,1.0,1.0,1.0],"RangeCompress":2});
+        assert_eq!(super::txtr_range(&explicit)["mask"], json!([0, 1, 0, 0]));
+        assert!(super::txtr_range(&json!({"Min":[0.0,0.0,0.0,0.0],"Max":[1.0,1.0,1.0,1.0]})).is_null());
+        assert!(super::txtr_range(&json!({"Min":[0.0,0.0],"Max":[1.0,1.0]})).is_null());
+    }
+
+    #[test]
+    fn fx_tweak_color_reads_the_hair_color_record() {
+        let mut bytes = vec![0_u8; 0x50];
+        let mut push = |words: &[u32]| words.iter().for_each(|w| bytes.extend_from_slice(&w.to_le_bytes()));
+        // A scalar record, then the color record: value, minimum, maximum.
+        push(&[0x88, 0x649b_3d83, 0x649b_3d83, 0, 0, 0, 0, 0, 1.0_f32.to_bits()]);
+        let (a, b) = super::HAIR_COLOR_TWEAK;
+        push(&[0x99, a, b, 0, 0, 0, 0.8039_f32.to_bits(), 0.451_f32.to_bits(), 0.2431_f32.to_bits(), 0, 0, 0,
+            1.0_f32.to_bits(), 1.0_f32.to_bits(), 1.0_f32.to_bits()]);
+        let color = super::fx_tweak_color(&bytes, super::HAIR_COLOR_TWEAK).unwrap();
+        assert!((color[0] - 0.8039).abs() < 1e-6 && (color[1] - 0.451).abs() < 1e-6 && (color[2] - 0.2431).abs() < 1e-6);
+        assert_eq!(super::fx_tweak_color(&bytes, (1, 2)), None, "missing record");
+        assert_eq!(super::fx_tweak_color(&bytes[..0x60], super::HAIR_COLOR_TWEAK), None, "truncated blob");
+        let mut unknown = vec![0_u8; 0x50];
+        unknown.extend_from_slice(&0x1234_u32.to_le_bytes());
+        unknown.extend_from_slice(&[0; 32]);
+        assert_eq!(super::fx_tweak_color(&unknown, super::HAIR_COLOR_TWEAK), None, "unknown record type");
+    }
+
+    #[test]
+    fn only_detail_maps_are_optional_preview_textures() {
+        for name in [
+            "shared/f2/strandshair_lightmap_o.f205f3ab21d1e563.tld",
+            "hair_tangent_o.45849c3e3580d940.tld",
+            "face_bentnormal_o.c5af17ae1ea08157.tld",
+            "face_wrinklecolor_o.eac435c5c39d6f52.tld",
+            "chest_region_weights.3366e90c356d95df.tld",
+            "goggles_rdmo_o.0146357b9f4d9270.tld",
+        ] {
+            assert!(super::auxiliary_texture(name), "{name} should be optional");
+        }
+        for name in [
+            "face_color_o.d4540db69a0b0202.tld",
+            "face_normal_o.c3b44e82da7964a3.tld",
+            "hair_color_o.d269c0cbe60555ea.tld",
+            "shared/ad/iris_normalheight1.ad144d47f7f5520f.tld",
+        ] {
+            assert!(!super::auxiliary_texture(name), "{name} must stay required");
+        }
     }
 
     #[test]

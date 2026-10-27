@@ -6,8 +6,9 @@ import { configureArenaLayers } from './arena-layers.mjs';
 import { configureScoreboardOverlay, configureCourtGraffiti } from './arena-overlays.mjs';
 import { captureBasketFrame, catalogOverheadTarget, captureCreatedWoodTint } from './arena-catalog.mjs';
 import { materialProfile, previewLightingProfile } from './render-profiles.mjs';
-import { skinBoundaryResponse } from '../skin-response.mjs';
+import { skinBoundaryResponse, skinLuminanceResponse } from '../skin-response.mjs';
 import { configureStrandLightmap, configureStrandTangentRange, configureStrandSpecular, configureStrandCoverage } from '../strand-preview-fixes.mjs';
+import { createStudioEnvironment, studioLightBalance, seamSmoothedNormals, vertexTangents, cardTextureUvs, configureEyeIris, configureSkinShading, configureTearFilm, configureEyewearLens, configureEyeSurface, strandTint, flipsBodyNormalGreen, configureDetailNormal, configureGarmentLayering, configureColorwayMask, SHOE_COLORWAY, configureOcclusionAlpha, GARMENT_LAYERING, previewGarmentKind, garmentCoverWeights, garmentBandBounds, GARMENT_BAND } from '../studio-shading.mjs';
 
 
 export function createExplorerRenderer(options = {}) {
@@ -28,6 +29,18 @@ const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: Boole
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, options.picker ? 1.25 : 2));
 
+// three's shadow pass draws casters with one shared depth material whose cached
+// `map` uniform is only refreshed when a caster has a map. After a player switch
+// it still held a disposed texture, which every later shadow pass re-uploaded and
+// nothing freed (one texture leaked per switch). Clear stale texture uniforms
+// before each shadow draw.
+function clearStaleDepthUniforms(_renderer, _object, _camera, _shadowCamera, _geometry, depthMaterial) {
+  const uniforms = renderer.properties.get(depthMaterial).uniforms;
+  if (!uniforms) return;
+  if (uniforms.map && uniforms.map.value !== depthMaterial.map) uniforms.map.value = depthMaterial.map;
+  if (uniforms.alphaMap && uniforms.alphaMap.value !== depthMaterial.alphaMap) uniforms.alphaMap.value = depthMaterial.alphaMap;
+}
+
 const ambientLight = new THREE.AmbientLight(0xffffff, 1.0);
 scene.add(ambientLight);
 const hemisphereLight = new THREE.HemisphereLight(0xe8f2ff, 0x54463f, 0);
@@ -46,6 +59,14 @@ const grid = new THREE.GridHelper(10000, 40, 0x4c5665, 0x20262f);
 grid.material.opacity = 0.32;
 grid.material.transparent = true;
 scene.add(grid);
+
+// Shadow-only floor for studio previews; outside modelRoot so fitting, picking
+// and the children/payload pairing never see it.
+const groundShadow = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.ShadowMaterial({ opacity: 0.34, depthWrite: false }));
+groundShadow.rotation.x = -Math.PI / 2;
+groundShadow.receiveShadow = true;
+groundShadow.visible = false;
+scene.add(groundShadow);
 
 const modelRoot = new THREE.Group();
 // The decoder deliberately emits the workspace Blender import basis (Z-up).
@@ -66,6 +87,8 @@ let textureItems = [];
 let currentPayload = null;
 let currentPreviewProfile = previewLightingProfile();
 let captureEnvironment = null;
+// Built once per renderer on first studio use; false after a failed build.
+let studioEnvironment = null;
 const captureLightGroup = new THREE.Group();
 scene.add(captureLightGroup);
 let drag = null;
@@ -80,6 +103,12 @@ const skinBoundaryPairs = new Map();
 let materialMetadataByName = new Map();
 let cameraRenderFrame = 0;
 let textureSampler = null;
+// Materials removed by the previous disposeRoot. three.js deletes a shader program
+// when its last material is disposed, so disposing a model's materials before the
+// next model compiles threw away ~30 identical programs per model (1-1.5 s of
+// compile stalls per portrait). They are disposed one model later instead, once
+// the replacement materials hold the same programs.
+let retiredMaterials = new Set();
 
 function invalidateShadows() {
   // Static geometry/light rigs do not need another shadow pass just because
@@ -116,12 +145,14 @@ function configurePreviewLighting(payload = currentPayload) {
   captureEnvironment?.dispose();
   captureEnvironment = null;
   renderer.shadowMap.enabled = false;
+  groundShadow.visible = false;
   renderer.localClippingEnabled = false;
   renderer.shadowMap.autoUpdate = true;
   invalidateShadows();
   keyLight.castShadow = false;
-  keyLight.shadow.map?.dispose();
-  keyLight.shadow.map = null;
+  // The shadow map is kept across loads (it is redrawn via invalidateShadows).
+  // Disposing it here made the next render re-upload the old map through the lit
+  // materials' shadow uniforms, leaking one 2048x2048 texture per load.
   keyLight.position.set(2, 4, 3);
   keyLight.target.position.set(0, 0, 0);
   fillLight.position.set(-4, 2, 3);
@@ -136,6 +167,32 @@ function configurePreviewLighting(payload = currentPayload) {
   keyLight.intensity = currentPreviewProfile.key;
   fillLight.intensity = currentPreviewProfile.fill;
   rimLight.intensity = currentPreviewProfile.rim;
+  scene.environmentIntensity = 1;
+  const environment = currentPreviewProfile.kind === 'arena' ? null : studioEnvironmentTexture();
+  if (environment) {
+    // Reflections and image-based fill replace most of the flat ambient term.
+    const balance = studioLightBalance(currentPreviewProfile);
+    scene.environment = environment;
+    scene.environmentIntensity = balance.environmentIntensity;
+    ambientLight.intensity = balance.ambient;
+    hemisphereLight.intensity = balance.hemisphere;
+  }
+}
+
+function studioEnvironmentTexture() {
+  if (studioEnvironment === null) {
+    try { studioEnvironment = createStudioEnvironment(THREE, renderer); } catch { studioEnvironment = false; }
+  }
+  return studioEnvironment ? studioEnvironment.texture : null;
+}
+
+// three only recreates a shadow map when it is missing, so a size change needs
+// an explicit release.
+function releaseShadowMap() {
+  const map = keyLight.shadow.map;
+  if (!map) return;
+  map.dispose();
+  keyLight.shadow.map = null;
 }
 
 function configureStudioLights(bounds) {
@@ -152,14 +209,18 @@ function configureStudioLights(bounds) {
   place(fillLight, [-2.1, 1.15, 1.3]);
   place(rimLight, [-1.4, 1.7, -2.2]);
   renderer.shadowMap.enabled = options.shadows !== false;
-  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  // r185 replaces PCFSoftShadowMap with PCFShadowMap; radius sets the softness.
+  renderer.shadowMap.type = THREE.PCFShadowMap;
   renderer.shadowMap.autoUpdate = false;
   invalidateShadows();
   keyLight.castShadow = options.shadows !== false;
-  keyLight.shadow.mapSize.set(1024, 1024);
+  if (keyLight.shadow.mapSize.x !== 2048) releaseShadowMap();
+  keyLight.shadow.mapSize.set(2048, 2048);
+  keyLight.shadow.radius = 3;
   keyLight.shadow.bias = -0.0002;
   const shadowCamera = keyLight.shadow.camera;
-  const extent = radius * 0.72;
+  // Wide enough to hold the shadow the model throws across the ground plane.
+  const extent = radius * 1.15;
   // About 1.5 shadow texels; 0.0006 * radius left slope acne banding on faces.
   keyLight.shadow.normalBias = extent * 2 / keyLight.shadow.mapSize.x * 1.5;
   shadowCamera.left = shadowCamera.bottom = -extent;
@@ -173,6 +234,10 @@ function configureStudioLights(bounds) {
     object.castShadow = materials.some((material) => material && !material.transparent);
     object.receiveShadow = true;
   });
+  // Contact shadow at the model's base so it stands on the floor instead of floating.
+  groundShadow.position.set(center.x, bounds.min.y + radius * 0.0005, center.z);
+  groundShadow.scale.setScalar(radius * 3);
+  groundShadow.visible = renderer.shadowMap.enabled;
 }
 
 function colorFor(name) {
@@ -184,6 +249,8 @@ function colorFor(name) {
   if (/tongue|mouth|gum/.test(normalized)) return new THREE.Color(0x7f4948);
   if (/facial.?hair|beard|brow|lash|(?:^|_)hair(?:_|$)/.test(normalized)) return new THREE.Color(0x292624);
   if (/(?:^|_)(?:skin|face|head|body)(?:_|$)/.test(normalized)) return new THREE.Color(0x9b7868);
+  // Preview crew socks have no color map: plain white athletic socks.
+  if (/(?:^|_)sock(?:_|$)/.test(normalized)) return new THREE.Color(0xe6e6e3);
   let hash = 2166136261;
   for (const char of String(name)) hash = Math.imul(hash ^ char.charCodeAt(0), 16777619);
   const color = new THREE.Color();
@@ -296,7 +363,8 @@ function disposeRoot(keepTextures = new Set()) {
     });
   }
   geometries.forEach((geometry) => geometry.dispose());
-  materialsToDispose.forEach((material) => material.dispose());
+  retiredMaterials.forEach((material) => { if (!materialsToDispose.has(material)) material.dispose(); });
+  retiredMaterials = materialsToDispose;
   textureCache.forEach((texture) => { if (!keepTextures.has(texture)) texture?.dispose(); });
   textureCache = [];
   textureItems = [];
@@ -327,8 +395,32 @@ function indexArray(value) {
   return new Uint16Array(indices);
 }
 
+// Time spent waiting in load yields, so load profiles separate work from waits
+// (background tabs throttle requestAnimationFrame to as little as once a second).
+let frameWaitMs = 0;
+let lastLoadProfile = null;
 function nextFrame() {
-  return new Promise((resolve) => requestAnimationFrame(resolve));
+  const started = performance.now();
+  return new Promise((resolve) => requestAnimationFrame((time) => { frameWaitMs += performance.now() - started; resolve(time); }));
+}
+
+// Busy milliseconds per load phase, excluding yields.
+function loadProfiler() {
+  const phases = {}, started = performance.now(), waitedAtStart = frameWaitMs;
+  let lapAt = started, waitedAtLap = frameWaitMs, yields = 0;
+  return {
+    yielded() { yields += 1; },
+    lap(name) {
+      const now = performance.now();
+      phases[name] = Math.round(now - lapAt - (frameWaitMs - waitedAtLap));
+      lapAt = now; waitedAtLap = frameWaitMs;
+    },
+    finish() {
+      const waitedMs = Math.round(frameWaitMs - waitedAtStart);
+      lastLoadProfile = { phases, busyMs: Math.round(performance.now() - started) - waitedMs, waitedMs, yields };
+      return lastLoadProfile;
+    },
+  };
 }
 
 function cancelLoad() {
@@ -894,7 +986,8 @@ function setArenaCaptureLighting(view, definitions = {}, options = {}) {
   keyLight.target.updateMatrixWorld(true);
   renderer.shadowMap.enabled = options.shadows !== false;
   renderer.shadowMap.autoUpdate = true;
-  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.shadowMap.type = THREE.PCFShadowMap;
+  keyLight.shadow.radius = 1;
   keyLight.castShadow = renderer.shadowMap.enabled && (!authoredSun || authoredSun.castsShadows);
   keyLight.shadow.mapSize.set(2048, 2048);
   keyLight.shadow.bias = -0.00004;
@@ -943,16 +1036,42 @@ function setArenaCaptureLighting(view, definitions = {}, options = {}) {
     ambientIntensity:ambientLight.intensity };
 }
 
+// The worker sends texture bytes as a Uint8Array; base64 strings (older payloads,
+// synthetic test textures) still decode.
+function textureBytes(value) {
+  if (value instanceof Uint8Array) {
+    return value.byteOffset === 0 && value.byteLength === value.buffer.byteLength ? value : value.slice();
+  }
+  if (value instanceof ArrayBuffer) return new Uint8Array(value);
+  return typeof Uint8Array.fromBase64 === 'function'
+    ? Uint8Array.fromBase64(value)
+    : Uint8Array.from(atob(value), c => c.charCodeAt(0));
+}
+
+// 2K texture names carry a content hash (name.<16 hex>.dds), so equal hashed
+// names with equal lengths are the same bytes; other names compare in full.
+function sameTextureBytes(left, right, name = '') {
+  if (typeof left === 'string' || typeof right === 'string') return left === right;
+  if (!ArrayBuffer.isView(left) || !ArrayBuffer.isView(right) || left.byteLength !== right.byteLength) return false;
+  if (left === right || /\.[0-9a-f]{16}\.dds$/i.test(name)) return true;
+  // Word-wise when both views are 4-byte aligned (DDS payloads are), else bytewise.
+  const words = left.byteOffset % 4 === 0 && right.byteOffset % 4 === 0 && left.byteLength % 4 === 0;
+  const a = words ? new Uint32Array(left.buffer, left.byteOffset, left.byteLength / 4) : left;
+  const b = words ? new Uint32Array(right.buffer, right.byteOffset, right.byteLength / 4) : right;
+  for (let index = 0; index < a.length; index++) if (a[index] !== b[index]) return false;
+  return true;
+}
+
 function createDdsTexture(item) {
   try {
-    const bytes = typeof Uint8Array.fromBase64 === 'function'
-      ? Uint8Array.fromBase64(item.bytes)
-      : Uint8Array.from(atob(item.bytes), c => c.charCodeAt(0));
+    const bytes = textureBytes(item.bytes);
     if (item.previewRgba) {
       if (bytes.length !== item.width * item.height * 4) return null;
       const texture = new THREE.DataTexture(bytes, item.width, item.height, THREE.RGBAFormat);
       texture.name = item.name;
       texture.userData.range = item.range || null;
+      texture.userData.rangeColor = Boolean(item.range) && item.binding?.channel === 'color'
+        && /hair|jersey|shorts/i.test(item.binding?.target || '');
       texture.colorSpace = item.range || item.format === 'RGBA8_UNORM' ? THREE.NoColorSpace : THREE.SRGBColorSpace;
       texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
       texture.generateMipmaps = true;
@@ -967,12 +1086,26 @@ function createDdsTexture(item) {
     const texture = new THREE.CompressedTexture(parsed.mipmaps, parsed.width, parsed.height, parsed.format);
     texture.name = item.name;
     texture.userData.range = item.range || null;
+    // Range-compressed maps upload raw (NoColorSpace) so the shader can decode the
+    // range. Hair and beard color maps then still hold sRGB values: linearising them
+    // matches the game's headshots (png00809, png01507). Uniform color maps are
+    // albedo the same way. Skin maps stay linear: read as sRGB, their chroma is far
+    // too saturated (dark-skinned png01013: G/R 0.25, B/R 0.13 vs 0.50/0.35 linear,
+    // against 0.49/0.34 for the ColorChecker dark-skin patch), and fair skin turns
+    // orange. Linear skin is somewhat bright, which the studio exposure absorbs.
+    texture.userData.rangeColor = Boolean(item.range) && item.binding?.channel === 'color'
+      && /hair|jersey|shorts/i.test(item.binding?.target || '');
     const declaredFormat = String(item.format || '').toUpperCase();
-    texture.colorSpace = item.range || (declaredFormat && declaredFormat !== 'DDS' && !declaredFormat.includes('SRGB'))
-      ? THREE.NoColorSpace
-      : declaredFormat.includes('SRGB') || item.binding?.channel === 'color'
-        || /basecolou?r|(?:^|_)color(?:_|\.)|albedo|diffuse|_c(?:\.|_)/i.test(`${item.source} ${item.name}`)
-        ? THREE.SRGBColorSpace : THREE.NoColorSpace;
+    // Plain (non-range) hair, beard and eyelash color maps are declared *_UNORM
+    // without an SRGB tag but hold sRGB color like their range-compressed siblings;
+    // reading them as linear washed dark hair out to gray and lashes to a haze.
+    const hairColor = !item.range && item.binding?.channel === 'color' && /hair|lash/i.test(item.binding?.target || '');
+    texture.colorSpace = hairColor ? THREE.SRGBColorSpace
+      : item.range || (declaredFormat && declaredFormat !== 'DDS' && !declaredFormat.includes('SRGB'))
+        ? THREE.NoColorSpace
+        : declaredFormat.includes('SRGB') || item.binding?.channel === 'color'
+          || /basecolou?r|(?:^|_)color(?:_|\.)|albedo|diffuse|_c(?:\.|_)/i.test(`${item.source} ${item.name}`)
+          ? THREE.SRGBColorSpace : THREE.NoColorSpace;
     texture.minFilter = parsed.mipmapCount > 1 ? THREE.LinearMipmapLinearFilter : THREE.LinearFilter;
     texture.magFilter = THREE.LinearFilter;
     texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
@@ -996,6 +1129,12 @@ function materialTextureTarget(materialName) {
   if (/(?:^|_)(?:torso|body)(?:_|$)/.test(name)) return 'torso';
   if (/(?:^|_)(?:legs?|thigh|calf)(?:_|$)/.test(name)) return 'legs';
   if (/ball/.test(name)) return 'ball';
+  // Preview garments (jerseyreg_nike_v_mat, female_shortsreg_nike_mat, ...) take
+  // the preview uniform's baked maps.
+  if (/jerseyreg/.test(name)) return 'jersey';
+  if (/shortsreg/.test(name)) return 'shorts';
+  // The generic preview shoes (L_/R_special_twokgeneric_shader).
+  if (/twokgeneric/.test(name)) return 'shoes';
   return '';
 }
 
@@ -1030,6 +1169,25 @@ function applyPreviewMaterialProfile(material, normalTexture = material.normalMa
 function boundTexture(targetName, channel) {
   const index = textureItems.findIndex((item, itemIndex) => textureCache[itemIndex]
     && item.binding?.target === targetName && item.binding?.channel === channel);
+  return index >= 0 ? textureCache[index] : null;
+}
+
+// Accessory textures (goggles, glasses, ...) arrive without a region target, so
+// region lookups never bind them and the accessory drew as a placeholder blob.
+// Pair them with a region-less material whose name contains the texture's
+// leading word: goggles_color_o -> goggles_custom_shader. Rig and side words
+// don't count (female_headband_thin_color_o leads with "headband"), or every
+// female_* texture matched every female material (headband maps on the socks).
+const ACCESSORY_QUALIFIERS = new Set(['female', 'male', 'child', 'l', 'r']);
+function accessoryWords(name, separator) {
+  return String(name || '').toLowerCase().split(separator).filter((word) => word && !ACCESSORY_QUALIFIERS.has(word));
+}
+
+function boundAccessoryTexture(materialName, channel) {
+  const tokens = new Set(accessoryWords(materialName, /[^a-z0-9]+/));
+  const index = textureItems.findIndex((item, itemIndex) => textureCache[itemIndex]
+    && item.binding && !item.binding.target && item.binding.channel === channel
+    && tokens.has(accessoryWords(item.name, /[_.]/)[0]));
   return index >= 0 ? textureCache[index] : null;
 }
 
@@ -1096,18 +1254,15 @@ function disposeDerivedTextures(material) {
   material.userData.derivedTextures = [];
 }
 
-function eyeAtlasTexture(texture, material) {
+function eyeWhiteTexture(texture, material) {
   if (!texture || !/eyewhite/i.test(texture.name)) return texture;
+  // 2K27 eyewhite_color maps are one radial sclera image (white front, veined
+  // edges) across the eyeball's full 0-1 UVs, not a 2x2 atlas. Sampling a
+  // quadrant stretched the veined corner over the whole eye.
   const derived = texture.clone();
-  const rightEye = /(?:^|_)r_eye(?:_|$)/i.test(material.name);
-  derived.name = `${texture.name} · ${rightEye ? 'right' : 'left'} eye`;
+  derived.name = `${texture.name} · sclera`;
   derived.wrapS = THREE.ClampToEdgeWrapping;
   derived.wrapT = THREE.ClampToEdgeWrapping;
-  // Shared 2K27 eyewhite_color_0N maps are one centered eyeball (cornea at
-  // the center, lid-hidden red rim at the edges) and each eye mesh spans UV
-  // 0..1. Sampling a 0.5 quadrant showed only the red rim as the sclera.
-  derived.repeat.set(1, 1);
-  derived.offset.set(0, 0);
   derived.needsUpdate = true;
   material.userData.derivedTextures.push(derived);
   return derived;
@@ -1115,6 +1270,7 @@ function eyeAtlasTexture(texture, material) {
 
 function irisColor(value) {
   const name = String(value || 'brown').trim().toLowerCase();
+  if (/^#?[0-9a-f]{6}$/.test(name)) return new THREE.Color(`#${name.replace('#', '')}`);
   const colors = {
     black: 0x211811,
     brown: 0x5a2f17,
@@ -1137,39 +1293,38 @@ function irisScale(value) {
   return 0.54;
 }
 
-function configureEyeIris(material, texture) {
-  if (!texture) return;
-  const color = irisColor(currentPayload?.player?.irisColor);
-  const scale = irisScale(currentPayload?.player?.irisSize);
-  material.onBeforeCompile = (shader) => {
-    shader.uniforms.nbaIrisColor = { value: color };
-    shader.uniforms.nbaIrisScale = { value: scale };
-    shader.fragmentShader = shader.fragmentShader
-      .replace('#include <map_pars_fragment>', '#include <map_pars_fragment>\nuniform vec3 nbaIrisColor;\nuniform float nbaIrisScale;')
-      .replace(
-        '#include <map_fragment>',
-        `#ifdef USE_MAP
-          vec4 sampledDiffuseColor = texture2D( map, vMapUv );
-          #ifdef DECODE_VIDEO_TEXTURE
-            sampledDiffuseColor = sRGBTransferEOTF( sampledDiffuseColor );
-          #endif
-          vec2 nbaEyeUv = vMapUv;
-          float nbaIrisDistance = length( nbaEyeUv - vec2( 0.5 ) ) / nbaIrisScale;
-          float nbaIrisMask = 1.0 - smoothstep( 0.185, 0.255, nbaIrisDistance );
-          float nbaPupilMask = 1.0 - smoothstep( 0.052, 0.085, nbaIrisDistance );
-          float nbaIrisRays = 0.92 + 0.08 * cos( atan( nbaEyeUv.y - 0.5, nbaEyeUv.x - 0.5 ) * 28.0 );
-          sampledDiffuseColor.rgb = mix( sampledDiffuseColor.rgb, nbaIrisColor * nbaIrisRays, nbaIrisMask );
-          sampledDiffuseColor.rgb = mix( sampledDiffuseColor.rgb, vec3( 0.012 ), nbaPupilMask );
-          diffuseColor *= sampledDiffuseColor;
-        #endif`,
-      );
-  };
-  material.customProgramCacheKey = () => `nba2k27-eye-iris-v3-${color.getHexString()}-${scale}`;
+// Scanned body color maps are pure black where clothing (e.g. a female player's
+// sports bra) is layered on in game, which drew as black holes with the jersey
+// hidden. Body maps fill those texels with a heather-gray athletic fabric.
+// Shared by every body skin material, so toggling garments never recompiles.
+// Depths for (jersey/shorts, footwear): footwear is always worn; the wrapper
+// switches the jersey depth with the jersey's visibility.
+const garmentLayeringUniform = { value: new THREE.Vector2(0, GARMENT_LAYERING.depth) };
+// The shadow pass gets the same push, or skin that sorts behind a garment still
+// shadows it (gray ovals on a female player's jersey over the bust).
+let garmentShadowDepth = null;
+function garmentShadowDepthMaterial() {
+  if (!garmentShadowDepth) {
+    // Default packing, like three's own shadow depth material; three copies each
+    // material's map/alphaMap/alphaTest onto it, so cut-out cards still cut out.
+    garmentShadowDepth = new THREE.MeshDepthMaterial();
+    configureGarmentLayering(garmentShadowDepth, garmentLayeringUniform, true);
+  }
+  return garmentShadowDepth;
 }
 
-function configureTextureRange(material, texture) {
+// Sports-bra band bounds for the current body (see garmentBandBounds); zeros = none.
+const garmentBandUniform = { value: new THREE.Vector4() };
+
+const GARMENT_CUTOUT_FILL = Object.freeze({ threshold: [0.02, 0.06], color: [0.1, 0.105, 0.115] });
+
+function configureTextureRange(material, texture, fillCutouts = false) {
   const range = texture?.userData?.range || null;
+  const srgb = Boolean(range && texture.userData.rangeColor);
+  const fill = Boolean(range && fillCutouts);
   material.userData.textureRange = range;
+  material.userData.textureRangeSrgb = srgb;
+  material.userData.garmentCutoutFill = fill;
   // A color-map swap can reuse the same compiled shader. Keep its uniform
   // objects alive and update their values even when onBeforeCompile is skipped.
   const uniforms = material.userData.textureRangeUniforms ||= {
@@ -1184,6 +1339,23 @@ function configureTextureRange(material, texture) {
   }
   material.onBeforeCompile = range ? (shader) => {
     Object.assign(shader.uniforms, uniforms);
+    // Body maps also take the sports-bra band, computed per pixel from the body
+    // position against shared bounds (bottom, top, center x, half-width; 0 = none).
+    if (fill) {
+      shader.uniforms.nbaGarmentBand = garmentBandUniform;
+      shader.vertexShader = 'varying vec3 vNbaBodyPosition;\n'
+        + shader.vertexShader.replace('#include <uv_vertex>', '#include <uv_vertex>\nvNbaBodyPosition = position;');
+      shader.fragmentShader = `varying vec3 vNbaBodyPosition;
+uniform vec4 nbaGarmentBand;
+float nbaGarmentBandWeight() {
+  if ( nbaGarmentBand.w <= 0.0 ) return 0.0;
+  float edge = ${GARMENT_BAND.edge.toFixed(2)};
+  return smoothstep( nbaGarmentBand.x - edge, nbaGarmentBand.x, vNbaBodyPosition.z )
+    * ( 1.0 - smoothstep( nbaGarmentBand.y, nbaGarmentBand.y + edge, vNbaBodyPosition.z ) )
+    * ( 1.0 - smoothstep( nbaGarmentBand.w - edge, nbaGarmentBand.w, abs( vNbaBodyPosition.x - nbaGarmentBand.z ) ) );
+}
+` + shader.fragmentShader;
+    }
     shader.fragmentShader = shader.fragmentShader
       .replace(
         '#include <map_pars_fragment>',
@@ -1196,13 +1368,16 @@ function configureTextureRange(material, texture) {
           #ifdef DECODE_VIDEO_TEXTURE
             sampledDiffuseColor = sRGBTransferEOTF( sampledDiffuseColor );
           #endif
+          ${fill ? `float garmentCutout = max( 1.0 - smoothstep( ${GARMENT_CUTOUT_FILL.threshold.join(', ')}, max( max( sampledDiffuseColor.r, sampledDiffuseColor.g ), sampledDiffuseColor.b ) ), nbaGarmentBandWeight() );` : ''}
           vec4 rangeDecodedColor = mix( mapRangeMin, mapRangeMax, sampledDiffuseColor );
           sampledDiffuseColor = mix( sampledDiffuseColor, rangeDecodedColor, mapRangeMask );
+          ${srgb ? 'sampledDiffuseColor = sRGBTransferEOTF( sampledDiffuseColor );' : ''}
+          ${fill ? `sampledDiffuseColor.rgb = mix( sampledDiffuseColor.rgb, vec3( ${GARMENT_CUTOUT_FILL.color.join(', ')} ), garmentCutout );` : ''}
           diffuseColor *= sampledDiffuseColor;
         #endif`,
       );
   } : () => {};
-  material.customProgramCacheKey = () => (range ? 'nba2k27-texture-range-v1' : '');
+  material.customProgramCacheKey = () => (range ? `nba2k27-texture-range-v1${srgb ? '-srgb' : ''}${fill ? '-cutout-band' : ''}` : '');
 }
 
 function median(values) {
@@ -1280,11 +1455,14 @@ function sampleDecodedTexture(texture, uv) {
   const x = Math.min(decoded.size - 1, Math.floor(wrap(uv[0]) * decoded.size));
   const y = Math.min(decoded.size - 1, Math.floor(wrap(uv[1]) * decoded.size));
   const offset = (y * decoded.size + x) * 4;
+  // Seam responses compare colors in the same linear space the shader lights in.
+  const linear = (value) => (value <= 0.04045 ? value / 12.92 : Math.pow((value + 0.055) / 1.055, 2.4));
   return [0, 1, 2].map((channel) => {
     const sample = decoded.pixels[offset + channel] / 255;
-    return decoded.range.mask[channel]
+    const value = decoded.range.mask[channel]
       ? decoded.range.min[channel] + sample * (decoded.range.max[channel] - decoded.range.min[channel])
       : sample;
+    return texture.userData.rangeColor ? linear(value) : value;
   });
 }
 
@@ -1306,8 +1484,9 @@ function boundaryUvPairs(leftTarget, rightTarget) {
     const leftVertices = verticesByTarget.get(leftTarget);
     const rightVertices = verticesByTarget.get(rightTarget);
     if (!leftVertices?.size || !rightVertices?.size) continue;
-    const positionKey = (vertex) => [0, 1, 2]
-      .map((axis) => Number(mesh.positions[vertex * 3 + axis]).toFixed(3)).join(',');
+    // Integer keys at 0.001-unit resolution; toFixed() dominated this pass on bodies.
+    const positionKey = (vertex) => Math.round(mesh.positions[vertex * 3] * 1000) + ','
+      + Math.round(mesh.positions[vertex * 3 + 1] * 1000) + ',' + Math.round(mesh.positions[vertex * 3 + 2] * 1000);
     const rightByPosition = new Map([...rightVertices].map((vertex) => [positionKey(vertex), vertex]));
     for (const leftVertex of leftVertices) {
       const rightVertex = rightByPosition.get(positionKey(leftVertex));
@@ -1338,7 +1517,8 @@ function boundaryColors(leftTarget, rightTarget) {
 }
 
 function responseColor(reference, source, referenceResponse = [1, 1, 1]) {
-  return new THREE.Color(...(skinBoundaryResponse(reference, source, referenceResponse) || [1, 1, 1]));
+  return new THREE.Color(...(skinBoundaryResponse(reference, source, referenceResponse)
+    || skinLuminanceResponse(reference, source, referenceResponse) || [1, 1, 1]));
 }
 
 function skinMaterialResponses() {
@@ -1385,46 +1565,129 @@ function applyAutomaticTextures() {
       const targetName = materialTextureTarget(material.name);
       const boundColorTexture = boundArenaTexture(material.name, 'color') || (targetName
         ? boundTexture(targetName, 'color')
-        : null);
+        : boundAccessoryTexture(material.name, 'color'));
       const colorTexture = targetName === 'eye'
-        ? eyeAtlasTexture(boundColorTexture, material)
+        ? eyeWhiteTexture(boundColorTexture, material)
         : boundColorTexture;
       const normalTexture = boundArenaTexture(material.name, 'normal') || (targetName
-        ? boundTexture(targetName, 'normal')
-        : null);
+        ? boundTextureMatching(targetName, 'normal', /^(?![\s\S]*detailnormal)/i)
+        : boundAccessoryTexture(material.name, 'normal'));
+      const detailNormalTexture = targetName === 'face' && normalTexture
+        ? boundTextureMatching('face', 'normal', /detailnormal/i) : null;
       const strandMaterial = targetName === 'hair' || targetName === 'facialhair';
       const tangentTexture = strandMaterial
         ? boundStrandTangent(material.name, targetName)
         : null;
       material.map = colorTexture;
       material.normalMap = normalTexture;
+      // Strands already apply their own lightmap/occlusion response.
+      const occlusionTarget = targetName && !strandMaterial && targetName !== 'eye';
+      const occlusionTexture = occlusionTarget
+        ? boundTextureMatching(targetName, 'auxiliary', /occlusion|(?:^|_)ao(?:_|\.)/i) : null;
+      // Without a dedicated occlusion map, the bent-normal map's alpha is the AO
+      // (the player's own face_bentnormal_o first).
+      const bentNormalTexture = occlusionTarget && !occlusionTexture
+        ? boundTextureMatching(targetName, 'auxiliary', /bentnormal_o\./i) || boundTextureMatching(targetName, 'auxiliary', /bentnormal/i)
+        : null;
+      material.aoMap = occlusionTexture || bentNormalTexture;
+      if (material.aoMap) material.aoMapIntensity = 1;
       if ('anisotropyMap' in material) {
         material.anisotropyMap = tangentTexture;
         material.anisotropy = tangentTexture ? previewMaterialProfile(material.name).anisotropy || 0 : 0;
       }
-      configureTextureRange(material, colorTexture);
+      configureTextureRange(material, colorTexture, ['chest', 'torso', 'legs'].includes(targetName));
       configureStrandLightmap(material, strandMaterial
-        ? boundTextureMatching(targetName, 'auxiliary', /lightmap|occlusion/i) : null);
+        ? boundTextureMatching(targetName, 'auxiliary', /lightmap|occlusion/i) : null,
+      object.geometry?.getAttribute('nbaStrandLightUv') ? 'nbaStrandLightUv' : null);
       configureStrandTangentRange(material, tangentTexture, THREE.ShaderChunk.lights_physical_fragment);
       configureStrandSpecular(material, strandMaterial);
-      if (targetName === 'eye') configureEyeIris(material, colorTexture);
+      configureEyeIris(material, targetName === 'eye' && Boolean(colorTexture),
+        irisColor(currentPayload?.player?.irisColor), irisScale(currentPayload?.player?.irisSize));
       const profile = applyPreviewMaterialProfile(material, normalTexture);
-      // A bound glasses color map carries lens/frame coverage in its alpha.
-      if (profile?.role === 'glass' && colorTexture) material.opacity = 1;
+      const normalSource = normalTexture ? textureItems[textureCache.indexOf(normalTexture)]?.source : null;
+      if (normalTexture && flipsBodyNormalGreen(targetName, normalSource)) material.normalScale.y *= -1;
+      configureEyeSurface(material);
+      configureSkinShading(material, profile?.role === 'skin');
+      configureDetailNormal(material, detailNormalTexture);
+      configureColorwayMask(material, targetName === 'shoes' ? SHOE_COLORWAY : null);
+      configureOcclusionAlpha(material, Boolean(bentNormalTexture), THREE.ShaderChunk.aomap_fragment);
+      if (configureGarmentLayering(material, garmentLayeringUniform, ['chest', 'torso', 'legs'].includes(targetName))) {
+        object.customDepthMaterial = garmentShadowDepthMaterial();
+      }
+      // Strand cards without a color/alpha map (e.g. armpit hair) can only draw
+      // as solid placeholder-colored blobs; hide them until a texture binds.
+      const untexturedStrand = profile?.role === 'strand' && !colorTexture;
+      if (untexturedStrand) material.visible = false;
+      else if (material.userData.untexturedStrand) material.visible = true;
+      material.userData.untexturedStrand = untexturedStrand;
       material.transparent = profile?.role === 'glass'
         || Boolean(colorTexture) && (targetName === 'eyelash' || strandMaterial);
       material.alphaTest = targetName === 'eyelash' || strandMaterial ? profile?.alphaTest || 0 : 0;
       material.depthWrite = targetName !== 'eyelash' && profile?.role !== 'glass';
       material.forceSinglePass = strandMaterial;
       configureStrandCoverage(material, strandMaterial, renderer.getContext().getContextAttributes()?.antialias);
+      configureEyewearLens(material, !targetName && /goggle|glasses|lens|visor/i.test(material.name) && Boolean(colorTexture));
       material.color.copy(colorTexture && targetName !== 'eyelash'
         ? materialResponses.get(targetName) || new THREE.Color(0xffffff)
         : colorFor(material.name));
+      const tint = colorTexture && strandMaterial
+        ? strandTint(targetName === 'facialhair' ? currentPayload?.player?.beardTint : currentPayload?.player?.hairTint) : null;
+      if (tint) material.color.multiply(new THREE.Color(...tint));
+      material.userData.strandTint = tint;
       material.userData.skinMaterialResponse = materialResponses.get(targetName)?.toArray() || null;
       if (currentPayload?.shoe && !colorTexture) material.color.set(0xaaaaaa);
+      configureTearFilm(material);
       material.needsUpdate = true;
     });
   });
+}
+
+// A cold load compiles every material program inside the first render, which
+// blocked the UI for ~0.5 s per player. compileAsync lets KHR_parallel_shader_compile
+// do that work off the main thread; the render then reuses the programs.
+async function compilePrograms(generation) {
+  if (typeof renderer.compileAsync !== 'function') return;
+  try {
+    await renderer.compileAsync(scene, camera);
+  } catch {
+    // The next render compiles synchronously instead.
+  }
+  if (generation !== loadGeneration) throw new Error('Preview cancelled.');
+}
+
+function collapsedPositions(positions) {
+  if (!positions?.length) return true;
+  for (let index = 0; index < positions.length; index++) if (positions[index] !== 0) return false;
+  return true;
+}
+
+function setVectorAttribute(geometry, name, values, size) {
+  // Reused geometry keeps its GPU buffer; only the contents change.
+  const current = geometry.getAttribute(name);
+  if (current?.array.length === values.length) { current.array.set(values); current.needsUpdate = true; }
+  else geometry.setAttribute(name, new THREE.BufferAttribute(values, size));
+}
+
+// Studio meshes share one seam-aware normal pass (face/neck/body splits stay
+// smooth across meshes and material groups), then get tangents for normal maps.
+function prepareSurfaceFrames(payload) {
+  if (payload?.stats?.arena) return;
+  const meshes = modelRoot.children.filter((object) => object.isMesh && object.geometry.index
+    && !object.geometry.userData.authoredNormals);
+  // Instances repeat one local geometry, so only plain meshes share a space.
+  const groups = [meshes.filter((object) => !object.isInstancedMesh),
+    ...meshes.filter((object) => object.isInstancedMesh).map((object) => [object])];
+  for (const group of groups.filter((entries) => entries.length)) {
+    const normals = seamSmoothedNormals(group.map(({ geometry }) => ({
+      positions: geometry.attributes.position.array, indices: geometry.index.array,
+    })));
+    group.forEach(({ geometry }, index) => setVectorAttribute(geometry, 'normal', normals[index], 3));
+  }
+  for (const { geometry, isMesh } of modelRoot.children) {
+    if (!isMesh || !geometry.index || !geometry.attributes.uv || !geometry.attributes.normal) continue;
+    setVectorAttribute(geometry, 'tangent', vertexTangents(geometry.attributes.position.array,
+      geometry.attributes.normal.array, geometry.attributes.uv.array, geometry.index.array), 4);
+  }
 }
 
 async function load(payload, onProgress = () => {}, options = {}) {
@@ -1444,11 +1707,13 @@ async function load(payload, onProgress = () => {}, options = {}) {
   for (let i = 0; i < textureItems.length; i++) {
     const old = textureItems[i], texture = textureCache[i];
     if (!texture) continue;
-    const next = (payload.textures || []).find(item => item.name === old.name && item.bytes === old.bytes
+    const next = (payload.textures || []).find(item => item.name === old.name && sameTextureBytes(item.bytes, old.bytes, item.name)
       && JSON.stringify(item.range) === JSON.stringify(old.range) && item.inputColorSpace === old.inputColorSpace);
     if (next) retainedTextures.set(next, texture);
   }
   let reusedGeometry = 0;
+  const skippedMeshes = [];
+  const profile = loadProfiler();
   try {
   currentPayload = payload;
   materialMetadataByName = new Map();
@@ -1470,10 +1735,32 @@ async function load(payload, onProgress = () => {}, options = {}) {
       retained.delete(meshKey(item)); modelRoot.add(reuse); reusedGeometry++;
       continue;
     }
+    // Tangent-space companions that were not projected onto a face arrive with
+    // every position at the origin: nothing to draw, but they skew the bounds.
+    // Callers pair modelRoot.children with payload.meshes by index, so keep an
+    // empty placeholder (no geometry or material) in this slot.
+    if (item.tangentSpaceAttachment && !item.tangentProjected && collapsedPositions(item.positions)) {
+      const placeholder = new THREE.Object3D();
+      placeholder.name = item.name;
+      placeholder.userData.previewModel = item.name;
+      placeholder.userData.collapsedTangentSpace = true;
+      modelRoot.add(placeholder);
+      skippedMeshes.push(item.sourceName || item.name);
+      continue;
+    }
     const neutralFacialHairFitBase = item.sourceKind === 'facialhair-fit-base';
     const geometry = new THREE.BufferGeometry();
     geometry.setAttribute('position', new THREE.BufferAttribute(typed(item.positions, Float32Array), 3));
-    if (item.uvs?.length) geometry.setAttribute('uv', new THREE.BufferAttribute(typed(item.uvs, Float32Array), 2));
+    if (item.uvs?.length) {
+      const uvs = cardTextureUvs(item.uvs, item.attachmentUvs, item.indices);
+      geometry.userData.textureUvSource = uvs === item.uvs ? 'uvs' : 'attachmentUvs';
+      geometry.setAttribute('uv', new THREE.BufferAttribute(typed(uvs, Float32Array), 2));
+      // The remaining set on two-set strand meshes is the per-card lightmap layout.
+      const lightmapUvs = uvs === item.uvs ? item.attachmentUvs : item.uvs;
+      if (lightmapUvs?.length === item.uvs.length) {
+        geometry.setAttribute('nbaStrandLightUv', new THREE.BufferAttribute(typed(lightmapUvs, Float32Array), 2));
+      }
+    }
     if (item.courtUvs?.length) geometry.setAttribute('courtUv', new THREE.BufferAttribute(typed(item.courtUvs, Float32Array), 2));
     if (item.detailUvs?.length) geometry.setAttribute('detailUv', new THREE.BufferAttribute(typed(item.detailUvs, Float32Array), 2));
     // TEXCOORD1 (scalp position) when the worker exports it; tangent-space hair
@@ -1483,12 +1770,18 @@ async function load(payload, onProgress = () => {}, options = {}) {
     if (item.overlayUvs?.length) geometry.setAttribute('overlayUv', new THREE.BufferAttribute(typed(item.overlayUvs, Float32Array), 2));
     if (item.graffitiUvs?.length) geometry.setAttribute('graffitiUv', new THREE.BufferAttribute(typed(item.graffitiUvs, Float32Array), 2));
     geometry.setIndex(new THREE.BufferAttribute(indexArray(item.indices), 1));
-    geometry.computeVertexNormals();
+    if (item.normals?.length === item.positions?.length) {
+      geometry.setAttribute('normal', new THREE.BufferAttribute(typed(item.normals, Float32Array), 3));
+      geometry.userData.authoredNormals = true;
+    } else if (payload.stats?.arena) {
+      geometry.computeVertexNormals();
+    }
     const materials = [];
     for (const group of item.groups || []) {
       const targetName = materialTextureTarget(group.material);
       const profile = previewMaterialProfile(group.material);
       const Material = targetName === 'hair' || targetName === 'facialhair' || profile.role === 'eye' || profile.role === 'glass'
+        || profile.role === 'skin' && !neutralFacialHairFitBase
         ? THREE.MeshPhysicalMaterial
         : THREE.MeshStandardMaterial;
       const material = new Material({
@@ -1517,6 +1810,7 @@ async function load(payload, onProgress = () => {}, options = {}) {
     if (instanceCount) {
       const mesh = new THREE.InstancedMesh(geometry, materials, instanceCount);
       mesh.name = item.name;
+      mesh.onBeforeShadow = clearStaleDepthUniforms;
       mesh.userData.previewInstances = legacyInstances;
       mesh.userData.previewInstanceNames = item.instanceNames || legacyInstances.map((instance) => instance.name);
       mesh.userData.previewInstanceTargets = item.instanceTargets || legacyInstances.map((instance) => instance.target);
@@ -1533,6 +1827,7 @@ async function load(payload, onProgress = () => {}, options = {}) {
     } else {
       const mesh = new THREE.Mesh(geometry, materials);
       mesh.name = item.name;
+      mesh.onBeforeShadow = clearStaleDepthUniforms;
       mesh.userData.previewModel = item.name;
       mesh.userData.previewGroups = item.groups || [];
       modelRoot.add(mesh);
@@ -1540,10 +1835,19 @@ async function load(payload, onProgress = () => {}, options = {}) {
     modelRoot.children.at(-1).userData.geometryKey = meshKey(item);
     if ((!options.deferRender || options.yieldPreparation) && performance.now() - sliceStarted >= 8 && itemIndex + 1 < items.length) {
       onProgress({ phase: 'meshes', completed: itemIndex + 1, total: items.length });
+      profile.yielded();
       await nextFrame();
       sliceStarted = performance.now();
     }
   }
+  profile.lap('meshes');
+  applyGarmentCover(items);
+  try {
+    prepareSurfaceFrames(payload);
+  } catch {
+    for (const { geometry, isMesh } of modelRoot.children) if (isMesh && !geometry.attributes.normal) geometry.computeVertexNormals();
+  }
+  profile.lap('surfaceFrames');
   textureItems = payload.textures || [];
   textureCache = [];
   sliceStarted = performance.now();
@@ -1554,18 +1858,26 @@ async function load(payload, onProgress = () => {}, options = {}) {
     textureCache.push(reused || createDdsTexture(textureItems[index]));
     if ((!options.deferRender || options.yieldPreparation) && performance.now() - sliceStarted >= 8 && index + 1 < textureItems.length) {
       onProgress({ phase: 'textures', completed: index + 1, total: textureItems.length });
+      profile.yielded();
       await nextFrame();
       sliceStarted = performance.now();
     }
   }
+  profile.lap('textures');
   applyAutomaticTextures();
+  applyGarmentBand();
+  profile.lap('materials');
   if (generation !== loadGeneration) throw new Error('Preview cancelled.');
   if (!options.deferRender) {
     setEyelashesVisible(false, false);
-    if (isPlacedArena(payload)) { fitCamera(false); setArenaCourtView(); }
-    else fitCamera();
+    // Fit first: studio lights decide the shadow variants the programs compile with.
+    fitCamera(false);
+    await compilePrograms(generation);
+    if (isPlacedArena(payload)) setArenaCourtView();
+    else updateCamera();
+    profile.lap('compile');
   }
-  return { decodedTextures: textureCache.filter(Boolean).length, reusedGeometry };
+  return { decodedTextures: textureCache.filter(Boolean).length, reusedGeometry, skippedMeshes, profile: profile.finish() };
   } finally {
     for (const object of retained.values()) {
       object.geometry.dispose();
@@ -1785,6 +2097,62 @@ function setWireframe(value) {
   renderer.render(scene, camera);
 }
 
+// Depth (model units) by which body skin sorts behind garments; 0 turns it off.
+// Depth (model units) by which covered skin sorts behind the jersey and shorts;
+// 0 turns it off. Footwear keeps its own depth.
+function setGarmentLayering(depth) {
+  garmentLayeringUniform.value.x = Math.max(0, Number(depth) || 0);
+}
+
+// Extends the chest map's sports-bra cut-out into a band around the torso
+// (garmentBandUniform); bodies without cut-out cups get none.
+function applyGarmentBand() {
+  garmentBandUniform.value.set(0, 0, 0, 0);
+  modelRoot.traverse((object) => {
+    const geometry = object.isMesh ? object.geometry : null;
+    const materials = Array.isArray(object.material) ? object.material : [object.material];
+    if (!geometry?.groups?.length || !geometry.index || !geometry.getAttribute('uv')) return;
+    const index = geometry.index.array, uv = geometry.getAttribute('uv').array;
+    const seen = new Set(), cups = [];
+    for (const group of geometry.groups) {
+      const material = materials[group.materialIndex ?? 0];
+      if (materialTextureTarget(material?.name) !== 'chest' || !material.map) continue;
+      const decoded = decodedTexturePixels(material.map);
+      if (!decoded) continue;
+      const size = decoded.size;
+      for (let cursor = group.start; cursor < group.start + group.count; cursor++) {
+        const v = index[cursor];
+        if (seen.has(v)) continue;
+        seen.add(v);
+        const x = Math.min(size - 1, Math.floor((uv[v * 2] - Math.floor(uv[v * 2])) * size));
+        const y = Math.min(size - 1, Math.floor((uv[v * 2 + 1] - Math.floor(uv[v * 2 + 1])) * size));
+        const offset = (y * size + x) * 4;
+        if (Math.max(decoded.pixels[offset], decoded.pixels[offset + 1], decoded.pixels[offset + 2]) < 16) cups.push(v);
+      }
+    }
+    const bounds = garmentBandBounds(geometry.getAttribute('position').array, cups);
+    if (bounds) garmentBandUniform.value.fromArray(bounds);
+  });
+}
+
+// Marks body vertices covered by a preview garment (nbaGarmentCover), so only
+// that skin sorts behind garments.
+function applyGarmentCover(items) {
+  const garments = [];
+  items.forEach((item, index) => {
+    const kind = previewGarmentKind(item);
+    const positions = modelRoot.children[index]?.geometry?.getAttribute('position')?.array;
+    if (kind && positions) garments.push({ kind, positions });
+  });
+  items.forEach((item, index) => {
+    const geometry = modelRoot.children[index]?.geometry;
+    if (item.sourceKind !== 'main' || !geometry) return;
+    if (!garments.length) { geometry.deleteAttribute('nbaGarmentCover'); return; }
+    const cover = garmentCoverWeights(geometry.getAttribute('position').array, garments);
+    geometry.setAttribute('nbaGarmentCover', new THREE.BufferAttribute(cover, 2));
+  });
+}
+
 function setEyelashesVisible(value, draw = true) {
   invalidateShadows();
   eyelashesVisible = Boolean(value);
@@ -1810,6 +2178,9 @@ function setTexture(index) {
     materials.filter(Boolean).forEach((material) => {
       material.map = texture;
       material.normalMap = null;
+      // Inspecting one texture shows it raw, without the automatic extra maps.
+      material.aoMap = null;
+      if ('anisotropyMap' in material) { material.anisotropyMap = null; material.anisotropy = 0; }
       configureTextureRange(material, texture);
       applyPreviewMaterialProfile(material, null);
       material.color.copy(texture ? new THREE.Color(0xffffff) : colorFor(material.name));
@@ -1887,6 +2258,9 @@ const api = {
   colorHex: (name) => `#${colorFor(name).getHexString()}`,
   clearPick,
   fitCamera,
+  // For callers that load with deferRender and configure before their first
+  // draw: compiles the current material programs off the main thread.
+  precompile: () => compilePrograms(loadGeneration),
   load,
   loadArenaTextures,
   replaceModelColors,
@@ -1894,6 +2268,7 @@ const api = {
   resize,
   setTexture,
   setEyelashesVisible,
+  setGarmentLayering,
   setArenaCourtView,
   setArenaCaptureView,
   setArenaDisplayCaptureView,
@@ -1905,6 +2280,7 @@ const api = {
   setWireframe,
   stats: () => ({
     decodedTextures: textureCache.filter(Boolean).length,
+    loadProfile: lastLoadProfile,
     payload: currentPayload,
     previewProfile: currentPreviewProfile,
     fittedDistance,
@@ -1914,6 +2290,7 @@ const api = {
       keyPosition: keyLight.position.toArray(), keyColor: keyLight.color.getHex(), cameraFov: camera.fov,
       toneMapping:renderer.toneMapping, exposure:renderer.toneMappingExposure, localClipping:renderer.localClippingEnabled },
     geometryIds: modelRoot.children.map(object => object.geometry?.uuid),
+    textureUvSources: modelRoot.children.map(object => `${object.name}:${object.geometry?.userData.textureUvSource || 'none'}`),
     materialTextures: modelRoot.children.flatMap((object) => {
       const materials = Array.isArray(object.material) ? object.material : [object.material];
       return materials.filter(Boolean).map((material) => ({
@@ -1923,6 +2300,7 @@ const api = {
         roughnessMap: material.roughnessMap?.name || '',
         aoMap: material.aoMap?.name || '',
         lightmap: material.userData.strandLightmap || '',
+        lightmapSkipped: Boolean(material.userData.strandLightmapSkipped),
         anisotropyMap: material.anisotropyMap?.name || '',
         tangentRangeCompressed: Boolean(material.userData.strandTangentRange),
         strandSpecularResponse: Boolean(material.userData.strandSpecularResponse),
@@ -1943,7 +2321,12 @@ const api = {
         roughness: material.roughness ?? null,
         metalness: material.metalness ?? null,
         skinResponse: material.userData.skinMaterialResponse || null,
+        skinScatter: Boolean(material.userData.skinScatter),
+        eyeIris: Boolean(material.userData.eyeIris),
+        detailNormal: material.userData.detailNormal || null,
+        strandTint: material.userData.strandTint || null,
         rangeCompressed: Boolean(material.userData.textureRange),
+        rangeSrgb: Boolean(material.userData.textureRangeSrgb),
       }));
     }),
     renderer: renderer.capabilities.isWebGL2 ? 'WebGL 2' : 'WebGL 1',
