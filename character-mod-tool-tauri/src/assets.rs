@@ -100,6 +100,34 @@ fn skin_color(value: &Value) -> Option<i64> {
         .or_else(|| value.as_str().and_then(|s| s.parse().ok()))
         .filter(|n| (0..=99).contains(n))
 }
+/// A TXTR's per-channel range compression as {min, max, mask}, the shape the
+/// preview worker derives for textures read from an IFF; null when uncompressed.
+fn txtr_range(meta: &Value) -> Value {
+    let channels = |key: &str| -> Option<Vec<f64>> {
+        let values: Vec<f64> = meta[key].as_array()?.iter().take(4).filter_map(Value::as_f64).collect();
+        (values.len() == 4 && values.iter().all(|v| v.is_finite())).then_some(values)
+    };
+    let (Some(min), Some(max)) = (channels("Min"), channels("Max")) else {
+        return Value::Null;
+    };
+    let compress = meta["RangeCompress"].as_u64().unwrap_or(0);
+    let mask: Vec<u8> = (0..4)
+        .map(|c| {
+            let ranged = if compress != 0 {
+                compress & (1 << c) != 0
+            } else {
+                min[c].abs() > 1e-7 || (max[c] - 1.0).abs() > 1e-7
+            };
+            u8::from(ranged)
+        })
+        .collect();
+    if mask.iter().any(|&m| m == 1) {
+        json!({"min":min,"max":max,"mask":mask})
+    } else {
+        Value::Null
+    }
+}
+
 /// FxTweakables record ids (two name hashes) of the hair/beard color triple.
 const HAIR_COLOR_TWEAK: (u32, u32) = (0x8790_02a7, 0x10de_55c5);
 
@@ -411,6 +439,38 @@ impl Assets {
         self.sources.insert(uri.clone(), source);
         Ok(uri)
     }
+    /// The chest/torso normal maps for a muscle type (NORMAL, RIPPED, SUPERRIPPED,
+    /// SOFT) as shared texture paths with their TXTR format and range.
+    fn body_normals(&self, iff: &str, muscle: &str) -> Result<Vec<(&'static str, String, String, Value)>> {
+        let mut archive = self.archive(&Source::Manifest(iff.to_owned()))?;
+        let variant = token(muscle);
+        let mut normals = Vec::new();
+        for region in ["chest", "torso"] {
+            let txtr = [variant.as_str(), "normal"]
+                .iter()
+                .find_map(|v| archive.named(&format!("{region}_normal_avg_{v}.TXTR")).ok())
+                .with_context(|| format!("No {region} normal map in {iff}"))?;
+            let tree = codec::tree(&txtr)?;
+            let meta = tree
+                .as_object()
+                .and_then(|map| map.values().next())
+                .context("Empty TXTR")?;
+            let binary = meta["Binary"].as_str().context("TXTR without a texture")?;
+            let hash = binary
+                .split('.')
+                .nth(1)
+                .filter(|h| h.len() == 16 && h.chars().all(|c| c.is_ascii_hexdigit()))
+                .context("Unexpected shared texture name")?;
+            normals.push((
+                region,
+                format!("shared/{}/{binary}", &hash[..2]),
+                meta["Format"].as_str().unwrap_or("BC5_UNORM").to_owned(),
+                txtr_range(meta),
+            ));
+        }
+        Ok(normals)
+    }
+
     fn archive(&self, source: &Source) -> Result<Archive> {
         codec::cancelled(&self.cancel)?;
         let c = self
@@ -934,6 +994,28 @@ impl Assets {
             let uri = self.register(Source::Shared(name), &leaf)?;
             external.push(json!({"path":uri,"name":leaf,"source":"shared (native memory)","format":format,"binding":{"target":region,"channel":channel}}));
         }
+        // Chest and torso normal maps follow the muscle type. The male set is only
+        // listed in fpglobal; the female and child skin IFFs carry their own.
+        let muscle = body
+            .get("muscle type")
+            .or_else(|| body.get("muscle_type"))
+            .and_then(Value::as_str)
+            .unwrap_or("NORMAL");
+        let normals_iff = match gender {
+            "female" => "char/female_skin.iff",
+            "child" => "char/child_skin.iff",
+            _ => "char/fpglobal.iff",
+        };
+        match self.body_normals(normals_iff, muscle) {
+            Ok(normals) => {
+                for (region, name, format, range) in normals {
+                    let leaf = name.rsplit('/').next().unwrap().trim_end_matches(".tld").to_owned() + ".dds";
+                    let uri = self.register(Source::Shared(name), &leaf)?;
+                    external.push(json!({"path":uri,"name":leaf,"source":"shared (native memory)","format":format,"range":range,"binding":{"target":region,"channel":"normal"}}));
+                }
+            }
+            Err(error) => warnings.push(format!("Body normal maps unavailable: {error:#}")),
+        }
         let mut fit = BTreeMap::new();
         for container in [body, &appearance] {
             if let Some(map) = container["body_fit"].as_object() {
@@ -1394,6 +1476,16 @@ mod tests {
         assert!(owned(&mut assets, &["shared"]).is_err());
         assets.release_resources(lease(&values[0]));
         assert!(owned(&mut assets, &["shared"]).is_ok());
+    }
+
+    #[test]
+    fn txtr_range_matches_the_worker_mask() {
+        let ripped = json!({"Min":[0.0431372561,0.0,0.627451003,1.0],"Max":[0.996078491,0.882353008,1.0,1.0]});
+        assert_eq!(super::txtr_range(&ripped)["mask"], json!([1, 1, 1, 1]), "alpha Min 1 counts as ranged, as in the worker");
+        let explicit = json!({"Min":[0.2,0.0,0.0,1.0],"Max":[1.0,1.0,1.0,1.0],"RangeCompress":2});
+        assert_eq!(super::txtr_range(&explicit)["mask"], json!([0, 1, 0, 0]));
+        assert!(super::txtr_range(&json!({"Min":[0.0,0.0,0.0,0.0],"Max":[1.0,1.0,1.0,1.0]})).is_null());
+        assert!(super::txtr_range(&json!({"Min":[0.0,0.0],"Max":[1.0,1.0]})).is_null());
     }
 
     #[test]

@@ -40,12 +40,14 @@ const STRAND_REPLACEMENTS = [
 // curvature, sweat, wrinkle and detail normals, secondary body-normal variants
 // such as avg_ripped), so hair lightmap/tangent maps and accessory textures were
 // dropped on nearly every player. Unused maps are now skipped and the cap
-// raised; arena previews keep their own limits.
+// raised; arena previews keep their own limits. Chest/torso body normals come
+// from native preparation, picked by muscle type, so the skin IFF's own
+// avg_normal/avg_ripped copies are skipped.
 const UNUSED_TEXTURE = String.raw`      function previewTextureUnused(item) {
         const identity = ${'`${item.name || ""} ${item.source || ""}`'};
         const channels = item.assignments?.length ? item.assignments.map((assignment) => assignment.channel) : [item.binding?.channel];
         if (channels.some((channel) => channel === "color" || channel === "tangent")) return false;
-        if (channels.includes("normal")) return /detailnormal|_normal_avg_(?!normal)/i.test(identity);
+        if (channels.includes("normal")) return /detailnormal/i.test(identity) || /_normal_avg_/i.test(identity) && !item.externalPath;
         return !/occlusion|(?:^|_)ao(?:_|\.)|lightmap|tangent/i.test(identity);
       }
 `;
@@ -57,6 +59,17 @@ const TEXTURE_REPLACEMENTS = [
   [
     '        for (const texture of prioritized) {\n',
     (match) => match + '          if (!includeArenaTextures && previewTextureUnused(texture)) continue;\n',
+  ],
+];
+
+// Every player scene carries the same ~330 named morphs: FACS expressions and
+// their combination correctives, joint-pose correctives (elbow, wrist, finger,
+// knee) and THIN/THICK fit shapes. All are zero at rest, so the neutral scanned
+// mesh is already the player's likeness; the old note implied otherwise.
+const MORPH_NOTE = [
+  [
+    "skipped.unshift(`${morphTargets} facial morph target(s) detected. The preview currently shows the neutral base mesh; NBA 2K's math-node morph evaluation is not applied yet.`);",
+    () => "skipped.unshift(`${morphTargets} morph target(s) detected (facial expressions and pose correctives). The preview shows the neutral rest pose, which already carries the player's likeness.`);",
   ],
 ];
 
@@ -75,6 +88,7 @@ function patchWorkerBundle(source) {
   let text = source.replace(/\r\n/g, '\n');
   text = apply(text, 'const strandCards = ', STRAND_REPLACEMENTS);
   text = apply(text, 'function previewTextureUnused(', TEXTURE_REPLACEMENTS);
+  text = apply(text, 'morph target(s) detected (facial expressions', MORPH_NOTE);
   return crlf ? text.replace(/\n/g, '\r\n') : text;
 }
 

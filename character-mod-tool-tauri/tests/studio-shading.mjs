@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { studioLightBalance, STUDIO_ENVIRONMENT, seamSmoothedNormals, vertexTangents, cardTextureUvs, configureEyeIris, configureSkinShading, configureTearFilm, configureEyewearLens, EYEWEAR_LENS, configureEyeSurface, EYE_SURFACE, strandTint } from '../web/renderer/studio-shading.mjs';
+import { studioLightBalance, STUDIO_ENVIRONMENT, seamSmoothedNormals, vertexTangents, cardTextureUvs, configureEyeIris, configureSkinShading, configureTearFilm, configureEyewearLens, EYEWEAR_LENS, configureEyeSurface, EYE_SURFACE, strandTint, flipsBodyNormalGreen } from '../web/renderer/studio-shading.mjs';
 
 const balance = studioLightBalance({ ambient: 0.4, hemisphere: 0.8 });
 assert.ok(Math.abs(balance.ambient - 0.4 * STUDIO_ENVIRONMENT.ambientScale) < 1e-12);
@@ -129,4 +129,10 @@ for (const unset of [null, undefined, [0, 0, 0], [0.5, 0.5], [0.5, NaN, 0.5], [1
   assert.equal(strandTint(unset), null, `${JSON.stringify(unset)} reads as no tint`);
 }
 
-console.log('Studio shading: light balance, seam/crease normals, tangent handedness and repair, chained iris uniforms, skin scatter and strand tint passed.');
+assert.equal(flipsBodyNormalGreen('torso', 'male'), true);
+assert.equal(flipsBodyNormalGreen('torso', 'child'), false);
+assert.equal(flipsBodyNormalGreen('torso', 'female'), false, 'Female torso maps already match the chest');
+assert.equal(flipsBodyNormalGreen('chest', 'male'), false);
+assert.equal(flipsBodyNormalGreen('torso', undefined), false, 'Unknown bodies (catalog items) are left alone');
+
+console.log('Studio shading: light balance, seam/crease normals, tangent handedness and repair, chained iris uniforms, skin scatter, strand tint and torso normal flip passed.');

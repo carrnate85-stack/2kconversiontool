@@ -3658,7 +3658,7 @@
         const identity = `${item.name || ""} ${item.source || ""}`;
         const channels = item.assignments?.length ? item.assignments.map((assignment) => assignment.channel) : [item.binding?.channel];
         if (channels.some((channel) => channel === "color" || channel === "tangent")) return false;
-        if (channels.includes("normal")) return /detailnormal|_normal_avg_(?!normal)/i.test(identity);
+        if (channels.includes("normal")) return /detailnormal/i.test(identity) || /_normal_avg_/i.test(identity) && !item.externalPath;
         return !/occlusion|(?:^|_)ao(?:_|\.)|lightmap|tangent/i.test(identity);
       }
       function previewTextureScore(item) {
@@ -4243,7 +4243,7 @@
           return count + Math.max(1, packed || mesh.instances?.length || 0);
         }, 0);
         if (morphTargets > 0) {
-          skipped.unshift(`${morphTargets} facial morph target(s) detected. The preview currently shows the neutral base mesh; NBA 2K's math-node morph evaluation is not applied yet.`);
+          skipped.unshift(`${morphTargets} morph target(s) detected (facial expressions and pose correctives). The preview shows the neutral rest pose, which already carries the player's likeness.`);
         }
         const arenaTextureRequests = arenaByName && !includeArenaTextures ? [...arenaTextureCandidates.values()].sort(comparePreviewTextures).slice(0, MAX_ARENA_TEXTURE_REQUESTS).map((texture) => texture.name.replace(/\.dds$/i, ".tld")) : [];
         const texturedMaterials = new Set(texturePayloads.flatMap((texture) => (texture.assignments || []).map((assignment) => String(assignment.material || "").toLowerCase())).filter(Boolean)).size;

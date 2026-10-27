@@ -8,7 +8,7 @@ import { captureBasketFrame, catalogOverheadTarget, captureCreatedWoodTint } fro
 import { materialProfile, previewLightingProfile } from './render-profiles.mjs';
 import { skinBoundaryResponse, skinLuminanceResponse } from '../skin-response.mjs';
 import { configureStrandLightmap, configureStrandTangentRange, configureStrandSpecular, configureStrandCoverage } from '../strand-preview-fixes.mjs';
-import { createStudioEnvironment, studioLightBalance, seamSmoothedNormals, vertexTangents, cardTextureUvs, configureEyeIris, configureSkinShading, configureTearFilm, configureEyewearLens, configureEyeSurface, strandTint } from '../studio-shading.mjs';
+import { createStudioEnvironment, studioLightBalance, seamSmoothedNormals, vertexTangents, cardTextureUvs, configureEyeIris, configureSkinShading, configureTearFilm, configureEyewearLens, configureEyeSurface, strandTint, flipsBodyNormalGreen } from '../studio-shading.mjs';
 
 
 export function createExplorerRenderer(options = {}) {
@@ -1453,6 +1453,7 @@ function applyAutomaticTextures() {
       configureEyeIris(material, targetName === 'eye' && Boolean(colorTexture),
         irisColor(currentPayload?.player?.irisColor), irisScale(currentPayload?.player?.irisSize));
       const profile = applyPreviewMaterialProfile(material, normalTexture);
+      if (normalTexture && flipsBodyNormalGreen(targetName, currentPayload?.player?.gender)) material.normalScale.y *= -1;
       configureEyeSurface(material);
       configureSkinShading(material, profile?.role === 'skin');
       // Strand cards without a color/alpha map (e.g. armpit hair) can only draw

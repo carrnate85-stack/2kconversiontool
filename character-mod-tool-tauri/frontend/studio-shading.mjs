@@ -345,3 +345,11 @@ export function strandTint(value) {
   if (!value.every((channel) => Number.isFinite(channel) && channel >= 0 && channel <= 1)) return null;
   return value.some((channel) => channel > 0) ? value.slice() : null;
 }
+
+// The male body's torso normal maps (fpglobal, every muscle type) carry the
+// opposite green (bitangent) direction to its chest maps, which left a zigzag
+// seam where the two materials meet. Female torso maps match their chest maps
+// (flipping them creates the seam); the child body's seam is unaffected by it.
+export function flipsBodyNormalGreen(targetName, gender) {
+  return targetName === 'torso' && gender === 'male';
+}

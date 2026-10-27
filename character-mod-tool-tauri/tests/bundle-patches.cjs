@@ -11,6 +11,7 @@ assert.equal(patchWorkerBundle(bundle), bundle);
 assert.throws(() => patchWorkerBundle('function buildMesh() {}'), /Pinned preview worker hook changed/);
 assert.ok(bundle.includes('var MAX_TEXTURE_BYTES = 32 * 1024 * 1024;') && bundle.includes('includeArenaTextures ? 128 : 40;'));
 assert.ok(bundle.includes('if (!includeArenaTextures && previewTextureUnused(texture)) continue;'));
+assert.ok(bundle.includes('morph target(s) detected (facial expressions and pose correctives)') && !bundle.includes('math-node morph evaluation is not applied yet'));
 
 // The strand test: every primitive (with inherited materials) is hair or facial hair.
 const start = bundle.indexOf('const strandCards = ');
@@ -31,15 +32,16 @@ assert.equal(strand([]), false);
 const unusedStart = bundle.indexOf('function previewTextureUnused(');
 const previewTextureUnused = vm.runInNewContext(`(${bundle.slice(unusedStart).match(/^function previewTextureUnused[\s\S]*?\n {6}\}/)[0]})`);
 const texture = (name, channel, target = 'face', assignments) => ({ name: `${name}.0123456789abcdef.dds`, source: 'main: png09613.iff', binding: { target, channel }, assignments });
-for (const [name, channel, target] of [['face_color_o', 'color'], ['face_normal_o', 'normal'], ['chest_normal_avg_normal', 'normal', 'chest'],
+for (const [name, channel, target] of [['face_color_o', 'color'], ['face_normal_o', 'normal'], ['legs_normal', 'normal', 'legs'],
   ['iris_normalheight1', 'normal', 'eye'], ['hair_lightmap_o', 'auxiliary', 'hair'], ['hair_tangent_o', 'auxiliary', 'hair'], ['legs_occlusion', 'auxiliary', 'legs'],
   ['female_headband_thin_color_o', 'color', undefined], ['female_headband_thin_normal_o', 'normal', undefined]]) {
   assert.equal(previewTextureUnused(texture(name, channel, target)), false, `${name} is kept`);
 }
-for (const [name, channel, target] of [['chest_normal_avg_ripped', 'normal', 'chest'], ['face_detailnormal_o', 'normal'], ['face_bentnormal_o', 'auxiliary'],
+for (const [name, channel, target] of [['chest_normal_avg_ripped', 'normal', 'chest'], ['torso_normal_avg_normal', 'normal', 'torso'], ['face_detailnormal_o', 'normal'], ['face_bentnormal_o', 'auxiliary'],
   ['face_wrinklecolor_o', 'auxiliary'], ['chest_region_id', 'auxiliary', 'chest'], ['torso_roughcurvedense', 'auxiliary', 'torso'],
   ['female_headband_thin_rdmo_o', 'auxiliary', undefined], ['female_headband_thin_coneangle_o', 'auxiliary', undefined]]) {
   assert.equal(previewTextureUnused(texture(name, channel, target)), true, `${name} is skipped`);
 }
+assert.equal(previewTextureUnused({ ...texture('chest_normal_avg_ripped', 'normal', 'chest'), externalPath: 'cmt-preview://shared/1' }), false, 'Native muscle-type body normal is kept');
 assert.equal(previewTextureUnused(texture('hair_strand_o', 'auxiliary', 'hair', [{ channel: 'tangent', material: 'hair_shader' }])), false, 'Assigned tangent maps are kept');
 console.log('Worker bundle patches: idempotent, hair/beard-only TEXCOORD1, unused preview maps skipped passed.');
