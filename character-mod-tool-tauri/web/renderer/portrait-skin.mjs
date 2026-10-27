@@ -119,16 +119,11 @@ float nbaNoise(vec2 p) { vec2 i = floor(p), f = fract(p); f = f * f * (3.0 - 2.0
 // Soft photo-studio image lighting from the same key/fill/rim directions as
 // the exporter's studio rig, replacing its flat ambient/hemisphere fill.
 // Generic portrait garments (preview-jersey companions): untextured fabric.
-// Environment reflection strength for preview garments (research override: garmentReflections).
-const garmentReflections = (material, settings) => {
-  const garment = GARMENT_MATERIALS.find(([pattern]) => pattern.test(material.name))?.[1];
-  return garment?.reflections ? settings.garmentReflections ?? garment.reflections : 1;
-};
 const GARMENT_MATERIALS = [
-  // Basketball uniforms are matte mesh knit: at 0.62 and full studio reflections
-  // they read as glossy next to the game's own store renders.
-  [/jersey/i, { color: 0x5b6472, roughness: 0.88, reflections: 0.45 }],
-  [/shorts/i, { color: 0x5b6472, roughness: 0.88, reflections: 0.45 }],
+  // Basketball uniforms are matte mesh knit: at roughness 0.62 they read as
+  // glossy next to the game's own store renders (research override: garmentRoughness).
+  [/jersey/i, { color: 0x5b6472, roughness: 0.88, uniform: true }],
+  [/shorts/i, { color: 0x5b6472, roughness: 0.88, uniform: true }],
   [/polo/i, { color: 0x1c2333, roughness: 0.88 }],
   [/blazer/i, { color: 0x2b2e34, roughness: 0.8 }],
   [/bdshirt|shirt/i, { color: 0xe9e9ec, roughness: 0.72 }],
@@ -168,8 +163,13 @@ const MAP_LINE = '#include <map_fragment>';
 // glyphs ({u, w} in atlas width, aspect = glyph width / atlas height), laid out
 // centered in the placement box at glyph height = box height, with spacing in
 // box widths between them.
-// The renderer reuses materials across loads, so the hook is rebuilt from the
-// material's original one whenever its overlay set changes.
+// The renderer reuses materials across loads (jerseys of the same cut), so the
+// hook is rebuilt from the material's original one whenever its overlay set
+// changes. three.js only runs onBeforeCompile when the material has no program
+// for its cache key yet. A material that already compiled this overlay structure
+// keeps the uniform objects bound at that compile, so they are kept per
+// material and updated in place. Fresh objects drew the previous jersey's
+// number and logos, e.g. a home number over the away jersey of the same cut.
 function configureGarmentOverlays(THREE, material, overlays) {
   const signature = overlays.map((o) => `${o.channel}:${o.name}:${o.scaleAndOffset}:${(o.glyphs || []).map((g) => g.u).join('/')}:${o.spacing ?? ''}`).join(',');
   if (material.userData.nbaOverlaySignature === signature) return;
@@ -182,16 +182,17 @@ function configureGarmentOverlays(THREE, material, overlays) {
     return;
   }
   const previous = base.compile, previousKey = base.key;
-  const uniforms = overlays.map((item) => {
+  const kept = material.userData.nbaOverlayUniforms ||= [];
+  const uniforms = overlays.map((item, i) => {
     const glyphs = (item.glyphs || []).slice(0, 2);
-    return {
-      number: item.channel === 'number',
-      map: { value: garmentTexture(THREE, item, THREE.SRGBColorSpace, THREE.ClampToEdgeWrapping) },
-      place: { value: new THREE.Vector4(...item.scaleAndOffset) },
-      turn: { value: (Number(item.rotate) || 0) * Math.PI / 180 },
-      glyphRects: { value: new THREE.Vector4(glyphs[0]?.u ?? 0, glyphs[0]?.w ?? 0, glyphs[1]?.u ?? 0, glyphs[1]?.w ?? 0) },
-      glyphLayout: { value: new THREE.Vector4(glyphs[0]?.aspect ?? 0, glyphs[1]?.aspect ?? 0, glyphs.length, Number(item.spacing) || 0) },
-    };
+    const u = kept[i] ||= { map: { value: null }, place: { value: new THREE.Vector4() }, turn: { value: 0 },
+      glyphRects: { value: new THREE.Vector4() }, glyphLayout: { value: new THREE.Vector4() } };
+    u.map.value = garmentTexture(THREE, item, THREE.SRGBColorSpace, THREE.ClampToEdgeWrapping);
+    u.place.value.set(...item.scaleAndOffset);
+    u.turn.value = (Number(item.rotate) || 0) * Math.PI / 180;
+    u.glyphRects.value.set(glyphs[0]?.u ?? 0, glyphs[0]?.w ?? 0, glyphs[1]?.u ?? 0, glyphs[1]?.w ?? 0);
+    u.glyphLayout.value.set(glyphs[0]?.aspect ?? 0, glyphs[1]?.aspect ?? 0, glyphs.length, Number(item.spacing) || 0);
+    return { number: item.channel === 'number', ...u };
   });
   material.onBeforeCompile = (shader, renderer) => {
     previous.call(material, shader, renderer);
@@ -345,7 +346,7 @@ export function configurePortraitLighting(context, settings = {}) {
           // A payload tint (e.g. the team's primary uniform color) overrides the default.
           const tint = context.payload?.portraitGarmentColor;
           material.color.setHex(Number.isInteger(tint) && /jersey/i.test(material.name) ? tint : garment.color);
-          material.roughness = garment.reflections ? settings.garmentRoughness ?? garment.roughness : garment.roughness;
+          material.roughness = garment.uniform ? settings.garmentRoughness ?? garment.roughness : garment.roughness;
           material.metalness = 0;
           configureGarmentTextures(context, material);
           // Tucked: the jersey's tail ends inside the shorts' waistband.
@@ -355,8 +356,7 @@ export function configurePortraitLighting(context, settings = {}) {
         }
       }
       // Wet clearcoated eyes would otherwise mirror the whole studio over the iris.
-      if ('envMapIntensity' in material) material.envMapIntensity = material.userData.previewMaterialRole === 'eye' ? 0.6
-        : object.userData.previewKind === 'preview-jersey' ? garmentReflections(material, settings) : 1;
+      if ('envMapIntensity' in material) material.envMapIntensity = material.userData.previewMaterialRole === 'eye' ? 0.6 : 1;
       if (material.userData.previewMaterialRole === 'eye' && material.map) configurePortraitEye(material);
       const strand = material.userData.strandLightmapUniforms;
       const lightmap = strand?.nbaStrandLightmap.value;
