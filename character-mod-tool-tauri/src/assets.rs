@@ -474,8 +474,7 @@ impl Assets {
     }
     /// The neutral rec-league uniform for male preview garments. Its RDAT names
     /// the jersey/shorts cut; its TXTRs the baked color and normal maps.
-    fn preview_uniform(&self) -> Result<PreviewUniform> {
-        let name = "u904rec_current_home";
+    fn preview_uniform(&self, name: &str) -> Result<PreviewUniform> {
         let iff = format!("char/uniforms/{name}/{name}.iff");
         let mut archive = self.archive(&Source::Manifest(iff.clone()))?;
         let garments = uniform_garments(&archive.named(&format!("{name}.RDAT"))?)?;
@@ -980,11 +979,13 @@ impl Assets {
         // its JERSEY/SHORTS TYPE picks the matching garment meshes.
         let mut warnings = Vec::new();
         let garment_prefix = if gender == "female" { "female_" } else { "" };
-        // Female rigs keep the plain garments: the only female-rig uniforms are WNBA
-        // ones typed for the male-rig *_wnba meshes, so their maps aren't known to
-        // match female_jersey_*.
-        let uniform = if gender == "male" {
-            match self.preview_uniform() {
+        // Female rigs keep the plain garments. The only female-rig uniforms are WNBA
+        // ones typed for the male-rig *_wnba meshes, which the female body pokes
+        // through; on female_jersey_* their color maps are a neutral base the game
+        // tints at runtime (white with gray blocks), not a finished uniform.
+        let uniform_name = (gender == "male").then_some("u904rec_current_home");
+        let uniform = if let Some(uniform_name) = uniform_name {
+            match self.preview_uniform(uniform_name) {
                 Ok(uniform) => Some(uniform),
                 Err(error) => {
                     warnings.push(format!("Preview uniform unavailable: {error:#}"));
@@ -999,11 +1000,13 @@ impl Assets {
             .map(|u| u.garments.clone())
             .unwrap_or_else(|| vec!["jersey_nike_v".to_owned(), "shorts_nike".to_owned()]);
         for garment in garments {
-            let mut name = format!("char/{garment_prefix}{garment}.iff");
-            if self.catalog.as_ref().unwrap().resolve(&name).is_err() {
-                // Fall back to the default cut for this rig.
-                name = format!("char/{garment_prefix}{}.iff", if garment.starts_with("jersey") { "jersey_nike_v" } else { "shorts_nike" });
-            }
+            let catalog = self.catalog.as_ref().unwrap();
+            let fallback = if garment.starts_with("jersey") { "jersey_nike_v" } else { "shorts_nike" };
+            // The rig's own cut, then an unprefixed one (WNBA *_wnba meshes), then the default.
+            let name = [format!("char/{garment_prefix}{garment}.iff"), format!("char/{garment}.iff")]
+                .into_iter()
+                .find(|name| catalog.resolve(name).is_ok())
+                .unwrap_or_else(|| format!("char/{garment_prefix}{fallback}.iff"));
             requested.insert(name, "preview-jersey".to_owned());
         }
         for (name, kind) in requested {

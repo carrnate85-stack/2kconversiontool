@@ -1,4 +1,5 @@
 import { createExplorerRenderer } from './explorer/model-preview.js';
+import { GARMENT_LAYERING } from './studio-shading.mjs';
 import { createBodyEditor } from './body-preview-editor.mjs';
 import { nearestSkinBoundaryPairs, normalPacking, configureNormalPacking } from './skin-preview-fixes.mjs';
 
@@ -152,6 +153,7 @@ function setJerseyVisible(value, drawAfter = true) {
   for (const object of modelRoot.children) {
     if (object.userData.previewKind === 'preview-jersey') object.visible = Boolean(value);
   }
+  context.api.setGarmentLayering?.(value ? GARMENT_LAYERING.depth : 0);
   context.invalidateShadows();
   if (drawAfter) draw();
 }

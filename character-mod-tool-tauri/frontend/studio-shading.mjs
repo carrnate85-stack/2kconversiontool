@@ -386,3 +386,28 @@ export function configureDetailNormal(material, texture, strength = DETAIL_NORMA
   material.customProgramCacheKey = () => `${previousKey}:nba-detail-normal-v1`;
   return true;
 }
+
+// Preview garments are fitted at their vertices, so skin still bulges through
+// between them (a female player's bust through the jersey); the game hides body
+// faces under garments instead. While garments show, body skin is drawn as if
+// pushed this far back from the camera: depth only, so its screen position and
+// shading are unchanged and nothing opens a hole.
+export const GARMENT_LAYERING = Object.freeze({ depth: 2.5 });
+
+export function configureGarmentLayering(material, uniform, enabled) {
+  material.userData.garmentLayering = Boolean(enabled && uniform);
+  if (!material.userData.garmentLayering) return false;
+  const previous = material.onBeforeCompile;
+  const previousKey = material.customProgramCacheKey();
+  material.onBeforeCompile = (shader) => {
+    previous(shader);
+    shader.uniforms.nbaGarmentDepth = uniform;
+    shader.vertexShader = 'uniform float nbaGarmentDepth;\n' + shader.vertexShader.replace('#include <project_vertex>', `#include <project_vertex>
+if ( nbaGarmentDepth > 0.0 ) {
+  vec4 nbaBehindGarment = projectionMatrix * ( mvPosition + vec4( 0.0, 0.0, - nbaGarmentDepth, 0.0 ) );
+  gl_Position.z = nbaBehindGarment.z / nbaBehindGarment.w * gl_Position.w;
+}`);
+  };
+  material.customProgramCacheKey = () => `${previousKey}:nba-garment-layering-v1`;
+  return true;
+}

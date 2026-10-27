@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { studioLightBalance, STUDIO_ENVIRONMENT, seamSmoothedNormals, vertexTangents, cardTextureUvs, configureEyeIris, configureSkinShading, configureTearFilm, configureEyewearLens, EYEWEAR_LENS, configureEyeSurface, EYE_SURFACE, strandTint, flipsBodyNormalGreen, configureDetailNormal } from '../web/renderer/studio-shading.mjs';
+import { studioLightBalance, STUDIO_ENVIRONMENT, seamSmoothedNormals, vertexTangents, cardTextureUvs, configureEyeIris, configureSkinShading, configureTearFilm, configureEyewearLens, EYEWEAR_LENS, configureEyeSurface, EYE_SURFACE, strandTint, flipsBodyNormalGreen, configureDetailNormal, configureGarmentLayering, GARMENT_LAYERING } from '../web/renderer/studio-shading.mjs';
 
 const balance = studioLightBalance({ ambient: 0.4, hemisphere: 0.8 });
 assert.ok(Math.abs(balance.ambient - 0.4 * STUDIO_ENVIRONMENT.ambientScale) < 1e-12);
@@ -97,6 +97,22 @@ const noBase = hookMaterial();
 assert.equal(configureDetailNormal(noBase, { name: 'face_detailnormal_o' }), false);
 assert.equal(noBase.customProgramCacheKey(), 'range-base');
 
+// Garment layering pushes skin depth only, after three's projection, from one
+// shared uniform; materials it doesn't apply to are untouched.
+const layering = { value: GARMENT_LAYERING.depth };
+const skinUnderGarment = hookMaterial();
+assert.equal(configureGarmentLayering(skinUnderGarment, layering, true), true);
+const layeringShader = { uniforms: {}, vertexShader: '#include <project_vertex>\n#include <worldpos_vertex>', fragmentShader: '' };
+skinUnderGarment.onBeforeCompile(layeringShader);
+assert.equal(layeringShader.basePreserved, true);
+assert.equal(layeringShader.uniforms.nbaGarmentDepth, layering, 'Shared uniform: toggling never recompiles');
+assert.ok(layeringShader.vertexShader.indexOf('gl_Position.z =') > layeringShader.vertexShader.indexOf('#include <project_vertex>'));
+assert.ok(!/gl_Position\.(?:xy|x|y)\s*=/.test(layeringShader.vertexShader), 'Only depth moves');
+assert.equal(skinUnderGarment.customProgramCacheKey(), 'range-base:nba-garment-layering-v1');
+const face = hookMaterial();
+assert.equal(configureGarmentLayering(face, layering, false), false);
+assert.equal(face.customProgramCacheKey(), 'range-base');
+
 // Card UVs (each quad covers a strand) beat an attachment layout that pins each card to one face spot.
 const cardIndices = new Uint32Array([0, 1, 2, 0, 2, 3, 4, 5, 6, 4, 6, 7]);
 const cardUvs = new Float32Array([0, 0, 0.1, 0, 0.1, 0.5, 0, 0.5, 0.2, 0, 0.3, 0, 0.3, 0.5, 0.2, 0.5]);
@@ -150,4 +166,4 @@ assert.equal(flipsBodyNormalGreen('torso', 'female'), false, 'Female torso maps 
 assert.equal(flipsBodyNormalGreen('chest', 'male'), false);
 assert.equal(flipsBodyNormalGreen('torso', undefined), false, 'Unknown bodies (catalog items) are left alone');
 
-console.log('Studio shading: light balance, seam/crease normals, tangent handedness and repair, chained iris uniforms, skin scatter, strand tint, torso normal flip and face detail normal passed.');
+console.log('Studio shading: light balance, seam/crease normals, tangent handedness and repair, chained iris uniforms, skin scatter, strand tint, torso normal flip, face detail normal and garment layering passed.');

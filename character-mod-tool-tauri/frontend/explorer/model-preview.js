@@ -8,7 +8,7 @@ import { captureBasketFrame, catalogOverheadTarget, captureCreatedWoodTint } fro
 import { materialProfile, previewLightingProfile } from './render-profiles.mjs';
 import { skinBoundaryResponse, skinLuminanceResponse } from '../skin-response.mjs';
 import { configureStrandLightmap, configureStrandTangentRange, configureStrandSpecular, configureStrandCoverage } from '../strand-preview-fixes.mjs';
-import { createStudioEnvironment, studioLightBalance, seamSmoothedNormals, vertexTangents, cardTextureUvs, configureEyeIris, configureSkinShading, configureTearFilm, configureEyewearLens, configureEyeSurface, strandTint, flipsBodyNormalGreen, configureDetailNormal } from '../studio-shading.mjs';
+import { createStudioEnvironment, studioLightBalance, seamSmoothedNormals, vertexTangents, cardTextureUvs, configureEyeIris, configureSkinShading, configureTearFilm, configureEyewearLens, configureEyeSurface, strandTint, flipsBodyNormalGreen, configureDetailNormal, configureGarmentLayering } from '../studio-shading.mjs';
 
 
 export function createExplorerRenderer(options = {}) {
@@ -1250,6 +1250,19 @@ function irisScale(value) {
 // Scanned body color maps are pure black where clothing (e.g. a female player's
 // sports bra) is layered on in game, which drew as black holes with the jersey
 // hidden. Body maps fill those texels with a heather-gray athletic fabric.
+// Shared by every body skin material, so toggling garments never recompiles.
+const garmentLayeringUniform = { value: 0 };
+// The shadow pass gets the same push, or skin that sorts behind a garment still
+// shadows it (gray ovals on a female player's jersey over the bust).
+let garmentShadowDepth = null;
+function garmentShadowDepthMaterial() {
+  if (!garmentShadowDepth) {
+    garmentShadowDepth = new THREE.MeshDepthMaterial({ depthPacking: THREE.RGBADepthPacking });
+    configureGarmentLayering(garmentShadowDepth, garmentLayeringUniform, true);
+  }
+  return garmentShadowDepth;
+}
+
 const GARMENT_CUTOUT_FILL = Object.freeze({ threshold: [0.02, 0.06], color: [0.1, 0.105, 0.115] });
 
 function configureTextureRange(material, texture, fillCutouts = false) {
@@ -1497,6 +1510,9 @@ function applyAutomaticTextures() {
       configureEyeSurface(material);
       configureSkinShading(material, profile?.role === 'skin');
       configureDetailNormal(material, detailNormalTexture);
+      if (configureGarmentLayering(material, garmentLayeringUniform, ['chest', 'torso', 'legs'].includes(targetName))) {
+        object.customDepthMaterial = garmentShadowDepthMaterial();
+      }
       // Strand cards without a color/alpha map (e.g. armpit hair) can only draw
       // as solid placeholder-colored blobs; hide them until a texture binds.
       const untexturedStrand = profile?.role === 'strand' && !colorTexture;
@@ -1966,6 +1982,11 @@ function setWireframe(value) {
   renderer.render(scene, camera);
 }
 
+// Depth (model units) by which body skin sorts behind garments; 0 turns it off.
+function setGarmentLayering(depth) {
+  garmentLayeringUniform.value = Math.max(0, Number(depth) || 0);
+}
+
 function setEyelashesVisible(value, draw = true) {
   invalidateShadows();
   eyelashesVisible = Boolean(value);
@@ -2081,6 +2102,7 @@ const api = {
   resize,
   setTexture,
   setEyelashesVisible,
+  setGarmentLayering,
   setArenaCourtView,
   setArenaCaptureView,
   setArenaDisplayCaptureView,
