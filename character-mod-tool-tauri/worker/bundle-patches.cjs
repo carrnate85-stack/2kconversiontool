@@ -39,7 +39,8 @@ const STRAND_REPLACEMENTS = [
 // the renderer never samples (bent normal, cone angle, rdmo, region, roughness-
 // curvature, sweat, wrinkle and detail normals, secondary body-normal variants
 // such as avg_ripped), so hair lightmap/tangent maps and accessory textures were
-// dropped on nearly every player. Unused maps are now skipped and the cap
+// dropped on nearly every player. Unused maps are now skipped and the cap (48 MB,
+// headroom for the preview uniform and shoes; textures transfer as binary)
 // raised; arena previews keep their own limits. Chest/torso body normals come
 // from native preparation, picked by muscle type, so the skin IFF's own
 // avg_normal/avg_ripped copies are skipped. A player's own face_detailnormal_o
@@ -55,7 +56,7 @@ const UNUSED_TEXTURE = String.raw`      function previewTextureUnused(item) {
 `;
 
 const TEXTURE_REPLACEMENTS = [
-  ['var MAX_TEXTURE_BYTES = 16 * 1024 * 1024;', () => 'var MAX_TEXTURE_BYTES = 32 * 1024 * 1024;'],
+  ['var MAX_TEXTURE_BYTES = 16 * 1024 * 1024;', () => 'var MAX_TEXTURE_BYTES = 48 * 1024 * 1024;'],
   ['const maxTextureCount = includeArenaTextures ? 128 : 24;', () => 'const maxTextureCount = includeArenaTextures ? 128 : 40;'],
   ['      function previewTextureScore(item) {\n', (match) => UNUSED_TEXTURE + match],
   [

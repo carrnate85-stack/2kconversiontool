@@ -483,29 +483,49 @@ impl Assets {
             let Ok(txtr) = archive.named(&format!("{garment}_{channel}.TXTR")) else {
                 continue;
             };
-            let tree = codec::tree(&txtr)?;
-            let meta = tree.as_object().and_then(|map| map.values().next()).context("Empty TXTR")?;
-            let binary = meta["Binary"].as_str().context("TXTR without a texture")?;
-            let hash = binary
-                .split('.')
-                .nth(1)
-                .filter(|h| h.len() == 16 && h.chars().all(|c| c.is_ascii_hexdigit()))
-                .context("Unexpected uniform texture name")?;
-            let path = format!("shared/{}/{binary}", &hash[..2]);
-            if self.catalog.as_ref().unwrap().resolve(&path).is_err() {
-                continue;
-            }
-            textures.push(UniformTexture {
-                path,
-                source: format!("uniform {name}"),
-                format: meta["Format"].as_str().unwrap_or("DDS").to_owned(),
-                range: txtr_range(meta),
-                target: garment,
-                channel,
-            });
+            textures.extend(self.shared_texture(&txtr, format!("uniform {name}"), garment, channel)?);
         }
         ensure!(!textures.is_empty(), "No uniform textures in {iff}");
         Ok(PreviewUniform { garments, textures })
+    }
+
+    /// The generic 2K shoe's color and normal maps, for the preview shoes.
+    fn preview_shoe_textures(&self) -> Result<Vec<UniformTexture>> {
+        let mut textures = Vec::new();
+        for (iff, member, channel) in [
+            ("clothing/shoes_twokgeneric_color_tex.iff", "male/clothing/shoes_casual/shoes_twokgeneric/average/textures/shoes_twokgeneric_color.TXTR", "color"),
+            ("clothing/shoes_twokgeneric_tex.iff", "male/clothing/shoes_casual/shoes_twokgeneric/average/textures/shoes_twokgeneric_normal.TXTR", "normal"),
+        ] {
+            let txtr = self.archive(&Source::Manifest(iff.to_owned()))?.named(member)?;
+            textures.extend(self.shared_texture(&txtr, "generic shoes".to_owned(), "shoes", channel)?);
+        }
+        ensure!(!textures.is_empty(), "No generic shoe textures");
+        Ok(textures)
+    }
+
+    /// The shared texture a TXTR names (shared/<hash[..2]>/<Binary>), with its
+    /// format and range; None when the manifest doesn't carry it.
+    fn shared_texture(&self, txtr: &[u8], source: String, target: &'static str, channel: &'static str) -> Result<Option<UniformTexture>> {
+        let tree = codec::tree(txtr)?;
+        let meta = tree.as_object().and_then(|map| map.values().next()).context("Empty TXTR")?;
+        let binary = meta["Binary"].as_str().context("TXTR without a texture")?;
+        let hash = binary
+            .split('.')
+            .nth(1)
+            .filter(|h| h.len() == 16 && h.chars().all(|c| c.is_ascii_hexdigit()))
+            .context("Unexpected shared texture name")?;
+        let path = format!("shared/{}/{binary}", &hash[..2]);
+        if self.catalog.as_ref().unwrap().resolve(&path).is_err() {
+            return Ok(None);
+        }
+        Ok(Some(UniformTexture {
+            path,
+            source,
+            format: meta["Format"].as_str().unwrap_or("DDS").to_owned(),
+            range: txtr_range(meta),
+            target,
+            channel,
+        }))
     }
 
     /// The chest/torso normal maps for a muscle type (NORMAL, RIPPED, SUPERRIPPED,
@@ -1009,6 +1029,17 @@ impl Assets {
                 .unwrap_or_else(|| format!("char/{garment_prefix}{fallback}.iff"));
             requested.insert(name, "preview-jersey".to_owned());
         }
+        // Generic 2K shoes over crew socks trimmed to sit inside them. They join the
+        // garments, so the wrapper's body fit binds them to the legs and the jersey
+        // toggle shows or hides them with the rest of the kit.
+        let shoes = gender == "male" || gender == "female";
+        if shoes {
+            requested.insert("clothing/geo/dynamic/shoes_special_twokgeneric_geo.iff".to_owned(), "preview-jersey".to_owned());
+            requested.insert(
+                format!("clothing/geo/simple/{gender}_sock_crew_occluded_by_special_twokgeneric_geo.iff"),
+                "preview-jersey".to_owned(),
+            );
+        }
         for (name, kind) in requested {
             codec::cancelled(&self.cancel)?;
             if self.catalog.as_ref().unwrap().resolve(&name).is_err() {
@@ -1107,7 +1138,15 @@ impl Assets {
             }
             Err(error) => warnings.push(format!("Body normal maps unavailable: {error:#}")),
         }
-        for texture in uniform.map(|u| u.textures).unwrap_or_default() {
+        let shoe_textures = if shoes {
+            self.preview_shoe_textures().unwrap_or_else(|error| {
+                warnings.push(format!("Preview shoe textures unavailable: {error:#}"));
+                Vec::new()
+            })
+        } else {
+            Vec::new()
+        };
+        for texture in uniform.map(|u| u.textures).unwrap_or_default().into_iter().chain(shoe_textures) {
             let leaf = texture.path.rsplit('/').next().unwrap().trim_end_matches(".tld").to_owned() + ".dds";
             let uri = self.register(Source::Shared(texture.path), &leaf)?;
             external.push(json!({"path":uri,"name":leaf,"source":texture.source,"format":texture.format,"range":texture.range,"binding":{"target":texture.target,"channel":texture.channel}}));

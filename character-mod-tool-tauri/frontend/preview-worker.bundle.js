@@ -3200,7 +3200,7 @@
       var { loadIff, parseBinaryTree, parseScneText, readZipEntry } = require_iff2();
       var DEFAULT_MAX_TRIANGLES = 25e4;
       var DEFAULT_MAX_MODELS = 300;
-      var MAX_TEXTURE_BYTES = 32 * 1024 * 1024;
+      var MAX_TEXTURE_BYTES = 48 * 1024 * 1024;
       var MAX_ARENA_TEXTURE_REQUESTS = 96;
       function sceneNameVariants(value) {
         const text = String(value || "");

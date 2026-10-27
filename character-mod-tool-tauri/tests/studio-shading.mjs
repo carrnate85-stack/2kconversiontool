@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { studioLightBalance, STUDIO_ENVIRONMENT, seamSmoothedNormals, vertexTangents, cardTextureUvs, configureEyeIris, configureSkinShading, configureTearFilm, configureEyewearLens, EYEWEAR_LENS, configureEyeSurface, EYE_SURFACE, strandTint, flipsBodyNormalGreen, configureDetailNormal, configureGarmentLayering, GARMENT_LAYERING } from '../web/renderer/studio-shading.mjs';
+import { studioLightBalance, STUDIO_ENVIRONMENT, seamSmoothedNormals, vertexTangents, cardTextureUvs, configureEyeIris, configureSkinShading, configureTearFilm, configureEyewearLens, EYEWEAR_LENS, configureEyeSurface, EYE_SURFACE, strandTint, flipsBodyNormalGreen, configureDetailNormal, configureGarmentLayering, GARMENT_LAYERING, configureColorwayMask, SHOE_COLORWAY } from '../web/renderer/studio-shading.mjs';
 
 const balance = studioLightBalance({ ambient: 0.4, hemisphere: 0.8 });
 assert.ok(Math.abs(balance.ambient - 0.4 * STUDIO_ENVIRONMENT.ambientScale) < 1e-12);
@@ -113,6 +113,20 @@ const face = hookMaterial();
 assert.equal(configureGarmentLayering(face, layering, false), false);
 assert.equal(face.customProgramCacheKey(), 'range-base');
 
+// A colorway mask recolors after the map step (which range decoding rewrites)
+// and before vertex colors; no map means nothing to recolor.
+const shoe = hookMaterial();
+assert.equal(configureColorwayMask(shoe, SHOE_COLORWAY), true);
+const shoeShader = { uniforms: {}, fragmentShader: 'RANGE_DECODED_MAP\n#include <color_fragment>' };
+shoe.onBeforeCompile(shoeShader);
+assert.equal(shoeShader.basePreserved, true);
+assert.ok(shoeShader.fragmentShader.indexOf('nbaMaskSum') < shoeShader.fragmentShader.indexOf('#include <color_fragment>'));
+assert.ok(shoeShader.fragmentShader.includes(SHOE_COLORWAY.blue.map((value) => value.toFixed(4)).join(', ')));
+assert.equal(shoe.customProgramCacheKey(), 'range-base:nba-colorway-v1');
+const bare = hookMaterial({ map: null });
+assert.equal(configureColorwayMask(bare, SHOE_COLORWAY), false);
+assert.equal(bare.customProgramCacheKey(), 'range-base');
+
 // Card UVs (each quad covers a strand) beat an attachment layout that pins each card to one face spot.
 const cardIndices = new Uint32Array([0, 1, 2, 0, 2, 3, 4, 5, 6, 4, 6, 7]);
 const cardUvs = new Float32Array([0, 0, 0.1, 0, 0.1, 0.5, 0, 0.5, 0.2, 0, 0.3, 0, 0.3, 0.5, 0.2, 0.5]);
@@ -166,4 +180,4 @@ assert.equal(flipsBodyNormalGreen('torso', 'female'), false, 'Female torso maps 
 assert.equal(flipsBodyNormalGreen('chest', 'male'), false);
 assert.equal(flipsBodyNormalGreen('torso', undefined), false, 'Unknown bodies (catalog items) are left alone');
 
-console.log('Studio shading: light balance, seam/crease normals, tangent handedness and repair, chained iris uniforms, skin scatter, strand tint, torso normal flip, face detail normal and garment layering passed.');
+console.log('Studio shading: light balance, seam/crease normals, tangent handedness and repair, chained iris uniforms, skin scatter, strand tint, torso normal flip, face detail normal, garment layering and shoe colorway passed.');

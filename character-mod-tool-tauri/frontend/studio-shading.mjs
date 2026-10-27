@@ -411,3 +411,29 @@ if ( nbaGarmentDepth > 0.0 ) {
   material.customProgramCacheKey = () => `${previousKey}:nba-garment-layering-v1`;
   return true;
 }
+
+// Clothing "color" maps such as the generic shoe's are RGB region masks the game
+// fills from a colorway (red upper, green laces and outsole edge, blue midsole on
+// shoes_twokgeneric). Each channel's weight picks its colorway color; linear.
+export const SHOE_COLORWAY = Object.freeze({ red: [0.8, 0.8, 0.79], green: [0.74, 0.74, 0.73], blue: [0.03, 0.03, 0.032] });
+
+export function configureColorwayMask(material, colorway) {
+  material.userData.colorwayMask = Boolean(colorway && material.map);
+  if (!material.userData.colorwayMask) return false;
+  const color = (rgb) => `vec3( ${rgb.map((value) => value.toFixed(4)).join(', ')} )`;
+  const previous = material.onBeforeCompile;
+  const previousKey = material.customProgramCacheKey();
+  material.onBeforeCompile = (shader) => {
+    previous(shader);
+    // After the map step (which range decoding rewrites), before vertex colors.
+    shader.fragmentShader = shader.fragmentShader.replace('#include <color_fragment>', `#ifdef USE_MAP
+  float nbaMaskSum = diffuseColor.r + diffuseColor.g + diffuseColor.b;
+  diffuseColor.rgb = nbaMaskSum > 0.05
+    ? ( diffuseColor.r * ${color(colorway.red)} + diffuseColor.g * ${color(colorway.green)} + diffuseColor.b * ${color(colorway.blue)} ) / nbaMaskSum
+    : ${color(colorway.red)};
+#endif
+#include <color_fragment>`);
+  };
+  material.customProgramCacheKey = () => `${previousKey}:nba-colorway-v1`;
+  return true;
+}

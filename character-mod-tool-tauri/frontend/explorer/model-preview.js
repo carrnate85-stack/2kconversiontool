@@ -8,7 +8,7 @@ import { captureBasketFrame, catalogOverheadTarget, captureCreatedWoodTint } fro
 import { materialProfile, previewLightingProfile } from './render-profiles.mjs';
 import { skinBoundaryResponse, skinLuminanceResponse } from '../skin-response.mjs';
 import { configureStrandLightmap, configureStrandTangentRange, configureStrandSpecular, configureStrandCoverage } from '../strand-preview-fixes.mjs';
-import { createStudioEnvironment, studioLightBalance, seamSmoothedNormals, vertexTangents, cardTextureUvs, configureEyeIris, configureSkinShading, configureTearFilm, configureEyewearLens, configureEyeSurface, strandTint, flipsBodyNormalGreen, configureDetailNormal, configureGarmentLayering } from '../studio-shading.mjs';
+import { createStudioEnvironment, studioLightBalance, seamSmoothedNormals, vertexTangents, cardTextureUvs, configureEyeIris, configureSkinShading, configureTearFilm, configureEyewearLens, configureEyeSurface, strandTint, flipsBodyNormalGreen, configureDetailNormal, configureGarmentLayering, configureColorwayMask, SHOE_COLORWAY } from '../studio-shading.mjs';
 
 
 export function createExplorerRenderer(options = {}) {
@@ -242,6 +242,8 @@ function colorFor(name) {
   if (/tongue|mouth|gum/.test(normalized)) return new THREE.Color(0x7f4948);
   if (/facial.?hair|beard|brow|lash|(?:^|_)hair(?:_|$)/.test(normalized)) return new THREE.Color(0x292624);
   if (/(?:^|_)(?:skin|face|head|body)(?:_|$)/.test(normalized)) return new THREE.Color(0x9b7868);
+  // Preview crew socks have no color map: plain white athletic socks.
+  if (/(?:^|_)sock(?:_|$)/.test(normalized)) return new THREE.Color(0xe6e6e3);
   let hash = 2166136261;
   for (const char of String(name)) hash = Math.imul(hash ^ char.charCodeAt(0), 16777619);
   const color = new THREE.Color();
@@ -1096,6 +1098,8 @@ function materialTextureTarget(materialName) {
   // the preview uniform's baked maps.
   if (/jerseyreg/.test(name)) return 'jersey';
   if (/shortsreg/.test(name)) return 'shorts';
+  // The generic preview shoes (L_/R_special_twokgeneric_shader).
+  if (/twokgeneric/.test(name)) return 'shoes';
   return '';
 }
 
@@ -1136,12 +1140,19 @@ function boundTexture(targetName, channel) {
 // Accessory textures (goggles, glasses, ...) arrive without a region target, so
 // region lookups never bind them and the accessory drew as a placeholder blob.
 // Pair them with a region-less material whose name contains the texture's
-// leading word: goggles_color_o -> goggles_custom_shader.
+// leading word: goggles_color_o -> goggles_custom_shader. Rig and side words
+// don't count (female_headband_thin_color_o leads with "headband"), or every
+// female_* texture matched every female material (headband maps on the socks).
+const ACCESSORY_QUALIFIERS = new Set(['female', 'male', 'child', 'l', 'r']);
+function accessoryWords(name, separator) {
+  return String(name || '').toLowerCase().split(separator).filter((word) => word && !ACCESSORY_QUALIFIERS.has(word));
+}
+
 function boundAccessoryTexture(materialName, channel) {
-  const tokens = new Set(String(materialName || '').toLowerCase().split(/[^a-z0-9]+/).filter(Boolean));
+  const tokens = new Set(accessoryWords(materialName, /[^a-z0-9]+/));
   const index = textureItems.findIndex((item, itemIndex) => textureCache[itemIndex]
     && item.binding && !item.binding.target && item.binding.channel === channel
-    && tokens.has(String(item.name || '').toLowerCase().split(/[_.]/)[0]));
+    && tokens.has(accessoryWords(item.name, /[_.]/)[0]));
   return index >= 0 ? textureCache[index] : null;
 }
 
@@ -1510,6 +1521,7 @@ function applyAutomaticTextures() {
       configureEyeSurface(material);
       configureSkinShading(material, profile?.role === 'skin');
       configureDetailNormal(material, detailNormalTexture);
+      configureColorwayMask(material, targetName === 'shoes' ? SHOE_COLORWAY : null);
       if (configureGarmentLayering(material, garmentLayeringUniform, ['chest', 'torso', 'legs'].includes(targetName))) {
         object.customDepthMaterial = garmentShadowDepthMaterial();
       }
