@@ -1,0 +1,82 @@
+# Headless player preview
+
+Renders real NBA 2K27 players outside the app window. You can compare a
+baseline renderer with your working tree side by side, without the Python engine.
+
+1. **extractor/** is a small Rust tool on `shared/nba2k-assets`. It reads the game
+   manifest and writes a player's IFFs (decompressed) into a folder shaped like a
+   staged player. Game files are only read.
+2. **decode-player.cjs** runs the app binary headless (`--serve-rpc`) to prepare
+   the player's native preview resources. It then runs the bundled
+   `frontend/preview-worker.bundle.js` in Node, just as `loadStaged()` in
+   `web/tauri-bridge.ts` does, and writes the preview payload as JSON.
+3. **harness/** loads that payload into two explorer renderers: `old/` from a git
+   ref and `new/` from the working tree. It applies the same packed-normal decoding
+   and seam pairing as the app wrapper.
+
+## Usage
+
+Run from `character-mod-tool-tauri/`. `$GAME` is the NBA 2K27 install folder.
+
+```bash
+cargo build --release
+cargo build --release --manifest-path tools/headless-preview/extractor/Cargo.toml
+```
+
+```bash
+tools/headless-preview/extractor/target/release/player-extract list "$GAME" '^char/sig/png\d+\.iff$' 20
+```
+
+```bash
+tools/headless-preview/extractor/target/release/player-extract player "$GAME" 00110 tools/headless-preview/work/players/png00110
+```
+
+```bash
+node tools/headless-preview/decode-player.cjs --game "$GAME" tools/headless-preview/work/players/png00110/png00110.iff
+```
+
+```bash
+node tools/headless-preview/harness/prepare.cjs --baseline HEAD
+```
+
+```bash
+node tools/headless-preview/harness/serve.cjs 8790
+```
+
+Then open `http://localhost:8790/?player=png00110&jersey=0&focus=head`.
+`player` prints the player's gender, skin tone and iris color, so you know what
+you extracted.
+
+`decode-player.cjs` options, also settable as environment variables:
+`--game` / `NBA2K27_ROOT`, `--exe` / `CMT_EXE` (default
+`target/release/character-mod-tool-tauri.exe`) and `--data` / `CMT_TEST_DATA`
+(default `work/cmt-data`). It writes its own `settings.json` into that isolated
+data folder, so your real app settings are never used. Output defaults to
+`harness/players/<player>.json`.
+
+Rerun `prepare.cjs` after editing `web/renderer/`. To compare against an older
+renderer, pass that commit as `--baseline`. Once your changes are committed,
+`HEAD` would show the same renderer on both sides.
+
+### Harness URL parameters
+
+| Parameter | Effect |
+| --- | --- |
+| `player=png00110` | Load `players/png00110.json`; without it, a synthetic head that needs no game files |
+| `jersey=0` | Hide the preview jersey and shorts |
+| `focus=head`, `headY`, `headZoom` | Head close-up: target height below the top, and distance, as fractions of model height |
+| `yaw`, `pitch`, `zoom` | Orbit angles in radians; `zoom` multiplies the fitted distance |
+| `only=old` / `only=new` | Load one side |
+| `iris=green`, `eyerange=1` | Synthetic head only: iris color, and a range-packed eye texture |
+
+`measureDetail('old' | 'new', [x, y, w, h])` in the page console returns a fine-detail score (mean absolute Laplacian of luminance) for a canvas region, to compare sides by number rather than by eye.
+
+## Notes
+
+- If `cl.exe` fails with `0xc0000017` while building, `PATH` is too long (over
+  ~32K characters). Build from a shell with a de-duplicated `PATH`.
+- These previews skip facial morphs (the decoder reports the morph targets and
+  shows the neutral base face), the wrapper's jersey/bust fit morphs, and the
+  default config's accessories.
+- Everything this writes (`work/`, `harness/players/`, the assembled renderers)
+  is game-derived or generated and is git-ignored.

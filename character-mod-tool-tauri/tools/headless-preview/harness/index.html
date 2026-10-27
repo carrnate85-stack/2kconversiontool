@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Renderer harness</title>
+<style>
+  body { margin: 0; background: #111; color: #ccc; font: 12px monospace; }
+  .row { display: flex; gap: 4px; }
+  .row div { flex: 1; text-align: center; }
+  canvas { width: 100%; height: 520px; display: block; }
+  pre { white-space: pre-wrap; padding: 4px 8px; }
+</style>
+</head>
+<body>
+<div class="row"><div>baseline (old)<canvas id="canvas-old"></canvas></div><div>working tree (new)<canvas id="canvas-new"></canvas></div></div>
+<pre id="log"></pre>
+<script>
+  // The renderer yields on requestAnimationFrame while loading; embedded or hidden
+  // panes may never paint, so drive those yields from timers instead.
+  window.requestAnimationFrame = (callback) => setTimeout(() => callback(performance.now()), 4);
+  window.cancelAnimationFrame = (handle) => clearTimeout(handle);
+</script>
+<script type="module" src="app.mjs"></script>
+</body>
+</html>
