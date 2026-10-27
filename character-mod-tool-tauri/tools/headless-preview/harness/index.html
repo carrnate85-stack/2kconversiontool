@@ -19,6 +19,12 @@
   // panes may never paint, so drive those yields from timers instead.
   window.requestAnimationFrame = (callback) => setTimeout(() => callback(performance.now()), 4);
   window.cancelAnimationFrame = (handle) => clearTimeout(handle);
+  // Main-thread stalls during loading (window.longTasks), to catch UI freezes.
+  window.longTasks = [];
+  try {
+    new PerformanceObserver((list) => list.getEntries().forEach((entry) => window.longTasks.push(Math.round(entry.duration))))
+      .observe({ type: 'longtask', buffered: true });
+  } catch { /* longtask timing unsupported */ }
 </script>
 <script type="module" src="app.mjs"></script>
 </body>
