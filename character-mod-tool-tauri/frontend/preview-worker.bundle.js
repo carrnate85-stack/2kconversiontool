@@ -4233,7 +4233,7 @@
               ...publicTexture,
               sourcePriority: Number.isInteger(container) ? container : Number.MAX_SAFE_INTEGER,
               inputColorSpace: textureInputColorSpace(publicTexture),
-              bytes: bytes2.toString("base64")
+              bytes: new Uint8Array(bytes2)
             });
             textureBytes += bytes2.length;
             if (bodyColorTarget) loadedBodyColors.add(bodyColorTarget);

@@ -1002,11 +1002,33 @@ function setArenaCaptureLighting(view, definitions = {}, options = {}) {
     ambientIntensity:ambientLight.intensity };
 }
 
+// The worker sends texture bytes as a Uint8Array; base64 strings (older payloads,
+// synthetic test textures) still decode.
+function textureBytes(value) {
+  if (value instanceof Uint8Array) {
+    return value.byteOffset === 0 && value.byteLength === value.buffer.byteLength ? value : value.slice();
+  }
+  if (value instanceof ArrayBuffer) return new Uint8Array(value);
+  return typeof Uint8Array.fromBase64 === 'function'
+    ? Uint8Array.fromBase64(value)
+    : Uint8Array.from(atob(value), c => c.charCodeAt(0));
+}
+
+function sameTextureBytes(left, right) {
+  if (typeof left === 'string' || typeof right === 'string') return left === right;
+  if (!ArrayBuffer.isView(left) || !ArrayBuffer.isView(right) || left.byteLength !== right.byteLength) return false;
+  if (left === right) return true;
+  // Word-wise when both views are 4-byte aligned (DDS payloads are), else bytewise.
+  const words = left.byteOffset % 4 === 0 && right.byteOffset % 4 === 0 && left.byteLength % 4 === 0;
+  const a = words ? new Uint32Array(left.buffer, left.byteOffset, left.byteLength / 4) : left;
+  const b = words ? new Uint32Array(right.buffer, right.byteOffset, right.byteLength / 4) : right;
+  for (let index = 0; index < a.length; index++) if (a[index] !== b[index]) return false;
+  return true;
+}
+
 function createDdsTexture(item) {
   try {
-    const bytes = typeof Uint8Array.fromBase64 === 'function'
-      ? Uint8Array.fromBase64(item.bytes)
-      : Uint8Array.from(atob(item.bytes), c => c.charCodeAt(0));
+    const bytes = textureBytes(item.bytes);
     if (item.previewRgba) {
       if (bytes.length !== item.width * item.height * 4) return null;
       const texture = new THREE.DataTexture(bytes, item.width, item.height, THREE.RGBAFormat);
@@ -1568,7 +1590,7 @@ async function load(payload, onProgress = () => {}, options = {}) {
   for (let i = 0; i < textureItems.length; i++) {
     const old = textureItems[i], texture = textureCache[i];
     if (!texture) continue;
-    const next = (payload.textures || []).find(item => item.name === old.name && item.bytes === old.bytes
+    const next = (payload.textures || []).find(item => item.name === old.name && sameTextureBytes(item.bytes, old.bytes)
       && JSON.stringify(item.range) === JSON.stringify(old.range) && item.inputColorSpace === old.inputColorSpace);
     if (next) retainedTextures.set(next, texture);
   }

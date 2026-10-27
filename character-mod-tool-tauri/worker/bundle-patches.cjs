@@ -90,6 +90,14 @@ const CONFIG_BODY_COLOR = [
   ],
 ];
 
+// Texture bytes went to the renderer as base64 strings: a third larger, encoded
+// in the worker and decoded again on the main thread, and copied by
+// postMessage. They now travel as their own Uint8Array (a copy, so cached
+// archive buffers are never detached), which the worker transfers zero-copy.
+const BINARY_TEXTURES = [
+  ['bytes: bytes2.toString("base64")', () => 'bytes: new Uint8Array(bytes2)'],
+];
+
 function apply(text, marker, replacements) {
   if (text.includes(marker)) return text;
   for (const [pinned, replace] of replacements) {
@@ -107,6 +115,7 @@ function patchWorkerBundle(source) {
   text = apply(text, 'function previewTextureUnused(', TEXTURE_REPLACEMENTS);
   text = apply(text, 'morph target(s) detected (facial expressions', MORPH_NOTE);
   text = apply(text, 'function bodyColorRank(', CONFIG_BODY_COLOR);
+  text = apply(text, 'bytes: new Uint8Array(bytes2)', BINARY_TEXTURES);
   return crlf ? text.replace(/\n/g, '\r\n') : text;
 }
 

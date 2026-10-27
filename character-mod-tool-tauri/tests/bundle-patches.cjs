@@ -11,6 +11,7 @@ assert.equal(patchWorkerBundle(bundle), bundle);
 assert.throws(() => patchWorkerBundle('function buildMesh() {}'), /Pinned preview worker hook changed/);
 assert.ok(bundle.includes('var MAX_TEXTURE_BYTES = 32 * 1024 * 1024;') && bundle.includes('includeArenaTextures ? 128 : 40;'));
 assert.ok(bundle.includes('if (!includeArenaTextures && previewTextureUnused(texture)) continue;'));
+assert.ok(bundle.includes('bytes: new Uint8Array(bytes2)') && !bundle.includes('bytes: bytes2.toString("base64")'), 'Texture bytes travel as a Uint8Array');
 assert.ok(bundle.includes('morph target(s) detected (facial expressions and pose correctives)') && !bundle.includes('math-node morph evaluation is not applied yet'));
 
 // The strand test: every primitive (with inherited materials) is hair or facial hair.
