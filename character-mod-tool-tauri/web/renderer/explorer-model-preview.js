@@ -29,6 +29,18 @@ const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: Boole
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, options.picker ? 1.25 : 2));
 
+// three's shadow pass draws casters with one shared depth material whose cached
+// `map` uniform is only refreshed when a caster has a map. After a player switch
+// it still held a disposed texture, which every later shadow pass re-uploaded and
+// nothing freed (one texture leaked per switch). Clear stale texture uniforms
+// before each shadow draw.
+function clearStaleDepthUniforms(_renderer, _object, _camera, _shadowCamera, _geometry, depthMaterial) {
+  const uniforms = renderer.properties.get(depthMaterial).uniforms;
+  if (!uniforms) return;
+  if (uniforms.map && uniforms.map.value !== depthMaterial.map) uniforms.map.value = depthMaterial.map;
+  if (uniforms.alphaMap && uniforms.alphaMap.value !== depthMaterial.alphaMap) uniforms.alphaMap.value = depthMaterial.alphaMap;
+}
+
 const ambientLight = new THREE.AmbientLight(0xffffff, 1.0);
 scene.add(ambientLight);
 const hemisphereLight = new THREE.HemisphereLight(0xe8f2ff, 0x54463f, 0);
@@ -132,8 +144,9 @@ function configurePreviewLighting(payload = currentPayload) {
   renderer.shadowMap.autoUpdate = true;
   invalidateShadows();
   keyLight.castShadow = false;
-  keyLight.shadow.map?.dispose();
-  keyLight.shadow.map = null;
+  // The shadow map is kept across loads (it is redrawn via invalidateShadows).
+  // Disposing it here made the next render re-upload the old map through the lit
+  // materials' shadow uniforms, leaking one 2048x2048 texture per load.
   keyLight.position.set(2, 4, 3);
   keyLight.target.position.set(0, 0, 0);
   fillLight.position.set(-4, 2, 3);
@@ -167,6 +180,15 @@ function studioEnvironmentTexture() {
   return studioEnvironment ? studioEnvironment.texture : null;
 }
 
+// three only recreates a shadow map when it is missing, so a size change needs
+// an explicit release.
+function releaseShadowMap() {
+  const map = keyLight.shadow.map;
+  if (!map) return;
+  map.dispose();
+  keyLight.shadow.map = null;
+}
+
 function configureStudioLights(bounds) {
   if (!currentPreviewProfile.shadows || bounds.isEmpty()) return;
   const center = bounds.getCenter(new THREE.Vector3());
@@ -186,7 +208,7 @@ function configureStudioLights(bounds) {
   renderer.shadowMap.autoUpdate = false;
   invalidateShadows();
   keyLight.castShadow = options.shadows !== false;
-  if (keyLight.shadow.mapSize.x !== 2048) { keyLight.shadow.map?.dispose(); keyLight.shadow.map = null; }
+  if (keyLight.shadow.mapSize.x !== 2048) releaseShadowMap();
   keyLight.shadow.mapSize.set(2048, 2048);
   keyLight.shadow.radius = 3;
   keyLight.shadow.bias = -0.0002;
@@ -1620,6 +1642,7 @@ async function load(payload, onProgress = () => {}, options = {}) {
     if (instanceCount) {
       const mesh = new THREE.InstancedMesh(geometry, materials, instanceCount);
       mesh.name = item.name;
+      mesh.onBeforeShadow = clearStaleDepthUniforms;
       mesh.userData.previewInstances = legacyInstances;
       mesh.userData.previewInstanceNames = item.instanceNames || legacyInstances.map((instance) => instance.name);
       mesh.userData.previewInstanceTargets = item.instanceTargets || legacyInstances.map((instance) => instance.target);
@@ -1636,6 +1659,7 @@ async function load(payload, onProgress = () => {}, options = {}) {
     } else {
       const mesh = new THREE.Mesh(geometry, materials);
       mesh.name = item.name;
+      mesh.onBeforeShadow = clearStaleDepthUniforms;
       mesh.userData.previewModel = item.name;
       mesh.userData.previewGroups = item.groups || [];
       modelRoot.add(mesh);
