@@ -141,6 +141,30 @@ export function seamSmoothedNormals(meshes, { creaseAngleDegrees = 60, tolerance
   return results;
 }
 
+// Tangent-space hair and beards carry two UV sets: the shared strand-atlas UVs
+// (color, alpha, tangent) and a unique per-card lightmap layout. The decoder
+// labels the wider-spread set `uvs`, which for these meshes is the lightmap
+// grid, so cards sampled tiny solid patches of the atlas and rendered as flat
+// flakes. Atlas UVs give each triangle a real share of the strand artwork;
+// lightmap cells are tiny. Pick the set whose median triangle UV area is
+// clearly larger; the other set is the lightmap UV.
+export function cardTextureUvs(uvs, alternateUvs, indices, margin = 4) {
+  if (!uvs?.length || alternateUvs?.length !== uvs.length || !indices?.length) return uvs;
+  const medianArea = (values) => {
+    const triangles = Math.floor(indices.length / 3);
+    const step = Math.max(1, Math.floor(triangles / 4096));
+    const areas = [];
+    for (let triangle = 0; triangle < triangles; triangle += step) {
+      const a = indices[triangle * 3] * 2, b = indices[triangle * 3 + 1] * 2, c = indices[triangle * 3 + 2] * 2;
+      areas.push(Math.abs((values[b] - values[a]) * (values[c + 1] - values[a + 1])
+        - (values[c] - values[a]) * (values[b + 1] - values[a + 1])) / 2);
+    }
+    areas.sort((left, right) => left - right);
+    return areas[Math.floor(areas.length / 2)] || 0;
+  };
+  return medianArea(alternateUvs) > medianArea(uvs) * margin ? alternateUvs : uvs;
+}
+
 // Per-vertex tangents (xyz + handedness w) from UV gradients. Degenerate UV
 // triangles leave no gradient, so those vertices get any tangent orthogonal
 // to the normal rather than a zero vector that would shade as NaN.

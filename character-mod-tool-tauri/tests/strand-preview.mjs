@@ -73,4 +73,17 @@ assert.equal(cards.depthWrite, false);
 assert.equal(cards.userData.strandAlphaMode, null);
 configureStrandCoverage(untextured, true, true);
 assert.equal(untextured.userData.strandAlphaMode, null);
+// A dedicated lightmap UV attribute is declared and sampled; without one the lightmap is skipped.
+const ownUv = { map: {}, userData: {}, onBeforeCompile() {}, customProgramCacheKey: () => 'base' };
+configureStrandLightmap(ownUv, texture, 'nbaStrandLightUv');
+const ownUvShader = { uniforms: {}, vertexShader: '#include <uv_vertex>', fragmentShader: '#include <color_fragment>\n#include <lights_fragment_end>' };
+ownUv.onBeforeCompile(ownUvShader);
+assert.ok(ownUvShader.vertexShader.startsWith('attribute vec2 nbaStrandLightUv;'));
+assert.ok(ownUvShader.vertexShader.includes('vec3(nbaStrandLightUv, 1.0)'));
+assert.equal(ownUv.customProgramCacheKey(), 'base:nba-strand-lightmap-v2:nbaStrandLightUv');
+const noUv = { map: {}, userData: {}, onBeforeCompile() {}, customProgramCacheKey: () => 'base' };
+configureStrandLightmap(noUv, texture, null);
+assert.equal(noUv.userData.strandLightmap, null);
+assert.equal(noUv.userData.strandLightmapSkipped, true);
+assert.equal(noUv.customProgramCacheKey(), 'base', 'Skipped lightmap adds no shader hook');
 console.log('Strand lightmap, tangent range, fiber specular, coverage fallback and shader composition passed.');

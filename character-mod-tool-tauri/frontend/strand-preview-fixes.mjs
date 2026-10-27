@@ -1,6 +1,10 @@
-export function configureStrandLightmap(material, texture) {
-  material.userData.strandLightmap = texture?.name || null;
-  if (!texture || !material.map) return;
+// Strand lightmaps use their own unique-per-card UV layout, not the shared
+// strand atlas UVs. uvAttribute names the geometry attribute holding it; null
+// means the mesh has none, and sampling with atlas UVs would scatter dark cells.
+export function configureStrandLightmap(material, texture, uvAttribute = 'uv') {
+  material.userData.strandLightmap = uvAttribute ? texture?.name || null : null;
+  material.userData.strandLightmapSkipped = Boolean(texture && material.map && !uvAttribute);
+  if (!texture || !material.map || !uvAttribute) return;
   texture.updateMatrix();
   const range = texture.userData?.range;
   const uniforms = material.userData.strandLightmapUniforms ||= {
@@ -20,9 +24,10 @@ export function configureStrandLightmap(material, texture) {
   material.onBeforeCompile = shader => {
     previous(shader);
     Object.assign(shader.uniforms, uniforms);
-    shader.vertexShader = 'uniform mat3 nbaStrandLightTransform; varying vec2 vNbaStrandLightUv;\n' + shader.vertexShader;
+    shader.vertexShader = (uvAttribute === 'uv' ? '' : `attribute vec2 ${uvAttribute};\n`)
+      + 'uniform mat3 nbaStrandLightTransform; varying vec2 vNbaStrandLightUv;\n' + shader.vertexShader;
     shader.vertexShader = shader.vertexShader.replace('#include <uv_vertex>',
-      '#include <uv_vertex>\nvNbaStrandLightUv = (nbaStrandLightTransform * vec3(uv, 1.0)).xy;');
+      `#include <uv_vertex>\nvNbaStrandLightUv = (nbaStrandLightTransform * vec3(${uvAttribute}, 1.0)).xy;`);
     shader.fragmentShader = `uniform sampler2D nbaStrandLightmap;
 uniform vec4 nbaStrandLightMin, nbaStrandLightMax, nbaStrandLightMask;
 varying vec2 vNbaStrandLightUv;
@@ -38,7 +43,7 @@ reflectedLight.indirectDiffuse *= nbaStrandResponse;
 reflectedLight.directSpecular *= nbaStrandResponse;
 reflectedLight.indirectSpecular *= nbaStrandResponse;`);
   };
-  material.customProgramCacheKey = () => previousKey + ':nba-strand-lightmap-v2';
+  material.customProgramCacheKey = () => previousKey + ':nba-strand-lightmap-v2' + (uvAttribute === 'uv' ? '' : ':' + uvAttribute);
 }
 
 export function configureStrandTangentRange(material, texture, physicalChunk) {

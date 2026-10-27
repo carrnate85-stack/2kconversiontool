@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { studioLightBalance, STUDIO_ENVIRONMENT, seamSmoothedNormals, vertexTangents, configureEyeIris, configureSkinShading, configureTearFilm } from '../web/renderer/studio-shading.mjs';
+import { studioLightBalance, STUDIO_ENVIRONMENT, seamSmoothedNormals, vertexTangents, cardTextureUvs, configureEyeIris, configureSkinShading, configureTearFilm } from '../web/renderer/studio-shading.mjs';
 
 const balance = studioLightBalance({ ambient: 0.4, hemisphere: 0.8 });
 assert.ok(Math.abs(balance.ambient - 0.4 * STUDIO_ENVIRONMENT.ambientScale) < 1e-12);
@@ -81,6 +81,15 @@ const standard = hookMaterial();
 configureSkinShading(standard, true);
 assert.equal(standard.userData.skinScatter, false, 'Standard materials (no sheen) are left unchanged');
 assert.equal(standard.customProgramCacheKey(), 'range-base');
+
+// Card UVs (each quad covers a strand) beat an attachment layout that pins each card to one face spot.
+const cardIndices = new Uint32Array([0, 1, 2, 0, 2, 3, 4, 5, 6, 4, 6, 7]);
+const cardUvs = new Float32Array([0, 0, 0.1, 0, 0.1, 0.5, 0, 0.5, 0.2, 0, 0.3, 0, 0.3, 0.5, 0.2, 0.5]);
+const attachmentLayout = new Float32Array([0.10, 0.10, 0.101, 0.10, 0.101, 0.102, 0.10, 0.102, 0.90, 0.90, 0.901, 0.90, 0.901, 0.902, 0.90, 0.902]);
+assert.equal(cardTextureUvs(attachmentLayout, cardUvs, cardIndices), cardUvs, 'Swapped decoder labels are corrected');
+assert.equal(cardTextureUvs(cardUvs, attachmentLayout, cardIndices), cardUvs, 'Correct labels are kept');
+assert.equal(cardTextureUvs(cardUvs, null, cardIndices), cardUvs, 'Meshes without a second set are untouched');
+assert.equal(cardTextureUvs(cardUvs, cardUvs.map(value => value * 0.8), cardIndices), cardUvs, 'Similar sets need a clear margin to switch');
 
 // The tear line becomes a translucent film; the caruncle and other parts are untouched.
 const tearLine = { name: 'teartube_shader', color: { setRGB(...rgb) { this.rgb = rgb; } }, transparent: false, opacity: 1, depthWrite: true, roughness: 0.7, metalness: 0.03, userData: {} };

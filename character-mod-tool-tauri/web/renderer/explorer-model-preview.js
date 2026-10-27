@@ -8,7 +8,7 @@ import { captureBasketFrame, catalogOverheadTarget, captureCreatedWoodTint } fro
 import { materialProfile, previewLightingProfile } from './render-profiles.mjs';
 import { skinBoundaryResponse, skinLuminanceResponse } from '../skin-response.mjs';
 import { configureStrandLightmap, configureStrandTangentRange, configureStrandSpecular, configureStrandCoverage } from '../strand-preview-fixes.mjs';
-import { createStudioEnvironment, studioLightBalance, seamSmoothedNormals, vertexTangents, configureEyeIris, configureSkinShading, configureTearFilm } from '../studio-shading.mjs';
+import { createStudioEnvironment, studioLightBalance, seamSmoothedNormals, vertexTangents, cardTextureUvs, configureEyeIris, configureSkinShading, configureTearFilm } from '../studio-shading.mjs';
 
 
 export function createExplorerRenderer(options = {}) {
@@ -1379,7 +1379,8 @@ function applyAutomaticTextures() {
       }
       configureTextureRange(material, colorTexture);
       configureStrandLightmap(material, strandMaterial
-        ? boundTextureMatching(targetName, 'auxiliary', /lightmap|occlusion/i) : null);
+        ? boundTextureMatching(targetName, 'auxiliary', /lightmap|occlusion/i) : null,
+      object.geometry?.getAttribute('nbaStrandLightUv') ? 'nbaStrandLightUv' : null);
       configureStrandTangentRange(material, tangentTexture, THREE.ShaderChunk.lights_physical_fragment);
       configureStrandSpecular(material, strandMaterial);
       configureEyeIris(material, targetName === 'eye' && Boolean(colorTexture),
@@ -1478,7 +1479,16 @@ async function load(payload, onProgress = () => {}, options = {}) {
     const neutralFacialHairFitBase = item.sourceKind === 'facialhair-fit-base';
     const geometry = new THREE.BufferGeometry();
     geometry.setAttribute('position', new THREE.BufferAttribute(typed(item.positions, Float32Array), 3));
-    if (item.uvs?.length) geometry.setAttribute('uv', new THREE.BufferAttribute(typed(item.uvs, Float32Array), 2));
+    if (item.uvs?.length) {
+      const uvs = cardTextureUvs(item.uvs, item.attachmentUvs, item.indices);
+      geometry.userData.textureUvSource = uvs === item.uvs ? 'uvs' : 'attachmentUvs';
+      geometry.setAttribute('uv', new THREE.BufferAttribute(typed(uvs, Float32Array), 2));
+      // The remaining set on two-set strand meshes is the per-card lightmap layout.
+      const lightmapUvs = uvs === item.uvs ? item.attachmentUvs : item.uvs;
+      if (lightmapUvs?.length === item.uvs.length) {
+        geometry.setAttribute('nbaStrandLightUv', new THREE.BufferAttribute(typed(lightmapUvs, Float32Array), 2));
+      }
+    }
     if (item.courtUvs?.length) geometry.setAttribute('courtUv', new THREE.BufferAttribute(typed(item.courtUvs, Float32Array), 2));
     if (item.detailUvs?.length) geometry.setAttribute('detailUv', new THREE.BufferAttribute(typed(item.detailUvs, Float32Array), 2));
     if (item.overlayUvs?.length) geometry.setAttribute('overlayUv', new THREE.BufferAttribute(typed(item.overlayUvs, Float32Array), 2));
@@ -1929,6 +1939,7 @@ const api = {
       keyPosition: keyLight.position.toArray(), keyColor: keyLight.color.getHex(), cameraFov: camera.fov,
       toneMapping:renderer.toneMapping, exposure:renderer.toneMappingExposure, localClipping:renderer.localClippingEnabled },
     geometryIds: modelRoot.children.map(object => object.geometry?.uuid),
+    textureUvSources: modelRoot.children.map(object => `${object.name}:${object.geometry?.userData.textureUvSource || 'none'}`),
     materialTextures: modelRoot.children.flatMap((object) => {
       const materials = Array.isArray(object.material) ? object.material : [object.material];
       return materials.filter(Boolean).map((material) => ({
@@ -1938,6 +1949,7 @@ const api = {
         roughnessMap: material.roughnessMap?.name || '',
         aoMap: material.aoMap?.name || '',
         lightmap: material.userData.strandLightmap || '',
+        lightmapSkipped: Boolean(material.userData.strandLightmapSkipped),
         anisotropyMap: material.anisotropyMap?.name || '',
         tangentRangeCompressed: Boolean(material.userData.strandTangentRange),
         strandSpecularResponse: Boolean(material.userData.strandSpecularResponse),
