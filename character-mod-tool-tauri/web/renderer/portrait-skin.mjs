@@ -149,33 +149,83 @@ function garmentTexture(THREE, item, colorSpace = THREE.NoColorSpace, wrap = THR
 // center plus an offset: logoUv = (uv - 0.5 - o) * s + 0.5 (checked against the
 // Lakers 1978 home wordmark, which lands centered on the chest).
 const MAP_LINE = '#include <map_fragment>';
-function configureGarmentLogos(THREE, material, logos) {
-  if (material.userData.nbaGarmentLogos) return;
-  material.userData.nbaGarmentLogos = true;
-  const previous = material.onBeforeCompile, previousKey = material.customProgramCacheKey();
-  const uniforms = logos.map((item) => ({
-    map: { value: garmentTexture(THREE, item, THREE.SRGBColorSpace, THREE.ClampToEdgeWrapping) },
-    place: { value: new THREE.Vector4(...item.scaleAndOffset) },
-    turn: { value: (Number(item.rotate) || 0) * Math.PI / 180 },
-  }));
+// Numbers use the uniform's font atlas (clothing/<file>_font.iff): up to two
+// glyphs ({u, w} in atlas width, aspect = glyph width / atlas height), laid out
+// centered in the placement box at glyph height = box height, with spacing in
+// box widths between them.
+// The renderer reuses materials across loads, so the hook is rebuilt from the
+// material's original one whenever its overlay set changes.
+function configureGarmentOverlays(THREE, material, overlays) {
+  const signature = overlays.map((o) => `${o.channel}:${o.name}:${o.scaleAndOffset}:${(o.glyphs || []).map((g) => g.u).join('/')}:${o.spacing ?? ''}`).join(',');
+  if (material.userData.nbaOverlaySignature === signature) return;
+  const base = material.userData.nbaOverlayBase ||= { compile: material.onBeforeCompile, key: material.customProgramCacheKey() };
+  material.userData.nbaOverlaySignature = signature;
+  material.needsUpdate = true;
+  if (!overlays.length) {
+    material.onBeforeCompile = base.compile;
+    material.customProgramCacheKey = () => base.key;
+    return;
+  }
+  const previous = base.compile, previousKey = base.key;
+  const uniforms = overlays.map((item) => {
+    const glyphs = (item.glyphs || []).slice(0, 2);
+    return {
+      number: item.channel === 'number',
+      map: { value: garmentTexture(THREE, item, THREE.SRGBColorSpace, THREE.ClampToEdgeWrapping) },
+      place: { value: new THREE.Vector4(...item.scaleAndOffset) },
+      turn: { value: (Number(item.rotate) || 0) * Math.PI / 180 },
+      glyphRects: { value: new THREE.Vector4(glyphs[0]?.u ?? 0, glyphs[0]?.w ?? 0, glyphs[1]?.u ?? 0, glyphs[1]?.w ?? 0) },
+      glyphLayout: { value: new THREE.Vector4(glyphs[0]?.aspect ?? 0, glyphs[1]?.aspect ?? 0, glyphs.length, Number(item.spacing) || 0) },
+    };
+  });
   material.onBeforeCompile = (shader, renderer) => {
     previous.call(material, shader, renderer);
-    uniforms.forEach((u, i) => { shader.uniforms[`nbaLogo${i}`] = u.map; shader.uniforms[`nbaLogoPlace${i}`] = u.place; shader.uniforms[`nbaLogoTurn${i}`] = u.turn; });
-    const declare = uniforms.map((_, i) => `uniform sampler2D nbaLogo${i}; uniform vec4 nbaLogoPlace${i}; uniform float nbaLogoTurn${i};`).join('\n');
-    const blend = uniforms.map((_, i) => `{
-      vec2 c = ( vMapUv - 0.5 - nbaLogoPlace${i}.zw ) * nbaLogoPlace${i}.xy + 0.5;
-      vec2 r = mat2( cos( nbaLogoTurn${i} ), -sin( nbaLogoTurn${i} ), sin( nbaLogoTurn${i} ), cos( nbaLogoTurn${i} ) ) * ( c - 0.5 ) + 0.5;
-      if ( all( greaterThanEqual( r, vec2( 0.0 ) ) ) && all( lessThanEqual( r, vec2( 1.0 ) ) ) ) {
-        vec4 logo = texture2D( nbaLogo${i}, r );
-        diffuseColor.rgb = mix( diffuseColor.rgb, logo.rgb, logo.a );
+    uniforms.forEach((u, i) => Object.assign(shader.uniforms, { [`nbaOverlay${i}`]: u.map, [`nbaOverlayPlace${i}`]: u.place, [`nbaOverlayTurn${i}`]: u.turn,
+      [`nbaGlyphRects${i}`]: u.glyphRects, [`nbaGlyphLayout${i}`]: u.glyphLayout }));
+    const declare = uniforms.map((_, i) => `uniform sampler2D nbaOverlay${i}; uniform vec4 nbaOverlayPlace${i}; uniform float nbaOverlayTurn${i}; uniform vec4 nbaGlyphRects${i}; uniform vec4 nbaGlyphLayout${i};`).join('\n');
+    const blend = uniforms.map((u, i) => `{
+      vec2 c = ( vMapUv - 0.5 - nbaOverlayPlace${i}.zw ) * nbaOverlayPlace${i}.xy + 0.5;
+      vec2 r = mat2( cos( nbaOverlayTurn${i} ), -sin( nbaOverlayTurn${i} ), sin( nbaOverlayTurn${i} ), cos( nbaOverlayTurn${i} ) ) * ( c - 0.5 ) + 0.5;
+      ${u.number ? `
+      // Glyph widths in box units (the box is 1/sx by 1/sy of the texture).
+      float aspect = nbaOverlayPlace${i}.x / nbaOverlayPlace${i}.y;
+      float w0 = nbaGlyphLayout${i}.x * aspect, w1 = nbaGlyphLayout${i}.z > 1.5 ? nbaGlyphLayout${i}.y * aspect : 0.0;
+      float gap = nbaGlyphLayout${i}.z > 1.5 ? nbaGlyphLayout${i}.w : 0.0;
+      float x = r.x - 0.5 + ( w0 + gap + w1 ) * 0.5;
+      vec2 atlas = vec2( -1.0 );
+      if ( r.y >= 0.0 && r.y <= 1.0 ) {
+        if ( x >= 0.0 && x <= w0 ) atlas = vec2( nbaGlyphRects${i}.x + x / w0 * nbaGlyphRects${i}.y, r.y );
+        else if ( w1 > 0.0 && x >= w0 + gap && x <= w0 + gap + w1 ) atlas = vec2( nbaGlyphRects${i}.z + ( x - w0 - gap ) / w1 * nbaGlyphRects${i}.w, r.y );
       }
+      if ( atlas.x >= 0.0 ) {
+        vec4 glyph = texture2D( nbaOverlay${i}, atlas );
+        diffuseColor.rgb = mix( diffuseColor.rgb, glyph.rgb, glyph.a );
+      }` : `
+      if ( all( greaterThanEqual( r, vec2( 0.0 ) ) ) && all( lessThanEqual( r, vec2( 1.0 ) ) ) ) {
+        vec4 logo = texture2D( nbaOverlay${i}, r );
+        diffuseColor.rgb = mix( diffuseColor.rgb, logo.rgb, logo.a );
+      }`}
     }`).join('\n');
     shader.fragmentShader = `${declare}\n${shader.fragmentShader.replace(MAP_LINE, `${MAP_LINE}\n${blend}`)}`;
   };
-  material.customProgramCacheKey = () => `${previousKey}|nba-garment-logos-${logos.map((l) => l.name).join(',')}`;
+  material.customProgramCacheKey = () => `${previousKey}|nba-garment-overlays-${signature}`;
+}
+// A renderer that loads one garment set after another (jersey previews) keeps
+// only the current payload's textures; earlier ones are released.
+let garmentPayload = null;
+function releaseStaleGarmentTextures(payload) {
+  if (payload === garmentPayload) return;
+  garmentPayload = payload;
+  const current = new Set((payload?.portraitGarmentTextures || []).map((item) => item.name));
+  for (const [key, texture] of garmentTextures) {
+    if (current.has(key.split('|')[0])) continue;
+    texture.dispose();
+    garmentTextures.delete(key);
+  }
 }
 function configureGarmentTextures(context, material) {
   const { THREE } = context;
+  releaseStaleGarmentTextures(context.payload);
   const items = (context.payload?.portraitGarmentTextures || []).filter((item) => material.name.toLowerCase().includes(item.material));
   const normal = items.find((item) => item.channel === 'normal');
   if (normal) {
@@ -187,8 +237,8 @@ function configureGarmentTextures(context, material) {
     material.map = garmentTexture(THREE, color, THREE.SRGBColorSpace);
     material.color.setHex(0xffffff);
   }
-  const logos = items.filter((item) => item.channel === 'logo' && Array.isArray(item.scaleAndOffset));
-  if (material.map && logos.length) configureGarmentLogos(THREE, material, logos);
+  const overlays = items.filter((item) => ['logo', 'number'].includes(item.channel) && Array.isArray(item.scaleAndOffset));
+  configureGarmentOverlays(THREE, material, material.map ? overlays : []);
   material.needsUpdate = true;
 }
 // Richer procedural iris on top of the exporter's flat iris disc: radial
