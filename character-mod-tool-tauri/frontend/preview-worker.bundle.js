@@ -3674,7 +3674,10 @@
         return channelScore + hairDetailScore + courtScore + playerColorScore + playerNormalScore;
       }
       function comparePreviewTextures(a, b) {
-        return previewTextureScore(b) - previewTextureScore(a) || (bodyColorTextureTarget(a) && bodyColorTextureTarget(b) ? (a.container ?? Number.MAX_SAFE_INTEGER) - (b.container ?? Number.MAX_SAFE_INTEGER) : 0) || (b.assignments?.length || 0) - (a.assignments?.length || 0) || a.width * a.height - b.width * b.height;
+        return previewTextureScore(b) - previewTextureScore(a) || (bodyColorTextureTarget(a) && bodyColorTextureTarget(b) ? bodyColorRank(a) - bodyColorRank(b) : 0) || (b.assignments?.length || 0) - (a.assignments?.length || 0) || a.width * a.height - b.width * b.height;
+      }
+      function bodyColorRank(texture) {
+        return /^config:/i.test(String(texture.source || "")) ? -1 : texture.container ?? Number.MAX_SAFE_INTEGER;
       }
       function bodyColorTextureTarget(texture) {
         const target = String(texture.binding?.target || "").toLowerCase();

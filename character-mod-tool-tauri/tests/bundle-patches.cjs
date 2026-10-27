@@ -44,4 +44,9 @@ for (const [name, channel, target] of [['chest_normal_avg_ripped', 'normal', 'ch
 }
 assert.equal(previewTextureUnused({ ...texture('chest_normal_avg_ripped', 'normal', 'chest'), externalPath: 'cmt-preview://shared/1' }), false, 'Native muscle-type body normal is kept');
 assert.equal(previewTextureUnused(texture('hair_strand_o', 'auxiliary', 'hair', [{ channel: 'tangent', material: 'hair_shader' }])), false, 'Assigned tangent maps are kept');
-console.log('Worker bundle patches: idempotent, hair/beard-only TEXCOORD1, unused preview maps skipped passed.');
+// A selected config's body color outranks the main IFF's.
+const rankStart = bundle.indexOf('function bodyColorRank(');
+const bodyColorRank = vm.runInNewContext(`(${bundle.slice(rankStart).match(/^function bodyColorRank[\s\S]*?\n {6}\}/)[0]})`, { Number });
+assert.ok(bodyColorRank({ source: 'config: png02444_config_headphone.iff', container: 3 }) < bodyColorRank({ source: 'main: png02444.iff', container: 0 }));
+assert.ok(bodyColorRank({ source: 'main: png02444.iff', container: 0 }) < bodyColorRank({ source: 'body-color: char/chest_color_06.iff', container: 5 }));
+console.log('Worker bundle patches: idempotent, hair/beard-only TEXCOORD1, unused preview maps skipped, config body colors preferred passed.');

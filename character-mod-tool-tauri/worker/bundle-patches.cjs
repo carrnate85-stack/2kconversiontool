@@ -73,6 +73,21 @@ const MORPH_NOTE = [
   ],
 ];
 
+// A player config (png#####_config_<look>.iff) can carry its own chest/legs
+// color (png01801 beard/buzz, png02444 headphone/headband_fury/short_afro: a
+// different tattoo era). Only one body color per region loads, ranked by
+// container, so the main IFF always won; the selected config's now does.
+const CONFIG_BODY_COLOR = [
+  [
+    '(bodyColorTextureTarget(a) && bodyColorTextureTarget(b) ? (a.container ?? Number.MAX_SAFE_INTEGER) - (b.container ?? Number.MAX_SAFE_INTEGER) : 0)',
+    () => '(bodyColorTextureTarget(a) && bodyColorTextureTarget(b) ? bodyColorRank(a) - bodyColorRank(b) : 0)',
+  ],
+  [
+    '      function bodyColorTextureTarget(texture) {\n',
+    (match) => '      function bodyColorRank(texture) {\n        return /^config:/i.test(String(texture.source || "")) ? -1 : texture.container ?? Number.MAX_SAFE_INTEGER;\n      }\n' + match,
+  ],
+];
+
 function apply(text, marker, replacements) {
   if (text.includes(marker)) return text;
   for (const [pinned, replace] of replacements) {
@@ -89,6 +104,7 @@ function patchWorkerBundle(source) {
   text = apply(text, 'const strandCards = ', STRAND_REPLACEMENTS);
   text = apply(text, 'function previewTextureUnused(', TEXTURE_REPLACEMENTS);
   text = apply(text, 'morph target(s) detected (facial expressions', MORPH_NOTE);
+  text = apply(text, 'function bodyColorRank(', CONFIG_BODY_COLOR);
   return crlf ? text.replace(/\n/g, '\r\n') : text;
 }
 
