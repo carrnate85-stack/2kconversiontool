@@ -1013,11 +1013,16 @@ function createDdsTexture(item) {
     texture.userData.rangeColor = Boolean(item.range) && item.binding?.channel === 'color'
       && /hair/i.test(item.binding?.target || '');
     const declaredFormat = String(item.format || '').toUpperCase();
-    texture.colorSpace = item.range || (declaredFormat && declaredFormat !== 'DDS' && !declaredFormat.includes('SRGB'))
-      ? THREE.NoColorSpace
-      : declaredFormat.includes('SRGB') || item.binding?.channel === 'color'
-        || /basecolou?r|(?:^|_)color(?:_|\.)|albedo|diffuse|_c(?:\.|_)/i.test(`${item.source} ${item.name}`)
-        ? THREE.SRGBColorSpace : THREE.NoColorSpace;
+    // Plain (non-range) hair and beard color maps are declared *_UNORM without an
+    // SRGB tag but hold sRGB color like their range-compressed siblings; reading
+    // them as linear washed dark hair out to gray.
+    const hairColor = !item.range && item.binding?.channel === 'color' && /hair/i.test(item.binding?.target || '');
+    texture.colorSpace = hairColor ? THREE.SRGBColorSpace
+      : item.range || (declaredFormat && declaredFormat !== 'DDS' && !declaredFormat.includes('SRGB'))
+        ? THREE.NoColorSpace
+        : declaredFormat.includes('SRGB') || item.binding?.channel === 'color'
+          || /basecolou?r|(?:^|_)color(?:_|\.)|albedo|diffuse|_c(?:\.|_)/i.test(`${item.source} ${item.name}`)
+          ? THREE.SRGBColorSpace : THREE.NoColorSpace;
     texture.minFilter = parsed.mipmapCount > 1 ? THREE.LinearMipmapLinearFilter : THREE.LinearFilter;
     texture.magFilter = THREE.LinearFilter;
     texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
