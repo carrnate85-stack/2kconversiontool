@@ -1,0 +1,262 @@
+// Preview-only studio shading: environment, surface frames, eyes and skin.
+// Shader hooks chain onto any previous onBeforeCompile, like the strand fixes.
+
+// Image-based light replaces most of the flat ambient/hemisphere fill. The
+// remaining fill keeps unlit (environment-free) cavities from going black.
+export const STUDIO_ENVIRONMENT = Object.freeze({ intensity: 0.62, ambientScale: 0.22, hemisphereScale: 0.38 });
+
+export function studioLightBalance(profile = {}) {
+  return {
+    ambient: Number(profile.ambient || 0) * STUDIO_ENVIRONMENT.ambientScale,
+    hemisphere: Number(profile.hemisphere || 0) * STUDIO_ENVIRONMENT.hemisphereScale,
+    environmentIntensity: STUDIO_ENVIRONMENT.intensity,
+  };
+}
+
+// Softboxes follow configureStudioLights directions (Y-up scene space), so
+// reflections line up with the key/fill/rim highlights.
+const SOFTBOXES = [
+  { direction: [1.5, 2.3, 2], color: [1, 0.97, 0.94], intensity: 7, size: [3.2, 2.4] },
+  { direction: [-2.1, 1.15, 1.3], color: [0.8, 0.87, 1], intensity: 2.4, size: [3.6, 2.6] },
+  { direction: [-1.4, 1.7, -2.2], color: [1, 0.93, 0.88], intensity: 4.2, size: [1.4, 3.4] },
+  { direction: [0, 1, 0.05], color: [1, 1, 1], intensity: 1.6, size: [5, 5] },
+];
+
+export function createStudioEnvironment(THREE, renderer) {
+  const scene = new THREE.Scene();
+  const disposables = [];
+  const room = new THREE.SphereGeometry(10, 48, 24);
+  const colors = new Float32Array(room.attributes.position.count * 3);
+  // A dark dome keeps reflections as distinct softbox catchlights; a bright
+  // uniform dome reads as a milky veil over eyes and flattens skin detail.
+  const top = new THREE.Color(0.11, 0.12, 0.14), horizon = new THREE.Color(0.05, 0.05, 0.055), floor = new THREE.Color(0.02, 0.018, 0.016);
+  const color = new THREE.Color();
+  for (let index = 0; index < room.attributes.position.count; index++) {
+    const height = room.attributes.position.getY(index) / 10;
+    if (height >= 0) color.copy(horizon).lerp(top, Math.pow(height, 0.7));
+    else color.copy(horizon).lerp(floor, Math.min(1, -height * 3));
+    color.toArray(colors, index * 3);
+  }
+  room.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+  const roomMaterial = new THREE.MeshBasicMaterial({ vertexColors: true, side: THREE.BackSide, toneMapped: false });
+  scene.add(new THREE.Mesh(room, roomMaterial));
+  disposables.push(room, roomMaterial);
+  for (const box of SOFTBOXES) {
+    const geometry = new THREE.PlaneGeometry(box.size[0], box.size[1]);
+    const material = new THREE.MeshBasicMaterial({ color: new THREE.Color(...box.color).multiplyScalar(box.intensity), side: THREE.DoubleSide, toneMapped: false });
+    const panel = new THREE.Mesh(geometry, material);
+    panel.position.set(...box.direction).normalize().multiplyScalar(7.5);
+    panel.lookAt(0, 0, 0);
+    scene.add(panel);
+    disposables.push(geometry, material);
+  }
+  const generator = new THREE.PMREMGenerator(renderer);
+  try {
+    return generator.fromScene(scene, 0.035);
+  } finally {
+    generator.dispose();
+    disposables.forEach((item) => item.dispose());
+  }
+}
+
+// Vertices split along UV/material seams get the same smooth normal when
+// they coincide and face within creaseAngleDegrees; hard edges stay hard.
+// Each input is { positions, indices }; returns one Float32Array per mesh.
+export function seamSmoothedNormals(meshes, { creaseAngleDegrees = 60, tolerance = null } = {}) {
+  const sums = meshes.map(({ positions, indices }) => {
+    const sum = new Float32Array(positions.length);
+    for (let cursor = 0; cursor + 2 < indices.length; cursor += 3) {
+      const a = indices[cursor] * 3, b = indices[cursor + 1] * 3, c = indices[cursor + 2] * 3;
+      const abx = positions[b] - positions[a], aby = positions[b + 1] - positions[a + 1], abz = positions[b + 2] - positions[a + 2];
+      const acx = positions[c] - positions[a], acy = positions[c + 1] - positions[a + 1], acz = positions[c + 2] - positions[a + 2];
+      // The unnormalised cross product weights each face by its area.
+      const nx = aby * acz - abz * acy, ny = abz * acx - abx * acz, nz = abx * acy - aby * acx;
+      sum[a] += nx; sum[a + 1] += ny; sum[a + 2] += nz;
+      sum[b] += nx; sum[b + 1] += ny; sum[b + 2] += nz;
+      sum[c] += nx; sum[c + 1] += ny; sum[c + 2] += nz;
+    }
+    return sum;
+  });
+  const units = sums.map((sum) => {
+    const unit = new Float32Array(sum.length);
+    for (let offset = 0; offset < sum.length; offset += 3) {
+      const length = Math.hypot(sum[offset], sum[offset + 1], sum[offset + 2]);
+      if (length > 0) { unit[offset] = sum[offset] / length; unit[offset + 1] = sum[offset + 1] / length; unit[offset + 2] = sum[offset + 2] / length; }
+    }
+    return unit;
+  });
+  let step = tolerance;
+  if (!(step > 0)) {
+    let min = [Infinity, Infinity, Infinity], max = [-Infinity, -Infinity, -Infinity];
+    for (const { positions } of meshes) for (let index = 0; index < positions.length; index += 3) {
+      for (let axis = 0; axis < 3; axis++) {
+        min[axis] = Math.min(min[axis], positions[index + axis]);
+        max[axis] = Math.max(max[axis], positions[index + axis]);
+      }
+    }
+    const diagonal = Math.hypot(max[0] - min[0], max[1] - min[1], max[2] - min[2]);
+    step = Number.isFinite(diagonal) && diagonal > 0 ? diagonal * 1e-6 : 1e-6;
+  }
+  // Numeric spatial hash; buckets hold [meshIndex, vertexOffset] pairs.
+  const buckets = new Map();
+  const quantized = meshes.map(({ positions }) => {
+    const cells = new Int32Array(positions.length);
+    for (let index = 0; index < positions.length; index++) cells[index] = Math.round(positions[index] / step);
+    return cells;
+  });
+  quantized.forEach((cells, meshIndex) => {
+    for (let offset = 0; offset < cells.length; offset += 3) {
+      const key = (Math.imul(cells[offset], 73856093) ^ Math.imul(cells[offset + 1], 19349663) ^ Math.imul(cells[offset + 2], 83492791)) >>> 0;
+      let bucket = buckets.get(key);
+      if (!bucket) buckets.set(key, bucket = []);
+      bucket.push(meshIndex, offset);
+    }
+  });
+  const crease = Math.cos(creaseAngleDegrees * Math.PI / 180);
+  // Unshared vertices (most of them) keep their own unit normal.
+  const results = units.map((unit) => unit.slice());
+  for (const bucket of buckets.values()) {
+    if (bucket.length === 2) continue;
+    for (let left = 0; left < bucket.length; left += 2) {
+      const meshIndex = bucket[left], offset = bucket[left + 1];
+      const own = units[meshIndex];
+      if (own[offset] === 0 && own[offset + 1] === 0 && own[offset + 2] === 0) continue;
+      let x = 0, y = 0, z = 0;
+      const cells = quantized[meshIndex];
+      for (let right = 0; right < bucket.length; right += 2) {
+        const otherMesh = bucket[right], otherOffset = bucket[right + 1];
+        const otherCells = quantized[otherMesh], otherUnit = units[otherMesh];
+        if (otherCells[otherOffset] !== cells[offset] || otherCells[otherOffset + 1] !== cells[offset + 1]
+          || otherCells[otherOffset + 2] !== cells[offset + 2]) continue;
+        // Zero (unused) normals fail this test as well.
+        if (otherUnit[otherOffset] * own[offset] + otherUnit[otherOffset + 1] * own[offset + 1]
+          + otherUnit[otherOffset + 2] * own[offset + 2] < crease) continue;
+        const other = sums[otherMesh];
+        x += other[otherOffset]; y += other[otherOffset + 1]; z += other[otherOffset + 2];
+      }
+      const length = Math.hypot(x, y, z) || 1;
+      results[meshIndex][offset] = x / length; results[meshIndex][offset + 1] = y / length; results[meshIndex][offset + 2] = z / length;
+    }
+  }
+  return results;
+}
+
+// Per-vertex tangents (xyz + handedness w) from UV gradients. Degenerate UV
+// triangles leave no gradient, so those vertices get any tangent orthogonal
+// to the normal rather than a zero vector that would shade as NaN.
+export function vertexTangents(positions, normals, uvs, indices, target = new Float32Array(positions.length / 3 * 4)) {
+  const vertexCount = positions.length / 3;
+  const tan1 = new Float32Array(vertexCount * 3), tan2 = new Float32Array(vertexCount * 3);
+  for (let cursor = 0; cursor + 2 < indices.length; cursor += 3) {
+    const a = indices[cursor], b = indices[cursor + 1], c = indices[cursor + 2];
+    const e1x = positions[b * 3] - positions[a * 3], e1y = positions[b * 3 + 1] - positions[a * 3 + 1], e1z = positions[b * 3 + 2] - positions[a * 3 + 2];
+    const e2x = positions[c * 3] - positions[a * 3], e2y = positions[c * 3 + 1] - positions[a * 3 + 1], e2z = positions[c * 3 + 2] - positions[a * 3 + 2];
+    const s1 = uvs[b * 2] - uvs[a * 2], t1 = uvs[b * 2 + 1] - uvs[a * 2 + 1];
+    const s2 = uvs[c * 2] - uvs[a * 2], t2 = uvs[c * 2 + 1] - uvs[a * 2 + 1];
+    const determinant = s1 * t2 - s2 * t1;
+    if (!Number.isFinite(determinant) || Math.abs(determinant) < 1e-20) continue;
+    const r = 1 / determinant;
+    const sx = (e1x * t2 - e2x * t1) * r, sy = (e1y * t2 - e2y * t1) * r, sz = (e1z * t2 - e2z * t1) * r;
+    const tx = (e2x * s1 - e1x * s2) * r, ty = (e2y * s1 - e1y * s2) * r, tz = (e2z * s1 - e1z * s2) * r;
+    for (let corner = 0; corner < 3; corner++) {
+      const vertex = (corner === 0 ? a : corner === 1 ? b : c) * 3;
+      tan1[vertex] += sx; tan1[vertex + 1] += sy; tan1[vertex + 2] += sz;
+      tan2[vertex] += tx; tan2[vertex + 1] += ty; tan2[vertex + 2] += tz;
+    }
+  }
+  for (let vertex = 0; vertex < vertexCount; vertex++) {
+    const nx = normals[vertex * 3], ny = normals[vertex * 3 + 1], nz = normals[vertex * 3 + 2];
+    let x = tan1[vertex * 3], y = tan1[vertex * 3 + 1], z = tan1[vertex * 3 + 2];
+    const along = nx * x + ny * y + nz * z;
+    x -= nx * along; y -= ny * along; z -= nz * along;
+    let length = Math.hypot(x, y, z);
+    if (!(length > 1e-12)) {
+      // Any axis that is not parallel to the normal yields a valid frame.
+      const ax = Math.abs(nx) < 0.9 ? 1 : 0, ay = ax ? 0 : 1;
+      x = ay * nz; y = -ax * nz; z = ax * ny - ay * nx;
+      length = Math.hypot(x, y, z) || 1;
+    }
+    x /= length; y /= length; z /= length;
+    const cx = ny * z - nz * y, cy = nz * x - nx * z, cz = nx * y - ny * x;
+    const handedness = cx * tan2[vertex * 3] + cy * tan2[vertex * 3 + 1] + cz * tan2[vertex * 3 + 2] < 0 ? -1 : 1;
+    target[vertex * 4] = x; target[vertex * 4 + 1] = y; target[vertex * 4 + 2] = z; target[vertex * 4 + 3] = handedness;
+  }
+  return target;
+}
+
+// The decoded eye textures carry the sclera only, so the iris is drawn in
+// each eye quadrant. Color and size are uniforms: one program for all players.
+export const EYE_ENVIRONMENT_INTENSITY = 0.45;
+
+export function configureEyeIris(material, enabled, color, scale) {
+  material.userData.eyeIris = Boolean(enabled && material.map);
+  if (!material.userData.eyeIris) return;
+  // The wet clearcoat should show catchlights, not haze over the iris.
+  material.envMapIntensity = EYE_ENVIRONMENT_INTENSITY;
+  const uniforms = material.userData.eyeIrisUniforms ||= { nbaIrisColor: { value: null }, nbaIrisScale: { value: 0.54 } };
+  uniforms.nbaIrisColor.value = color;
+  uniforms.nbaIrisScale.value = scale;
+  const previous = material.onBeforeCompile;
+  const previousKey = material.customProgramCacheKey();
+  material.onBeforeCompile = (shader) => {
+    previous(shader);
+    Object.assign(shader.uniforms, uniforms);
+    shader.fragmentShader = 'uniform vec3 nbaIrisColor;\nuniform float nbaIrisScale;\n' + shader.fragmentShader;
+    // Runs after map/range decoding (which may have replaced map_fragment).
+    shader.fragmentShader = shader.fragmentShader.replace('#include <color_fragment>', `#ifdef USE_MAP
+  vec2 nbaEyeOffset = fract( vMapUv * 2.0 ) - vec2( 0.5 );
+  float nbaIrisDistance = length( nbaEyeOffset ) / nbaIrisScale;
+  float nbaIrisMask = 1.0 - smoothstep( 0.185, 0.255, nbaIrisDistance );
+  float nbaPupilMask = 1.0 - smoothstep( 0.052, 0.085, nbaIrisDistance );
+  float nbaIrisAngle = atan( nbaEyeOffset.y, nbaEyeOffset.x );
+  float nbaIrisRadial = clamp( ( nbaIrisDistance - 0.07 ) / 0.16, 0.0, 1.0 );
+  float nbaIrisFibers = 0.88 + 0.07 * cos( nbaIrisAngle * 28.0 + sin( nbaIrisAngle * 7.0 ) * 1.7 )
+    + 0.05 * cos( nbaIrisAngle * 61.0 + nbaIrisRadial * 9.0 );
+  float nbaLimbalRing = smoothstep( 0.15, 0.225, nbaIrisDistance );
+  float nbaCollarette = 1.0 - smoothstep( 0.0, 0.05, abs( nbaIrisDistance - 0.11 ) );
+  vec3 nbaIris = nbaIrisColor * nbaIrisFibers * mix( 1.08, 0.5, nbaLimbalRing ) * ( 1.0 + 0.18 * nbaCollarette );
+  diffuseColor.rgb = mix( diffuseColor.rgb, nbaIris, nbaIrisMask );
+  diffuseColor.rgb = mix( diffuseColor.rgb, vec3( 0.012 ), nbaPupilMask );
+#endif
+#include <color_fragment>`);
+  };
+  material.customProgramCacheKey = () => previousKey + ':nba-eye-iris-v3';
+}
+
+// Skin: sheen for the peach-fuzz rim, a lower dielectric F0, and wrapped,
+// red-shifted diffuse past the terminator as a cheap subsurface stand-in.
+export const SKIN_SHADING = Object.freeze({
+  sheen: 0.2, sheenRoughness: 0.55, sheenColor: [0.75, 0.55, 0.48],
+  specularIntensity: 0.6, scatterWrap: 0.45, scatterColor: [0.62, 0.2, 0.12],
+});
+
+export function configureSkinShading(material, enabled) {
+  material.userData.skinScatter = Boolean(enabled && 'sheen' in material);
+  if (!material.userData.skinScatter) return;
+  material.sheen = SKIN_SHADING.sheen;
+  material.sheenRoughness = SKIN_SHADING.sheenRoughness;
+  material.sheenColor?.setRGB?.(...SKIN_SHADING.sheenColor);
+  material.specularIntensity = SKIN_SHADING.specularIntensity;
+  const uniforms = material.userData.skinScatterUniforms ||= {
+    nbaSkinScatterColor: { value: new Float32Array(SKIN_SHADING.scatterColor) },
+    nbaSkinScatterWrap: { value: SKIN_SHADING.scatterWrap },
+  };
+  const previous = material.onBeforeCompile;
+  const previousKey = material.customProgramCacheKey();
+  material.onBeforeCompile = (shader) => {
+    previous(shader);
+    Object.assign(shader.uniforms, uniforms);
+    shader.fragmentShader = 'uniform vec3 nbaSkinScatterColor;\nuniform float nbaSkinScatterWrap;\n' + shader.fragmentShader;
+    shader.fragmentShader = shader.fragmentShader.replace('#include <lights_physical_pars_fragment>', `#include <lights_physical_pars_fragment>
+void RE_Direct_NbaSkin( const in IncidentLight directLight, const in vec3 geometryPosition, const in vec3 geometryNormal, const in vec3 geometryViewDir, const in vec3 geometryClearcoatNormal, const in PhysicalMaterial material, inout ReflectedLight reflectedLight ) {
+  RE_Direct_Physical( directLight, geometryPosition, geometryNormal, geometryViewDir, geometryClearcoatNormal, material, reflectedLight );
+  float nbaSkinNdl = dot( geometryNormal, directLight.direction );
+  float nbaSkinWrapped = saturate( ( nbaSkinNdl + nbaSkinScatterWrap ) / ( 1.0 + nbaSkinScatterWrap ) );
+  float nbaSkinBand = max( nbaSkinWrapped - saturate( nbaSkinNdl ), 0.0 );
+  reflectedLight.directDiffuse += directLight.color * nbaSkinBand * nbaSkinScatterColor * BRDF_Lambert( material.diffuseColor );
+}
+#undef RE_Direct
+#define RE_Direct RE_Direct_NbaSkin`);
+  };
+  material.customProgramCacheKey = () => previousKey + ':nba-skin-scatter-v1';
+}

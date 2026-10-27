@@ -6,8 +6,9 @@ import { configureArenaLayers } from './arena-layers.mjs';
 import { configureScoreboardOverlay, configureCourtGraffiti } from './arena-overlays.mjs';
 import { captureBasketFrame, catalogOverheadTarget, captureCreatedWoodTint } from './arena-catalog.mjs';
 import { materialProfile, previewLightingProfile } from './render-profiles.mjs';
-import { skinBoundaryResponse } from '../skin-response.mjs';
+import { skinBoundaryResponse, skinLuminanceResponse } from '../skin-response.mjs';
 import { configureStrandLightmap, configureStrandTangentRange, configureStrandSpecular, configureStrandCoverage } from '../strand-preview-fixes.mjs';
+import { createStudioEnvironment, studioLightBalance, seamSmoothedNormals, vertexTangents, configureEyeIris, configureSkinShading } from '../studio-shading.mjs';
 
 
 export function createExplorerRenderer(options = {}) {
@@ -66,6 +67,8 @@ let textureItems = [];
 let currentPayload = null;
 let currentPreviewProfile = previewLightingProfile();
 let captureEnvironment = null;
+// Built once per renderer on first studio use; false after a failed build.
+let studioEnvironment = null;
 const captureLightGroup = new THREE.Group();
 scene.add(captureLightGroup);
 let drag = null;
@@ -136,6 +139,23 @@ function configurePreviewLighting(payload = currentPayload) {
   keyLight.intensity = currentPreviewProfile.key;
   fillLight.intensity = currentPreviewProfile.fill;
   rimLight.intensity = currentPreviewProfile.rim;
+  scene.environmentIntensity = 1;
+  const environment = currentPreviewProfile.kind === 'arena' ? null : studioEnvironmentTexture();
+  if (environment) {
+    // Reflections and image-based fill replace most of the flat ambient term.
+    const balance = studioLightBalance(currentPreviewProfile);
+    scene.environment = environment;
+    scene.environmentIntensity = balance.environmentIntensity;
+    ambientLight.intensity = balance.ambient;
+    hemisphereLight.intensity = balance.hemisphere;
+  }
+}
+
+function studioEnvironmentTexture() {
+  if (studioEnvironment === null) {
+    try { studioEnvironment = createStudioEnvironment(THREE, renderer); } catch { studioEnvironment = false; }
+  }
+  return studioEnvironment ? studioEnvironment.texture : null;
 }
 
 function configureStudioLights(bounds) {
@@ -152,11 +172,14 @@ function configureStudioLights(bounds) {
   place(fillLight, [-2.1, 1.15, 1.3]);
   place(rimLight, [-1.4, 1.7, -2.2]);
   renderer.shadowMap.enabled = options.shadows !== false;
-  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  // r185 replaces PCFSoftShadowMap with PCFShadowMap; radius sets the softness.
+  renderer.shadowMap.type = THREE.PCFShadowMap;
   renderer.shadowMap.autoUpdate = false;
   invalidateShadows();
   keyLight.castShadow = options.shadows !== false;
-  keyLight.shadow.mapSize.set(1024, 1024);
+  if (keyLight.shadow.mapSize.x !== 2048) { keyLight.shadow.map?.dispose(); keyLight.shadow.map = null; }
+  keyLight.shadow.mapSize.set(2048, 2048);
+  keyLight.shadow.radius = 3;
   keyLight.shadow.bias = -0.0002;
   keyLight.shadow.normalBias = radius * 0.0006;
   const shadowCamera = keyLight.shadow.camera;
@@ -893,7 +916,8 @@ function setArenaCaptureLighting(view, definitions = {}, options = {}) {
   keyLight.target.updateMatrixWorld(true);
   renderer.shadowMap.enabled = options.shadows !== false;
   renderer.shadowMap.autoUpdate = true;
-  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.shadowMap.type = THREE.PCFShadowMap;
+  keyLight.shadow.radius = 1;
   keyLight.castShadow = renderer.shadowMap.enabled && (!authoredSun || authoredSun.castsShadows);
   keyLight.shadow.mapSize.set(2048, 2048);
   keyLight.shadow.bias = -0.00004;
@@ -1112,6 +1136,7 @@ function eyeAtlasTexture(texture, material) {
 
 function irisColor(value) {
   const name = String(value || 'brown').trim().toLowerCase();
+  if (/^#?[0-9a-f]{6}$/.test(name)) return new THREE.Color(`#${name.replace('#', '')}`);
   const colors = {
     black: 0x211811,
     brown: 0x5a2f17,
@@ -1132,36 +1157,6 @@ function irisScale(value) {
   if (/small|tiny/.test(name)) return 0.46;
   if (/large|big/.test(name)) return 0.64;
   return 0.54;
-}
-
-function configureEyeIris(material, texture) {
-  if (!texture) return;
-  const color = irisColor(currentPayload?.player?.irisColor);
-  const scale = irisScale(currentPayload?.player?.irisSize);
-  material.onBeforeCompile = (shader) => {
-    shader.uniforms.nbaIrisColor = { value: color };
-    shader.uniforms.nbaIrisScale = { value: scale };
-    shader.fragmentShader = shader.fragmentShader
-      .replace('#include <map_pars_fragment>', '#include <map_pars_fragment>\nuniform vec3 nbaIrisColor;\nuniform float nbaIrisScale;')
-      .replace(
-        '#include <map_fragment>',
-        `#ifdef USE_MAP
-          vec4 sampledDiffuseColor = texture2D( map, vMapUv );
-          #ifdef DECODE_VIDEO_TEXTURE
-            sampledDiffuseColor = sRGBTransferEOTF( sampledDiffuseColor );
-          #endif
-          vec2 nbaEyeUv = fract( vMapUv * 2.0 );
-          float nbaIrisDistance = length( nbaEyeUv - vec2( 0.5 ) ) / nbaIrisScale;
-          float nbaIrisMask = 1.0 - smoothstep( 0.185, 0.255, nbaIrisDistance );
-          float nbaPupilMask = 1.0 - smoothstep( 0.052, 0.085, nbaIrisDistance );
-          float nbaIrisRays = 0.92 + 0.08 * cos( atan( nbaEyeUv.y - 0.5, nbaEyeUv.x - 0.5 ) * 28.0 );
-          sampledDiffuseColor.rgb = mix( sampledDiffuseColor.rgb, nbaIrisColor * nbaIrisRays, nbaIrisMask );
-          sampledDiffuseColor.rgb = mix( sampledDiffuseColor.rgb, vec3( 0.012 ), nbaPupilMask );
-          diffuseColor *= sampledDiffuseColor;
-        #endif`,
-      );
-  };
-  material.customProgramCacheKey = () => `nba2k27-eye-iris-v2-${color.getHexString()}-${scale}`;
 }
 
 function configureTextureRange(material, texture) {
@@ -1303,8 +1298,9 @@ function boundaryUvPairs(leftTarget, rightTarget) {
     const leftVertices = verticesByTarget.get(leftTarget);
     const rightVertices = verticesByTarget.get(rightTarget);
     if (!leftVertices?.size || !rightVertices?.size) continue;
-    const positionKey = (vertex) => [0, 1, 2]
-      .map((axis) => Number(mesh.positions[vertex * 3 + axis]).toFixed(3)).join(',');
+    // Integer keys at 0.001-unit resolution; toFixed() dominated this pass on bodies.
+    const positionKey = (vertex) => Math.round(mesh.positions[vertex * 3] * 1000) + ','
+      + Math.round(mesh.positions[vertex * 3 + 1] * 1000) + ',' + Math.round(mesh.positions[vertex * 3 + 2] * 1000);
     const rightByPosition = new Map([...rightVertices].map((vertex) => [positionKey(vertex), vertex]));
     for (const leftVertex of leftVertices) {
       const rightVertex = rightByPosition.get(positionKey(leftVertex));
@@ -1335,7 +1331,8 @@ function boundaryColors(leftTarget, rightTarget) {
 }
 
 function responseColor(reference, source, referenceResponse = [1, 1, 1]) {
-  return new THREE.Color(...(skinBoundaryResponse(reference, source, referenceResponse) || [1, 1, 1]));
+  return new THREE.Color(...(skinBoundaryResponse(reference, source, referenceResponse)
+    || skinLuminanceResponse(reference, source, referenceResponse) || [1, 1, 1]));
 }
 
 function skinMaterialResponses() {
@@ -1374,6 +1371,10 @@ function applyAutomaticTextures() {
         : null;
       material.map = colorTexture;
       material.normalMap = normalTexture;
+      // Strands already apply their own lightmap/occlusion response.
+      material.aoMap = targetName && !strandMaterial && targetName !== 'eye'
+        ? boundTextureMatching(targetName, 'auxiliary', /occlusion|(?:^|_)ao(?:_|\.)/i) : null;
+      if (material.aoMap) material.aoMapIntensity = 1;
       if ('anisotropyMap' in material) {
         material.anisotropyMap = tangentTexture;
         material.anisotropy = tangentTexture ? previewMaterialProfile(material.name).anisotropy || 0 : 0;
@@ -1383,8 +1384,10 @@ function applyAutomaticTextures() {
         ? boundTextureMatching(targetName, 'auxiliary', /lightmap|occlusion/i) : null);
       configureStrandTangentRange(material, tangentTexture, THREE.ShaderChunk.lights_physical_fragment);
       configureStrandSpecular(material, strandMaterial);
-      if (targetName === 'eye') configureEyeIris(material, colorTexture);
+      configureEyeIris(material, targetName === 'eye' && Boolean(colorTexture),
+        irisColor(currentPayload?.player?.irisColor), irisScale(currentPayload?.player?.irisSize));
       const profile = applyPreviewMaterialProfile(material, normalTexture);
+      configureSkinShading(material, profile?.role === 'skin');
       material.transparent = profile?.role === 'glass'
         || Boolean(colorTexture) && (targetName === 'eyelash' || strandMaterial);
       material.alphaTest = targetName === 'eyelash' || strandMaterial ? profile?.alphaTest || 0 : 0;
@@ -1399,6 +1402,35 @@ function applyAutomaticTextures() {
       material.needsUpdate = true;
     });
   });
+}
+
+function setVectorAttribute(geometry, name, values, size) {
+  // Reused geometry keeps its GPU buffer; only the contents change.
+  const current = geometry.getAttribute(name);
+  if (current?.array.length === values.length) { current.array.set(values); current.needsUpdate = true; }
+  else geometry.setAttribute(name, new THREE.BufferAttribute(values, size));
+}
+
+// Studio meshes share one seam-aware normal pass (face/neck/body splits stay
+// smooth across meshes and material groups), then get tangents for normal maps.
+function prepareSurfaceFrames(payload) {
+  if (payload?.stats?.arena) return;
+  const meshes = modelRoot.children.filter((object) => object.isMesh && object.geometry.index
+    && !object.geometry.userData.authoredNormals);
+  // Instances repeat one local geometry, so only plain meshes share a space.
+  const groups = [meshes.filter((object) => !object.isInstancedMesh),
+    ...meshes.filter((object) => object.isInstancedMesh).map((object) => [object])];
+  for (const group of groups.filter((entries) => entries.length)) {
+    const normals = seamSmoothedNormals(group.map(({ geometry }) => ({
+      positions: geometry.attributes.position.array, indices: geometry.index.array,
+    })));
+    group.forEach(({ geometry }, index) => setVectorAttribute(geometry, 'normal', normals[index], 3));
+  }
+  for (const { geometry, isMesh } of modelRoot.children) {
+    if (!isMesh || !geometry.index || !geometry.attributes.uv || !geometry.attributes.normal) continue;
+    setVectorAttribute(geometry, 'tangent', vertexTangents(geometry.attributes.position.array,
+      geometry.attributes.normal.array, geometry.attributes.uv.array, geometry.index.array), 4);
+  }
 }
 
 async function load(payload, onProgress = () => {}, options = {}) {
@@ -1453,12 +1485,18 @@ async function load(payload, onProgress = () => {}, options = {}) {
     if (item.overlayUvs?.length) geometry.setAttribute('overlayUv', new THREE.BufferAttribute(typed(item.overlayUvs, Float32Array), 2));
     if (item.graffitiUvs?.length) geometry.setAttribute('graffitiUv', new THREE.BufferAttribute(typed(item.graffitiUvs, Float32Array), 2));
     geometry.setIndex(new THREE.BufferAttribute(indexArray(item.indices), 1));
-    geometry.computeVertexNormals();
+    if (item.normals?.length === item.positions?.length) {
+      geometry.setAttribute('normal', new THREE.BufferAttribute(typed(item.normals, Float32Array), 3));
+      geometry.userData.authoredNormals = true;
+    } else if (payload.stats?.arena) {
+      geometry.computeVertexNormals();
+    }
     const materials = [];
     for (const group of item.groups || []) {
       const targetName = materialTextureTarget(group.material);
       const profile = previewMaterialProfile(group.material);
       const Material = targetName === 'hair' || targetName === 'facialhair' || profile.role === 'eye' || profile.role === 'glass'
+        || profile.role === 'skin' && !neutralFacialHairFitBase
         ? THREE.MeshPhysicalMaterial
         : THREE.MeshStandardMaterial;
       const material = new Material({
@@ -1513,6 +1551,11 @@ async function load(payload, onProgress = () => {}, options = {}) {
       await nextFrame();
       sliceStarted = performance.now();
     }
+  }
+  try {
+    prepareSurfaceFrames(payload);
+  } catch {
+    for (const { geometry, isMesh } of modelRoot.children) if (isMesh && !geometry.attributes.normal) geometry.computeVertexNormals();
   }
   textureItems = payload.textures || [];
   textureCache = [];
@@ -1780,6 +1823,9 @@ function setTexture(index) {
     materials.filter(Boolean).forEach((material) => {
       material.map = texture;
       material.normalMap = null;
+      // Inspecting one texture shows it raw, without the automatic extra maps.
+      material.aoMap = null;
+      if ('anisotropyMap' in material) { material.anisotropyMap = null; material.anisotropy = 0; }
       configureTextureRange(material, texture);
       applyPreviewMaterialProfile(material, null);
       material.color.copy(texture ? new THREE.Color(0xffffff) : colorFor(material.name));
@@ -1913,6 +1959,8 @@ const api = {
         roughness: material.roughness ?? null,
         metalness: material.metalness ?? null,
         skinResponse: material.userData.skinMaterialResponse || null,
+        skinScatter: Boolean(material.userData.skinScatter),
+        eyeIris: Boolean(material.userData.eyeIris),
         rangeCompressed: Boolean(material.userData.textureRange),
       }));
     }),

@@ -113,7 +113,7 @@ function applyEditorDisplay() {
     }
     if (!clayMode && !neutralHead) return;
     for (const material of materials.filter(Boolean)) {
-      material.map = material.normalMap = null;
+      material.map = material.normalMap = material.aoMap = null;
       if ('anisotropyMap' in material) material.anisotropyMap = null;
       material.color.setHex(0x8e959c);
       material.transparent = false;
@@ -136,6 +136,8 @@ function setStudioLighting(value) {
     renderer.toneMapping = THREE.NoToneMapping;
     renderer.toneMappingExposure = 1;
     renderer.shadowMap.enabled = context.keyLight.castShadow = false;
+    // Flat lighting is a reference view: no studio reflections either.
+    scene.environment = null;
     context.ambientLight.intensity = sourcePayload?.player ? 2.15 : 1;
     context.hemisphereLight.intensity = context.fillLight.intensity = 0;
     context.keyLight.intensity = sourcePayload?.player ? 1.75 : 0.85;

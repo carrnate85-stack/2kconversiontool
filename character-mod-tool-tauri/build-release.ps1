@@ -80,6 +80,8 @@ try {
         if ($LASTEXITCODE) { throw 'Strand shader regression tests failed.' }
         & 'C:\Users\carrn\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\bin\node.exe' (Join-Path $root 'tests\skin-response.mjs')
         if ($LASTEXITCODE) { throw 'Skin response regression tests failed.' }
+        & 'C:\Users\carrn\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\bin\node.exe' (Join-Path $root 'tests\studio-shading.mjs')
+        if ($LASTEXITCODE) { throw 'Studio shading regression tests failed.' }
         & 'C:\Users\carrn\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\bin\node.exe' (Join-Path $root 'tests\renderer-transactions.cjs')
         if ($LASTEXITCODE) { throw 'Renderer texture transaction tests failed.' }
         & 'C:\Users\carrn\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\bin\node.exe' (Join-Path $root 'tests\staged-projection.mjs')
