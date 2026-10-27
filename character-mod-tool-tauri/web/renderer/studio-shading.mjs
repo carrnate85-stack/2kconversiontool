@@ -184,8 +184,9 @@ export function vertexTangents(positions, normals, uvs, indices, target = new Fl
   return target;
 }
 
-// The decoded eye textures carry the sclera only, so the iris is drawn in
-// each eye quadrant. Color and size are uniforms: one program for all players.
+// The decoded eye textures carry the sclera only, so the iris is drawn around
+// the cornea, which sits at the centre of the eyeball's 0-1 UVs.
+// Color and size are uniforms: one program for all players.
 export const EYE_ENVIRONMENT_INTENSITY = 0.45;
 
 export function configureEyeIris(material, enabled, color, scale) {
@@ -204,7 +205,7 @@ export function configureEyeIris(material, enabled, color, scale) {
     shader.fragmentShader = 'uniform vec3 nbaIrisColor;\nuniform float nbaIrisScale;\n' + shader.fragmentShader;
     // Runs after map/range decoding (which may have replaced map_fragment).
     shader.fragmentShader = shader.fragmentShader.replace('#include <color_fragment>', `#ifdef USE_MAP
-  vec2 nbaEyeOffset = fract( vMapUv * 2.0 ) - vec2( 0.5 );
+  vec2 nbaEyeOffset = vMapUv - vec2( 0.5 );
   float nbaIrisDistance = length( nbaEyeOffset ) / nbaIrisScale;
   float nbaIrisMask = 1.0 - smoothstep( 0.185, 0.255, nbaIrisDistance );
   float nbaPupilMask = 1.0 - smoothstep( 0.052, 0.085, nbaIrisDistance );
@@ -220,7 +221,24 @@ export function configureEyeIris(material, enabled, color, scale) {
 #endif
 #include <color_fragment>`);
   };
-  material.customProgramCacheKey = () => previousKey + ':nba-eye-iris-v3';
+  material.customProgramCacheKey = () => previousKey + ':nba-eye-iris-v4';
+}
+
+// The teartube mesh is the wet tear line along the lower lid; drawn opaque with
+// a placeholder flesh color it reads as a red rim. The caruncle stays opaque.
+export const TEAR_FILM = Object.freeze({ opacity: 0.18, roughness: 0.06, color: [0.95, 0.9, 0.9] });
+
+export function configureTearFilm(material) {
+  const film = /(?:^|_)teartube(?:_|$)/i.test(String(material.name || ''));
+  material.userData.tearFilm = film;
+  if (!film) return false;
+  material.color?.setRGB?.(...TEAR_FILM.color);
+  material.transparent = true;
+  material.opacity = TEAR_FILM.opacity;
+  material.depthWrite = false;
+  if ('roughness' in material) material.roughness = TEAR_FILM.roughness;
+  if ('metalness' in material) material.metalness = 0;
+  return true;
 }
 
 // Skin: sheen for the peach-fuzz rim, a lower dielectric F0, and wrapped,

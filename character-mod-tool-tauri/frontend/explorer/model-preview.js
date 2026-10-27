@@ -8,7 +8,7 @@ import { captureBasketFrame, catalogOverheadTarget, captureCreatedWoodTint } fro
 import { materialProfile, previewLightingProfile } from './render-profiles.mjs';
 import { skinBoundaryResponse, skinLuminanceResponse } from '../skin-response.mjs';
 import { configureStrandLightmap, configureStrandTangentRange, configureStrandSpecular, configureStrandCoverage } from '../strand-preview-fixes.mjs';
-import { createStudioEnvironment, studioLightBalance, seamSmoothedNormals, vertexTangents, configureEyeIris, configureSkinShading } from '../studio-shading.mjs';
+import { createStudioEnvironment, studioLightBalance, seamSmoothedNormals, vertexTangents, configureEyeIris, configureSkinShading, configureTearFilm } from '../studio-shading.mjs';
 
 
 export function createExplorerRenderer(options = {}) {
@@ -1118,17 +1118,15 @@ function disposeDerivedTextures(material) {
   material.userData.derivedTextures = [];
 }
 
-function eyeAtlasTexture(texture, material) {
+function eyeWhiteTexture(texture, material) {
   if (!texture || !/eyewhite/i.test(texture.name)) return texture;
+  // 2K27 eyewhite_color maps are one radial sclera image (white front, veined
+  // edges) across the eyeball's full 0-1 UVs, not a 2x2 atlas. Sampling a
+  // quadrant stretched the veined corner over the whole eye.
   const derived = texture.clone();
-  const rightEye = /(?:^|_)r_eye(?:_|$)/i.test(material.name);
-  derived.name = `${texture.name} · ${rightEye ? 'right' : 'left'} eye quadrant`;
+  derived.name = `${texture.name} · sclera`;
   derived.wrapS = THREE.ClampToEdgeWrapping;
   derived.wrapT = THREE.ClampToEdgeWrapping;
-  derived.repeat.set(0.5, 0.5);
-  // DDS textures are uploaded without a Y flip. The usable eye-white/iris
-  // color is stored in the lower image row, which is v=0.5 in this basis.
-  derived.offset.set(rightEye ? 0.5 : 0, 0.5);
   derived.needsUpdate = true;
   material.userData.derivedTextures.push(derived);
   return derived;
@@ -1360,7 +1358,7 @@ function applyAutomaticTextures() {
         ? boundTexture(targetName, 'color')
         : null);
       const colorTexture = targetName === 'eye'
-        ? eyeAtlasTexture(boundColorTexture, material)
+        ? eyeWhiteTexture(boundColorTexture, material)
         : boundColorTexture;
       const normalTexture = boundArenaTexture(material.name, 'normal') || (targetName
         ? boundTexture(targetName, 'normal')
@@ -1399,6 +1397,7 @@ function applyAutomaticTextures() {
         : colorFor(material.name));
       material.userData.skinMaterialResponse = materialResponses.get(targetName)?.toArray() || null;
       if (currentPayload?.shoe && !colorTexture) material.color.set(0xaaaaaa);
+      configureTearFilm(material);
       material.needsUpdate = true;
     });
   });

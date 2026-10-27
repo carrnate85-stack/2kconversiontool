@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { studioLightBalance, STUDIO_ENVIRONMENT, seamSmoothedNormals, vertexTangents, configureEyeIris, configureSkinShading } from '../web/renderer/studio-shading.mjs';
+import { studioLightBalance, STUDIO_ENVIRONMENT, seamSmoothedNormals, vertexTangents, configureEyeIris, configureSkinShading, configureTearFilm } from '../web/renderer/studio-shading.mjs';
 
 const balance = studioLightBalance({ ambient: 0.4, hemisphere: 0.8 });
 assert.ok(Math.abs(balance.ambient - 0.4 * STUDIO_ENVIRONMENT.ambientScale) < 1e-12);
@@ -57,7 +57,7 @@ assert.equal(eyeShader.basePreserved, true, 'Iris keeps the texture-range hook')
 assert.equal(eyeShader.uniforms.nbaIrisColor.value, color);
 assert.equal(eyeShader.uniforms.nbaIrisScale.value, 0.46);
 assert.ok(eyeShader.fragmentShader.indexOf('nbaIrisMask') < eyeShader.fragmentShader.indexOf('#include <color_fragment>'));
-assert.equal(eye.customProgramCacheKey(), 'range-base:nba-eye-iris-v3', 'Iris color is a uniform, not part of the program key');
+assert.equal(eye.customProgramCacheKey(), 'range-base:nba-eye-iris-v4', 'Iris color is a uniform, not part of the program key');
 const uniforms = eye.userData.eyeIrisUniforms;
 eye.onBeforeCompile = () => {}; eye.customProgramCacheKey = () => '';
 configureEyeIris(eye, true, { r: 1, g: 1, b: 1 }, 0.64);
@@ -81,5 +81,15 @@ const standard = hookMaterial();
 configureSkinShading(standard, true);
 assert.equal(standard.userData.skinScatter, false, 'Standard materials (no sheen) are left unchanged');
 assert.equal(standard.customProgramCacheKey(), 'range-base');
+
+// The tear line becomes a translucent film; the caruncle and other parts are untouched.
+const tearLine = { name: 'teartube_shader', color: { setRGB(...rgb) { this.rgb = rgb; } }, transparent: false, opacity: 1, depthWrite: true, roughness: 0.7, metalness: 0.03, userData: {} };
+assert.equal(configureTearFilm(tearLine), true);
+assert.ok(tearLine.transparent && tearLine.opacity < 0.5 && !tearLine.depthWrite && tearLine.roughness < 0.2 && tearLine.metalness === 0);
+for (const name of ['teartubecaruncle_shader', 'mouth_shader', 'face_shader']) {
+  const other = { name, transparent: false, opacity: 1, depthWrite: true, userData: {} };
+  assert.equal(configureTearFilm(other), false);
+  assert.ok(!other.transparent && other.opacity === 1 && other.depthWrite, `${name} stays opaque`);
+}
 
 console.log('Studio shading: light balance, seam/crease normals, tangent handedness and repair, chained iris uniforms and skin scatter passed.');
