@@ -437,3 +437,24 @@ export function configureColorwayMask(material, colorway) {
   material.customProgramCacheKey = () => `${previousKey}:nba-colorway-v1`;
   return true;
 }
+
+// Body bent-normal maps (and the player's face_bentnormal_o) carry ambient
+// occlusion in alpha: dark in the armpits, under the jaw, around the eyes and
+// nostrils. Bound as the aoMap, alpha is read in place of red. Its TXTR Min/Max
+// are bounds, not range compression (the chest's darkest raw alpha, 171/255, is
+// its Min of 0.67), so it is read raw. three applies the aoMap to ambient and
+// environment light only: contact shadows that leave the key light alone.
+export function configureOcclusionAlpha(material, enabled, aomapChunk) {
+  const sample = 'texture2D( aoMap, vAoMapUv ).r';
+  material.userData.occlusionAlpha = Boolean(enabled && material.aoMap && aomapChunk?.includes(sample));
+  if (!material.userData.occlusionAlpha) return false;
+  const chunk = aomapChunk.replace(sample, 'texture2D( aoMap, vAoMapUv ).a');
+  const previous = material.onBeforeCompile;
+  const previousKey = material.customProgramCacheKey();
+  material.onBeforeCompile = (shader) => {
+    previous(shader);
+    shader.fragmentShader = shader.fragmentShader.replace('#include <aomap_fragment>', chunk);
+  };
+  material.customProgramCacheKey = () => `${previousKey}:nba-occlusion-alpha-v1`;
+  return true;
+}

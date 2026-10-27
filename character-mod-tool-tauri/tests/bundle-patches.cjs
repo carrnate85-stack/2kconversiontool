@@ -38,7 +38,7 @@ for (const [name, channel, target] of [['face_color_o', 'color'], ['face_normal_
   ['female_headband_thin_color_o', 'color', undefined], ['female_headband_thin_normal_o', 'normal', undefined]]) {
   assert.equal(previewTextureUnused(texture(name, channel, target)), false, `${name} is kept`);
 }
-for (const [name, channel, target] of [['chest_normal_avg_ripped', 'normal', 'chest'], ['torso_normal_avg_normal', 'normal', 'torso'], ['face_bentnormal_o', 'auxiliary'],
+for (const [name, channel, target] of [['chest_normal_avg_ripped', 'normal', 'chest'], ['torso_normal_avg_normal', 'normal', 'torso'],
   ['face_wrinklecolor_o', 'auxiliary'], ['chest_region_id', 'auxiliary', 'chest'], ['torso_roughcurvedense', 'auxiliary', 'torso'],
   ['female_headband_thin_rdmo_o', 'auxiliary', undefined], ['female_headband_thin_coneangle_o', 'auxiliary', undefined]]) {
   assert.equal(previewTextureUnused(texture(name, channel, target)), true, `${name} is skipped`);
@@ -46,6 +46,10 @@ for (const [name, channel, target] of [['chest_normal_avg_ripped', 'normal', 'ch
 assert.equal(previewTextureUnused({ ...texture('chest_normal_avg_ripped', 'normal', 'chest'), externalPath: 'cmt-preview://shared/1' }), false, 'Native muscle-type body normal is kept');
 assert.equal(previewTextureUnused(texture('face_detailnormal_o', 'normal')), false, "The player's face detail normal is kept");
 assert.equal(previewTextureUnused({ ...texture('face_detailnormal_o', 'normal'), source: 'body-detail: char/male_skin.iff' }), true, 'The generic skin copy is skipped');
+for (const [name, target] of [['face_bentnormal_o', 'face'], ['chest_bentnormal', 'chest'], ['legs_bentnormal', 'legs']]) {
+  assert.equal(previewTextureUnused(texture(name, 'auxiliary', target)), false, `${name} is kept for its occlusion alpha`);
+}
+assert.equal(previewTextureUnused({ ...texture('face_bentnormal', 'auxiliary'), source: 'body-detail: char/male_skin.iff' }), true, "The generic face bent normal gives way to the player's");
 assert.equal(previewTextureUnused(texture('hair_strand_o', 'auxiliary', 'hair', [{ channel: 'tangent', material: 'hair_shader' }])), false, 'Assigned tangent maps are kept');
 // A selected config's body color outranks the main IFF's.
 const rankStart = bundle.indexOf('function bodyColorRank(');

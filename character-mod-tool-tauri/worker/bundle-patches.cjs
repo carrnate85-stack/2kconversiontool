@@ -45,13 +45,15 @@ const STRAND_REPLACEMENTS = [
 // from native preparation, picked by muscle type, so the skin IFF's own
 // avg_normal/avg_ripped copies are skipped. A player's own face_detailnormal_o
 // (2048x2048, the face's high-frequency detail over a 512x512 face_normal_o) is
-// kept; the generic skin IFF copies are not.
+// kept; the generic skin IFF copies are not. Body bent-normal maps are kept for
+// their alpha, which is ambient occlusion (the renderer's contact shadows); the
+// skin IFF's generic face_bentnormal gives way to the player's face_bentnormal_o.
 const UNUSED_TEXTURE = String.raw`      function previewTextureUnused(item) {
         const identity = ${'`${item.name || ""} ${item.source || ""}`'};
         const channels = item.assignments?.length ? item.assignments.map((assignment) => assignment.channel) : [item.binding?.channel];
         if (channels.some((channel) => channel === "color" || channel === "tangent")) return false;
         if (channels.includes("normal")) return /detailnormal/i.test(identity) && (!/^face_detailnormal_o\./i.test(item.name || "") || /_skin\.iff/i.test(identity)) || /_normal_avg_/i.test(identity) && !item.externalPath;
-        return !/occlusion|(?:^|_)ao(?:_|\.)|lightmap|tangent/i.test(identity);
+        return !/occlusion|(?:^|_)ao(?:_|\.)|lightmap|tangent|bentnormal/i.test(identity) || /face_bentnormal\./i.test(item.name || "") && /_skin\.iff/i.test(identity);
       }
 `;
 

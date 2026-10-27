@@ -8,7 +8,7 @@ import { captureBasketFrame, catalogOverheadTarget, captureCreatedWoodTint } fro
 import { materialProfile, previewLightingProfile } from './render-profiles.mjs';
 import { skinBoundaryResponse, skinLuminanceResponse } from '../skin-response.mjs';
 import { configureStrandLightmap, configureStrandTangentRange, configureStrandSpecular, configureStrandCoverage } from '../strand-preview-fixes.mjs';
-import { createStudioEnvironment, studioLightBalance, seamSmoothedNormals, vertexTangents, cardTextureUvs, configureEyeIris, configureSkinShading, configureTearFilm, configureEyewearLens, configureEyeSurface, strandTint, flipsBodyNormalGreen, configureDetailNormal, configureGarmentLayering, configureColorwayMask, SHOE_COLORWAY } from '../studio-shading.mjs';
+import { createStudioEnvironment, studioLightBalance, seamSmoothedNormals, vertexTangents, cardTextureUvs, configureEyeIris, configureSkinShading, configureTearFilm, configureEyewearLens, configureEyeSurface, strandTint, flipsBodyNormalGreen, configureDetailNormal, configureGarmentLayering, configureColorwayMask, SHOE_COLORWAY, configureOcclusionAlpha } from '../studio-shading.mjs';
 
 
 export function createExplorerRenderer(options = {}) {
@@ -1525,8 +1525,15 @@ function applyAutomaticTextures() {
       material.map = colorTexture;
       material.normalMap = normalTexture;
       // Strands already apply their own lightmap/occlusion response.
-      material.aoMap = targetName && !strandMaterial && targetName !== 'eye'
+      const occlusionTarget = targetName && !strandMaterial && targetName !== 'eye';
+      const occlusionTexture = occlusionTarget
         ? boundTextureMatching(targetName, 'auxiliary', /occlusion|(?:^|_)ao(?:_|\.)/i) : null;
+      // Without a dedicated occlusion map, the bent-normal map's alpha is the AO
+      // (the player's own face_bentnormal_o first).
+      const bentNormalTexture = occlusionTarget && !occlusionTexture
+        ? boundTextureMatching(targetName, 'auxiliary', /bentnormal_o\./i) || boundTextureMatching(targetName, 'auxiliary', /bentnormal/i)
+        : null;
+      material.aoMap = occlusionTexture || bentNormalTexture;
       if (material.aoMap) material.aoMapIntensity = 1;
       if ('anisotropyMap' in material) {
         material.anisotropyMap = tangentTexture;
@@ -1546,6 +1553,7 @@ function applyAutomaticTextures() {
       configureSkinShading(material, profile?.role === 'skin');
       configureDetailNormal(material, detailNormalTexture);
       configureColorwayMask(material, targetName === 'shoes' ? SHOE_COLORWAY : null);
+      configureOcclusionAlpha(material, Boolean(bentNormalTexture), THREE.ShaderChunk.aomap_fragment);
       if (configureGarmentLayering(material, garmentLayeringUniform, ['chest', 'torso', 'legs'].includes(targetName))) {
         object.customDepthMaterial = garmentShadowDepthMaterial();
       }
