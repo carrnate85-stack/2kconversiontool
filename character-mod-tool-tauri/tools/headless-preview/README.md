@@ -86,6 +86,13 @@ Rerun `prepare.cjs` after editing `web/renderer/`. To compare against an older
 renderer, pass that commit as `--baseline`. Once your changes are committed,
 `HEAD` would show the same renderer on both sides.
 
+To see a player through the app's own wrapper (`web/renderer/model-preview.js`:
+body fit, jersey fit and editor display, old and new side by side), open
+`http://localhost:8790/wrapper.html?player=png00110`. It takes `jersey=0`,
+`yaw`, `pitch` and `zoom`, and logs each side's load time and jersey-fit
+diagnostics. Use it for anything garment-related: `index.html` renders the
+explorer alone, without the wrapper's garment fit.
+
 ### Harness URL parameters
 
 | Parameter | Effect |
@@ -113,7 +120,8 @@ renderer, pass that commit as `--baseline`. Once your changes are committed,
   bitangent sign (`tangent.w`). On the body these frames match the UV-derived
   ones the renderer computes (tangent agreement 0.999).
 - These previews show the neutral rest pose: the scene's morph targets are
-  facial expressions and pose correctives, all zero at rest. They also skip the
-  wrapper's jersey/bust fit morphs and the default config's accessories.
+  facial expressions and pose correctives, all zero at rest. `index.html` also skips
+  the wrapper's jersey/bust fit (use `wrapper.html`) and the default config's
+  accessories.
 - Everything this writes (`work/`, `harness/players/`, the assembled renderers)
   is game-derived or generated and is git-ignored.

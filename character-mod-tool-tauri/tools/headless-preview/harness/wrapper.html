@@ -1,0 +1,12 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Wrapper harness</title>
+<style>body{margin:0;background:#111;color:#ccc;font:12px monospace}.row{display:flex;gap:4px}canvas{width:400px;height:420px;display:block}</style>
+<script>
+  window.requestAnimationFrame = (callback) => setTimeout(() => callback(performance.now()), 4);
+  window.cancelAnimationFrame = (handle) => clearTimeout(handle);
+</script></head>
+<body>
+<div class="row"><div><div>baseline (old) wrapper</div><canvas id="oldCanvas"></canvas></div><div><div>working tree (new) wrapper</div><canvas id="newCanvas"></canvas></div></div>
+<pre id="log"></pre>
+<script type="module" src="wrapper.mjs"></script>
+</body></html>

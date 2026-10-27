@@ -16,6 +16,9 @@ const rendererFiles = {
   'skin-response.mjs': 'skin-response.mjs',
   'strand-preview-fixes.mjs': 'strand-preview-fixes.mjs',
   'studio-shading.mjs': 'studio-shading.mjs',
+  // The app wrapper (wrapper.html): body fit, jersey fit, editor display.
+  'model-preview.js': 'model-preview.js',
+  'body-preview-editor.mjs': 'body-preview-editor.mjs',
 };
 
 function vendored(destination) {
@@ -42,4 +45,5 @@ for (const [published, source] of Object.entries(rendererFiles)) {
 }
 if (!fs.existsSync(path.join(harness, 'old/explorer/model-preview.js'))) throw new Error(`No explorer renderer at ${baseline}`);
 fs.copyFileSync(path.join(app, 'frontend/skin-preview-fixes.mjs'), path.join(harness, 'skin-preview-fixes.mjs'));
+for (const side of ['old', 'new']) fs.copyFileSync(path.join(app, 'frontend/skin-preview-fixes.mjs'), path.join(harness, side, 'skin-preview-fixes.mjs'));
 console.log(`Harness renderers: old = ${baseline}, new = working tree.`);
