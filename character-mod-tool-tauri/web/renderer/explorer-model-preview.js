@@ -387,8 +387,32 @@ function indexArray(value) {
   return new Uint16Array(indices);
 }
 
+// Time spent waiting in load yields, so load profiles separate work from waits
+// (background tabs throttle requestAnimationFrame to as little as once a second).
+let frameWaitMs = 0;
+let lastLoadProfile = null;
 function nextFrame() {
-  return new Promise((resolve) => requestAnimationFrame(resolve));
+  const started = performance.now();
+  return new Promise((resolve) => requestAnimationFrame((time) => { frameWaitMs += performance.now() - started; resolve(time); }));
+}
+
+// Busy milliseconds per load phase, excluding yields.
+function loadProfiler() {
+  const phases = {}, started = performance.now(), waitedAtStart = frameWaitMs;
+  let lapAt = started, waitedAtLap = frameWaitMs, yields = 0;
+  return {
+    yielded() { yields += 1; },
+    lap(name) {
+      const now = performance.now();
+      phases[name] = Math.round(now - lapAt - (frameWaitMs - waitedAtLap));
+      lapAt = now; waitedAtLap = frameWaitMs;
+    },
+    finish() {
+      const waitedMs = Math.round(frameWaitMs - waitedAtStart);
+      lastLoadProfile = { phases, busyMs: Math.round(performance.now() - started) - waitedMs, waitedMs, yields };
+      return lastLoadProfile;
+    },
+  };
 }
 
 function cancelLoad() {
@@ -1624,6 +1648,7 @@ async function load(payload, onProgress = () => {}, options = {}) {
   }
   let reusedGeometry = 0;
   const skippedMeshes = [];
+  const profile = loadProfiler();
   try {
   currentPayload = payload;
   materialMetadataByName = new Map();
@@ -1741,15 +1766,18 @@ async function load(payload, onProgress = () => {}, options = {}) {
     modelRoot.children.at(-1).userData.geometryKey = meshKey(item);
     if ((!options.deferRender || options.yieldPreparation) && performance.now() - sliceStarted >= 8 && itemIndex + 1 < items.length) {
       onProgress({ phase: 'meshes', completed: itemIndex + 1, total: items.length });
+      profile.yielded();
       await nextFrame();
       sliceStarted = performance.now();
     }
   }
+  profile.lap('meshes');
   try {
     prepareSurfaceFrames(payload);
   } catch {
     for (const { geometry, isMesh } of modelRoot.children) if (isMesh && !geometry.attributes.normal) geometry.computeVertexNormals();
   }
+  profile.lap('surfaceFrames');
   textureItems = payload.textures || [];
   textureCache = [];
   sliceStarted = performance.now();
@@ -1760,11 +1788,14 @@ async function load(payload, onProgress = () => {}, options = {}) {
     textureCache.push(reused || createDdsTexture(textureItems[index]));
     if ((!options.deferRender || options.yieldPreparation) && performance.now() - sliceStarted >= 8 && index + 1 < textureItems.length) {
       onProgress({ phase: 'textures', completed: index + 1, total: textureItems.length });
+      profile.yielded();
       await nextFrame();
       sliceStarted = performance.now();
     }
   }
+  profile.lap('textures');
   applyAutomaticTextures();
+  profile.lap('materials');
   if (generation !== loadGeneration) throw new Error('Preview cancelled.');
   if (!options.deferRender) {
     setEyelashesVisible(false, false);
@@ -1773,8 +1804,9 @@ async function load(payload, onProgress = () => {}, options = {}) {
     await compilePrograms(generation);
     if (isPlacedArena(payload)) setArenaCourtView();
     else updateCamera();
+    profile.lap('compile');
   }
-  return { decodedTextures: textureCache.filter(Boolean).length, reusedGeometry, skippedMeshes };
+  return { decodedTextures: textureCache.filter(Boolean).length, reusedGeometry, skippedMeshes, profile: profile.finish() };
   } finally {
     for (const object of retained.values()) {
       object.geometry.dispose();
@@ -2126,6 +2158,7 @@ const api = {
   setWireframe,
   stats: () => ({
     decodedTextures: textureCache.filter(Boolean).length,
+    loadProfile: lastLoadProfile,
     payload: currentPayload,
     previewProfile: currentPreviewProfile,
     fittedDistance,

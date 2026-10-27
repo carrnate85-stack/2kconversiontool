@@ -14,14 +14,19 @@ window.wrapperReady = (async () => {
   for (const side of ['old', 'new']) {
     await import(`./${side}/model-preview.js?canvas=${side}Canvas&global=viewer_${side}&interactive=0`);
     const viewer = window[`viewer_${side}`];
+    // Decoding the JSON payload is harness-only work (the app receives binary), so
+    // it's timed apart from the load; the profile shows busy time per phase.
+    const decodeStarted = performance.now();
+    const payload = decode(source);
+    log(side, 'decoded the harness payload in', (performance.now() - decodeStarted).toFixed(0), 'ms');
     const started = performance.now();
-    await viewer.load(decode(source));
+    await viewer.load(payload);
     viewer.setJerseyVisible(params.get('jersey') !== '0');
     const state = viewer.cameraState();
     viewer.setCameraState({ ...state, yaw: Number(params.get('yaw') ?? 0), pitch: Number(params.get('pitch') ?? 0.05),
       distance: state.fittedDistance * Number(params.get('zoom') ?? 0.9) });
-    const fit = viewer.stats().bodyFitJersey;
-    log(side, 'loaded in', (performance.now() - started).toFixed(0), 'ms; jersey fit', JSON.stringify(fit));
+    const stats = viewer.stats();
+    log(side, 'loaded in', (performance.now() - started).toFixed(0), 'ms; profile', JSON.stringify(stats.loadProfile), '; jersey fit', JSON.stringify(stats.bodyFitJersey));
   }
   log('done');
 })().catch((error) => log('error', error.stack || error.message));

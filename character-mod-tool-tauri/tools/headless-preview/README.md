@@ -89,9 +89,17 @@ renderer, pass that commit as `--baseline`. Once your changes are committed,
 To see a player through the app's own wrapper (`web/renderer/model-preview.js`:
 body fit, jersey fit and editor display, old and new side by side), open
 `http://localhost:8790/wrapper.html?player=png00110`. It takes `jersey=0`,
-`yaw`, `pitch` and `zoom`, and logs each side's load time and jersey-fit
-diagnostics. Use it for anything garment-related: `index.html` renders the
-explorer alone, without the wrapper's garment fit.
+`yaw`, `pitch` and `zoom`, and logs each side's load time, load profile and
+jersey-fit diagnostics. Use it for anything garment-related: `index.html`
+renders the explorer alone, without the wrapper's garment fit.
+
+Read load cost from the profile (`stats().loadProfile`: busy milliseconds per
+phase, with yields excluded), not from wall time. Wall time here includes
+decoding the JSON payload, which the app never does (it is logged separately),
+and a hidden or background pane throttles the load's frame yields to as little
+as once a second. Measured on five players, the app's own work is about 0.4 s:
+renderer ~110 ms, body fit ~150-180 ms, shader precompile ~100 ms, first draw
+~40 ms.
 
 ### Harness URL parameters
 

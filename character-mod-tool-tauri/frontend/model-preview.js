@@ -18,6 +18,7 @@ let clayMode = false;
 let headOcclusionVisible = true;
 let wireframe = false;
 let gridVisible = !transparentBackground;
+let wrapperLoadProfile = null;
 
 function visibleHit(hit) {
   if (!hit.object.visible || !hit.object.parent?.visible) return false;
@@ -228,6 +229,8 @@ async function load(payload, onProgress = () => {}) {
   }
   const result = await context.api.load(prepared, onProgress, { deferRender: true, yieldPreparation: true });
   if (generation !== loadGeneration) return { cancelled: true };
+  let lapAt = performance.now();
+  const lap = () => { const now = performance.now(), elapsed = Math.round(now - lapAt); lapAt = now; return elapsed; };
   sourcePayload = payload;
   for (let index = 0; index < prepared.meshes.length; index++) {
     const item = prepared.meshes[index], object = modelRoot.children[index];
@@ -236,6 +239,7 @@ async function load(payload, onProgress = () => {}) {
   }
   // Catalog heads and hair layers never use the body-fit editor.
   if (!String(payload.player?.mode || '').startsWith('hair-catalog-')) bodyEditor.initialize(prepared);
+  const bodyEditorMs = lap();
   // Configure everything that affects shader variants first, then compile them
   // off the main thread: drawing straight away compiled every program
   // synchronously and froze the UI for ~0.5 s on a cold load.
@@ -245,9 +249,12 @@ async function load(payload, onProgress = () => {}) {
   fitCamera(null, false);
   setGridVisible(gridVisible, false);
   if (!studioLighting) setStudioLighting(false, false);
+  const displayMs = lap();
   try { await context.api.precompile?.(); } catch { /* a newer load superseded this one */ }
   if (generation !== loadGeneration) return { cancelled: true };
+  const precompileMs = lap();
   draw();
+  wrapperLoadProfile = { renderer: result.profile || null, bodyEditorMs, displayMs, precompileMs, firstDrawMs: lap() };
   window.dispatchEvent(new CustomEvent('model-preview:loaded', { detail: { viewer: viewerGlobalName } }));
   return result;
   } catch (error) {
@@ -310,6 +317,7 @@ window[viewerGlobalName] = {
         inputColorSpace: sourcePayload?.textures?.find(item => item.name === material.map)?.inputColorSpace || null,
       })),
       bodyFitJersey: bodyEditor.diagnostics(),
+      loadProfile: wrapperLoadProfile,
     };
   },
 };
