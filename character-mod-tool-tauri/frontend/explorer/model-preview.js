@@ -8,7 +8,7 @@ import { captureBasketFrame, catalogOverheadTarget, captureCreatedWoodTint } fro
 import { materialProfile, previewLightingProfile } from './render-profiles.mjs';
 import { skinBoundaryResponse, skinLuminanceResponse } from '../skin-response.mjs';
 import { configureStrandLightmap, configureStrandTangentRange, configureStrandSpecular, configureStrandCoverage } from '../strand-preview-fixes.mjs';
-import { createStudioEnvironment, studioLightBalance, seamSmoothedNormals, vertexTangents, cardTextureUvs, configureEyeIris, configureSkinShading, configureTearFilm, configureEyewearLens, configureEyeSurface, strandTint, flipsBodyNormalGreen, configureDetailNormal, configureGarmentLayering, configureColorwayMask, SHOE_COLORWAY, configureOcclusionAlpha, GARMENT_LAYERING, previewGarmentKind, garmentCoverWeights } from '../studio-shading.mjs';
+import { createStudioEnvironment, studioLightBalance, seamSmoothedNormals, vertexTangents, cardTextureUvs, configureEyeIris, configureSkinShading, configureTearFilm, configureEyewearLens, configureEyeSurface, strandTint, flipsBodyNormalGreen, configureDetailNormal, configureGarmentLayering, configureColorwayMask, SHOE_COLORWAY, configureOcclusionAlpha, GARMENT_LAYERING, previewGarmentKind, garmentCoverWeights, garmentBandBounds, GARMENT_BAND } from '../studio-shading.mjs';
 
 
 export function createExplorerRenderer(options = {}) {
@@ -1304,6 +1304,9 @@ function garmentShadowDepthMaterial() {
   return garmentShadowDepth;
 }
 
+// Sports-bra band bounds for the current body (see garmentBandBounds); zeros = none.
+const garmentBandUniform = { value: new THREE.Vector4() };
+
 const GARMENT_CUTOUT_FILL = Object.freeze({ threshold: [0.02, 0.06], color: [0.1, 0.105, 0.115] });
 
 function configureTextureRange(material, texture, fillCutouts = false) {
@@ -1327,6 +1330,23 @@ function configureTextureRange(material, texture, fillCutouts = false) {
   }
   material.onBeforeCompile = range ? (shader) => {
     Object.assign(shader.uniforms, uniforms);
+    // Body maps also take the sports-bra band, computed per pixel from the body
+    // position against shared bounds (bottom, top, center x, half-width; 0 = none).
+    if (fill) {
+      shader.uniforms.nbaGarmentBand = garmentBandUniform;
+      shader.vertexShader = 'varying vec3 vNbaBodyPosition;\n'
+        + shader.vertexShader.replace('#include <uv_vertex>', '#include <uv_vertex>\nvNbaBodyPosition = position;');
+      shader.fragmentShader = `varying vec3 vNbaBodyPosition;
+uniform vec4 nbaGarmentBand;
+float nbaGarmentBandWeight() {
+  if ( nbaGarmentBand.w <= 0.0 ) return 0.0;
+  float edge = ${GARMENT_BAND.edge.toFixed(2)};
+  return smoothstep( nbaGarmentBand.x - edge, nbaGarmentBand.x, vNbaBodyPosition.z )
+    * ( 1.0 - smoothstep( nbaGarmentBand.y, nbaGarmentBand.y + edge, vNbaBodyPosition.z ) )
+    * ( 1.0 - smoothstep( nbaGarmentBand.w - edge, nbaGarmentBand.w, abs( vNbaBodyPosition.x - nbaGarmentBand.z ) ) );
+}
+` + shader.fragmentShader;
+    }
     shader.fragmentShader = shader.fragmentShader
       .replace(
         '#include <map_pars_fragment>',
@@ -1339,7 +1359,7 @@ function configureTextureRange(material, texture, fillCutouts = false) {
           #ifdef DECODE_VIDEO_TEXTURE
             sampledDiffuseColor = sRGBTransferEOTF( sampledDiffuseColor );
           #endif
-          ${fill ? `float garmentCutout = 1.0 - smoothstep( ${GARMENT_CUTOUT_FILL.threshold.join(', ')}, max( max( sampledDiffuseColor.r, sampledDiffuseColor.g ), sampledDiffuseColor.b ) );` : ''}
+          ${fill ? `float garmentCutout = max( 1.0 - smoothstep( ${GARMENT_CUTOUT_FILL.threshold.join(', ')}, max( max( sampledDiffuseColor.r, sampledDiffuseColor.g ), sampledDiffuseColor.b ) ), nbaGarmentBandWeight() );` : ''}
           vec4 rangeDecodedColor = mix( mapRangeMin, mapRangeMax, sampledDiffuseColor );
           sampledDiffuseColor = mix( sampledDiffuseColor, rangeDecodedColor, mapRangeMask );
           ${srgb ? 'sampledDiffuseColor = sRGBTransferEOTF( sampledDiffuseColor );' : ''}
@@ -1348,7 +1368,7 @@ function configureTextureRange(material, texture, fillCutouts = false) {
         #endif`,
       );
   } : () => {};
-  material.customProgramCacheKey = () => (range ? `nba2k27-texture-range-v1${srgb ? '-srgb' : ''}${fill ? '-cutout' : ''}` : '');
+  material.customProgramCacheKey = () => (range ? `nba2k27-texture-range-v1${srgb ? '-srgb' : ''}${fill ? '-cutout-band' : ''}` : '');
 }
 
 function median(values) {
@@ -1811,6 +1831,7 @@ async function load(payload, onProgress = () => {}, options = {}) {
   }
   profile.lap('textures');
   applyAutomaticTextures();
+  applyGarmentBand();
   profile.lap('materials');
   if (generation !== loadGeneration) throw new Error('Preview cancelled.');
   if (!options.deferRender) {
@@ -2047,6 +2068,37 @@ function setWireframe(value) {
 // 0 turns it off. Footwear keeps its own depth.
 function setGarmentLayering(depth) {
   garmentLayeringUniform.value.x = Math.max(0, Number(depth) || 0);
+}
+
+// Extends the chest map's sports-bra cut-out into a band around the torso
+// (garmentBandUniform); bodies without cut-out cups get none.
+function applyGarmentBand() {
+  garmentBandUniform.value.set(0, 0, 0, 0);
+  modelRoot.traverse((object) => {
+    const geometry = object.isMesh ? object.geometry : null;
+    const materials = Array.isArray(object.material) ? object.material : [object.material];
+    if (!geometry?.groups?.length || !geometry.index || !geometry.getAttribute('uv')) return;
+    const index = geometry.index.array, uv = geometry.getAttribute('uv').array;
+    const seen = new Set(), cups = [];
+    for (const group of geometry.groups) {
+      const material = materials[group.materialIndex ?? 0];
+      if (materialTextureTarget(material?.name) !== 'chest' || !material.map) continue;
+      const decoded = decodedTexturePixels(material.map);
+      if (!decoded) continue;
+      const size = decoded.size;
+      for (let cursor = group.start; cursor < group.start + group.count; cursor++) {
+        const v = index[cursor];
+        if (seen.has(v)) continue;
+        seen.add(v);
+        const x = Math.min(size - 1, Math.floor((uv[v * 2] - Math.floor(uv[v * 2])) * size));
+        const y = Math.min(size - 1, Math.floor((uv[v * 2 + 1] - Math.floor(uv[v * 2 + 1])) * size));
+        const offset = (y * size + x) * 4;
+        if (Math.max(decoded.pixels[offset], decoded.pixels[offset + 1], decoded.pixels[offset + 2]) < 16) cups.push(v);
+      }
+    }
+    const bounds = garmentBandBounds(geometry.getAttribute('position').array, cups);
+    if (bounds) garmentBandUniform.value.fromArray(bounds);
+  });
 }
 
 // Marks body vertices covered by a preview garment (nbaGarmentCover), so only

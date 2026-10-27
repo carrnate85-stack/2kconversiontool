@@ -513,3 +513,24 @@ export function configureOcclusionAlpha(material, enabled, aomapChunk) {
   material.customProgramCacheKey = () => `${previousKey}:nba-occlusion-alpha-v1`;
   return true;
 }
+
+// A female player's scanned chest color is black only where the sports-bra cups
+// go, so the cut-out fill alone drew two gray ovals. The band extends it into a
+// bandeau around the torso: from a little below the cups to their top (z is up),
+// within 1.6x the cups' half-width so the arms stay bare. Returns
+// [bottom, top, centerX, halfWidth] for the fill shader, or null without cups.
+export const GARMENT_BAND = Object.freeze({ below: 3, above: 0.5, widthScale: 1.6, edge: 0.6, minimumCupVertices: 20 });
+
+export function garmentBandBounds(positions, cups, band = GARMENT_BAND) {
+  if (cups.length < band.minimumCupVertices) return null;
+  let low = Infinity, high = -Infinity, centerX = 0;
+  for (const v of cups) {
+    low = Math.min(low, positions[v * 3 + 2]);
+    high = Math.max(high, positions[v * 3 + 2]);
+    centerX += positions[v * 3];
+  }
+  centerX /= cups.length;
+  let halfWidth = 0;
+  for (const v of cups) halfWidth = Math.max(halfWidth, Math.abs(positions[v * 3] - centerX));
+  return [low - band.below, high + band.above, centerX, halfWidth * band.widthScale];
+}

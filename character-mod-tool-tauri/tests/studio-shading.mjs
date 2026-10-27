@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { studioLightBalance, STUDIO_ENVIRONMENT, seamSmoothedNormals, vertexTangents, cardTextureUvs, configureEyeIris, configureSkinShading, configureTearFilm, configureEyewearLens, EYEWEAR_LENS, configureEyeSurface, EYE_SURFACE, strandTint, flipsBodyNormalGreen, configureDetailNormal, configureGarmentLayering, GARMENT_LAYERING, previewGarmentKind, garmentCoverWeights, configureColorwayMask, SHOE_COLORWAY, configureOcclusionAlpha } from '../web/renderer/studio-shading.mjs';
+import { studioLightBalance, STUDIO_ENVIRONMENT, seamSmoothedNormals, vertexTangents, cardTextureUvs, configureEyeIris, configureSkinShading, configureTearFilm, configureEyewearLens, EYEWEAR_LENS, configureEyeSurface, EYE_SURFACE, strandTint, flipsBodyNormalGreen, configureDetailNormal, configureGarmentLayering, GARMENT_LAYERING, previewGarmentKind, garmentCoverWeights, garmentBandBounds, GARMENT_BAND, configureColorwayMask, SHOE_COLORWAY, configureOcclusionAlpha } from '../web/renderer/studio-shading.mjs';
 
 const balance = studioLightBalance({ ambient: 0.4, hemisphere: 0.8 });
 assert.ok(Math.abs(balance.ambient - 0.4 * STUDIO_ENVIRONMENT.ambientScale) < 1e-12);
@@ -127,6 +127,13 @@ const cover = garmentCoverWeights(new Float32Array([0, 0, 0, 40, 0, 0, 0, -90, 0
   { kind: 'footwear', positions: new Float32Array([0, -88, 1]) },
 ]);
 assert.deepEqual(Array.from(cover), [1, 0, 0, 0, 0, 1]);
+// The sports-bra band spans a little below the cups to their top, centered on
+// them, 1.6x their half-width; too few cup vertices means no band.
+const cupPositions = new Float32Array(GARMENT_BAND.minimumCupVertices * 3);
+for (let i = 0; i < GARMENT_BAND.minimumCupVertices; i++) cupPositions.set([i % 2 ? 10 : -10, -12, 28 + (i % 5) * 2], i * 3);
+const cupIndices = Array.from({ length: GARMENT_BAND.minimumCupVertices }, (_, i) => i);
+assert.deepEqual(garmentBandBounds(cupPositions, cupIndices), [28 - GARMENT_BAND.below, 36 + GARMENT_BAND.above, 0, 10 * GARMENT_BAND.widthScale]);
+assert.equal(garmentBandBounds(cupPositions, cupIndices.slice(0, 5)), null);
 
 // A colorway mask recolors after the map step (which range decoding rewrites)
 // and before vertex colors; no map means nothing to recolor.
