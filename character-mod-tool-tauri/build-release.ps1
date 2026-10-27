@@ -84,6 +84,8 @@ try {
         if ($LASTEXITCODE) { throw 'Studio shading regression tests failed.' }
         & 'C:\Users\carrn\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\bin\node.exe' (Join-Path $root 'tests\bundle-patches.cjs')
         if ($LASTEXITCODE) { throw 'Preview worker bundle patch tests failed.' }
+        & 'C:\Users\carrn\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\bin\node.exe' (Join-Path $root 'tests\frontend-sync.cjs')
+        if ($LASTEXITCODE) { throw 'Frontend renderer copies are out of date.' }
         & 'C:\Users\carrn\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\bin\node.exe' (Join-Path $root 'tests\renderer-transactions.cjs')
         if ($LASTEXITCODE) { throw 'Renderer texture transaction tests failed.' }
         & 'C:\Users\carrn\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\bin\node.exe' (Join-Path $root 'tests\staged-projection.mjs')
