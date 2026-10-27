@@ -100,6 +100,44 @@ fn skin_color(value: &Value) -> Option<i64> {
         .or_else(|| value.as_str().and_then(|s| s.parse().ok()))
         .filter(|n| (0..=99).contains(n))
 }
+/// FxTweakables record ids (two name hashes) of the hair/beard color triple.
+const HAIR_COLOR_TWEAK: (u32, u32) = (0x8790_02a7, 0x10de_55c5);
+
+/// Reads an RGB parameter from an FxTweakables blob: records start at 0x50, each
+/// a type word, two name hashes, three padding words, then the value. Scalar
+/// records (0x48/0x88/0x8c) are 9 words; vector records (0x98-0x9a) 15 words
+/// holding value, minimum and maximum triples. Unknown layouts read as absent.
+fn fx_tweak_color(bytes: &[u8], id: (u32, u32)) -> Option<[f64; 3]> {
+    let mut offset = 0x50;
+    while offset + 12 <= bytes.len() {
+        let kind = codec::u32_at(bytes, offset).ok()?;
+        let words = match kind {
+            0x48 | 0x88 | 0x8c => 9,
+            0x98..=0x9a => 15,
+            _ => return None,
+        };
+        if offset + words * 4 > bytes.len() {
+            return None;
+        }
+        if words == 15
+            && codec::u32_at(bytes, offset + 4).ok()? == id.0
+            && codec::u32_at(bytes, offset + 8).ok()? == id.1
+        {
+            let channel = |slot: usize| {
+                let at = offset + 24 + slot * 4;
+                f32::from_le_bytes(bytes[at..at + 4].try_into().unwrap()) as f64
+            };
+            let color = [channel(0), channel(1), channel(2)];
+            return color
+                .iter()
+                .all(|value| value.is_finite() && (0.0..=1.0).contains(value))
+                .then_some(color);
+        }
+        offset += words * 4;
+    }
+    None
+}
+
 /// Detail maps (lightmaps, strand tangents, occlusion, wrinkle and region maps)
 /// that a preview can render without; color and normal maps are never optional.
 fn auxiliary_texture(lower_name: &str) -> bool {
@@ -676,6 +714,18 @@ impl Assets {
             Err(_) => json!({}),
         };
         let body = appearance.get("appearance").unwrap_or(&appearance);
+        // Per-player hair and beard color from hair_####/beard_#### FxTweakables.
+        let tweak_names: Vec<String> = main
+            .names()
+            .map(|rows| rows.iter().filter_map(|row| row["name"].as_str().map(str::to_owned)).collect())
+            .unwrap_or_default();
+        let mut strand_tint = |prefix: &str| {
+            let pattern = regex::Regex::new(&format!(r"(?i)^{prefix}_\d+\.fxtweakables$")).ok()?;
+            let name = tweak_names.iter().find(|name| pattern.is_match(name))?;
+            fx_tweak_color(&main.named(name).ok()?, HAIR_COLOR_TWEAK)
+        };
+        let hair_tint = strand_tint("hair");
+        let beard_tint = strand_tint("beard");
         let accessories = &appearance["accessory_items"];
         let config = payload["config"]
             .as_str()
@@ -916,6 +966,7 @@ impl Assets {
             "fingerprint":fingerprint,"native":true,
             "options":{"companionPaths":companions,"externalTextures":external,"projectTangent":"staged","preferHighestDetail":true},
             "player":{"mode":"staged-player","defaultConfig":config,"gender":gender,"skinColor":skin,"irisColor":body.get("iris color").and_then(Value::as_str).unwrap_or("BROWN"),"irisSize":body.get("iris size").and_then(Value::as_str).unwrap_or("REGULAR"),"bodyFit":fit,
+                "hairTint":hair_tint,"beardTint":beard_tint,
                 "companionsLoaded":companions.len(),"companionsRequested":companions.len(),"sharedTexturesLoaded":external.len(),
                 "stagedBodyTextures":companions.iter().filter(|c| c["kind"].as_str().is_some_and(|s| s.starts_with("body-")) && c["name"].as_str().is_some_and(|s| !s.starts_with("char/"))).count(),
                 "jerseyAvailable":companions.iter().any(|c| c["kind"] == "preview-jersey")}}),
@@ -1343,6 +1394,25 @@ mod tests {
         assert!(owned(&mut assets, &["shared"]).is_err());
         assets.release_resources(lease(&values[0]));
         assert!(owned(&mut assets, &["shared"]).is_ok());
+    }
+
+    #[test]
+    fn fx_tweak_color_reads_the_hair_color_record() {
+        let mut bytes = vec![0_u8; 0x50];
+        let mut push = |words: &[u32]| words.iter().for_each(|w| bytes.extend_from_slice(&w.to_le_bytes()));
+        // A scalar record, then the color record: value, minimum, maximum.
+        push(&[0x88, 0x649b_3d83, 0x649b_3d83, 0, 0, 0, 0, 0, 1.0_f32.to_bits()]);
+        let (a, b) = super::HAIR_COLOR_TWEAK;
+        push(&[0x99, a, b, 0, 0, 0, 0.8039_f32.to_bits(), 0.451_f32.to_bits(), 0.2431_f32.to_bits(), 0, 0, 0,
+            1.0_f32.to_bits(), 1.0_f32.to_bits(), 1.0_f32.to_bits()]);
+        let color = super::fx_tweak_color(&bytes, super::HAIR_COLOR_TWEAK).unwrap();
+        assert!((color[0] - 0.8039).abs() < 1e-6 && (color[1] - 0.451).abs() < 1e-6 && (color[2] - 0.2431).abs() < 1e-6);
+        assert_eq!(super::fx_tweak_color(&bytes, (1, 2)), None, "missing record");
+        assert_eq!(super::fx_tweak_color(&bytes[..0x60], super::HAIR_COLOR_TWEAK), None, "truncated blob");
+        let mut unknown = vec![0_u8; 0x50];
+        unknown.extend_from_slice(&0x1234_u32.to_le_bytes());
+        unknown.extend_from_slice(&[0; 32]);
+        assert_eq!(super::fx_tweak_color(&unknown, super::HAIR_COLOR_TWEAK), None, "unknown record type");
     }
 
     #[test]

@@ -8,7 +8,7 @@ import { captureBasketFrame, catalogOverheadTarget, captureCreatedWoodTint } fro
 import { materialProfile, previewLightingProfile } from './render-profiles.mjs';
 import { skinBoundaryResponse, skinLuminanceResponse } from '../skin-response.mjs';
 import { configureStrandLightmap, configureStrandTangentRange, configureStrandSpecular, configureStrandCoverage } from '../strand-preview-fixes.mjs';
-import { createStudioEnvironment, studioLightBalance, seamSmoothedNormals, vertexTangents, cardTextureUvs, configureEyeIris, configureSkinShading, configureTearFilm, configureEyewearLens, configureEyeSurface } from '../studio-shading.mjs';
+import { createStudioEnvironment, studioLightBalance, seamSmoothedNormals, vertexTangents, cardTextureUvs, configureEyeIris, configureSkinShading, configureTearFilm, configureEyewearLens, configureEyeSurface, strandTint } from '../studio-shading.mjs';
 
 
 export function createExplorerRenderer(options = {}) {
@@ -1471,6 +1471,10 @@ function applyAutomaticTextures() {
       material.color.copy(colorTexture && targetName !== 'eyelash'
         ? materialResponses.get(targetName) || new THREE.Color(0xffffff)
         : colorFor(material.name));
+      const tint = colorTexture && strandMaterial
+        ? strandTint(targetName === 'facialhair' ? currentPayload?.player?.beardTint : currentPayload?.player?.hairTint) : null;
+      if (tint) material.color.multiply(new THREE.Color(...tint));
+      material.userData.strandTint = tint;
       material.userData.skinMaterialResponse = materialResponses.get(targetName)?.toArray() || null;
       if (currentPayload?.shoe && !colorTexture) material.color.set(0xaaaaaa);
       configureTearFilm(material);
@@ -2088,6 +2092,7 @@ const api = {
         skinResponse: material.userData.skinMaterialResponse || null,
         skinScatter: Boolean(material.userData.skinScatter),
         eyeIris: Boolean(material.userData.eyeIris),
+        strandTint: material.userData.strandTint || null,
         rangeCompressed: Boolean(material.userData.textureRange),
         rangeSrgb: Boolean(material.userData.textureRangeSrgb),
       }));

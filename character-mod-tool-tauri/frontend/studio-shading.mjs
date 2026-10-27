@@ -337,3 +337,11 @@ void RE_Direct_NbaSkin( const in IncidentLight directLight, const in vec3 geomet
   };
   material.customProgramCacheKey = () => previousKey + ':nba-skin-scatter-v1';
 }
+
+// Per-player hair/beard color from the FxTweakables color record. 2K multiplies
+// the strand albedo by it; (0,0,0) means no tint is set, so it reads as absent.
+export function strandTint(value) {
+  if (!Array.isArray(value) || value.length !== 3) return null;
+  if (!value.every((channel) => Number.isFinite(channel) && channel >= 0 && channel <= 1)) return null;
+  return value.some((channel) => channel > 0) ? value.slice() : null;
+}

@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { studioLightBalance, STUDIO_ENVIRONMENT, seamSmoothedNormals, vertexTangents, cardTextureUvs, configureEyeIris, configureSkinShading, configureTearFilm, configureEyewearLens, EYEWEAR_LENS, configureEyeSurface, EYE_SURFACE } from '../web/renderer/studio-shading.mjs';
+import { studioLightBalance, STUDIO_ENVIRONMENT, seamSmoothedNormals, vertexTangents, cardTextureUvs, configureEyeIris, configureSkinShading, configureTearFilm, configureEyewearLens, EYEWEAR_LENS, configureEyeSurface, EYE_SURFACE, strandTint } from '../web/renderer/studio-shading.mjs';
 
 const balance = studioLightBalance({ ambient: 0.4, hemisphere: 0.8 });
 assert.ok(Math.abs(balance.ambient - 0.4 * STUDIO_ENVIRONMENT.ambientScale) < 1e-12);
@@ -123,4 +123,10 @@ for (const name of ['teartubecaruncle_shader', 'mouth_shader', 'face_shader']) {
   assert.ok(!other.transparent && other.opacity === 1 && other.depthWrite, `${name} stays opaque`);
 }
 
-console.log('Studio shading: light balance, seam/crease normals, tangent handedness and repair, chained iris uniforms and skin scatter passed.');
+assert.deepEqual(strandTint([0.8039, 0.451, 0.2431]), [0.8039, 0.451, 0.2431]);
+assert.deepEqual(strandTint([1, 1, 1]), [1, 1, 1], 'Neutral tint passes through');
+for (const unset of [null, undefined, [0, 0, 0], [0.5, 0.5], [0.5, NaN, 0.5], [1.2, 0.5, 0.5], [-0.1, 0.5, 0.5], 'brown']) {
+  assert.equal(strandTint(unset), null, `${JSON.stringify(unset)} reads as no tint`);
+}
+
+console.log('Studio shading: light balance, seam/crease normals, tangent handedness and repair, chained iris uniforms, skin scatter and strand tint passed.');
