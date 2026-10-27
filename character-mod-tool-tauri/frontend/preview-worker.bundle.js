@@ -3729,6 +3729,11 @@
       function buildMesh(iff, model, modelPath, remainingTriangles, materialUsage, preferHighestDetail = false) {
         const position = model.VertexFormat?.POSITION0;
         const tangentSpaceAttachment = String(position?.Format || "").toUpperCase() === "R16G16B16A16_UINT" && Boolean(model.VertexFormat?.POSITION1 && model.VertexFormat?.TEXCOORD0 && model.VertexFormat?.TEXCOORD1);
+        const strandCards = !tangentSpaceAttachment && Boolean(model.VertexFormat?.TEXCOORD1) && (() => {
+          let inherited = "";
+          const materials = (Array.isArray(model.Prim) ? model.Prim : []).map((primitive) => inherited = primitiveMaterial(primitive, inherited));
+          return materials.length > 0 && materials.every((material) => /^(?:facial)?hair_/i.test(material));
+        })();
         const streams = vertexStreams(model);
         const positionStream = streams[Number(position?.Stream || 0)];
         const indexEntry = memberFor(iff, model.IndexBuffer?.Binary);
@@ -3745,7 +3750,7 @@
         const sourceIndices = readIndices(indexBytes, model.IndexBuffer.Format);
         if (!sourceIndices) return { reason: `unsupported index format ${model.IndexBuffer.Format || "(none)"}` };
         const vertexCount = Math.floor(positionBytes.length / stride);
-        const uvDescriptors = tangentSpaceAttachment ? [model.VertexFormat?.TEXCOORD1, model.VertexFormat?.TEXCOORD0] : [model.VertexFormat?.TEXCOORD0];
+        const uvDescriptors = tangentSpaceAttachment ? [model.VertexFormat?.TEXCOORD1, model.VertexFormat?.TEXCOORD0] : strandCards ? [model.VertexFormat?.TEXCOORD0, model.VertexFormat?.TEXCOORD1] : [model.VertexFormat?.TEXCOORD0];
         const uvOptions = uvDescriptors.filter(Boolean).map((descriptor) => {
           const stream = streams[Number(descriptor.Stream || 0)];
           const entry = memberFor(iff, stream?.Binary);
@@ -3771,12 +3776,12 @@
           }
           return { descriptor, stream, bytes: bytes2, stride: streamStride, score };
         });
-        uvOptions.sort((left, right) => right.score - left.score);
+        if (tangentSpaceAttachment) uvOptions.sort((left, right) => right.score - left.score);
         const uvOption = uvOptions[0] || {};
         const uvDescriptor = uvOption.descriptor;
         const uvBytes = uvOption.bytes || null;
         const uvStride = Number(uvOption.stride || 0);
-        const attachmentOption = tangentSpaceAttachment ? uvOptions.find((option) => option.descriptor !== uvDescriptor) || {} : {};
+        const attachmentOption = tangentSpaceAttachment || strandCards ? uvOptions.find((option) => option.descriptor !== uvDescriptor) || {} : {};
         const attachmentDescriptor = attachmentOption.descriptor;
         const attachmentBytes = attachmentOption.bytes || null;
         const attachmentStride = Number(attachmentOption.stride || 0);
@@ -3855,7 +3860,7 @@
             positions: new Float32Array(positions),
             sourceVertexIds: new Uint32Array(sourceVertexIds),
             uvs: new Float32Array(uvs),
-            attachmentUvs: tangentSpaceAttachment ? new Float32Array(attachmentUvs) : null,
+            attachmentUvs: tangentSpaceAttachment || strandCards ? new Float32Array(attachmentUvs) : null,
             tangentOffsets: tangentSpaceAttachment ? new Float32Array(tangentOffsets) : null,
             tangentAnchorIds: tangentSpaceAttachment ? new Uint32Array(tangentAnchorIds) : null,
             tangentSpaceAttachment,

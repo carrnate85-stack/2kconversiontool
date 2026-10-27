@@ -170,6 +170,14 @@ mod tests {
         assert!(attribute(&[0, 0, 0], 4, 0, &descriptor, 2).is_err());
         assert!(attribute(&[0; 4], 4, usize::MAX, &descriptor, 2).is_err());
     }
+    #[test]
+    fn strand_geometry_is_hair_and_beard_files_only() {
+        assert!(strand_geometry("staged/png01018_geo_hair_straight_long.iff"));
+        assert!(strand_geometry(r"C:\staged\PNG01507_GEO_FACIALHAIR_01.IFF"));
+        assert!(!strand_geometry("staged/png01018.iff"), "body mesh has armpit hair groups");
+        assert!(!strand_geometry("staged/png06970_geo_hat_cap_01.iff"));
+        assert!(!strand_geometry("arena/floor_court_chair_rows.iff"));
+    }
 }
 
 struct Buffers {
@@ -238,6 +246,7 @@ fn mesh(
     buffers: &mut Buffers,
     model: &Value,
     path: &str,
+    strand: bool,
     budget: usize,
 ) -> Result<(Value, usize)> {
     let position = &model["VertexFormat"]["POSITION0"];
@@ -337,7 +346,7 @@ fn mesh(
             } else {
                 "TEXCOORD0"
             },
-            tangent,
+            tangent || strand,
         ),
     ] {
         let descriptor = &model["VertexFormat"][semantic];
@@ -473,6 +482,11 @@ fn mesh(
     Ok((result, triangles))
 }
 
+fn strand_geometry(file: &str) -> bool {
+    let leaf = file.rsplit(['/', '\\']).next().unwrap_or(file).to_lowercase();
+    leaf.contains("_geo_hair_") || leaf.contains("_geo_facialhair_")
+}
+
 pub fn build(
     archive: &mut Archive,
     catalog: &Catalog,
@@ -489,6 +503,9 @@ pub fn build(
     let mut scenes = Vec::new();
     let mut seen = std::collections::HashSet::new();
     let mut triangles = 0usize;
+    // Strand cards carry a per-card lightmap layout in their second UV set; keep
+    // it for regular hair and beard geometry too, not just tangent-space meshes.
+    let strand = strand_geometry(file);
     for member in archive.names()? {
         let name = text(&member["name"]);
         if !name.to_lowercase().ends_with(".scne") {
@@ -536,6 +553,7 @@ pub fn build(
                 &mut buffers,
                 model,
                 &path,
+                strand,
                 350000 - triangles,
             )?;
             if head_only {

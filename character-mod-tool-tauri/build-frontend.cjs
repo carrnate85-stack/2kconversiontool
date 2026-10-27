@@ -65,5 +65,9 @@ esbuild.build({
     'cmt-preview': path.join(production, 'core/preview.js'),
     'cmt-tangent-frame': path.join(root, 'worker/tangent-frame.js')
   }
-}).then(() => console.log('TypeScript application UI and native preview worker prepared for Tauri.'))
+}).then(() => {
+  const bundle = path.join(output, 'preview-worker.bundle.js');
+  fs.writeFileSync(bundle, require('./worker/strand-uv-patch.cjs').patchStrandUvs(fs.readFileSync(bundle, 'utf8')));
+  console.log('TypeScript application UI and native preview worker prepared for Tauri.');
+})
   .catch(error => { console.error(error); process.exitCode = 1; });
