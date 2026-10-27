@@ -130,11 +130,19 @@ const GARMENT_MATERIALS = [
 // Game garment normals (folds, seams, piping, buttons) from
 // payload.portraitGarmentTextures.
 const garmentTextures = new Map();
+// A plain loop: Uint8Array.from(atob(s), callback) took ~0.5 s per jersey's textures.
+function decodeBase64(data) {
+  const text = atob(data), out = new Uint8Array(text.length);
+  for (let i = 0; i < text.length; i += 1) out[i] = text.charCodeAt(i);
+  return out;
+}
 function garmentTexture(THREE, item, colorSpace = THREE.NoColorSpace, wrap = THREE.RepeatWrapping) {
   const key = `${item.name}|${colorSpace}|${wrap}`;
   if (garmentTextures.has(key)) return garmentTextures.get(key);
-  const bytes = Uint8Array.from(atob(item.data), (c) => c.charCodeAt(0));
-  const parsed = new DDSLoader().parse(bytes.buffer, true);
+  // Raw bytes when the caller has them (jersey previews); base64 otherwise.
+  const bytes = item.bytes ?? decodeBase64(item.data);
+  const whole = bytes.byteOffset === 0 && bytes.byteLength === bytes.buffer.byteLength ? bytes.buffer : bytes.slice().buffer;
+  const parsed = new DDSLoader().parse(whole, true);
   const texture = new THREE.CompressedTexture(parsed.mipmaps, parsed.width, parsed.height, parsed.format);
   Object.assign(texture, { name: item.name, colorSpace, magFilter: THREE.LinearFilter, anisotropy: 8,
     minFilter: parsed.mipmapCount > 1 ? THREE.LinearMipmapLinearFilter : THREE.LinearFilter });
@@ -208,7 +216,10 @@ function configureGarmentOverlays(THREE, material, overlays) {
     }`).join('\n');
     shader.fragmentShader = `${declare}\n${shader.fragmentShader.replace(MAP_LINE, `${MAP_LINE}\n${blend}`)}`;
   };
-  material.customProgramCacheKey = () => `${previousKey}|nba-garment-overlays-${signature}`;
+  // Programs depend only on the overlay structure (values are uniforms), so
+  // garment sets with the same logos/numbers layout share one compiled program.
+  const structure = overlays.map((o) => o.channel).join(',');
+  material.customProgramCacheKey = () => `${previousKey}|nba-garment-overlays-${structure}`;
 }
 // A renderer that loads one garment set after another (jersey previews) keeps
 // only the current payload's textures; earlier ones are released.
@@ -222,6 +233,17 @@ function releaseStaleGarmentTextures(payload) {
     texture.dispose();
     garmentTextures.delete(key);
   }
+}
+// payload.tuckJersey: a jersey shown without a body hangs over the shorts, so it
+// is clipped a little below the top of the shorts' waistband (world height).
+const TUCK_INSET = 3;
+function jerseyTuckHeight(context) {
+  if (!context.payload?.tuckJersey) return null;
+  const { THREE } = context, bounds = new THREE.Box3();
+  context.modelRoot.traverse((object) => {
+    if (object.userData.previewKind === 'preview-jersey' && [object.material].flat().some((m) => /shorts/i.test(m?.name || ''))) bounds.expandByObject(object, true);
+  });
+  return bounds.isEmpty() ? null : bounds.max.y - TUCK_INSET;
 }
 function configureGarmentTextures(context, material) {
   const { THREE } = context;
@@ -307,6 +329,7 @@ export function configurePortraitLighting(context, settings = {}) {
     averagedLightmaps.set(texture, averaged);
     return averaged;
   };
+  const tuckAt = jerseyTuckHeight(context);
   context.modelRoot.traverse((object) => {
     for (const material of [object.material].flat().filter(Boolean)) {
       if (object.userData.previewKind === 'preview-jersey') {
@@ -318,6 +341,10 @@ export function configurePortraitLighting(context, settings = {}) {
           material.roughness = garment.roughness;
           material.metalness = 0;
           configureGarmentTextures(context, material);
+          // Tucked: the jersey's tail ends inside the shorts' waistband.
+          const tuck = tuckAt !== null && /jersey/i.test(material.name);
+          material.clippingPlanes = tuck ? [new THREE.Plane(new THREE.Vector3(0, 1, 0), -tuckAt)] : null;
+          if (tuck) context.renderer.localClippingEnabled = true;
         }
       }
       // Wet clearcoated eyes would otherwise mirror the whole studio over the iris.
