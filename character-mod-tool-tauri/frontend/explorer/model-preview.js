@@ -158,9 +158,10 @@ function configureStudioLights(bounds) {
   keyLight.castShadow = options.shadows !== false;
   keyLight.shadow.mapSize.set(1024, 1024);
   keyLight.shadow.bias = -0.0002;
-  keyLight.shadow.normalBias = radius * 0.0006;
   const shadowCamera = keyLight.shadow.camera;
   const extent = radius * 0.72;
+  // About 1.5 shadow texels; 0.0006 * radius left slope acne banding on faces.
+  keyLight.shadow.normalBias = extent * 2 / keyLight.shadow.mapSize.x * 1.5;
   shadowCamera.left = shadowCamera.bottom = -extent;
   shadowCamera.right = shadowCamera.top = extent;
   shadowCamera.near = Math.max(0.01, radius * 0.05);
@@ -987,6 +988,7 @@ function materialTextureTarget(materialName) {
   const name = String(materialName || '').toLowerCase();
   if (/(?:^|_)[lr]_eye(?:_|$)|eyeball|sclera|iris/.test(name)) return 'eye';
   if (/eyelash|(?:^|_)lash(?:_|$)/.test(name)) return 'eyelash';
+  if (/(?:^|_)glasses(?:_|$)/.test(name)) return 'glasses';
   if (/facial.?hair|beard/.test(name)) return 'facialhair';
   if (/(?:^|_)hair(?:_|$)/.test(name)) return 'hair';
   if (/(?:^|_)face(?:_|$)/.test(name)) return 'face';
@@ -1098,13 +1100,14 @@ function eyeAtlasTexture(texture, material) {
   if (!texture || !/eyewhite/i.test(texture.name)) return texture;
   const derived = texture.clone();
   const rightEye = /(?:^|_)r_eye(?:_|$)/i.test(material.name);
-  derived.name = `${texture.name} · ${rightEye ? 'right' : 'left'} eye quadrant`;
+  derived.name = `${texture.name} · ${rightEye ? 'right' : 'left'} eye`;
   derived.wrapS = THREE.ClampToEdgeWrapping;
   derived.wrapT = THREE.ClampToEdgeWrapping;
-  derived.repeat.set(0.5, 0.5);
-  // DDS textures are uploaded without a Y flip. The usable eye-white/iris
-  // color is stored in the lower image row, which is v=0.5 in this basis.
-  derived.offset.set(rightEye ? 0.5 : 0, 0.5);
+  // Shared 2K27 eyewhite_color_0N maps are one centered eyeball (cornea at
+  // the center, lid-hidden red rim at the edges) and each eye mesh spans UV
+  // 0..1. Sampling a 0.5 quadrant showed only the red rim as the sclera.
+  derived.repeat.set(1, 1);
+  derived.offset.set(0, 0);
   derived.needsUpdate = true;
   material.userData.derivedTextures.push(derived);
   return derived;
@@ -1150,7 +1153,7 @@ function configureEyeIris(material, texture) {
           #ifdef DECODE_VIDEO_TEXTURE
             sampledDiffuseColor = sRGBTransferEOTF( sampledDiffuseColor );
           #endif
-          vec2 nbaEyeUv = fract( vMapUv * 2.0 );
+          vec2 nbaEyeUv = vMapUv;
           float nbaIrisDistance = length( nbaEyeUv - vec2( 0.5 ) ) / nbaIrisScale;
           float nbaIrisMask = 1.0 - smoothstep( 0.185, 0.255, nbaIrisDistance );
           float nbaPupilMask = 1.0 - smoothstep( 0.052, 0.085, nbaIrisDistance );
@@ -1161,7 +1164,7 @@ function configureEyeIris(material, texture) {
         #endif`,
       );
   };
-  material.customProgramCacheKey = () => `nba2k27-eye-iris-v2-${color.getHexString()}-${scale}`;
+  material.customProgramCacheKey = () => `nba2k27-eye-iris-v3-${color.getHexString()}-${scale}`;
 }
 
 function configureTextureRange(material, texture) {
@@ -1342,6 +1345,27 @@ function skinMaterialResponses() {
   if (!currentPayload?.player) return new Map();
   const responses = new Map();
   const chestTorso = boundaryColors('chest', 'torso');
+  const chestItem = textureItems.find((item, index) => textureCache[index]
+    && item.binding?.target === 'chest' && item.binding?.channel === 'color');
+  if (/^body-color:/i.test(chestItem?.source || '')) {
+    // A shared regional skin fallback is generic, so it must not set the
+    // face's brightness. Keep the face response's hue only (unit luminance)
+    // and fit the body chain to the character's own face instead.
+    const faceChest = boundaryColors('face', 'chest');
+    if (faceChest) {
+      const faceResponse = responseColor(faceChest.right, faceChest.left);
+      const luminance = faceResponse.r * 0.2126 + faceResponse.g * 0.7152 + faceResponse.b * 0.0722;
+      if (luminance > 0) faceResponse.multiplyScalar(1 / luminance);
+      responses.set('face', faceResponse);
+      const chestResponse = responseColor(faceChest.left, faceChest.right, faceResponse.toArray());
+      responses.set('chest', chestResponse);
+      const torsoResponse = chestTorso ? responseColor(chestTorso.left, chestTorso.right, chestResponse.toArray()) : chestResponse;
+      responses.set('torso', torsoResponse);
+      const torsoLegs = boundaryColors('torso', 'legs');
+      if (torsoLegs) responses.set('legs', responseColor(torsoLegs.left, torsoLegs.right, torsoResponse.toArray()));
+      return responses;
+    }
+  }
   const chestResponse = chestTorso ? responseColor(chestTorso.right, chestTorso.left) : new THREE.Color(1, 1, 1);
   responses.set('chest', chestResponse);
   const torsoLegs = boundaryColors('torso', 'legs');
@@ -1385,6 +1409,8 @@ function applyAutomaticTextures() {
       configureStrandSpecular(material, strandMaterial);
       if (targetName === 'eye') configureEyeIris(material, colorTexture);
       const profile = applyPreviewMaterialProfile(material, normalTexture);
+      // A bound glasses color map carries lens/frame coverage in its alpha.
+      if (profile?.role === 'glass' && colorTexture) material.opacity = 1;
       material.transparent = profile?.role === 'glass'
         || Boolean(colorTexture) && (targetName === 'eyelash' || strandMaterial);
       material.alphaTest = targetName === 'eyelash' || strandMaterial ? profile?.alphaTest || 0 : 0;
@@ -1450,6 +1476,10 @@ async function load(payload, onProgress = () => {}, options = {}) {
     if (item.uvs?.length) geometry.setAttribute('uv', new THREE.BufferAttribute(typed(item.uvs, Float32Array), 2));
     if (item.courtUvs?.length) geometry.setAttribute('courtUv', new THREE.BufferAttribute(typed(item.courtUvs, Float32Array), 2));
     if (item.detailUvs?.length) geometry.setAttribute('detailUv', new THREE.BufferAttribute(typed(item.detailUvs, Float32Array), 2));
+    // TEXCOORD1 (scalp position) when the worker exports it; tangent-space hair
+    // copies carry the same coordinates as their attachment UVs.
+    const lightmapUvs = item.lightmapUvs?.length ? item.lightmapUvs : item.attachmentUvs?.length ? item.attachmentUvs : null;
+    if (lightmapUvs) geometry.setAttribute('lightmapUv', new THREE.BufferAttribute(typed(lightmapUvs, Float32Array), 2));
     if (item.overlayUvs?.length) geometry.setAttribute('overlayUv', new THREE.BufferAttribute(typed(item.overlayUvs, Float32Array), 2));
     if (item.graffitiUvs?.length) geometry.setAttribute('graffitiUv', new THREE.BufferAttribute(typed(item.graffitiUvs, Float32Array), 2));
     geometry.setIndex(new THREE.BufferAttribute(indexArray(item.indices), 1));

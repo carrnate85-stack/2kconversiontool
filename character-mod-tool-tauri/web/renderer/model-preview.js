@@ -1,12 +1,15 @@
 import { createExplorerRenderer } from './explorer/model-preview.js';
 import { createBodyEditor } from './body-preview-editor.mjs';
 import { nearestSkinBoundaryPairs, normalPacking, configureNormalPacking } from './skin-preview-fixes.mjs';
+import { configurePortraitSkin, configurePortraitLighting } from './portrait-skin.mjs';
+import { capturePortrait } from './portrait-capture.mjs';
 
 const params = new URL(import.meta.url).searchParams;
 const viewerGlobalName = params.get('global') || 'modelPreview';
 const canvas = document.getElementById(params.get('canvas') || 'previewCanvas');
 const pickerMode = params.get('picker') === '1';
 const transparentBackground = params.get('transparent') === '1';
+const portraitMode = params.get('portrait') === '1';
 const cameraBroadcast = params.get('broadcast') || '';
 const cameraFollow = params.get('follow') || '';
 let sourcePayload = null;
@@ -30,7 +33,8 @@ const context = createExplorerRenderer({
   picker: pickerMode,
   transparent: transparentBackground,
   interactive: params.get('interactive') !== '0',
-  shadows: !pickerMode && !transparentBackground,
+  // Transparent captures omit studio shadows unless a caller opts in (shadows=1).
+  shadows: params.has('shadows') ? params.get('shadows') === '1' : !pickerMode && !transparentBackground,
   skinBoundaryPairs: nearestSkinBoundaryPairs,
   onCameraChange: (state) => {
     if (cameraBroadcast) window.dispatchEvent(new CustomEvent('model-preview:camera:' + cameraBroadcast, { detail: state }));
@@ -110,6 +114,7 @@ function applyEditorDisplay() {
       const pixels = texture && [THREE.RGB_BPTC_UNSIGNED_Format, THREE.RGBA_BPTC_Format].includes(texture.format)
         ? context.decodedTexturePixels(texture)?.pixels : null;
       configureNormalPacking(THREE, material, normalPacking(THREE, texture, pixels));
+      if (portraitMode && !clayMode && !neutralHead) configurePortraitSkin(context, material);
     }
     if (!clayMode && !neutralHead) return;
     for (const material of materials.filter(Boolean)) {
@@ -124,9 +129,14 @@ function applyEditorDisplay() {
       material.needsUpdate = true;
     }
   });
+  if (portraitMode && studioLighting) configurePortraitLighting(context, portraitLightingSettings);
   context.invalidateShadows();
   draw();
 }
+
+// Optional overrides for research A/B (envIntensity, ambient, hemisphere).
+const portraitLightingSettings = Object.fromEntries(['environment', 'ambient', 'hemisphere']
+  .filter((key) => params.has(key)).map((key) => [key, Number(params.get(key))]));
 
 function setStudioLighting(value) {
   studioLighting = Boolean(value);
@@ -276,6 +286,8 @@ window[viewerGlobalName] = {
     }
     draw();
   },
+  // Portrait mode: head-fitted shadows, 4x supersampling, SSAO and filmic tone mapping.
+  capturePortrait: portraitMode ? (options) => capturePortrait(context, options) : undefined,
   setBodyFit: bodyEditor.setBodyFit,
   setChestCorrection: bodyEditor.setChestCorrection,
   getChestCorrectionPatch: bodyEditor.getChestCorrectionPatch,
