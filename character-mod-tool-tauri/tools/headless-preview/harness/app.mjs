@@ -95,6 +95,27 @@ async function run(version, source) {
   const yaw = Number(params.get('yaw') ?? 0.35), pitch = Number(params.get('pitch') ?? 0.12);
   const state = context.cameraState();
   context.setCameraState({ ...state, yaw, pitch, distance: state.fittedDistance * Number(params.get('zoom') ?? 0.72) });
+  if (params.get('focus') === 'eyes') {
+    // Aim at the eye material groups themselves; the head bounds sit on the body axis.
+    const box = new THREE.Box3(), point = new THREE.Vector3();
+    context.modelRoot.updateMatrixWorld(true);
+    context.modelRoot.traverse((object) => {
+      if (!object.isMesh || object.isInstancedMesh) return;
+      const materials = Array.isArray(object.material) ? object.material : [object.material];
+      const { index, attributes } = object.geometry;
+      for (const group of object.geometry.groups) {
+        if (!/(?:^|_)[lr]_eye(?:_|$)/i.test(materials[group.materialIndex]?.name || '')) continue;
+        for (let cursor = group.start; cursor < group.start + group.count; cursor++) {
+          box.expandByPoint(point.fromBufferAttribute(attributes.position, index ? index.getX(cursor) : cursor).applyMatrix4(object.matrixWorld));
+        }
+      }
+    });
+    if (!box.isEmpty()) {
+      const size = box.getSize(new THREE.Vector3());
+      context.setCameraState({ ...state, yaw, pitch, target: box.getCenter(new THREE.Vector3()).toArray(),
+        distance: Math.max(size.x, size.y, size.z) * Number(params.get('eyeZoom') ?? 1.6) });
+    }
+  }
   if (params.get('focus') === 'head') {
     const box = new THREE.Box3().setFromObject(context.modelRoot);
     const height = box.max.y - box.min.y, center = box.getCenter(new THREE.Vector3());

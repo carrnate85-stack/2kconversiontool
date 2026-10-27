@@ -8,7 +8,8 @@
 //   --game  NBA2K27_ROOT   NBA 2K27 install folder (required)
 //   --exe   CMT_EXE        app binary (default: ../../target/release/character-mod-tool-tauri.exe)
 //   --data  CMT_TEST_DATA  isolated app data folder (default: work/cmt-data)
-// The default output is harness/players/<player>.json.
+//   --config               accessory configuration, e.g. flat_top (default: the player's default)
+// The default output is harness/players/<player>[-<config>].json.
 const { spawn } = require('child_process');
 const fs = require('fs');
 const path = require('path');
@@ -33,7 +34,8 @@ if (!game || !target) {
 }
 if (!fs.existsSync(path.join(game, 'manifest'))) throw new Error(`No NBA 2K27 manifest in ${game}`);
 if (!fs.existsSync(exe)) throw new Error(`App binary not found: ${exe} (cargo build --release first)`);
-const outFile = path.resolve(outArg || path.join(tool, 'harness/players', path.basename(target, path.extname(target)) + '.json'));
+const stem = path.basename(target, path.extname(target)) + (options.config ? `-${options.config}` : '');
+const outFile = path.resolve(outArg || path.join(tool, 'harness/players', stem + '.json'));
 fs.mkdirSync(data, { recursive: true });
 fs.mkdirSync(path.dirname(outFile), { recursive: true });
 // --serve-rpc honours CMT_TEST_DATA, so the real app settings are never read or written.
@@ -90,7 +92,7 @@ function encode(value) {
 
 (async () => {
   const started = Date.now();
-  const resources = await call('native-preview-resources', { target: path.resolve(target) });
+  const resources = await call('native-preview-resources', { target: path.resolve(target), config: options.config || '' });
   const result = await new Promise((resolve) => {
     finish = resolve;
     listeners.forEach((listener) => listener({ data: { id: 1, type: 'preview', payload: { filePath: resources.filePath, options: resources.options } } }));

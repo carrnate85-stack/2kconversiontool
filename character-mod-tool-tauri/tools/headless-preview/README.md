@@ -51,8 +51,10 @@ you extracted.
 `--game` / `NBA2K27_ROOT`, `--exe` / `CMT_EXE` (default
 `target/release/character-mod-tool-tauri.exe`) and `--data` / `CMT_TEST_DATA`
 (default `work/cmt-data`). It writes its own `settings.json` into that isolated
-data folder, so your real app settings are never used. Output defaults to
-`harness/players/<player>.json`.
+data folder, so your real app settings are never used. `--config <name>` picks
+an accessory configuration, such as `flat_top`, which loads that hair. The config
+names are the `png#####_config_<name>.iff` files the extractor wrote. Output
+defaults to `harness/players/<player>[-<config>].json`.
 
 Rerun `prepare.cjs` after editing `web/renderer/`. To compare against an older
 renderer, pass that commit as `--baseline`. Once your changes are committed,
@@ -65,6 +67,7 @@ renderer, pass that commit as `--baseline`. Once your changes are committed,
 | `player=png00110` | Load `players/png00110.json`; without it, a synthetic head that needs no game files |
 | `jersey=0` | Hide the preview jersey and shorts |
 | `focus=head`, `headY`, `headZoom` | Head close-up: target height below the top, and distance, as fractions of model height |
+| `focus=eyes`, `eyeZoom` | Aim at the eye geometry; distance as a multiple of the eyes' extent |
 | `yaw`, `pitch`, `zoom` | Orbit angles in radians; `zoom` multiplies the fitted distance |
 | `only=old` / `only=new` | Load one side |
 | `iris=green`, `eyerange=1` | Synthetic head only: iris color, and a range-packed eye texture |
