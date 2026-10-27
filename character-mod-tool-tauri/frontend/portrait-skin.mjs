@@ -121,6 +121,7 @@ float nbaNoise(vec2 p) { vec2 i = floor(p), f = fract(p); f = f * f * (3.0 - 2.0
 // Generic portrait garments (preview-jersey companions): untextured fabric.
 const GARMENT_MATERIALS = [
   [/jersey/i, { color: 0x5b6472, roughness: 0.62 }],
+  [/shorts/i, { color: 0x5b6472, roughness: 0.66 }],
   [/polo/i, { color: 0x1c2333, roughness: 0.88 }],
   [/blazer/i, { color: 0x2b2e34, roughness: 0.8 }],
   [/bdshirt|shirt/i, { color: 0xe9e9ec, roughness: 0.72 }],
@@ -129,17 +130,49 @@ const GARMENT_MATERIALS = [
 // Game garment normals (folds, seams, piping, buttons) from
 // payload.portraitGarmentTextures.
 const garmentTextures = new Map();
-function garmentTexture(THREE, item) {
-  if (garmentTextures.has(item.name)) return garmentTextures.get(item.name);
+function garmentTexture(THREE, item, colorSpace = THREE.NoColorSpace, wrap = THREE.RepeatWrapping) {
+  const key = `${item.name}|${colorSpace}|${wrap}`;
+  if (garmentTextures.has(key)) return garmentTextures.get(key);
   const bytes = Uint8Array.from(atob(item.data), (c) => c.charCodeAt(0));
   const parsed = new DDSLoader().parse(bytes.buffer, true);
   const texture = new THREE.CompressedTexture(parsed.mipmaps, parsed.width, parsed.height, parsed.format);
-  Object.assign(texture, { name: item.name, colorSpace: THREE.NoColorSpace, magFilter: THREE.LinearFilter, anisotropy: 8,
+  Object.assign(texture, { name: item.name, colorSpace, magFilter: THREE.LinearFilter, anisotropy: 8,
     minFilter: parsed.mipmapCount > 1 ? THREE.LinearMipmapLinearFilter : THREE.LinearFilter });
-  texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+  texture.wrapS = texture.wrapT = wrap;
   texture.needsUpdate = true;
-  garmentTextures.set(item.name, texture);
+  garmentTextures.set(key, texture);
   return texture;
+}
+// Team uniforms (char/uniforms/<file>): the jersey/shorts color map replaces the
+// tint, and chest/NBA logos are composited over it in the shader, placed by the
+// uniform RDAT's scale_and_offset [sx, sy, ox, oy], a scale about the texture
+// center plus an offset: logoUv = (uv - 0.5 - o) * s + 0.5 (checked against the
+// Lakers 1978 home wordmark, which lands centered on the chest).
+const MAP_LINE = '#include <map_fragment>';
+function configureGarmentLogos(THREE, material, logos) {
+  if (material.userData.nbaGarmentLogos) return;
+  material.userData.nbaGarmentLogos = true;
+  const previous = material.onBeforeCompile, previousKey = material.customProgramCacheKey();
+  const uniforms = logos.map((item) => ({
+    map: { value: garmentTexture(THREE, item, THREE.SRGBColorSpace, THREE.ClampToEdgeWrapping) },
+    place: { value: new THREE.Vector4(...item.scaleAndOffset) },
+    turn: { value: (Number(item.rotate) || 0) * Math.PI / 180 },
+  }));
+  material.onBeforeCompile = (shader, renderer) => {
+    previous.call(material, shader, renderer);
+    uniforms.forEach((u, i) => { shader.uniforms[`nbaLogo${i}`] = u.map; shader.uniforms[`nbaLogoPlace${i}`] = u.place; shader.uniforms[`nbaLogoTurn${i}`] = u.turn; });
+    const declare = uniforms.map((_, i) => `uniform sampler2D nbaLogo${i}; uniform vec4 nbaLogoPlace${i}; uniform float nbaLogoTurn${i};`).join('\n');
+    const blend = uniforms.map((_, i) => `{
+      vec2 c = ( vMapUv - 0.5 - nbaLogoPlace${i}.zw ) * nbaLogoPlace${i}.xy + 0.5;
+      vec2 r = mat2( cos( nbaLogoTurn${i} ), -sin( nbaLogoTurn${i} ), sin( nbaLogoTurn${i} ), cos( nbaLogoTurn${i} ) ) * ( c - 0.5 ) + 0.5;
+      if ( all( greaterThanEqual( r, vec2( 0.0 ) ) ) && all( lessThanEqual( r, vec2( 1.0 ) ) ) ) {
+        vec4 logo = texture2D( nbaLogo${i}, r );
+        diffuseColor.rgb = mix( diffuseColor.rgb, logo.rgb, logo.a );
+      }
+    }`).join('\n');
+    shader.fragmentShader = `${declare}\n${shader.fragmentShader.replace(MAP_LINE, `${MAP_LINE}\n${blend}`)}`;
+  };
+  material.customProgramCacheKey = () => `${previousKey}|nba-garment-logos-${logos.map((l) => l.name).join(',')}`;
 }
 function configureGarmentTextures(context, material) {
   const { THREE } = context;
@@ -149,6 +182,13 @@ function configureGarmentTextures(context, material) {
     material.normalMap = garmentTexture(THREE, normal);
     material.normalScale.set(1, 1);
   }
+  const color = items.find((item) => item.channel === 'color');
+  if (color) {
+    material.map = garmentTexture(THREE, color, THREE.SRGBColorSpace);
+    material.color.setHex(0xffffff);
+  }
+  const logos = items.filter((item) => item.channel === 'logo' && Array.isArray(item.scaleAndOffset));
+  if (material.map && logos.length) configureGarmentLogos(THREE, material, logos);
   material.needsUpdate = true;
 }
 // Richer procedural iris on top of the exporter's flat iris disc: radial
