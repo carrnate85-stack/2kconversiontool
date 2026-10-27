@@ -3200,7 +3200,7 @@
       var { loadIff, parseBinaryTree, parseScneText, readZipEntry } = require_iff2();
       var DEFAULT_MAX_TRIANGLES = 25e4;
       var DEFAULT_MAX_MODELS = 300;
-      var MAX_TEXTURE_BYTES = 16 * 1024 * 1024;
+      var MAX_TEXTURE_BYTES = 48 * 1024 * 1024;
       var MAX_ARENA_TEXTURE_REQUESTS = 96;
       function sceneNameVariants(value) {
         const text = String(value || "");
@@ -3654,6 +3654,13 @@
           }
         }
       }
+      function previewTextureUnused(item) {
+        const identity = `${item.name || ""} ${item.source || ""}`;
+        const channels = item.assignments?.length ? item.assignments.map((assignment) => assignment.channel) : [item.binding?.channel];
+        if (channels.some((channel) => channel === "color" || channel === "tangent")) return false;
+        if (channels.includes("normal")) return /detailnormal/i.test(identity) && (!/^face_detailnormal_o\./i.test(item.name || "") || /_skin\.iff/i.test(identity)) || /_normal_avg_/i.test(identity) && !item.externalPath;
+        return !/occlusion|(?:^|_)ao(?:_|\.)|lightmap|tangent|bentnormal/i.test(identity) || /face_bentnormal\./i.test(item.name || "") && /_skin\.iff/i.test(identity);
+      }
       function previewTextureScore(item) {
         const channels = item.assignments?.map((assignment) => assignment.channel) || [item.binding?.channel];
         const channelScore = channels.includes("color") ? 10 : channels.includes("normal") ? 5 : 1;
@@ -3667,7 +3674,10 @@
         return channelScore + hairDetailScore + courtScore + playerColorScore + playerNormalScore;
       }
       function comparePreviewTextures(a, b) {
-        return previewTextureScore(b) - previewTextureScore(a) || (bodyColorTextureTarget(a) && bodyColorTextureTarget(b) ? (a.container ?? Number.MAX_SAFE_INTEGER) - (b.container ?? Number.MAX_SAFE_INTEGER) : 0) || (b.assignments?.length || 0) - (a.assignments?.length || 0) || a.width * a.height - b.width * b.height;
+        return previewTextureScore(b) - previewTextureScore(a) || (bodyColorTextureTarget(a) && bodyColorTextureTarget(b) ? bodyColorRank(a) - bodyColorRank(b) : 0) || (b.assignments?.length || 0) - (a.assignments?.length || 0) || a.width * a.height - b.width * b.height;
+      }
+      function bodyColorRank(texture) {
+        return /^config:/i.test(String(texture.source || "")) ? -1 : texture.container ?? Number.MAX_SAFE_INTEGER;
       }
       function bodyColorTextureTarget(texture) {
         const target = String(texture.binding?.target || "").toLowerCase();
@@ -3729,6 +3739,11 @@
       function buildMesh(iff, model, modelPath, remainingTriangles, materialUsage, preferHighestDetail = false) {
         const position = model.VertexFormat?.POSITION0;
         const tangentSpaceAttachment = String(position?.Format || "").toUpperCase() === "R16G16B16A16_UINT" && Boolean(model.VertexFormat?.POSITION1 && model.VertexFormat?.TEXCOORD0 && model.VertexFormat?.TEXCOORD1);
+        const strandCards = !tangentSpaceAttachment && Boolean(model.VertexFormat?.TEXCOORD1) && (() => {
+          let inherited = "";
+          const materials = (Array.isArray(model.Prim) ? model.Prim : []).map((primitive) => inherited = primitiveMaterial(primitive, inherited));
+          return materials.length > 0 && materials.every((material) => /^(?:facial)?hair_/i.test(material));
+        })();
         const streams = vertexStreams(model);
         const positionStream = streams[Number(position?.Stream || 0)];
         const indexEntry = memberFor(iff, model.IndexBuffer?.Binary);
@@ -3745,7 +3760,7 @@
         const sourceIndices = readIndices(indexBytes, model.IndexBuffer.Format);
         if (!sourceIndices) return { reason: `unsupported index format ${model.IndexBuffer.Format || "(none)"}` };
         const vertexCount = Math.floor(positionBytes.length / stride);
-        const uvDescriptors = tangentSpaceAttachment ? [model.VertexFormat?.TEXCOORD1, model.VertexFormat?.TEXCOORD0] : [model.VertexFormat?.TEXCOORD0];
+        const uvDescriptors = tangentSpaceAttachment ? [model.VertexFormat?.TEXCOORD1, model.VertexFormat?.TEXCOORD0] : strandCards ? [model.VertexFormat?.TEXCOORD0, model.VertexFormat?.TEXCOORD1] : [model.VertexFormat?.TEXCOORD0];
         const uvOptions = uvDescriptors.filter(Boolean).map((descriptor) => {
           const stream = streams[Number(descriptor.Stream || 0)];
           const entry = memberFor(iff, stream?.Binary);
@@ -3771,12 +3786,12 @@
           }
           return { descriptor, stream, bytes: bytes2, stride: streamStride, score };
         });
-        uvOptions.sort((left, right) => right.score - left.score);
+        if (tangentSpaceAttachment) uvOptions.sort((left, right) => right.score - left.score);
         const uvOption = uvOptions[0] || {};
         const uvDescriptor = uvOption.descriptor;
         const uvBytes = uvOption.bytes || null;
         const uvStride = Number(uvOption.stride || 0);
-        const attachmentOption = tangentSpaceAttachment ? uvOptions.find((option) => option.descriptor !== uvDescriptor) || {} : {};
+        const attachmentOption = tangentSpaceAttachment || strandCards ? uvOptions.find((option) => option.descriptor !== uvDescriptor) || {} : {};
         const attachmentDescriptor = attachmentOption.descriptor;
         const attachmentBytes = attachmentOption.bytes || null;
         const attachmentStride = Number(attachmentOption.stride || 0);
@@ -3855,7 +3870,7 @@
             positions: new Float32Array(positions),
             sourceVertexIds: new Uint32Array(sourceVertexIds),
             uvs: new Float32Array(uvs),
-            attachmentUvs: tangentSpaceAttachment ? new Float32Array(attachmentUvs) : null,
+            attachmentUvs: tangentSpaceAttachment || strandCards ? new Float32Array(attachmentUvs) : null,
             tangentOffsets: tangentSpaceAttachment ? new Float32Array(tangentOffsets) : null,
             tangentAnchorIds: tangentSpaceAttachment ? new Uint32Array(tangentAnchorIds) : null,
             tangentSpaceAttachment,
@@ -4197,8 +4212,9 @@
         const loadedBodyColors = /* @__PURE__ */ new Set();
         let textureBytes = 0;
         const maxTextureBytes = includeArenaTextures ? 64 * 1024 * 1024 : MAX_TEXTURE_BYTES;
-        const maxTextureCount = includeArenaTextures ? 128 : 24;
+        const maxTextureCount = includeArenaTextures ? 128 : 40;
         for (const texture of prioritized) {
+          if (!includeArenaTextures && previewTextureUnused(texture)) continue;
           const bodyColorTarget = bodyColorTextureTarget(texture);
           if (bodyColorTarget && loadedBodyColors.has(bodyColorTarget)) continue;
           try {
@@ -4217,7 +4233,7 @@
               ...publicTexture,
               sourcePriority: Number.isInteger(container) ? container : Number.MAX_SAFE_INTEGER,
               inputColorSpace: textureInputColorSpace(publicTexture),
-              bytes: bytes2.toString("base64")
+              bytes: new Uint8Array(bytes2)
             });
             textureBytes += bytes2.length;
             if (bodyColorTarget) loadedBodyColors.add(bodyColorTarget);
@@ -4230,7 +4246,7 @@
           return count + Math.max(1, packed || mesh.instances?.length || 0);
         }, 0);
         if (morphTargets > 0) {
-          skipped.unshift(`${morphTargets} facial morph target(s) detected. The preview currently shows the neutral base mesh; NBA 2K's math-node morph evaluation is not applied yet.`);
+          skipped.unshift(`${morphTargets} morph target(s) detected (facial expressions and pose correctives). The preview shows the neutral rest pose, which already carries the player's likeness.`);
         }
         const arenaTextureRequests = arenaByName && !includeArenaTextures ? [...arenaTextureCandidates.values()].sort(comparePreviewTextures).slice(0, MAX_ARENA_TEXTURE_REQUESTS).map((texture) => texture.name.replace(/\.dds$/i, ".tld")) : [];
         const texturedMaterials = new Set(texturePayloads.flatMap((texture) => (texture.assignments || []).map((assignment) => String(assignment.material || "").toLowerCase())).filter(Boolean)).size;

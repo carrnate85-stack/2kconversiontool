@@ -1,6 +1,10 @@
-export function configureStrandLightmap(material, texture) {
-  material.userData.strandLightmap = texture?.name || null;
-  if (!texture || !material.map) return;
+// Strand lightmaps use their own unique-per-card UV layout, not the shared
+// strand atlas UVs. uvAttribute names the geometry attribute holding it; null
+// means the mesh has none, and sampling with atlas UVs would scatter dark cells.
+export function configureStrandLightmap(material, texture, uvAttribute = 'uv') {
+  material.userData.strandLightmap = uvAttribute ? texture?.name || null : null;
+  material.userData.strandLightmapSkipped = Boolean(texture && material.map && !uvAttribute);
+  if (!texture || !material.map || !uvAttribute) return;
   texture.updateMatrix();
   const range = texture.userData?.range;
   const uniforms = material.userData.strandLightmapUniforms ||= {
@@ -20,9 +24,10 @@ export function configureStrandLightmap(material, texture) {
   material.onBeforeCompile = shader => {
     previous(shader);
     Object.assign(shader.uniforms, uniforms);
-    shader.vertexShader = 'uniform mat3 nbaStrandLightTransform; varying vec2 vNbaStrandLightUv;\n' + shader.vertexShader;
+    shader.vertexShader = (uvAttribute === 'uv' ? '' : `attribute vec2 ${uvAttribute};\n`)
+      + 'uniform mat3 nbaStrandLightTransform; varying vec2 vNbaStrandLightUv;\n' + shader.vertexShader;
     shader.vertexShader = shader.vertexShader.replace('#include <uv_vertex>',
-      '#include <uv_vertex>\nvNbaStrandLightUv = (nbaStrandLightTransform * vec3(uv, 1.0)).xy;');
+      `#include <uv_vertex>\nvNbaStrandLightUv = (nbaStrandLightTransform * vec3(${uvAttribute}, 1.0)).xy;`);
     shader.fragmentShader = `uniform sampler2D nbaStrandLightmap;
 uniform vec4 nbaStrandLightMin, nbaStrandLightMax, nbaStrandLightMask;
 varying vec2 vNbaStrandLightUv;
@@ -38,7 +43,7 @@ reflectedLight.indirectDiffuse *= nbaStrandResponse;
 reflectedLight.directSpecular *= nbaStrandResponse;
 reflectedLight.indirectSpecular *= nbaStrandResponse;`);
   };
-  material.customProgramCacheKey = () => previousKey + ':nba-strand-lightmap-v2';
+  material.customProgramCacheKey = () => previousKey + ':nba-strand-lightmap-v2' + (uvAttribute === 'uv' ? '' : ':' + uvAttribute);
 }
 
 export function configureStrandTangentRange(material, texture, physicalChunk) {
@@ -69,20 +74,29 @@ vec3 anisotropyPolar = mix(nbaStrandTangentSample, nbaStrandTangentDecoded, nbaS
   material.customProgramCacheKey = () => previousKey + ':nba-strand-tangent-range-v1';
 }
 
-export function configureStrandSpecular(material, enabled) {
+// Fraction of uncolored (white) highlight kept on every strand. Real hair's
+// primary highlight is largely uncolored, so near-black hair still needs one to
+// show its form; the pigment-tinted remainder stops dark atlases flaring white.
+export const STRAND_SPECULAR_FLOOR = 0.5;
+
+export function configureStrandSpecular(material, enabled, floor = STRAND_SPECULAR_FLOOR) {
   material.userData.strandSpecularResponse = Boolean(enabled && material.map);
   if (!material.userData.strandSpecularResponse) return;
+  const uniforms = material.userData.strandSpecularUniforms ||= { nbaStrandSpecularFloor: { value: floor } };
+  uniforms.nbaStrandSpecularFloor.value = floor;
   const previous = material.onBeforeCompile;
   const previousKey = material.customProgramCacheKey();
   material.onBeforeCompile = shader => {
     previous(shader);
+    Object.assign(shader.uniforms, uniforms);
+    shader.fragmentShader = 'uniform float nbaStrandSpecularFloor;\n' + shader.fragmentShader;
     // A fiber response keeps dark atlases from reflecting as white solid cards.
     shader.fragmentShader = shader.fragmentShader.replace('#include <lights_fragment_end>', `#include <lights_fragment_end>
-vec3 nbaStrandSpecularTint = sqrt(clamp(diffuseColor.rgb, 0.0, 1.0));
+vec3 nbaStrandSpecularTint = mix(sqrt(clamp(diffuseColor.rgb, 0.0, 1.0)), vec3(1.0), nbaStrandSpecularFloor);
 reflectedLight.directSpecular *= nbaStrandSpecularTint;
 reflectedLight.indirectSpecular *= nbaStrandSpecularTint;`);
   };
-  material.customProgramCacheKey = () => previousKey + ':nba-strand-specular-v1';
+  material.customProgramCacheKey = () => previousKey + ':nba-strand-specular-v2';
 }
 
 export function configureStrandCoverage(material, enabled, multisampled) {

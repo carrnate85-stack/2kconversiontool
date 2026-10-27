@@ -13,6 +13,7 @@ fs.copyFileSync(path.join(root, 'web/renderer/body-preview-editor.mjs'), path.jo
 fs.copyFileSync(path.join(root, 'web/renderer/explorer-model-preview.js'), path.join(output, 'explorer/model-preview.js'));
 fs.copyFileSync(path.join(root, 'web/renderer/strand-preview-fixes.mjs'), path.join(output, 'strand-preview-fixes.mjs'));
 fs.copyFileSync(path.join(root, 'web/renderer/skin-response.mjs'), path.join(output, 'skin-response.mjs'));
+fs.copyFileSync(path.join(root, 'web/renderer/studio-shading.mjs'), path.join(output, 'studio-shading.mjs'));
 let html = fs.readFileSync(path.join(output, 'index.html'), 'utf8');
 html = html.replace(/<meta[^>]*http-equiv="Content-Security-Policy"[^>]*>/i, '');
 html = html.replace('<script src="lucide.min.js"></script>', '<script src="tauri-bridge.js"></script>\n<script src="lucide.min.js"></script>');
@@ -64,5 +65,9 @@ esbuild.build({
     'cmt-preview': path.join(production, 'core/preview.js'),
     'cmt-tangent-frame': path.join(root, 'worker/tangent-frame.js')
   }
-}).then(() => console.log('TypeScript application UI and native preview worker prepared for Tauri.'))
+}).then(() => {
+  const bundle = path.join(output, 'preview-worker.bundle.js');
+  fs.writeFileSync(bundle, require('./worker/bundle-patches.cjs').patchWorkerBundle(fs.readFileSync(bundle, 'utf8')));
+  console.log('TypeScript application UI and native preview worker prepared for Tauri.');
+})
   .catch(error => { console.error(error); process.exitCode = 1; });

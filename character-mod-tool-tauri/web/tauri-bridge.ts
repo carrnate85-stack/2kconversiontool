@@ -7,6 +7,14 @@ type BridgeCommands = NativeCommands & {
   'blender-snapshot-release': boolean;
 };
 
+// The preview worker sends texture bytes as a Uint8Array; native IPC is JSON.
+function textureBase64(bytes: string | Uint8Array) {
+  if (typeof bytes === 'string') return bytes;
+  let text = '';
+  for (let index = 0; index < bytes.length; index += 0x8000) text += String.fromCharCode(...bytes.subarray(index, index + 0x8000));
+  return btoa(text);
+}
+
 function initializeBridge() {
   'use strict';
   const invoke = <K extends keyof BridgeCommands>(command: K, payload: unknown = {}) => window.__TAURI__.core.invoke<BridgeCommands[K]>('engine_call', { command, payload });
@@ -330,7 +338,7 @@ function initializeBridge() {
         const kind = (mesh: PreviewMesh) => /facialhair|facial_hair|beard|goatee|scruff/i.test(`${mesh.sourceName} ${mesh.name}`) ? 'facialhair' : /(?:^|[_\s])hair(?:[_\s.]|$)/i.test(`${mesh.sourceName} ${mesh.name}`) ? 'hair' : '';
         const meshes = preview.meshes.filter(mesh => mesh.sourceKind === 'geometry' && (kind(mesh) === 'hair' && request.includeHair || kind(mesh) === 'facialhair' && request.includeFacialHair) && (!String(mesh.sourceName).includes('_tangentspace.iff') || !ordinary.has(String(mesh.sourceName).toLowerCase().replace('_tangentspace.iff', '.iff'))))
           .map(mesh => ({ name: mesh.name, kind: kind(mesh), sourceName: mesh.sourceName, positions: Array.from(mesh.positions), uvs: Array.from(mesh.uvs || []), indices: Array.from(mesh.indices), groups: mesh.groups || [] }));
-        const textures = request.includeTextures ? preview.textures.filter(x => x.bytes).map(texture => ({ name: texture.name, bytes: texture.bytes, binding: texture.binding || null, assignments: texture.assignments || [], inputColorSpace: texture.inputColorSpace || 'none', range: texture.range || null })) : [];
+        const textures = request.includeTextures ? preview.textures.filter(x => x.bytes).map(texture => ({ name: texture.name, bytes: textureBase64(texture.bytes!), binding: texture.binding || null, assignments: texture.assignments || [], inputColorSpace: texture.inputColorSpace || 'none', range: texture.range || null })) : [];
         referenceBundle = { meshes, textures, eye: { irisColor: resources.player.irisColor, irisSize: resources.player.irisSize } };
       } finally { decoder.cancel(); }
     }

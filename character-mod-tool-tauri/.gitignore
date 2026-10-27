@@ -6,3 +6,5 @@
 /build-tools/npm.tgz
 /gen/
 *.log
+# The repository root ignores tools/ folders (game-derived assets); these are source.
+!/tools/

@@ -14,7 +14,7 @@ export interface BlenderRequest extends TargetRequest { includeHair?: boolean; i
 export interface AssetRequest { assetType: AssetType; assetId?: string; includeBase?: boolean; nativeGeometry?: boolean; nativeBinaryGeometry?: boolean; }
 export interface MeshGroup { start: number; count: number; material: string; }
 export interface PreviewMesh { name: string; sourceName: string; sourceKind: string; positions: Float32Array | number[]; uvs?: Float32Array | number[]; indices: Uint16Array | Uint32Array | number[]; groups?: MeshGroup[]; fitMorphNames?: string[]; fitMorphDeltas?: Float32Array | number[]; [key: string]: unknown; }
-export interface PreviewTexture { name: string; bytes?: string; binding?: Metadata | null; assignments?: Metadata[]; inputColorSpace?: string; range?: Metadata | null; [key: string]: unknown; }
+export interface PreviewTexture { name: string; bytes?: string | Uint8Array; binding?: Metadata | null; assignments?: Metadata[]; inputColorSpace?: string; range?: Metadata | null; [key: string]: unknown; }
 export interface PlayerPreview { mode: string; bodyFit: Record<string, number>; jerseyAvailable: boolean; irisColor?: string; irisSize?: string; defaultConfig?: string; [key: string]: unknown; }
 export interface Preview { meshes: PreviewMesh[]; textures: PreviewTexture[]; skipped: string[]; stats: { modelsDecoded: number; triangles: number; companions: number; [key: string]: unknown }; player?: PlayerPreview; name?: string; activeItems?: string[]; companionNames?: string[]; [key: string]: unknown; }
 export interface PackedArray { kind: 'f32' | 'u32' | 'u16'; data: string; }

@@ -23,7 +23,7 @@ function renderer() {
   },disposeRoot(){clears++;root.children=[];},configurePreviewLighting(){}};
   const c=vm.createContext({context,modelRoot:root,viewerGlobalName:'test',transparentBackground:false,
     bodyEditor:{setBodyFit(){},initialize(){}},applyEditorDisplay(){},draw(){},setJerseyVisible(){},fitCamera(){},setGridVisible(){},
-    window:{dispatchEvent:event=>events.push(event.type)},CustomEvent:class {constructor(type){this.type=type;}},
+    window:{dispatchEvent:event=>events.push(event.type)},CustomEvent:class {constructor(type){this.type=type;}},performance,previewGarmentKind:()=>null,
   });
   vm.runInContext(rendererSource.slice(rendererSource.indexOf('let sourcePayload'),rendererSource.indexOf('function visibleHit')),c);
   vm.runInContext('function setStudioLighting(){window.lightingOwner=sourcePayload?.name;}',c);

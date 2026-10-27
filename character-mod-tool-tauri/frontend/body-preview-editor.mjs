@@ -1,4 +1,6 @@
 // Existing Character Mod Tool geometry editor, separated from rendering.
+import { previewGarmentKind } from './studio-shading.mjs';
+
 export function createBodyEditor(context) {
 const { THREE, modelRoot, renderer: sourceRenderer, scene, camera, materialTextureTarget, typed } = context;
 // Keep geometry calculations intact while invalidating shadows after deformation.
@@ -183,15 +185,17 @@ function bodyFitObjects(role) {
   return modelRoot.children.filter((object) => object.userData?.bodyFitRole === role);
 }
 
-function spatialCell(x, y, z, size) {
-  return `${Math.floor(x / size)}:${Math.floor(y / size)}:${Math.floor(z / size)}`;
-}
-
+// Body vertices bucketed by integer cell (nested maps). String cell keys and a
+// copied, fully sorted candidate list per jersey vertex made this the slowest
+// step of a player load (~0.4 s for a full body and jersey).
 function prepareJerseySurfaceBindings() {
-  if (!bodyFitContext?.bodyObjects.length || !bodyFitContext.jerseyObjects.length) return null;
+  const garmentObjects = [...(bodyFitContext?.jerseyObjects || []), ...(bodyFitContext?.footwearObjects || [])];
+  if (!bodyFitContext?.bodyObjects.length || !garmentObjects.length) return null;
   const cellSize = Math.max(0.5, bodyFitContext.height * 0.018, bodyFitContext.torsoHalfWidth * 0.18);
   const maxDistance = bodyFitContext.height * 0.12;
+  const maxSquared = maxDistance * maxDistance;
   const grid = new Map();
+  const bucketAt = (cx, cy, cz) => grid.get(cx)?.get(cy)?.get(cz);
   let bodyVertices = 0;
   for (const object of bodyFitContext.bodyObjects) {
     const base = object.userData.bodyFitBasePositions;
@@ -201,55 +205,75 @@ function prepareJerseySurfaceBindings() {
       if (!mask[index]) continue;
       const offset = index * 3;
       const sample = { object, index, x: base[offset], y: base[offset + 1], z: base[offset + 2] };
-      const key = spatialCell(sample.x, sample.y, sample.z, cellSize);
-      const bucket = grid.get(key) || [];
-      bucket.push(sample);
-      grid.set(key, bucket);
+      const cx = Math.floor(sample.x / cellSize), cy = Math.floor(sample.y / cellSize), cz = Math.floor(sample.z / cellSize);
+      let plane = grid.get(cx);
+      if (!plane) grid.set(cx, plane = new Map());
+      let row = plane.get(cy);
+      if (!row) plane.set(cy, row = new Map());
+      const bucket = row.get(cz);
+      if (bucket) bucket.push(sample); else row.set(cz, [sample]);
       bodyVertices += 1;
     }
   }
   let jerseyVertices = 0;
   let boundJerseyVertices = 0;
-  for (const object of bodyFitContext.jerseyObjects) {
+  const candidates = [];
+  const nearest = [], nearestDistance = [];
+  for (const object of garmentObjects) {
+    const counted = object.userData.bodyFitRole === 'jersey';
     const base = object.userData.bodyFitBasePositions;
     const mask = object.userData.bodyFitMask;
     if (!base || !mask) continue;
     const bindings = new Array(mask.length).fill(null);
     for (let index = 0; index < mask.length; index += 1) {
       if (!mask[index]) continue;
-      jerseyVertices += 1;
+      if (counted) jerseyVertices += 1;
       const offset = index * 3;
       const x = base[offset], y = base[offset + 1], z = base[offset + 2];
-      const center = [Math.floor(x / cellSize), Math.floor(y / cellSize), Math.floor(z / cellSize)];
-      let candidates = [];
+      const cx = Math.floor(x / cellSize), cy = Math.floor(y / cellSize), cz = Math.floor(z / cellSize);
+      candidates.length = 0;
       for (let radius = 0; radius <= 5 && candidates.length < 8; radius += 1) {
         for (let dz = -radius; dz <= radius; dz += 1) {
           for (let dy = -radius; dy <= radius; dy += 1) {
             for (let dx = -radius; dx <= radius; dx += 1) {
               if (radius && Math.max(Math.abs(dx), Math.abs(dy), Math.abs(dz)) !== radius) continue;
-              const bucket = grid.get(`${center[0] + dx}:${center[1] + dy}:${center[2] + dz}`);
-              if (bucket) candidates.push(...bucket);
+              const bucket = bucketAt(cx + dx, cy + dy, cz + dz);
+              if (bucket) for (const sample of bucket) candidates.push(sample);
             }
           }
         }
       }
-      candidates = candidates.map((sample) => ({
-        ...sample,
-        distance: Math.hypot(x - sample.x, y - sample.y, z - sample.z),
-      })).filter((sample) => sample.distance <= maxDistance)
-        .sort((left, right) => left.distance - right.distance || left.index - right.index)
-        .slice(0, 4);
-      if (!candidates.length) continue;
-      const exact = candidates.filter((sample) => sample.distance <= 0.000001);
-      const selected = exact.length ? exact : candidates;
-      const rawWeights = selected.map((sample) => exact.length ? 1 : 1 / Math.max(sample.distance * sample.distance, 0.000001));
+      // The 4 nearest within maxDistance, ordered by distance then vertex index;
+      // equal entries keep candidate order, matching a stable sort and slice(0, 4).
+      // Ranked by squared distance (Math.hypot dominated this loop); the kept
+      // samples get their exact distances below.
+      nearest.length = 0; nearestDistance.length = 0;
+      for (const sample of candidates) {
+        const dx = x - sample.x, dy = y - sample.y, dz = z - sample.z;
+        const squared = dx * dx + dy * dy + dz * dz;
+        if (squared > maxSquared) continue;
+        let at = nearest.length;
+        while (at > 0 && (nearestDistance[at - 1] > squared
+          || nearestDistance[at - 1] === squared && nearest[at - 1].index > sample.index)) at -= 1;
+        if (at >= 4) continue;
+        nearest.splice(at, 0, sample);
+        nearestDistance.splice(at, 0, squared);
+        if (nearest.length > 4) { nearest.pop(); nearestDistance.pop(); }
+      }
+      if (!nearest.length) continue;
+      for (let slot = 0; slot < nearest.length; slot += 1) {
+        nearestDistance[slot] = Math.hypot(x - nearest[slot].x, y - nearest[slot].y, z - nearest[slot].z);
+      }
+      const exact = nearest.filter((_, slot) => nearestDistance[slot] <= 0.000001);
+      const selected = exact.length ? exact : nearest;
+      const rawWeights = selected.map((_, slot) => exact.length ? 1 : 1 / Math.max(nearestDistance[slot] * nearestDistance[slot], 0.000001));
       const total = rawWeights.reduce((sum, value) => sum + value, 0);
-      bindings[index] = selected.map((sample, sampleIndex) => ({
+      bindings[index] = selected.map((sample, slot) => ({
         object: sample.object,
         index: sample.index,
-        weight: rawWeights[sampleIndex] / total,
+        weight: rawWeights[slot] / total,
       }));
-      boundJerseyVertices += 1;
+      if (counted) boundJerseyVertices += 1;
     }
     object.userData.bodyFitBindings = bindings;
   }
@@ -303,6 +327,7 @@ function prepareBodyFitContext(baseValues = {}) {
   bodyFitContext = {
     bodyObjects,
     jerseyObjects: bodyFitObjects('jersey'),
+    footwearObjects: bodyFitObjects('footwear'),
     centerX,
     centerY,
     minZ,
@@ -562,7 +587,7 @@ function applyBoundJerseyFit(object) {
   return true;
 }
 
-function applyBodyFit(values = {}) {
+function applyBodyFit(values = {}, drawAfter = true) {
   if (!bodyFitContext) return;
   currentBodyFitValues = { ...values };
   const signals = bodyFitSignals(values);
@@ -578,6 +603,9 @@ function applyBodyFit(values = {}) {
   let nativeMorphTargets = 0;
   let appliedMorphTargets = 0;
   let fallbackMeshes = 0;
+  for (const object of bodyFitContext.footwearObjects) {
+    if (!applyBoundJerseyFit(object)) applyParametricBodyFit(object, new Map(), dimensionDeltas, dimensionChanges, 1);
+  }
   for (const object of bodyFitContext.jerseyObjects) {
     const bound = applyBoundJerseyFit(object);
     if (!bound) applyParametricBodyFit(object, new Map(), dimensionDeltas, dimensionChanges, 0.45);
@@ -604,7 +632,7 @@ function applyBodyFit(values = {}) {
     });
   }
   const chestCorrection = chestCorrectionEnabled ? applyChestCorrectionGeometry() : null;
-  renderer.render(scene, camera);
+  if (drawAfter) renderer.render(scene, camera);
   return chestCorrection;
 }
 
@@ -826,8 +854,10 @@ function initialize(payload) {
     const indices = object.geometry.index.array;
     const mask = new Uint8Array(positions.length / 3);
     const chest = new Uint8Array(mask.length), torso = new Uint8Array(mask.length);
-    const role = item.sourceKind === 'preview-jersey' ? 'jersey' : 'body';
-    if (role === 'jersey') mask.fill(1);
+    // Shoes and socks follow the body like the jersey but stay out of the jersey's
+    // fit diagnostics, suggestions and chest correction.
+    const role = previewGarmentKind(item) || 'body';
+    if (role !== 'body') mask.fill(1);
     else for (const group of item.groups || []) {
       const target = materialTextureTarget(group.material);
       if (!['face', 'chest', 'torso', 'legs'].includes(target)) continue;
@@ -848,7 +878,9 @@ function initialize(payload) {
     });
   }
   prepareBodyFitContext(payload.player?.bodyFit || {});
-  applyBodyFit(payload.player?.bodyFit || {});
+  // No draw here: this ran the load's first render, compiling every shader
+  // synchronously before the preview could precompile them off the main thread.
+  applyBodyFit(payload.player?.bodyFit || {}, false);
 }
 function jerseyBindingMetrics() {
   if (!bodyFitContext?.jerseyObjects.length) return null;
