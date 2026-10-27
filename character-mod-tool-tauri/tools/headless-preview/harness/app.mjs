@@ -153,6 +153,11 @@ window.harnessReady = (async () => {
     const only = params.get('only');
     if (only !== 'new') await run('old', source);
     if (only !== 'old') await run('new', source);
+    // ?headshot=809 shows the game's own headshot (player-extract headshot) as a color reference.
+    if (params.get('headshot')) {
+      const { showHeadshot } = await import('./headshot.mjs');
+      await showHeadshot(window.ctx_new || window.ctx_old, `players/headshot-${params.get('headshot')}.dds`);
+    }
     log('done');
   } catch (error) { log('ERROR', error.stack || error); }
 })();

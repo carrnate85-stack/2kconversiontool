@@ -44,6 +44,18 @@ node tools/headless-preview/harness/serve.cjs 8790
 ```
 
 Then open `http://localhost:8790/?player=png00110&jersey=0&focus=head`.
+
+For a color reference, extract the game's own headshot for a player. It's
+`player_images/chr_g####.iff`, and the number matches the png ID; not every
+player has one.
+
+```bash
+tools/headless-preview/extractor/target/release/player-extract headshot "$GAME" 809 tools/headless-preview/harness/players/headshot-809.dds
+```
+
+Add `&headshot=809` to the harness URL to show it next to the renders. Headshots
+are photographs, so compare brightness and hue rather than expecting identical
+lighting.
 `player` prints the player's gender, skin tone and iris color, so you know what
 you extracted.
 
@@ -70,6 +82,7 @@ renderer, pass that commit as `--baseline`. Once your changes are committed,
 | `focus=eyes`, `eyeZoom` | Aim at the eye geometry; distance as a multiple of the eyes' extent |
 | `yaw`, `pitch`, `zoom` | Orbit angles in radians; `zoom` multiplies the fitted distance |
 | `only=old` / `only=new` | Load one side |
+| `headshot=809` | Show `players/headshot-809.dds` (the game's headshot) as a reference panel |
 | `iris=green`, `eyerange=1` | Synthetic head only: iris color, and a range-packed eye texture |
 
 `measureDetail('old' | 'new', [x, y, w, h])` in the page console returns a fine-detail score (mean absolute Laplacian of luminance) for a canvas region, to compare sides by number rather than by eye.

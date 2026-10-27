@@ -2,6 +2,7 @@
 // (decompressed) into a folder laid out like a Character Mod Tool staged player.
 //   player-extract list <game-root> <regex> [limit]
 //   player-extract player <game-root> <png-id> <out-dir>
+//   player-extract headshot <game-root> <graphic-id> <out.dds>
 use anyhow::{Context, Result, bail, ensure};
 use nba2k_assets::{catalog::Catalog, codec};
 use std::{fs, path::Path, sync::atomic::AtomicBool};
@@ -66,7 +67,31 @@ fn main() -> Result<()> {
                 );
             }
         }
-        other => bail!("Unknown mode {other}; use list or player"),
+        "headshot" => {
+            // The game's own headshot render (player_images/chr_g####.iff), as DDS:
+            // ground truth for hair, beard and skin color.
+            let id: u32 = args.get(2).context("Missing graphic id, e.g. 809")?.parse()?;
+            let out = Path::new(args.get(3).context("Missing output .dds path")?);
+            let name = format!("chr_g{id:04}");
+            let source = catalog.resolve(&format!("player_images/{name}.iff"))?;
+            let cancel = AtomicBool::new(false);
+            let decoded = codec::Oodle::load(root)?.archive(&codec::range(&catalog, source)?, &cancel)?;
+            let mut archive = codec::Archive::open(decoded)?;
+            let tld = catalog
+                .entries
+                .iter()
+                .find(|e| e.name.rsplit('/').next().is_some_and(|leaf| leaf.starts_with(&format!("{name}.")) && leaf.ends_with(".tld")))
+                .with_context(|| format!("No texture for {name}"))?;
+            let leaf = tld.name.rsplit('/').next().unwrap_or(&tld.name);
+            let dds = nba2k_assets::textures::one(&mut archive, &catalog, &tld.name, &cancel)
+                .or_else(|_| nba2k_assets::textures::one(&mut archive, &catalog, leaf, &cancel))?;
+            if let Some(parent) = out.parent() {
+                fs::create_dir_all(parent)?;
+            }
+            fs::write(out, &dds)?;
+            println!("{name} -> {} ({} bytes)", out.display(), dds.len());
+        }
+        other => bail!("Unknown mode {other}; use list, player or headshot"),
     }
     Ok(())
 }
