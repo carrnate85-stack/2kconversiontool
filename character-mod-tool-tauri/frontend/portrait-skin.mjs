@@ -170,15 +170,28 @@ const MAP_LINE = '#include <map_fragment>';
 // keeps the uniform objects bound at that compile, so they are kept per
 // material and updated in place. Fresh objects drew the previous jersey's
 // number and logos, e.g. a home number over the away jersey of the same cut.
-function configureGarmentOverlays(THREE, material, overlays) {
+function configureGarmentOverlays(THREE, material, overlays, renderer) {
   const signature = overlays.map((o) => `${o.channel}:${o.name}:${o.scaleAndOffset}:${(o.glyphs || []).map((g) => g.u).join('/')}:${o.spacing ?? ''}`).join(',');
-  if (material.userData.nbaOverlaySignature === signature) return;
-  const base = material.userData.nbaOverlayBase ||= { compile: material.onBeforeCompile, key: material.customProgramCacheKey() };
+  // The base renderer re-applies its texture hook to reused materials, replacing
+  // this one (configureNormalPacking wraps it instead, which keeps it). A
+  // replaced hook drew no overlays, so they are rebuilt on the hook in place now,
+  // even when the overlay set is unchanged (the 76ers 1997 away and alternate
+  // share their logo and font).
+  const installed = material.userData.nbaOverlayInstalled, key = material.customProgramCacheKey();
+  const intact = installed && (material.onBeforeCompile === installed.compile || (key !== installed.key && key.startsWith(installed.key)));
+  if (!intact) {
+    material.userData.nbaOverlayBase = { compile: material.onBeforeCompile, key };
+    material.userData.nbaOverlaySignature = undefined;
+  }
+  if (material.userData.nbaOverlaySignature === signature) return bindGarmentOverlays(renderer, material);
+  const base = material.userData.nbaOverlayBase;
   material.userData.nbaOverlaySignature = signature;
   material.needsUpdate = true;
   if (!overlays.length) {
     material.onBeforeCompile = base.compile;
     material.customProgramCacheKey = () => base.key;
+    material.userData.nbaOverlayActive = [];
+    material.userData.nbaOverlayInstalled = { compile: material.onBeforeCompile, key: base.key };
     return;
   }
   const previous = base.compile, previousKey = base.key;
@@ -228,6 +241,20 @@ function configureGarmentOverlays(THREE, material, overlays) {
   // garment sets with the same logos/numbers layout share one compiled program.
   const structure = overlays.map((o) => o.channel).join(',');
   material.customProgramCacheKey = () => `${previousKey}|nba-garment-overlays-${structure}`;
+  material.userData.nbaOverlayActive = uniforms;
+  material.userData.nbaOverlayInstalled = { compile: material.onBeforeCompile, key: material.customProgramCacheKey() };
+  bindGarmentOverlays(renderer, material);
+}
+// three.js binds a material's uniforms when it compiles, and a material that
+// switches back to a program it compiled earlier keeps the latest compile's
+// uniforms. Those may lack the overlays (the 76ers 2007 home sampled unbound
+// textures as garbage), so the current overlay uniforms are written into the
+// material's uniform table directly.
+function bindGarmentOverlays(renderer, material) {
+  const table = renderer?.properties.get(material).uniforms;
+  if (!table) return;
+  (material.userData.nbaOverlayActive || []).forEach((u, i) => Object.assign(table, { [`nbaOverlay${i}`]: u.map, [`nbaOverlayPlace${i}`]: u.place,
+    [`nbaOverlayTurn${i}`]: u.turn, [`nbaGlyphRects${i}`]: u.glyphRects, [`nbaGlyphLayout${i}`]: u.glyphLayout }));
 }
 // A renderer that loads one garment set after another (jersey previews) keeps
 // only the current payload's textures; earlier ones are released.
@@ -268,7 +295,7 @@ function configureGarmentTextures(context, material) {
     material.color.setHex(0xffffff);
   }
   const overlays = items.filter((item) => ['logo', 'number'].includes(item.channel) && Array.isArray(item.scaleAndOffset));
-  configureGarmentOverlays(THREE, material, material.map ? overlays : []);
+  configureGarmentOverlays(THREE, material, material.map ? overlays : [], context.renderer);
   material.needsUpdate = true;
 }
 // Richer procedural iris on top of the exporter's flat iris disc: radial
