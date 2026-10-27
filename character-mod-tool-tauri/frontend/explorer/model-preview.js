@@ -8,7 +8,7 @@ import { captureBasketFrame, catalogOverheadTarget, captureCreatedWoodTint } fro
 import { materialProfile, previewLightingProfile } from './render-profiles.mjs';
 import { skinBoundaryResponse, skinLuminanceResponse } from '../skin-response.mjs';
 import { configureStrandLightmap, configureStrandTangentRange, configureStrandSpecular, configureStrandCoverage } from '../strand-preview-fixes.mjs';
-import { createStudioEnvironment, studioLightBalance, seamSmoothedNormals, vertexTangents, cardTextureUvs, configureEyeIris, configureSkinShading, configureTearFilm, configureEyewearLens, configureEyeSurface, strandTint, flipsBodyNormalGreen } from '../studio-shading.mjs';
+import { createStudioEnvironment, studioLightBalance, seamSmoothedNormals, vertexTangents, cardTextureUvs, configureEyeIris, configureSkinShading, configureTearFilm, configureEyewearLens, configureEyeSurface, strandTint, flipsBodyNormalGreen, configureDetailNormal } from '../studio-shading.mjs';
 
 
 export function createExplorerRenderer(options = {}) {
@@ -1444,8 +1444,10 @@ function applyAutomaticTextures() {
         ? eyeWhiteTexture(boundColorTexture, material)
         : boundColorTexture;
       const normalTexture = boundArenaTexture(material.name, 'normal') || (targetName
-        ? boundTexture(targetName, 'normal')
+        ? boundTextureMatching(targetName, 'normal', /^(?![\s\S]*detailnormal)/i)
         : boundAccessoryTexture(material.name, 'normal'));
+      const detailNormalTexture = targetName === 'face' && normalTexture
+        ? boundTextureMatching('face', 'normal', /detailnormal/i) : null;
       const strandMaterial = targetName === 'hair' || targetName === 'facialhair';
       const tangentTexture = strandMaterial
         ? boundStrandTangent(material.name, targetName)
@@ -1472,6 +1474,7 @@ function applyAutomaticTextures() {
       if (normalTexture && flipsBodyNormalGreen(targetName, currentPayload?.player?.gender)) material.normalScale.y *= -1;
       configureEyeSurface(material);
       configureSkinShading(material, profile?.role === 'skin');
+      configureDetailNormal(material, detailNormalTexture);
       // Strand cards without a color/alpha map (e.g. armpit hair) can only draw
       // as solid placeholder-colored blobs; hide them until a texture binds.
       const untexturedStrand = profile?.role === 'strand' && !colorTexture;
@@ -2109,6 +2112,7 @@ const api = {
         skinResponse: material.userData.skinMaterialResponse || null,
         skinScatter: Boolean(material.userData.skinScatter),
         eyeIris: Boolean(material.userData.eyeIris),
+        detailNormal: material.userData.detailNormal || null,
         strandTint: material.userData.strandTint || null,
         rangeCompressed: Boolean(material.userData.textureRange),
         rangeSrgb: Boolean(material.userData.textureRangeSrgb),

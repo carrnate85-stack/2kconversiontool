@@ -355,3 +355,34 @@ export function strandTint(value) {
 export function flipsBodyNormalGreen(targetName, gender) {
   return targetName === 'torso' && (gender === 'male' || gender === 'child');
 }
+
+// A player's face_normal_o is only 512x512; the pores and fine wrinkles live in
+// the 2048x2048 face_detailnormal_o over the same UVs. Its XY is added to the
+// base normal's in tangent space (scaled like the base), after three's normal
+// chunk so the wrapper's normal-packing hook still finds that chunk.
+export const DETAIL_NORMAL = Object.freeze({ strength: 0.6 });
+
+export function configureDetailNormal(material, texture, strength = DETAIL_NORMAL.strength) {
+  material.userData.detailNormal = texture?.name || null;
+  if (!texture || !material.normalMap) return false;
+  const uniforms = material.userData.detailNormalUniforms ||= {
+    nbaDetailNormalMap: { value: null },
+    nbaDetailNormalStrength: { value: strength },
+  };
+  uniforms.nbaDetailNormalMap.value = texture;
+  uniforms.nbaDetailNormalStrength.value = strength;
+  const previous = material.onBeforeCompile;
+  const previousKey = material.customProgramCacheKey();
+  material.onBeforeCompile = (shader) => {
+    previous(shader);
+    Object.assign(shader.uniforms, uniforms);
+    shader.fragmentShader = 'uniform sampler2D nbaDetailNormalMap;\nuniform float nbaDetailNormalStrength;\n' + shader.fragmentShader;
+    shader.fragmentShader = shader.fragmentShader.replace('#include <normal_fragment_maps>', `#include <normal_fragment_maps>
+#ifdef USE_NORMALMAP_TANGENTSPACE
+  vec2 nbaDetailXY = texture2D( nbaDetailNormalMap, vNormalMapUv ).xy * 2.0 - 1.0;
+  normal = normalize( tbn * vec3( mapN.xy + nbaDetailXY * normalScale * nbaDetailNormalStrength, mapN.z ) );
+#endif`);
+  };
+  material.customProgramCacheKey = () => `${previousKey}:nba-detail-normal-v1`;
+  return true;
+}

@@ -42,12 +42,14 @@ const STRAND_REPLACEMENTS = [
 // dropped on nearly every player. Unused maps are now skipped and the cap
 // raised; arena previews keep their own limits. Chest/torso body normals come
 // from native preparation, picked by muscle type, so the skin IFF's own
-// avg_normal/avg_ripped copies are skipped.
+// avg_normal/avg_ripped copies are skipped. A player's own face_detailnormal_o
+// (2048x2048, the face's high-frequency detail over a 512x512 face_normal_o) is
+// kept; the generic skin IFF copies are not.
 const UNUSED_TEXTURE = String.raw`      function previewTextureUnused(item) {
         const identity = ${'`${item.name || ""} ${item.source || ""}`'};
         const channels = item.assignments?.length ? item.assignments.map((assignment) => assignment.channel) : [item.binding?.channel];
         if (channels.some((channel) => channel === "color" || channel === "tangent")) return false;
-        if (channels.includes("normal")) return /detailnormal/i.test(identity) || /_normal_avg_/i.test(identity) && !item.externalPath;
+        if (channels.includes("normal")) return /detailnormal/i.test(identity) && (!/^face_detailnormal_o\./i.test(item.name || "") || /_skin\.iff/i.test(identity)) || /_normal_avg_/i.test(identity) && !item.externalPath;
         return !/occlusion|(?:^|_)ao(?:_|\.)|lightmap|tangent/i.test(identity);
       }
 `;

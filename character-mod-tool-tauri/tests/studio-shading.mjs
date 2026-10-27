@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { studioLightBalance, STUDIO_ENVIRONMENT, seamSmoothedNormals, vertexTangents, cardTextureUvs, configureEyeIris, configureSkinShading, configureTearFilm, configureEyewearLens, EYEWEAR_LENS, configureEyeSurface, EYE_SURFACE, strandTint, flipsBodyNormalGreen } from '../web/renderer/studio-shading.mjs';
+import { studioLightBalance, STUDIO_ENVIRONMENT, seamSmoothedNormals, vertexTangents, cardTextureUvs, configureEyeIris, configureSkinShading, configureTearFilm, configureEyewearLens, EYEWEAR_LENS, configureEyeSurface, EYE_SURFACE, strandTint, flipsBodyNormalGreen, configureDetailNormal } from '../web/renderer/studio-shading.mjs';
 
 const balance = studioLightBalance({ ambient: 0.4, hemisphere: 0.8 });
 assert.ok(Math.abs(balance.ambient - 0.4 * STUDIO_ENVIRONMENT.ambientScale) < 1e-12);
@@ -82,6 +82,21 @@ configureSkinShading(standard, true);
 assert.equal(standard.userData.skinScatter, false, 'Standard materials (no sheen) are left unchanged');
 assert.equal(standard.customProgramCacheKey(), 'range-base');
 
+// The face detail normal adds its XY after three's normal chunk, which stays in
+// place for the wrapper's packing hook; no base normal map means no detail.
+const detailFace = hookMaterial(); detailFace.normalMap = { name: 'face_normal_o' };
+assert.equal(configureDetailNormal(detailFace, { name: 'face_detailnormal_o' }), true);
+const detailShader = { uniforms: {}, fragmentShader: '#include <normal_fragment_maps>\n#include <lights_fragment_begin>' };
+detailFace.onBeforeCompile(detailShader);
+assert.equal(detailShader.basePreserved, true);
+assert.ok(detailShader.fragmentShader.includes('#include <normal_fragment_maps>'), 'Normal chunk kept for the packing hook');
+assert.ok(detailShader.fragmentShader.indexOf('nbaDetailXY') > detailShader.fragmentShader.indexOf('#include <normal_fragment_maps>'));
+assert.equal(detailShader.uniforms.nbaDetailNormalMap.value.name, 'face_detailnormal_o');
+assert.equal(detailFace.customProgramCacheKey(), 'range-base:nba-detail-normal-v1');
+const noBase = hookMaterial();
+assert.equal(configureDetailNormal(noBase, { name: 'face_detailnormal_o' }), false);
+assert.equal(noBase.customProgramCacheKey(), 'range-base');
+
 // Card UVs (each quad covers a strand) beat an attachment layout that pins each card to one face spot.
 const cardIndices = new Uint32Array([0, 1, 2, 0, 2, 3, 4, 5, 6, 4, 6, 7]);
 const cardUvs = new Float32Array([0, 0, 0.1, 0, 0.1, 0.5, 0, 0.5, 0.2, 0, 0.3, 0, 0.3, 0.5, 0.2, 0.5]);
@@ -135,4 +150,4 @@ assert.equal(flipsBodyNormalGreen('torso', 'female'), false, 'Female torso maps 
 assert.equal(flipsBodyNormalGreen('chest', 'male'), false);
 assert.equal(flipsBodyNormalGreen('torso', undefined), false, 'Unknown bodies (catalog items) are left alone');
 
-console.log('Studio shading: light balance, seam/crease normals, tangent handedness and repair, chained iris uniforms, skin scatter, strand tint and torso normal flip passed.');
+console.log('Studio shading: light balance, seam/crease normals, tangent handedness and repair, chained iris uniforms, skin scatter, strand tint, torso normal flip and face detail normal passed.');

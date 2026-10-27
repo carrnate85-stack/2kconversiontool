@@ -3658,7 +3658,7 @@
         const identity = `${item.name || ""} ${item.source || ""}`;
         const channels = item.assignments?.length ? item.assignments.map((assignment) => assignment.channel) : [item.binding?.channel];
         if (channels.some((channel) => channel === "color" || channel === "tangent")) return false;
-        if (channels.includes("normal")) return /detailnormal/i.test(identity) || /_normal_avg_/i.test(identity) && !item.externalPath;
+        if (channels.includes("normal")) return /detailnormal/i.test(identity) && (!/^face_detailnormal_o\./i.test(item.name || "") || /_skin\.iff/i.test(identity)) || /_normal_avg_/i.test(identity) && !item.externalPath;
         return !/occlusion|(?:^|_)ao(?:_|\.)|lightmap|tangent/i.test(identity);
       }
       function previewTextureScore(item) {
