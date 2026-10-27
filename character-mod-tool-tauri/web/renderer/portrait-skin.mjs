@@ -374,9 +374,10 @@ export function configurePortraitLighting(context, settings = {}) {
       if (object.userData.previewKind === 'preview-jersey') {
         const garment = GARMENT_MATERIALS.find(([pattern]) => pattern.test(material.name))?.[1];
         if (garment) {
-          // A payload tint (e.g. the team's primary uniform color) overrides the default.
+          // A payload tint (e.g. the team's primary uniform color) overrides the default
+          // for the jersey and the viewer's shorts.
           const tint = context.payload?.portraitGarmentColor;
-          material.color.setHex(Number.isInteger(tint) && /jersey/i.test(material.name) ? tint : garment.color);
+          material.color.setHex(Number.isInteger(tint) && /jersey|shorts/i.test(material.name) ? tint : garment.color);
           material.roughness = garment.uniform ? settings.garmentRoughness ?? garment.roughness : garment.roughness;
           material.metalness = 0;
           configureGarmentTextures(context, material);
