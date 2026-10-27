@@ -3200,7 +3200,7 @@
       var { loadIff, parseBinaryTree, parseScneText, readZipEntry } = require_iff2();
       var DEFAULT_MAX_TRIANGLES = 25e4;
       var DEFAULT_MAX_MODELS = 300;
-      var MAX_TEXTURE_BYTES = 16 * 1024 * 1024;
+      var MAX_TEXTURE_BYTES = 32 * 1024 * 1024;
       var MAX_ARENA_TEXTURE_REQUESTS = 96;
       function sceneNameVariants(value) {
         const text = String(value || "");
@@ -3653,6 +3653,13 @@
             });
           }
         }
+      }
+      function previewTextureUnused(item) {
+        const identity = `${item.name || ""} ${item.source || ""}`;
+        const channels = item.assignments?.length ? item.assignments.map((assignment) => assignment.channel) : [item.binding?.channel];
+        if (channels.some((channel) => channel === "color" || channel === "tangent")) return false;
+        if (channels.includes("normal")) return /detailnormal|_normal_avg_(?!normal)/i.test(identity);
+        return !/occlusion|(?:^|_)ao(?:_|\.)|lightmap|tangent/i.test(identity);
       }
       function previewTextureScore(item) {
         const channels = item.assignments?.map((assignment) => assignment.channel) || [item.binding?.channel];
@@ -4202,8 +4209,9 @@
         const loadedBodyColors = /* @__PURE__ */ new Set();
         let textureBytes = 0;
         const maxTextureBytes = includeArenaTextures ? 64 * 1024 * 1024 : MAX_TEXTURE_BYTES;
-        const maxTextureCount = includeArenaTextures ? 128 : 24;
+        const maxTextureCount = includeArenaTextures ? 128 : 40;
         for (const texture of prioritized) {
+          if (!includeArenaTextures && previewTextureUnused(texture)) continue;
           const bodyColorTarget = bodyColorTextureTarget(texture);
           if (bodyColorTarget && loadedBodyColors.has(bodyColorTarget)) continue;
           try {

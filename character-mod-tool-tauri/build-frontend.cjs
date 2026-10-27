@@ -67,7 +67,7 @@ esbuild.build({
   }
 }).then(() => {
   const bundle = path.join(output, 'preview-worker.bundle.js');
-  fs.writeFileSync(bundle, require('./worker/strand-uv-patch.cjs').patchStrandUvs(fs.readFileSync(bundle, 'utf8')));
+  fs.writeFileSync(bundle, require('./worker/bundle-patches.cjs').patchWorkerBundle(fs.readFileSync(bundle, 'utf8')));
   console.log('TypeScript application UI and native preview worker prepared for Tauri.');
 })
   .catch(error => { console.error(error); process.exitCode = 1; });
