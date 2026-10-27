@@ -211,13 +211,20 @@ export function vertexTangents(positions, normals, uvs, indices, target = new Fl
 // The decoded eye textures carry the sclera only, so the iris is drawn around
 // the cornea, which sits at the centre of the eyeball's 0-1 UVs.
 // Color and size are uniforms: one program for all players.
-export const EYE_ENVIRONMENT_INTENSITY = 0.45;
+// The wet cornea should show small, crisp catchlights. A rough clearcoat
+// smeared the key softbox into a white band across the iris.
+export const EYE_SURFACE = Object.freeze({ environmentIntensity: 0.3, clearcoatRoughness: 0.05 });
+
+// Runs after the material profile, which resets clearcoat roughness.
+export function configureEyeSurface(material) {
+  if (!material.userData.eyeIris) return;
+  material.envMapIntensity = EYE_SURFACE.environmentIntensity;
+  if ('clearcoatRoughness' in material) material.clearcoatRoughness = EYE_SURFACE.clearcoatRoughness;
+}
 
 export function configureEyeIris(material, enabled, color, scale) {
   material.userData.eyeIris = Boolean(enabled && material.map);
   if (!material.userData.eyeIris) return;
-  // The wet clearcoat should show catchlights, not haze over the iris.
-  material.envMapIntensity = EYE_ENVIRONMENT_INTENSITY;
   const uniforms = material.userData.eyeIrisUniforms ||= { nbaIrisColor: { value: null }, nbaIrisScale: { value: 0.54 } };
   uniforms.nbaIrisColor.value = color;
   uniforms.nbaIrisScale.value = scale;

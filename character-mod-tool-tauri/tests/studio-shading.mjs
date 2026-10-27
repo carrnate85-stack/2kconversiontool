@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { studioLightBalance, STUDIO_ENVIRONMENT, seamSmoothedNormals, vertexTangents, cardTextureUvs, configureEyeIris, configureSkinShading, configureTearFilm, configureEyewearLens, EYEWEAR_LENS } from '../web/renderer/studio-shading.mjs';
+import { studioLightBalance, STUDIO_ENVIRONMENT, seamSmoothedNormals, vertexTangents, cardTextureUvs, configureEyeIris, configureSkinShading, configureTearFilm, configureEyewearLens, EYEWEAR_LENS, configureEyeSurface, EYE_SURFACE } from '../web/renderer/studio-shading.mjs';
 
 const balance = studioLightBalance({ ambient: 0.4, hemisphere: 0.8 });
 assert.ok(Math.abs(balance.ambient - 0.4 * STUDIO_ENVIRONMENT.ambientScale) < 1e-12);
@@ -90,6 +90,15 @@ assert.equal(cardTextureUvs(attachmentLayout, cardUvs, cardIndices), cardUvs, 'S
 assert.equal(cardTextureUvs(cardUvs, attachmentLayout, cardIndices), cardUvs, 'Correct labels are kept');
 assert.equal(cardTextureUvs(cardUvs, null, cardIndices), cardUvs, 'Meshes without a second set are untouched');
 assert.equal(cardTextureUvs(cardUvs, cardUvs.map(value => value * 0.8), cardIndices), cardUvs, 'Similar sets need a clear margin to switch');
+
+// Eye surface: crisp catchlights only on iris-configured eyes.
+const cornea = { userData: { eyeIris: true }, envMapIntensity: 1, clearcoatRoughness: 0.16 };
+configureEyeSurface(cornea);
+assert.equal(cornea.envMapIntensity, EYE_SURFACE.environmentIntensity);
+assert.equal(cornea.clearcoatRoughness, EYE_SURFACE.clearcoatRoughness);
+const notEye = { userData: {}, envMapIntensity: 1, clearcoatRoughness: 0.16 };
+configureEyeSurface(notEye);
+assert.equal(notEye.envMapIntensity, 1);
 
 // Eyewear keeps its texture mask with a minimum lens opacity, chained after earlier hooks.
 const goggles = hookMaterial({ transparent: false, opacity: 0.28, depthWrite: false, roughness: 0.72, metalness: 0.03 });

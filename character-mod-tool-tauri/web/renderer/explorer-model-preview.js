@@ -8,7 +8,7 @@ import { captureBasketFrame, catalogOverheadTarget, captureCreatedWoodTint } fro
 import { materialProfile, previewLightingProfile } from './render-profiles.mjs';
 import { skinBoundaryResponse, skinLuminanceResponse } from '../skin-response.mjs';
 import { configureStrandLightmap, configureStrandTangentRange, configureStrandSpecular, configureStrandCoverage } from '../strand-preview-fixes.mjs';
-import { createStudioEnvironment, studioLightBalance, seamSmoothedNormals, vertexTangents, cardTextureUvs, configureEyeIris, configureSkinShading, configureTearFilm, configureEyewearLens } from '../studio-shading.mjs';
+import { createStudioEnvironment, studioLightBalance, seamSmoothedNormals, vertexTangents, cardTextureUvs, configureEyeIris, configureSkinShading, configureTearFilm, configureEyewearLens, configureEyeSurface } from '../studio-shading.mjs';
 
 
 export function createExplorerRenderer(options = {}) {
@@ -1013,10 +1013,10 @@ function createDdsTexture(item) {
     texture.userData.rangeColor = Boolean(item.range) && item.binding?.channel === 'color'
       && /hair/i.test(item.binding?.target || '');
     const declaredFormat = String(item.format || '').toUpperCase();
-    // Plain (non-range) hair and beard color maps are declared *_UNORM without an
-    // SRGB tag but hold sRGB color like their range-compressed siblings; reading
-    // them as linear washed dark hair out to gray.
-    const hairColor = !item.range && item.binding?.channel === 'color' && /hair/i.test(item.binding?.target || '');
+    // Plain (non-range) hair, beard and eyelash color maps are declared *_UNORM
+    // without an SRGB tag but hold sRGB color like their range-compressed siblings;
+    // reading them as linear washed dark hair out to gray and lashes to a haze.
+    const hairColor = !item.range && item.binding?.channel === 'color' && /hair|lash/i.test(item.binding?.target || '');
     texture.colorSpace = hairColor ? THREE.SRGBColorSpace
       : item.range || (declaredFormat && declaredFormat !== 'DDS' && !declaredFormat.includes('SRGB'))
         ? THREE.NoColorSpace
@@ -1431,6 +1431,7 @@ function applyAutomaticTextures() {
       configureEyeIris(material, targetName === 'eye' && Boolean(colorTexture),
         irisColor(currentPayload?.player?.irisColor), irisScale(currentPayload?.player?.irisSize));
       const profile = applyPreviewMaterialProfile(material, normalTexture);
+      configureEyeSurface(material);
       configureSkinShading(material, profile?.role === 'skin');
       // Strand cards without a color/alpha map (e.g. armpit hair) can only draw
       // as solid placeholder-colored blobs; hide them until a texture binds.
