@@ -39,13 +39,16 @@ for (const [name, channel, target] of [['face_color_o', 'color'], ['face_normal_
   assert.equal(previewTextureUnused(texture(name, channel, target)), false, `${name} is kept`);
 }
 for (const [name, channel, target] of [['chest_normal_avg_ripped', 'normal', 'chest'], ['torso_normal_avg_normal', 'normal', 'torso'],
-  ['face_wrinklecolor_o', 'auxiliary'], ['chest_region_id', 'auxiliary', 'chest'], ['torso_roughcurvedense', 'auxiliary', 'torso'],
+  ['face_wrinklecolor_o', 'auxiliary'], ['chest_region_id', 'auxiliary', 'chest'],
   ['female_headband_thin_rdmo_o', 'auxiliary', undefined], ['female_headband_thin_coneangle_o', 'auxiliary', undefined]]) {
   assert.equal(previewTextureUnused(texture(name, channel, target)), true, `${name} is skipped`);
 }
 assert.equal(previewTextureUnused({ ...texture('chest_normal_avg_ripped', 'normal', 'chest'), externalPath: 'cmt-preview://shared/1' }), false, 'Native muscle-type body normal is kept');
 assert.equal(previewTextureUnused(texture('face_detailnormal_o', 'normal')), false, "The player's face detail normal is kept");
 assert.equal(previewTextureUnused({ ...texture('face_detailnormal_o', 'normal'), source: 'body-detail: char/male_skin.iff' }), true, 'The generic skin copy is skipped');
+for (const target of ['face', 'chest', 'torso', 'legs']) {
+  assert.equal(previewTextureUnused(texture(`${target}_roughcurvedense`, 'auxiliary', target)), false, `${target}_roughcurvedense is kept for skin roughness`);
+}
 for (const [name, target] of [['face_bentnormal_o', 'face'], ['chest_bentnormal', 'chest'], ['legs_bentnormal', 'legs']]) {
   assert.equal(previewTextureUnused(texture(name, 'auxiliary', target)), false, `${name} is kept for its occlusion alpha`);
 }

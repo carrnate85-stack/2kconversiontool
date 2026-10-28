@@ -3,7 +3,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
 const finish = require('./test-watchdog.cjs')('renderer texture transactions');
-const source = fs.readFileSync(path.join(__dirname, '../web/renderer/explorer-model-preview.js'), 'utf8');
+const source = fs.readFileSync(path.join(__dirname, '../web/renderer/shared/model-preview-core.mjs'), 'utf8');
 const section = (start, end) => source.slice(source.indexOf(start), source.indexOf(end, source.indexOf(start)));
 const item = (name, extra = {}) => ({ name, bytes: new Uint8Array([1, 2]), ...extra });
 function fixture() {

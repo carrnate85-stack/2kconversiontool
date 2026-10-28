@@ -1,5 +1,5 @@
 // Existing Character Mod Tool geometry editor, separated from rendering.
-import { previewGarmentKind } from './studio-shading.mjs';
+import { previewGarmentKind } from './shared/studio-shading.mjs';
 
 export function createBodyEditor(context) {
 const { THREE, modelRoot, renderer: sourceRenderer, scene, camera, materialTextureTarget, typed } = context;

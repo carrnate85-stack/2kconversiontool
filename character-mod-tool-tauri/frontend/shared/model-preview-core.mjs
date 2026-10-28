@@ -1,0 +1,2501 @@
+import * as THREE from './vendor/three.module.min.js';
+import { DDSLoader } from './vendor/DDSLoader.js';
+import { captureLightRig, captureSurfaceParameters, captureAuthoredCourtLights, captureAuthoredSun, captureDisplayParameters, captureEmissionTint } from './arena-capture.mjs';
+import { configureArenaLayers } from './arena-layers.mjs';
+import { configureScoreboardOverlay, configureCourtGraffiti } from './arena-overlays.mjs';
+import { captureBasketFrame, catalogOverheadTarget, captureCreatedWoodTint } from './arena-catalog.mjs';
+import { materialProfile, previewLightingProfile, skinBoundaryResponse } from './render-profiles.mjs';
+import { strandTextureCoordinates, copyPreviewCamera, legacyArenaCourtDefault, hiddenLegacyArenaHelper, hiddenArenaReflection, hiddenLegacyHairShell, legacyHairTextureMatches } from './preview-state.mjs';
+import { nearestSkinBoundaryPairs } from './skin-preview-fixes.mjs';
+import { configureUniformOverlays } from './uniform-overlays.mjs';
+import { uncompressedDds } from './rgba-dds.mjs';
+import { configureEyeIris, configureEyeSurface, configureTearFilm, configureDetailNormal, configureSkinShading, configureSkinRoughness, configureStrandShading, strandShading, createStudioEnvironment, studioLightBalance, seamSmoothedNormals, vertexTangents, flipsBodyNormalGreen, configureOcclusionAlpha, configureEyewearLens, configureGarmentLayering, configureColorwayMask, cardTextureUvs, SHOE_COLORWAY, GARMENT_LAYERING, previewGarmentKind, garmentCoverWeights, garmentBandBounds, GARMENT_BAND } from './studio-shading.mjs';
+// One renderer per call; the Exporter's model-preview.js creates the default
+// window.modelPreview. Options: canvas, viewer (event name), transparent,
+// interactive, shadows, picker, onCameraChange, filterHits.
+export function createModelPreview(config = {}) {
+let uniformNumber = '23';
+
+const canvas = config.canvas || document.getElementById('previewCanvas');
+const scene = new THREE.Scene();
+scene.background = config.transparent ? null : new THREE.Color(0x080b10);
+scene.fog = new THREE.FogExp2(0x080b10, 0.00008);
+const camera = new THREE.PerspectiveCamera(45, 1, 0.01, 1000000);
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: Boolean(config.transparent), powerPreference: 'high-performance' });
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, config.picker ? 1.25 : 2));
+
+const ambientLight = new THREE.AmbientLight(0xffffff, 1.0);
+scene.add(ambientLight);
+const hemisphereLight = new THREE.HemisphereLight(0xe8f2ff, 0x54463f, 0);
+scene.add(hemisphereLight);
+const keyLight = new THREE.DirectionalLight(0xfff8f2, 0.85);
+keyLight.position.set(2, 4, 3);
+scene.add(keyLight);
+scene.add(keyLight.target);
+const fillLight = new THREE.DirectionalLight(0xc9dcff, 0);
+fillLight.position.set(-4, 2, 3);
+scene.add(fillLight, fillLight.target);
+const rimLight = new THREE.DirectionalLight(0xff6a32, 0.22);
+rimLight.position.set(-3, 1, -2);
+scene.add(rimLight, rimLight.target);
+const grid = new THREE.GridHelper(10000, 40, 0x4c5665, 0x20262f);
+grid.material.opacity = 0.32;
+grid.material.transparent = true;
+scene.add(grid);
+
+// Shadow-only floor for player previews; outside modelRoot so fitting, picking
+// and the children/payload pairing never see it.
+const groundShadow = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.ShadowMaterial({ opacity: 0.34, depthWrite: false }));
+groundShadow.rotation.x = -Math.PI / 2;
+groundShadow.receiveShadow = true;
+groundShadow.visible = false;
+scene.add(groundShadow);
+// Built once per renderer on first player load; false after a failed build.
+let studioEnvironment = null;
+
+const modelRoot = new THREE.Group();
+// The decoder deliberately emits the workspace Blender import basis (Z-up).
+// Three.js and its grid are Y-up, so rotate the complete placed scene once.
+modelRoot.rotation.x = -Math.PI / 2;
+scene.add(modelRoot);
+const target = new THREE.Vector3();
+const raycaster = new THREE.Raycaster();
+const pointer = new THREE.Vector2();
+let yaw = Math.PI / 4;
+let pitch = Math.PI / 5;
+let distance = 10;
+let fittedDistance = 10;
+let wireframe = false;
+let eyelashesVisible = false;
+let textureCache = [];
+let textureItems = [];
+let currentPayload = null;
+let currentPreviewProfile = previewLightingProfile();
+let captureEnvironment = null;
+const captureLightGroup = new THREE.Group();
+scene.add(captureLightGroup);
+let drag = null;
+let selectionHelper = null;
+let loadGeneration = 0;
+const movementKeys = new Set();
+let movementFrame = 0;
+let movementTime = 0;
+// Geometry-derived lookup data belongs to this load only, not a growing cache.
+const skinBoundaryPairs = new Map();
+let materialMetadataByName = new Map();
+let cameraRenderFrame = 0;
+let textureBatchGeneration = 0;
+// One small readback rig per model load, reused across range-compressed maps.
+// Its shader/quad/render target are not reconstructed for every skin texture.
+let textureSampler = null;
+
+function invalidateShadows() {
+  // Static geometry/light rigs do not need another shadow pass just because
+  // the viewer camera moved. Material/visibility/rig changes still invalidate.
+  renderer.shadowMap.needsUpdate = true;
+}
+
+function scheduleCameraRender() {
+  updateCamera(false);
+  if (cameraRenderFrame) return;
+  cameraRenderFrame = requestAnimationFrame(() => {
+    cameraRenderFrame = 0;
+    if (viewerIsActive()) { renderer.render(scene, camera); cameraChanged(); }
+  });
+}
+
+function isPlacedArena(payload = currentPayload) {
+  const stats = payload?.stats || {};
+  return Number(stats.objectMatrices || 0) >= 20
+    && Number(stats.instances || 0) > Number(stats.modelsDecoded || 0);
+}
+
+const PLAYER_FOV = 24;
+
+function configurePreviewLighting(payload = currentPayload) {
+  currentPreviewProfile = previewLightingProfile(payload || {});
+  captureLightGroup.clear();
+  renderer.toneMapping = currentPreviewProfile.toneMapping === 'neutral'
+    ? THREE.NeutralToneMapping : currentPreviewProfile.toneMapping === 'aces'
+      ? THREE.ACESFilmicToneMapping : THREE.NoToneMapping;
+  renderer.toneMappingExposure = currentPreviewProfile.exposure;
+  scene.background?.set(0x080b10);
+  scene.fog.color.set(0x080b10);
+  // A 45 degree lens is wide-angle at head distance: noses grow and faces
+  // narrow. Players use a portrait lens; fitCamera backs off to match.
+  camera.fov = currentPreviewProfile.kind === 'player' ? PLAYER_FOV : 45;
+  camera.updateProjectionMatrix();
+  scene.environment = null;
+  captureEnvironment?.dispose();
+  captureEnvironment = null;
+  renderer.shadowMap.enabled = false;
+  groundShadow.visible = false;
+  renderer.localClippingEnabled = false;
+  renderer.shadowMap.autoUpdate = true;
+  invalidateShadows();
+  keyLight.castShadow = false;
+  keyLight.shadow.map?.dispose();
+  keyLight.shadow.map = null;
+  keyLight.position.set(2, 4, 3);
+  keyLight.target.position.set(0, 0, 0);
+  fillLight.position.set(-4, 2, 3);
+  fillLight.target.position.set(0, 0, 0);
+  rimLight.position.set(-3, 1, -2);
+  rimLight.target.position.set(0, 0, 0);
+  keyLight.color.set(0xfff8f2);
+  fillLight.color.set(0xc9dcff);
+  rimLight.color.set(0xff6a32);
+  ambientLight.intensity = currentPreviewProfile.ambient;
+  hemisphereLight.intensity = currentPreviewProfile.hemisphere;
+  keyLight.intensity = currentPreviewProfile.key;
+  fillLight.intensity = currentPreviewProfile.fill;
+  rimLight.intensity = currentPreviewProfile.rim;
+  scene.environmentIntensity = 1;
+  const environment = currentPreviewProfile.kind === 'player' ? studioEnvironmentTexture() : null;
+  if (environment) {
+    // Reflections and image-based fill replace most of the flat ambient term.
+    const balance = studioLightBalance(currentPreviewProfile);
+    scene.environment = environment;
+    scene.environmentIntensity = balance.environmentIntensity;
+    ambientLight.intensity = balance.ambient;
+    hemisphereLight.intensity = balance.hemisphere;
+  }
+}
+
+function studioEnvironmentTexture() {
+  if (studioEnvironment === null) {
+    try { studioEnvironment = createStudioEnvironment(THREE, renderer); } catch { studioEnvironment = false; }
+  }
+  return studioEnvironment ? studioEnvironment.texture : null;
+}
+
+function configureStudioLights(bounds) {
+  if (!currentPreviewProfile.shadows || bounds.isEmpty()) return;
+  const center = bounds.getCenter(new THREE.Vector3());
+  const size = bounds.getSize(new THREE.Vector3());
+  const radius = Math.max(size.x, size.y, size.z, 0.01);
+  const place = (light, direction) => {
+    light.position.copy(center).addScaledVector(new THREE.Vector3(...direction).normalize(), radius * 2.6);
+    light.target.position.copy(center);
+    light.target.updateMatrixWorld(true);
+  };
+  place(keyLight, [1.5, 2.3, 2]);
+  place(fillLight, [-2.1, 1.15, 1.3]);
+  place(rimLight, [-1.4, 1.7, -2.2]);
+  renderer.shadowMap.enabled = config.shadows !== false;
+  // r185 deprecates PCFSoftShadowMap (it fell back to PCF with a warning);
+  // the radius now sets the softness.
+  renderer.shadowMap.type = THREE.PCFShadowMap;
+  renderer.shadowMap.autoUpdate = false;
+  invalidateShadows();
+  keyLight.castShadow = config.shadows !== false;
+  // Players also throw a contact shadow onto the ground plane, which needs a
+  // wider shadow camera and more texels to keep the body's shadow detail.
+  const player = currentPreviewProfile.kind === 'player';
+  const mapSize = player ? 2048 : 1024;
+  keyLight.shadow.mapSize.set(mapSize, mapSize);
+  const extent = radius * (player ? 1.15 : 0.72);
+  // Players get softer PCF. The normal bias is ~1.5 shadow texels: the old
+  // 0.0006 x radius was under half a texel and banded lit foreheads.
+  keyLight.shadow.radius = player ? 3 : 1;
+  keyLight.shadow.bias = -0.0002;
+  keyLight.shadow.normalBias = player ? 1.5 * (2 * extent / mapSize) : radius * 0.0006;
+  const shadowCamera = keyLight.shadow.camera;
+  shadowCamera.left = shadowCamera.bottom = -extent;
+  shadowCamera.right = shadowCamera.top = extent;
+  shadowCamera.near = Math.max(0.01, radius * 0.05);
+  shadowCamera.far = radius * 6;
+  shadowCamera.updateProjectionMatrix();
+  modelRoot.traverse((object) => {
+    if (!object.isMesh) return;
+    const materials = Array.isArray(object.material) ? object.material : [object.material];
+    object.castShadow = materials.some((material) => material && !material.transparent);
+    object.receiveShadow = true;
+  });
+  // Contact shadow at the player's base so it stands on the floor.
+  groundShadow.position.set(center.x, bounds.min.y + radius * 0.0005, center.z);
+  groundShadow.scale.setScalar(radius * 3);
+  groundShadow.visible = player;
+}
+
+function colorFor(name) {
+  const normalized = String(name || '').toLowerCase();
+  if (/eye(?:ball|white)|sclera/.test(normalized)) return new THREE.Color(0xd8d4c8);
+  if (/iris|pupil/.test(normalized)) return new THREE.Color(0x332b26);
+  if (/caruncle|teartube/.test(normalized)) return new THREE.Color(0x9a5d5c);
+  if (/teeth/.test(normalized)) return new THREE.Color(0xd7d1bf);
+  if (/tongue|mouth|gum/.test(normalized)) return new THREE.Color(0x7f4948);
+  if (/facial.?hair|beard|brow|lash|(?:^|_)hair(?:_|$)/.test(normalized)) return new THREE.Color(0x292624);
+  if (/(?:^|_)(?:skin|face|head|body)(?:_|$)/.test(normalized)) return new THREE.Color(0x9b7868);
+  // Preview crew socks have no color map: plain white athletic socks.
+  if (/(?:^|_)sock(?:_|$)/.test(normalized)) return new THREE.Color(0xe6e6e3);
+  let hash = 2166136261;
+  for (const char of String(name)) hash = Math.imul(hash ^ char.charCodeAt(0), 16777619);
+  const color = new THREE.Color();
+  color.setHSL(((hash >>> 0) % 360) / 360, 0.07, 0.52 + ((hash >>> 8) % 8) / 100);
+  return color;
+}
+
+function updateCamera(draw = true) {
+  if (draw && cameraRenderFrame) {
+    cancelAnimationFrame(cameraRenderFrame);
+    cameraRenderFrame = 0;
+  }
+  pitch = Math.max(-Math.PI * 0.48, Math.min(Math.PI * 0.48, pitch));
+  distance = Math.max(0.001, distance);
+  const horizontal = Math.cos(pitch) * distance;
+  camera.position.set(
+    target.x + Math.sin(yaw) * horizontal,
+    target.y + Math.sin(pitch) * distance,
+    target.z + Math.cos(yaw) * horizontal,
+  );
+  camera.lookAt(target);
+  camera.near = Math.max(0.001, distance / 5000);
+  camera.far = Math.max(1000, distance * 100);
+  camera.updateProjectionMatrix();
+  if (draw) { renderer.render(scene, camera); cameraChanged(); }
+}
+
+function cameraChanged() {
+  config.onCameraChange?.({ target: target.toArray(), yaw, pitch, distance, fittedDistance });
+}
+
+// Events from a named viewer carry its name, so several renderers can share a page.
+function emit(type, detail) {
+  window.dispatchEvent(new CustomEvent(type, { detail: config.viewer ? { ...(detail || {}), viewer: config.viewer } : detail }));
+}
+
+function viewerIsActive() {
+  if (config.interactive === false || canvas.closest('[hidden]')) return false;
+  const modal = canvas.closest('.modal-backdrop');
+  return !modal || !modal.classList.contains('hidden');
+}
+
+function moveCameraFrame(time) {
+  movementFrame = 0;
+  if (!movementKeys.size || !viewerIsActive()) return;
+  const delta = Math.min(0.05, Math.max(0, (time - movementTime) / 1000));
+  movementTime = time;
+  const forward = target.clone().sub(camera.position);
+  forward.y = 0;
+  if (forward.lengthSq() < 0.000001) forward.set(-Math.sin(yaw), 0, -Math.cos(yaw));
+  forward.normalize();
+  const right = new THREE.Vector3().crossVectors(forward, camera.up).normalize();
+  const movement = new THREE.Vector3();
+  if (movementKeys.has('ArrowUp')) movement.add(forward);
+  if (movementKeys.has('ArrowDown')) movement.sub(forward);
+  if (movementKeys.has('KeyD') || movementKeys.has('ArrowRight')) movement.add(right);
+  if (movementKeys.has('KeyA') || movementKeys.has('ArrowLeft')) movement.sub(right);
+  if (movementKeys.has('KeyW') || movementKeys.has('Space')) movement.y += 1;
+  if (movementKeys.has('KeyS') || movementKeys.has('KeyC')) movement.y -= 1;
+  let changed = false;
+  if (movement.lengthSq()) {
+    const speed = movementKeys.has('ShiftLeft') || movementKeys.has('ShiftRight') ? 900 : 300;
+    target.addScaledVector(movement.normalize(), speed * delta);
+    changed = true;
+  }
+  const zoomDirection = (movementKeys.has('KeyE') ? 1 : 0) - (movementKeys.has('KeyQ') ? 1 : 0);
+  if (zoomDirection) {
+    const zoomRate = movementKeys.has('ShiftLeft') || movementKeys.has('ShiftRight') ? 4 : 2;
+    distance *= Math.exp(zoomDirection * zoomRate * delta);
+    changed = true;
+  }
+  if (changed) updateCamera();
+  movementFrame = requestAnimationFrame(moveCameraFrame);
+}
+
+function startCameraMovement() {
+  if (movementFrame) return;
+  movementTime = performance.now();
+  movementFrame = requestAnimationFrame(moveCameraFrame);
+}
+
+function stopCameraMovement() {
+  movementKeys.clear();
+  if (movementFrame) cancelAnimationFrame(movementFrame);
+  movementFrame = 0;
+  if (cameraRenderFrame) cancelAnimationFrame(cameraRenderFrame);
+  cameraRenderFrame = 0;
+}
+
+function resize() {
+  const width = Math.max(1, canvas.clientWidth);
+  const height = Math.max(1, canvas.clientHeight);
+  renderer.setSize(width, height, false);
+  camera.aspect = width / height;
+  camera.updateProjectionMatrix();
+  renderer.render(scene, camera);
+}
+new ResizeObserver(resize).observe(canvas);
+
+function disposeRoot() {
+  if (textureSampler) {
+    textureSampler.geometry.dispose();
+    textureSampler.material.dispose();
+    textureSampler.target.dispose();
+    textureSampler = null;
+  }
+  skinBoundaryPairs.clear();
+  clearPick(false);
+  const geometries = new Set();
+  const materialsToDispose = new Set();
+  while (modelRoot.children.length) {
+    const child = modelRoot.children.at(-1);
+    modelRoot.remove(child);
+    // InstancedMesh owns additional GPU buffers beyond its shared geometry.
+    child.dispose?.();
+    if (child.geometry) geometries.add(child.geometry);
+    // Strand soft passes share the geometry but own their materials.
+    const materials = [child, ...child.children].flatMap((object) => Array.isArray(object.material) ? object.material : [object.material]);
+    materials.filter(Boolean).forEach((material) => {
+      disposeDerivedTextures(material);
+      materialsToDispose.add(material);
+    });
+  }
+  geometries.forEach((geometry) => geometry.dispose());
+  materialsToDispose.forEach((material) => material.dispose());
+  textureCache.forEach((texture) => texture?.dispose());
+  textureCache = [];
+  textureItems = [];
+}
+
+function clearPick(notify = true) {
+  if (selectionHelper) {
+    scene.remove(selectionHelper);
+    selectionHelper.geometry?.dispose();
+    selectionHelper.material?.dispose();
+    selectionHelper = null;
+  }
+  if (notify) emit('model-preview:pick', null);
+  renderer.render(scene, camera);
+}
+
+function typed(value, Type) {
+  if (value instanceof Type) return value;
+  if (ArrayBuffer.isView(value)) return new Type(value.buffer, value.byteOffset, value.byteLength / Type.BYTES_PER_ELEMENT);
+  return new Type(value || []);
+}
+
+function indexArray(value) {
+  // WebGL reserves 0xffff for primitive restart. Keep that index (and larger
+  // ones) in a 32-bit buffer, but halve storage for ordinary small meshes.
+  const indices = typed(value, Uint32Array);
+  for (const index of indices) if (index >= 65535) return indices;
+  return new Uint16Array(indices);
+}
+
+function nextFrame() {
+  return new Promise((resolve) => requestAnimationFrame(resolve));
+}
+
+function cancelLoad() {
+  loadGeneration += 1;
+}
+
+function clearPreview() {
+  cancelLoad();
+  stopCameraMovement();
+  disposeRoot();
+  currentPayload = null;
+  materialMetadataByName.clear();
+  renderer.renderLists.dispose();
+}
+
+function getCameraState() {
+  return copyPreviewCamera({target:target.toArray(),yaw,pitch,distance,fittedDistance,fov:camera.fov});
+}
+
+function setCameraState(value, draw = true) {
+  // Callers that never change the lens may leave fov out.
+  const state = copyPreviewCamera(value && !('fov' in value) ? { ...value, fov: camera.fov } : value);
+  if (!state) return false;
+  target.fromArray(state.target);
+  ({yaw,pitch,distance,fittedDistance} = state);
+  camera.fov = state.fov;
+  updateCamera(draw);
+  return true;
+}
+
+function fitCamera(draw = true) {
+  const bounds = new THREE.Box3().setFromObject(modelRoot);
+  if (bounds.isEmpty()) {
+    target.set(0, 0, 0);
+    fittedDistance = distance = 10;
+  } else {
+    bounds.getCenter(target);
+    const size = bounds.getSize(new THREE.Vector3());
+    const radius = Math.max(size.x, size.y, size.z, 0.01);
+    if (isPlacedArena()) target.set(0, 0, 0);
+    fittedDistance = distance = radius / (2 * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2))) * 1.35;
+    grid.position.y = bounds.min.y;
+    grid.scale.setScalar(Math.max(0.01, radius / 10000));
+  }
+  configureStudioLights(bounds);
+  yaw = Math.PI / 4;
+  pitch = Math.PI / 5;
+  updateCamera(draw);
+}
+
+function basketWorldPosition() {
+  modelRoot.updateMatrixWorld(true);
+  const candidates = [];
+  for (const object of modelRoot.children) {
+    const legacy = object.userData.previewInstances || [];
+    const names = object.userData.previewInstanceNames || legacy.map((instance) => instance.name);
+    const targets = object.userData.previewInstanceTargets || legacy.map((instance) => instance.target);
+    names.forEach((name, index) => {
+      if (!/(?:^|[:@_])basket(?:\d|$)|rimr/i.test(`${name || ''} ${targets[index] || ''}`)) return;
+      const matrix = new THREE.Matrix4();
+      object.getMatrixAt(index, matrix);
+      matrix.premultiply(object.matrixWorld);
+      candidates.push(new THREE.Vector3().setFromMatrixPosition(matrix));
+    });
+  }
+  // Legacy arenas bake placement into vertices rather than Object matrices.
+  // Use a full basket's world-space bounds; small rim submeshes can be local.
+  if (!candidates.length && currentPayload?.arena) {
+    for (const object of modelRoot.children) {
+      if (!/(?:^|:)basket[ha]$/i.test(object.name)) continue;
+      const box = new THREE.Box3().setFromObject(object);
+      if (!box.isEmpty()) candidates.push(box.getCenter(new THREE.Vector3()));
+    }
+  }
+  candidates.sort((a, b) => a.z - b.z);
+  return candidates[0] || new THREE.Vector3(0, 0, -1200);
+}
+
+function setArenaCourtView() {
+  if (!currentPayload?.arena && !isPlacedArena()) {
+    fitCamera();
+    return;
+  }
+  const basket = basketWorldPosition();
+  const cameraHeight = 100;
+  target.set(basket.x, cameraHeight, basket.z);
+  const cameraX = 0;
+  const cameraZ = 0;
+  const dx = cameraX - target.x;
+  const dz = cameraZ - target.z;
+  yaw = Math.atan2(dx, dz);
+  pitch = 0;
+  distance = Math.max(200, Math.hypot(dx, dz));
+  updateCamera();
+}
+
+// Offline catalog captures share a court-relative camera, independent of the
+// arena's roof/bowl bounds. Basket placement origins are at floor level.
+function setArenaCaptureView(options = {}) {
+  invalidateShadows();
+  if (!currentPayload?.stats?.arena) throw new Error('Load an arena before setting a capture view.');
+  stopCameraMovement();
+  if (selectionHelper) clearPick(false);
+  modelRoot.updateMatrixWorld(true);
+  const anchors = [];
+  for (const object of modelRoot.children) {
+    if (!object.isInstancedMesh) continue;
+    const names = object.userData.previewInstanceTargets || [];
+    names.forEach((name, index) => {
+      if (!/(?:^|:)basket$/i.test(name)) return;
+      const matrix = new THREE.Matrix4();
+      object.getMatrixAt(index, matrix);
+      matrix.premultiply(object.matrixWorld);
+      const point = new THREE.Vector3().setFromMatrixPosition(matrix);
+      if (!anchors.some(other => other.distanceTo(point) < 1)) anchors.push(point);
+    });
+  }
+  anchors.sort((a, b) => a.z - b.z || a.x - b.x);
+  const basketFrame = captureBasketFrame(anchors.map(point=>point.toArray()));
+  const anchored = Boolean(basketFrame);
+  if (!anchored && options.sceneFallback) return setArenaSceneCaptureView(options);
+  const center = anchored ? new THREE.Vector3(...basketFrame.center) : new THREE.Vector3();
+  const longAxis = anchored ? new THREE.Vector3(...basketFrame.axis) : new THREE.Vector3(0, 0, 1);
+  const sideAxis = new THREE.Vector3(longAxis.z, 0, -longAxis.x);
+  const length = anchored ? basketFrame.length : 2865;
+  const width = anchored ? basketFrame.width : length*.534;
+  const azimuthDegrees = Number(options.azimuthDegrees ?? 245);
+  const elevationDegrees = Number(options.elevationDegrees ?? 35);
+  const distanceInCourtLengths = Number(options.distanceInCourtLengths ?? 1.3);
+  if (![azimuthDegrees, elevationDegrees, distanceInCourtLengths].every(Number.isFinite)
+    || elevationDegrees <= 0 || elevationDegrees >= 90 || distanceInCourtLengths <= 0) {
+    throw new Error('Invalid arena capture camera.');
+  }
+  const azimuth = THREE.MathUtils.degToRad(azimuthDegrees);
+  const horizontal = longAxis.clone().multiplyScalar(Math.cos(azimuth))
+    .addScaledVector(sideAxis, Math.sin(azimuth));
+  yaw = Math.atan2(horizontal.x, horizontal.z);
+  pitch = THREE.MathUtils.degToRad(elevationDegrees);
+  const requestedDistance = length * distanceInCourtLengths;
+  distance = requestedDistance;
+  const cutawayObjects = options.catalogCutaway ? applyCatalogRoofCutaway(center.y) : [];
+  let ceilingHeight = null;
+  for (const object of modelRoot.children) {
+    if (!object.visible) continue;
+    if (!/(?:^|[:_])(?:roof|ceiling)(?:_|$)/i.test(object.name.split(':').at(-1))) continue;
+    const bounds = new THREE.Box3().setFromObject(object);
+    const size = bounds.getSize(new THREE.Vector3());
+    if (size.x < length * 0.5 || size.z < length * 0.5 || bounds.min.y <= center.y + 500) continue;
+    ceilingHeight = Math.min(ceilingHeight ?? Infinity, bounds.min.y);
+  }
+  if (ceilingHeight !== null) distance = Math.min(distance, (ceilingHeight - center.y - 300) / Math.sin(pitch));
+  // A very low gym cannot fit an elevated full-court view inside its roof
+  // without an almost 180-degree lens. Use a documented roof cutaway instead.
+  if (options.cutaway !== false && (distance < requestedDistance * 0.45 || options.catalogCutaway && distance < requestedDistance)) {
+    distance = requestedDistance;
+    for (const object of modelRoot.children) {
+      if (!/roof|ceiling|truss|rafter|duct|pillar|light_hanging|lights_hanging|light_stage|light_spot/i.test(object.name)) continue;
+      const bounds = new THREE.Box3().setFromObject(object);
+      if (bounds.min.y <= center.y + 500 && !/truss|rafter|duct|pillar/i.test(object.name)) continue;
+      object.visible = false;
+      cutawayObjects.push(object.name);
+    }
+  }
+  target.copy(center);
+  // Keep the requested view angle inside a low gym roof. Widen the lens to
+  // compensate for the shorter distance instead of photographing the roof.
+  camera.fov = THREE.MathUtils.radToDeg(2 * Math.atan(Math.tan(THREE.MathUtils.degToRad(45 / 2)) * requestedDistance / distance));
+  grid.visible = false;
+  updateCamera(false);
+  camera.updateMatrixWorld(true);
+  const framingPoints = [];
+  for (const x of [-1, 1]) for (const z of [-1, 1]) {
+    framingPoints.push(center.clone().addScaledVector(sideAxis, x * width*.5).addScaledVector(longAxis, z * length * 0.502));
+  }
+  for (const end of [-1, 1]) for (const x of [-1, 1]) for (const height of [0, 600]) {
+    framingPoints.push(center.clone().addScaledVector(longAxis, end * length * 0.63)
+      .addScaledVector(sideAxis, x * 110).add(new THREE.Vector3(0, height, 0)));
+  }
+  if(anchors.length>2) for(const anchor of anchors) for(const x of [-110,110]) for(const height of [0,600])
+    framingPoints.push(anchor.clone().addScaledVector(sideAxis,x).add(new THREE.Vector3(0,height,0)));
+  let tangent = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
+  for (const point of framingPoints) {
+    const view = point.clone().applyMatrix4(camera.matrixWorldInverse);
+    if (view.z >= 0) throw new Error('The capture camera is too close to frame the court.');
+    tangent = Math.max(tangent, Math.abs(view.x) / (-view.z * camera.aspect) * 1.08, Math.abs(view.y) / -view.z * 1.08);
+  }
+  camera.fov = THREE.MathUtils.radToDeg(2 * Math.atan(tangent));
+  camera.updateProjectionMatrix();
+  renderer.render(scene, camera);
+  return {
+    preset: 'elevated-corner-v2', azimuthDegrees, elevationDegrees,
+    distanceInCourtLengths, courtLength: length, anchorSource: anchored ? 'basket placements' : 'NBA court fallback',
+    basketAnchors: anchors.map(point => point.toArray()),
+    courtWidth:width, longAxis:longAxis.toArray(),
+    position: camera.position.toArray(), target: target.toArray(), fov: camera.fov,
+    actualDistance: distance, ceilingHeight, ceilingAdjustment: distance < requestedDistance, cutawayObjects,
+    frameBounds: framingPoints.map(point => point.clone().project(camera).toArray()),
+  };
+}
+
+function capturePng() {
+  renderer.render(scene, camera);
+  return canvas.toDataURL('image/png');
+}
+
+function inspectCaptureVisibility() {
+  camera.updateMatrixWorld(true);modelRoot.updateMatrixWorld(true);
+  const visible=modelRoot.children.filter(object=>object.visible);
+  return [[0,0],[-.4,-.3],[.4,-.3],[-.4,.3],[.4,.3]].map(([x,y])=>{
+    raycaster.setFromCamera(new THREE.Vector2(x,y),camera);
+    const hits=raycaster.intersectObjects(visible,false);
+    return {ndc:[x,y],hits:hits.slice(0,3).map(hit=>({name:hit.object.name,distance:hit.distance,
+      point:hit.point.toArray(),material:(Array.isArray(hit.object.material)?hit.object.material[hit.face?.materialIndex||0]:hit.object.material)?.name}))};
+  });
+}
+
+function applyCatalogRoofCutaway(floorHeight = 0) {
+  const names=[];
+  for(const object of modelRoot.children){
+    const leaf=object.name.split(':').at(-1);
+    if(/basket|scorecube|scoreboard/i.test(leaf))continue;
+    if(object.isInstancedMesh){
+      const targets=object.userData.previewInstanceTargets || [];
+      const overhead=targets.map((name,index)=>catalogOverheadTarget(name)?index:-1).filter(index=>index>=0);
+      if(overhead.length){
+        if(overhead.length===object.count){object.visible=false;names.push(object.name+' [overhead scene group]');continue;}
+        // Shared geometry can also appear on lower walls. Remove only the
+        // placements inside overhead groups, keeping those other instances.
+        const empty=new THREE.Matrix4().makeScale(0,0,0);
+        for(const index of overhead)object.setMatrixAt(index,empty);
+        object.instanceMatrix.needsUpdate=true;object.computeBoundingBox();object.computeBoundingSphere();
+        names.push(object.name+` [${overhead.length} overhead instances hidden]`);
+      }
+    }else if(catalogOverheadTarget(object.name)){
+      object.visible=false;names.push(object.name+' [overhead scene group]');continue;
+    }
+    if(/roof|ceiling|truss|rafter|duct|hvac|domeframe|domeglass|(?:^|_)beam|pillar/i.test(leaf)){
+      object.visible=false;names.push(object.name);
+    }else if(/(?:^|_)shell(?:_|$)/i.test(leaf) || /@shell(?:s|_[^@]+)?_grp@/i.test(object.name)){
+      // Some gyms bake roofs and walls into one shell. Clip its upper portion
+      // rather than discarding the room's lower walls and floor together.
+      object.userData.captureClipHeight=floorHeight+600;
+      renderer.localClippingEnabled=true;names.push(object.name+' [upper shell clipped]');
+    }
+  }
+  return names;
+}
+
+// Picker entries also include lobby/menu scenes without a pair of baskets.
+// Fit their actual static bounds rather than implying a standard NBA court.
+function setArenaSceneCaptureView(options = {}) {
+  const cutawayObjects=options.catalogCutaway ? applyCatalogRoofCutaway() : [];
+  let box = new THREE.Box3();
+  for(const object of modelRoot.children)if(object.visible)box.union(new THREE.Box3().setFromObject(object));
+  const courtBox=new THREE.Box3();
+  for(const object of modelRoot.children){
+    const materials=Array.isArray(object.material)?object.material:[object.material];
+    if(!object.visible || !materials.some(material=>/^floor_/i.test(material.name)))continue;
+    const floorBounds=new THREE.Box3().setFromObject(object),size=floorBounds.getSize(new THREE.Vector3());
+    if(size.y<50 && size.x*size.z>1000000)courtBox.union(floorBounds);
+  }
+  const floorFraming=!courtBox.isEmpty();
+  if(floorFraming){box=courtBox;box.max.y+=600;}
+  if (box.isEmpty()) throw new Error('No static scene geometry was found.');
+  const size = box.getSize(new THREE.Vector3());
+  if (![...box.min.toArray(), ...box.max.toArray()].every(Number.isFinite)) throw new Error('Invalid static scene bounds.');
+  target.copy(box.getCenter(new THREE.Vector3()));
+  yaw = THREE.MathUtils.degToRad(Number(options.azimuthDegrees ?? 245));
+  pitch = THREE.MathUtils.degToRad(Number(options.elevationDegrees ?? 35));
+  distance = Math.max(size.x, size.y, size.z, 1) * 1.8;
+  camera.fov = 45;
+  grid.visible = false;
+  updateCamera(false);
+  camera.updateMatrixWorld(true);
+  const corners=[];
+  for(const x of [box.min.x,box.max.x]) for(const y of [box.min.y,box.max.y]) for(const z of [box.min.z,box.max.z]) {
+    corners.push(new THREE.Vector3(x,y,z));
+  }
+  let tangent=Math.tan(THREE.MathUtils.degToRad(camera.fov/2));
+  for(const corner of corners){
+    const p=corner.clone().applyMatrix4(camera.matrixWorldInverse);
+    if(p.z>=0) throw new Error('Static scene cannot be framed.');
+    tangent=Math.max(tangent,Math.abs(p.x)/(-p.z*camera.aspect)*1.08,Math.abs(p.y)/-p.z*1.08);
+  }
+  camera.fov=THREE.MathUtils.radToDeg(2*Math.atan(tangent));camera.updateProjectionMatrix();
+  return {preset:'static-scene-overview-v1',anchorSource:floorFraming?'authored floor bounds; no basket pair':'static scene bounds; no basket pair',
+    azimuthDegrees:Number(options.azimuthDegrees??245),elevationDegrees:Number(options.elevationDegrees??35),
+    target:target.toArray(),position:camera.position.toArray(),fov:camera.fov,courtLength:Math.max(size.x,size.z,1),
+    ceilingHeight:null,basketAnchors:[],cutawayObjects,bounds:{min:box.min.toArray(),max:box.max.toArray()},
+    frameBounds:corners.map(point=>point.clone().project(camera).toArray())};
+}
+
+function setArenaDisplayCaptureView(options = {}) {
+  if (!currentPayload?.stats?.arena) throw new Error('Load an arena before capturing its physical scoreboard.');
+  stopCameraMovement();
+  modelRoot.updateMatrixWorld(true);
+  const candidates = modelRoot.children.filter(object => object.visible
+    && /scorecube|scoreboard/i.test(object.name) && !/spotlight|tarp|scoretable/i.test(object.name));
+  const box = new THREE.Box3();
+  const names = [];
+  for (const object of candidates) {
+    // Suspension cables share the scorecube model and can run all the way
+    // through the roof. Fit the screen primitives, not that full-model bound.
+    const materials = Array.isArray(object.material) ? object.material : [object.material];
+    const screenGroups = object.geometry.groups.filter(group => materials[group.materialIndex]?.userData.arenaDisplay);
+    if (!screenGroups.length) continue;
+    const localBox = new THREE.Box3();
+    const positions = object.geometry.getAttribute('position');
+    const indices = object.geometry.index;
+    for (const group of screenGroups) for (let cursor = group.start; cursor < group.start + group.count; cursor++) {
+      localBox.expandByPoint(new THREE.Vector3().fromBufferAttribute(positions, indices ? indices.getX(cursor) : cursor));
+    }
+    const objectBox = new THREE.Box3();
+    for (let index = 0; index < (object.isInstancedMesh ? object.count : 1); index++) {
+      const matrix = new THREE.Matrix4();
+      if (object.isInstancedMesh) object.getMatrixAt(index, matrix);
+      matrix.premultiply(object.matrixWorld);
+      objectBox.union(localBox.clone().applyMatrix4(matrix));
+    }
+    if (objectBox.isEmpty() || ![...objectBox.min.toArray(), ...objectBox.max.toArray()].every(Number.isFinite)) continue;
+    box.union(objectBox);
+    names.push(object.name);
+  }
+  if (box.isEmpty()) throw new Error('No physical scoreboard geometry was found.');
+  const size = box.getSize(new THREE.Vector3());
+  target.copy(box.getCenter(new THREE.Vector3()));
+  yaw = THREE.MathUtils.degToRad(Number(options.azimuthDegrees ?? 245));
+  pitch = THREE.MathUtils.degToRad(Number(options.elevationDegrees ?? 8));
+  distance = Math.max(...size.toArray()) * 1.8;
+  camera.fov = 45;
+  grid.visible = false;
+  updateCamera(false);
+  camera.updateMatrixWorld(true);
+  const corners = [];
+  for (const x of [box.min.x, box.max.x]) for (const y of [box.min.y, box.max.y]) for (const z of [box.min.z, box.max.z]) {
+    corners.push(new THREE.Vector3(x, y, z));
+  }
+  let tangent = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
+  for (const corner of corners) {
+    const p = corner.clone().applyMatrix4(camera.matrixWorldInverse);
+    if (p.z >= 0) throw new Error('Physical scoreboard capture cannot be framed.');
+    tangent = Math.max(tangent, Math.abs(p.x) / (-p.z * camera.aspect) * 1.08, Math.abs(p.y) / -p.z * 1.08);
+  }
+  camera.fov = THREE.MathUtils.radToDeg(2 * Math.atan(tangent));
+  camera.updateProjectionMatrix();
+  return { preset: 'physical-scoreboard-v1', objects: names, target: target.toArray(), position: camera.position.toArray(),
+    fov: camera.fov, bounds: { min: box.min.toArray(), max: box.max.toArray() },
+    frameBounds: corners.map(p => p.clone().project(camera).toArray()) };
+}
+
+function configureCourtLogos(material, parameter) {
+  const logos = [];
+  for (const [index, item] of textureItems.entries()) {
+    for (const binding of item.assignments || []) {
+      if (binding.channel !== 'logo' || binding.material.toLowerCase() !== material.name.toLowerCase() || !textureCache[index]) continue;
+      const prefix = binding.slot.replace(/Texture$/i, '');
+      const angle = Number(parameter[`${prefix}Rotation`] || 0) * Math.PI / 180;
+      const scaleX = Number(parameter[`${prefix}ScaleX`] ?? 25);
+      const scaleY = Number(parameter[`${prefix}ScaleY`] ?? 25);
+      logos.push({ slot: binding.slot, texture: textureCache[index],
+        offset: [Number(parameter[`${prefix}OffsetX`] || 0), Number(parameter[`${prefix}OffsetY`] || 0)],
+        scale: [scaleX, scaleY], angle, fullCourt: scaleX > 0 && scaleY > 0 && scaleX < 1 && scaleY < 1
+          && /_court(?:\.|$)/i.test(item.name) && textureCache[index].image.width === textureCache[index].image.height * 2 });
+    }
+  }
+  logos.sort((a, b) => a.slot.localeCompare(b.slot, undefined, { numeric: true }));
+  if (!logos.length) return [];
+  const previous = material.onBeforeCompile;
+  const previousKey = material.customProgramCacheKey();
+  material.onBeforeCompile = shader => {
+    previous(shader);
+    // TEXCOORD2 tiles every 128 game units. Use the court projection extent
+    // declared by the floor material, rather than the wood texture's UVs.
+    shader.uniforms.courtProjectionExtent = { value: Number(parameter.FloorIBLSize?.[2] || 4000) / 128 };
+    shader.vertexShader = 'attribute vec2 courtUv; varying vec2 vCourtUv;\n' + shader.vertexShader;
+    shader.vertexShader = shader.vertexShader.replace('#include <uv_vertex>', '#include <uv_vertex>\nvCourtUv = courtUv;');
+    let declarations = 'varying vec2 vCourtUv; uniform float courtProjectionExtent;\n';
+    let composition = '';
+    logos.forEach((logo, index) => {
+      shader.uniforms[`courtLogo${index}`] = { value: logo.texture };
+      shader.uniforms[`courtTransform${index}`] = { value: new THREE.Vector4(...logo.offset, ...logo.scale) };
+      shader.uniforms[`courtRotation${index}`] = { value: new THREE.Vector2(Math.cos(logo.angle), Math.sin(logo.angle)) };
+      declarations += `uniform sampler2D courtLogo${index}; uniform vec4 courtTransform${index}; uniform vec2 courtRotation${index};\n`;
+      composition += `{
+        vec2 p = (vCourtUv - vec2(0.5)) ${logo.fullCourt ? '* 0.5' : '/ courtProjectionExtent'} - courtTransform${index}.xy;
+        vec2 r = courtRotation${index};
+        vec2 q = vec2(r.x*p.x + r.y*p.y, -r.y*p.x + r.x*p.y) * courtTransform${index}.zw + vec2(0.5);
+        if (q.x >= 0.0 && q.x <= 1.0 && q.y >= 0.0 && q.y <= 1.0) {
+          vec4 artwork = texture2D(courtLogo${index}, q);
+          diffuseColor.rgb = mix(diffuseColor.rgb, artwork.rgb, artwork.a);
+        }
+      }\n`;
+    });
+    shader.fragmentShader = declarations + shader.fragmentShader;
+    shader.fragmentShader = shader.fragmentShader.replace('#include <alphamap_fragment>', composition + '#include <alphamap_fragment>');
+  };
+  material.customProgramCacheKey = () => `${previousKey}:court-logos-v2:${logos.map(logo => Number(logo.fullCourt)).join(',')}`;
+  return logos.map(({ slot, texture, offset, scale, angle, fullCourt }) => ({ slot, texture: texture.name, offset, scale, rotationDegrees: angle * 180 / Math.PI, fullCourt }));
+}
+
+function setArenaCaptureAppearance(definitions = {}, options = {}) {
+  invalidateShadows();
+  if (!currentPayload?.stats?.arena) throw new Error('Load an arena before setting capture materials.');
+  if (options.lighting && !options.preserveLighting) {
+    ambientLight.intensity = 0.85;
+    keyLight.intensity = 0.7;
+    keyLight.color.set(0xfffaf5);
+    rimLight.intensity = 0.18;
+    rimLight.color.set(0xdce8ff);
+  }
+  const changes = [];
+  for (const object of modelRoot.children) {
+    if (/^crowd_cards$/i.test(object.name)) object.visible = false;
+    const originals = Array.isArray(object.material) ? object.material : [object.material];
+    object.material = originals.map(original => {
+      const definition = definitions[original.name.toLowerCase()] || {};
+      const parameter = definition.parameter || {};
+      const defaultColor = parameter.DetailDefaultAlbedo || parameter.DefaultAlbedo;
+      const modulate = parameter.AlbedoModulate || parameter.ModulateAlbedo || parameter.LAYER0_AlbedoModulate;
+      const color = new THREE.Color(1, 1, 1);
+      const woodTint=captureCreatedWoodTint(original.name,definition.shader,parameter);
+      if (woodTint) color.setRGB(...woodTint,THREE.SRGBColorSpace);
+      else if (!original.map && Array.isArray(defaultColor)) color.setRGB(defaultColor[0] ?? 0, defaultColor[1] ?? 0, defaultColor[2] ?? 0, THREE.SRGBColorSpace);
+      else if (!original.map) color.copy(original.color);
+      if (Array.isArray(modulate)) color.multiply(new THREE.Color().setRGB(modulate[0] ?? 0, modulate[1] ?? 0, modulate[2] ?? 0, THREE.SRGBColorSpace));
+      const floorShader = /^floor_/i.test(original.name) && /^floor\.fx(?:#|$)/i.test(definition.shader || '');
+      const isLine = /:line_\d+_mat$/i.test(original.name) || (floorShader &&
+        (/:floor_line_/i.test(original.name) || definition.resourceSlots?.includes('LineTexture')));
+      const isFloorArea = /^floor_/i.test(original.name) && (/:area_\d+_mat$/i.test(original.name) || (floorShader && !isLine));
+      const glass = /glass_backboard/i.test(original.name);
+      const alpha = String(parameter.AlphaStyle?.Value || parameter.AlphaStyle || 'OPAQUE');
+      const foliageCutout = /^speedtree_(?:leaves|fronds)\.fx/i.test(definition.shader || '');
+      const cull = String(parameter.CullMode?.Value || parameter.CullMode || 'CW');
+      const Material = options.lighting && !glass
+        ? options.pbr ? THREE.MeshStandardMaterial : !isLine ? THREE.MeshPhongMaterial : THREE.MeshBasicMaterial
+        : THREE.MeshBasicMaterial;
+      const material = new Material({ name: original.name, map: original.map, color,
+        side: cull === 'NONE' || foliageCutout ? THREE.DoubleSide : THREE.FrontSide,
+        transparent: glass || isLine || /blend|transparent|translucent/i.test(alpha),
+        opacity: glass ? 0.12 : Number(parameter.DefaultAlpha ?? 1),
+        alphaTest: foliageCutout ? 0.35 : isLine || /mask|test|cutout/i.test(alpha) ? 0.05 : 0,
+        depthWrite: !glass && !isLine, polygonOffset: isLine || isFloorArea,
+        polygonOffsetFactor: isLine ? -4 : isFloorArea ? -2 : 0,
+        polygonOffsetUnits: isLine ? -4 : isFloorArea ? -2 : 0,
+      });
+      if(floorShader && original.map && definition.resourceSlots?.includes('BaseTexture')
+        && Array.isArray(parameter.BaseTextureScale) && Array.isArray(parameter.BaseTextureOffset)
+        && [...parameter.BaseTextureScale.slice(0,2),...parameter.BaseTextureOffset.slice(0,2)].every(Number.isFinite)){
+        // Created floors select the wood region of a shared atlas. Sampling
+        // the whole atlas also paints its white padding onto the court.
+        const derived=original.map.clone();
+        derived.repeat.fromArray(parameter.BaseTextureScale);derived.offset.fromArray(parameter.BaseTextureOffset);
+        if(object.geometry.getAttribute('graffitiUv')){
+          object.geometry.setAttribute('uv1',object.geometry.getAttribute('graffitiUv'));derived.channel=1;
+        }
+        material.map=derived;material.userData.derivedTextures=[derived];
+      }
+      if(floorShader && isLine && original.map && definition.resourceSlots?.includes('LineTexture')
+        && !parameter.CreatedFloor && object.geometry.getAttribute('detailUv')){
+        // The explicit line atlas follows the ribbon coordinates on TEXCOORD2;
+        // asphalt/wood UV0 repeats in world space and breaks the painted arcs.
+        // CreatedFloor variants instead place their ribbon atlas on UV0.
+        const derived=original.map.clone();derived.channel=2;
+        object.geometry.setAttribute('uv2',object.geometry.getAttribute('detailUv'));
+        material.map=derived;material.userData.derivedTextures=[derived];
+      }
+      if(Number.isFinite(object.userData.captureClipHeight))
+        material.clippingPlanes=[new THREE.Plane(new THREE.Vector3(0,-1,0),object.userData.captureClipHeight)];
+      if (material.isMeshStandardMaterial) {
+        Object.assign(material, captureSurfaceParameters(parameter, isFloorArea || isLine));
+        material.envMapIntensity = 0.7;
+        const normal = boundArenaTexture(material.name, 'normal');
+        if (normal) {
+          material.normalMap = captureSurfaceTexture(normal, parameter, material);
+          material.normalScale.set(0.12, 0.12);
+        }
+        const roughness = boundArenaTexture(material.name, 'roughness');
+        if (roughness) {
+          material.roughnessMap = captureSurfaceTexture(roughness, parameter, material);
+          // The map already holds absolute roughness; avoid multiplying it by
+          // the fallback value used for untextured surfaces.
+          material.roughness = 1;
+        }
+        const ao = boundArenaTexture(material.name, 'ao');
+        if (ao) {
+          material.aoMap = captureSurfaceTexture(ao, parameter, material, 'ConeAngle');
+          material.aoMapIntensity = 0.65;
+        }
+        const metalness = boundArenaTexture(material.name, 'metalness');
+        if (metalness) {
+          material.metalnessMap = captureSurfaceTexture(metalness, parameter, material, 'MetalDense');
+          material.metalness = 1;
+        }
+      }
+      if (material.isMeshPhongMaterial || material.isMeshStandardMaterial) {
+        if (material.isMeshPhongMaterial) {
+          material.shininess = isFloorArea ? 40 : 12;
+          material.specular.set(isFloorArea ? 0x252525 : 0x101010);
+        }
+        const emissive = boundArenaTexture(material.name, 'emissive');
+        if (emissive && Number(parameter.EmissiveIntensity || 0) > 0) {
+          material.emissiveMap = emissive;
+          const tint = captureEmissionTint(parameter.EmissiveTint);
+          material.emissive.setRGB(tint[0], tint[1], tint[2], THREE.SRGBColorSpace);
+          // Game photometric units are not Three.js units. Bound the preview
+          // response so a lit fixture remains readable without blowing out.
+          material.emissiveIntensity = Math.min(1.5, Math.log10(1 + Number(parameter.EmissiveIntensity)) / 3);
+        }
+        const display = captureDisplayParameters(definition.shader, parameter, Boolean(material.map),
+          { digits: Boolean(definition.captureDigitAtlas) });
+        if (display) {
+          material.emissiveMap = material.map;
+          material.emissive.copy(material.color);
+          material.emissiveIntensity = display.emission;
+          material.color.multiplyScalar(display.surface);
+          if (material.isMeshStandardMaterial) { material.metalness = 0; material.roughness = 1; material.envMapIntensity = 0; }
+          else material.specular.set(0x000000);
+          material.userData.arenaDisplay = display;
+          if (display.kind === 'digits') {
+            material.transparent = true;
+            material.alphaTest = .02;
+            material.depthWrite = false;
+          }
+        }
+      }
+      configureTextureRange(material, definition.resourceSlots?.includes('CombinedLayerMaskMap') ? null : original.map);
+      const layers = configureArenaLayers(material, definition, (channel, slot) => boundArenaTextureSlot(material.name, channel, slot),
+        Boolean(object.geometry.getAttribute('detailUv')));
+      const overlay = configureScoreboardOverlay(material, definition,
+        boundArenaTextureSlot(material.name, 'overlay', 'AddOn1AlbedoMap'), Boolean(object.geometry.getAttribute('overlayUv')));
+      const graffiti = configureCourtGraffiti(material, definition,
+        boundArenaTextureSlot(material.name,'overlay','GraffitiAlbedoMap'),Boolean(object.geometry.getAttribute('graffitiUv')));
+      const logos = object.geometry.getAttribute('courtUv') ? configureCourtLogos(material, parameter) : [];
+      changes.push({ name: material.name, color: `#${material.color.getHexString()}`, map: material.map?.name || '',
+        mapUvChannel:material.map?.channel ?? null,mapRepeat:material.map?.repeat.toArray() || null,mapOffset:material.map?.offset.toArray() || null,
+        emissiveMap: material.emissiveMap?.name || '', normalMap: material.normalMap?.name || '',
+        roughnessMap: material.roughnessMap?.name || '', transparent: material.transparent,
+        aoMap: material.aoMap?.name || '', metalnessMap: material.metalnessMap?.name || '',
+        roughness: material.roughness ?? null, metalness: material.metalness ?? null,
+        lighting: material.isMeshStandardMaterial ? 'pbr' : material.isMeshPhongMaterial ? 'phong' : 'unlit', logos, layers });
+      changes.at(-1).display = material.userData.arenaDisplay || null;
+      changes.at(-1).overlay = overlay;
+      changes.at(-1).graffiti = graffiti;
+      disposeDerivedTextures(original);
+      original.dispose();
+      return material;
+    });
+  }
+  return changes;
+}
+
+function setArenaCaptureLighting(view, definitions = {}, options = {}) {
+  if (!currentPayload?.stats?.arena) throw new Error('Load an arena before setting capture lighting.');
+  scene.environment = null;
+  captureEnvironment?.dispose();
+  captureEnvironment = null;
+  setArenaCaptureAppearance(definitions, { lighting: true });
+  captureLightGroup.clear();
+  const authoredSun = options.outdoor ? captureAuthoredSun(options.sceneLights, view) : null;
+  const authoredLights = captureAuthoredCourtLights(options.sceneLights, view, { spots: options.outdoor });
+  for (const definition of authoredLights) {
+    const light = new THREE.SpotLight(new THREE.Color().setRGB(...definition.color), definition.intensity,
+      definition.distance, definition.angle, definition.penumbra, 2);
+    light.name = definition.name;
+    light.position.fromArray(definition.position);
+    light.target.position.copy(light.position).add(new THREE.Vector3().fromArray(definition.direction));
+    captureLightGroup.add(light, light.target);
+  }
+  if (authoredLights.length) {
+    ambientLight.intensity = 0.75;
+    keyLight.intensity = 0.25;
+    rimLight.intensity = 0.12;
+  }
+  const center = new THREE.Vector3().fromArray(view.target);
+  const length = view.courtLength;
+  const rig = captureLightRig(view);
+  keyLight.position.fromArray(authoredSun?.position || rig.keyPosition);
+  if (authoredSun) {
+    keyLight.color.setRGB(...authoredSun.color, THREE.SRGBColorSpace);
+    keyLight.intensity = authoredSun.intensity;
+    ambientLight.intensity = 0.25;
+    rimLight.intensity = 0.08;
+    captureLightGroup.add(new THREE.HemisphereLight(0xc9e4ff, 0x6e6253, 0.7));
+    scene.background?.set(0x94bdd7);
+    scene.fog.color.set(0x94bdd7);
+  }
+  const brightness = options.brightPreview ? { toneMapping:'ACESFilmic', exposure:1.5,
+    ambientGain:1.8, hemisphereGain:1.15, shadowIntensity:.55 } : null;
+  if (brightness) {
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = brightness.exposure;
+    ambientLight.intensity *= brightness.ambientGain;
+    for (const light of captureLightGroup.children) if (light.isHemisphereLight) light.intensity *= brightness.hemisphereGain;
+  }
+  keyLight.target.position.copy(center);
+  keyLight.target.updateMatrixWorld(true);
+  renderer.shadowMap.enabled = options.shadows !== false;
+  renderer.shadowMap.autoUpdate = true;
+  // r185's PCFSoftShadowMap already fell back to PCF at radius 1; same result.
+  renderer.shadowMap.type = THREE.PCFShadowMap;
+  keyLight.shadow.radius = 1;
+  keyLight.castShadow = renderer.shadowMap.enabled && (!authoredSun || authoredSun.castsShadows);
+  keyLight.shadow.mapSize.set(2048, 2048);
+  keyLight.shadow.bias = -0.00004;
+  keyLight.shadow.normalBias = 1.5;
+  keyLight.shadow.intensity = brightness?.shadowIntensity ?? .7;
+  const shadowCamera = keyLight.shadow.camera;
+  shadowCamera.left = shadowCamera.bottom = -rig.shadowExtent;
+  shadowCamera.right = shadowCamera.top = rig.shadowExtent;
+  shadowCamera.near = rig.shadowNear;
+  shadowCamera.far = rig.shadowFar;
+  shadowCamera.updateProjectionMatrix();
+  const casters = [];
+  const receivers = [];
+  for (const object of modelRoot.children) {
+    // These static court objects cast the preview's local shadows. Overhead
+    // roofs and scorecubes would block this approximate light rig completely.
+    object.castShadow = renderer.shadowMap.enabled && /basket|scoretable|chair_arenabench|rack_ball/i.test(object.name);
+    object.receiveShadow = renderer.shadowMap.enabled && /floor_.*court|lowerbowl|upperbowl|bleacher|chair|basket|court_full_city|court_short_city|terrain_/i.test(object.name);
+    if (object.castShadow) casters.push(object.name);
+    if (object.receiveShadow) receivers.push(object.name);
+  }
+  renderer.render(scene, camera);
+  // The capture is static; reuse this shadow map during all six cube views.
+  renderer.shadowMap.autoUpdate = false;
+  let environment = null;
+  if (options.reflections !== false) {
+    const cubeTarget = new THREE.WebGLCubeRenderTarget(128, { type: THREE.HalfFloatType });
+    const probe = new THREE.CubeCamera(10, length * 5, cubeTarget);
+    probe.position.fromArray(rig.probePosition);
+    const generator = new THREE.PMREMGenerator(renderer);
+    try {
+      probe.update(renderer, scene);
+      captureEnvironment?.dispose();
+      captureEnvironment = generator.fromCubemap(cubeTarget.texture);
+      scene.environment = captureEnvironment.texture;
+      environment = { source: 'actual arena scene', position: probe.position.toArray(), cubeResolution: 128 };
+    } finally {
+      generator.dispose();
+      cubeTarget.dispose();
+    }
+  }
+  const appearance = setArenaCaptureAppearance(definitions, { lighting: true, pbr: true, preserveLighting: true });
+  renderer.render(scene, camera);
+  return { preset: authoredSun || options.outdoor ? 'court-lighting-v4' : authoredLights.length ? 'court-lighting-v3' : 'court-lighting-v2', keyPosition: keyLight.position.toArray(), shadowMapSize: keyLight.castShadow ? [2048, 2048] : null,
+    shadowCasters: casters, shadowReceivers: receivers, environment, authoredSun, authoredLights, appearance, brightness,
+    ambientIntensity:ambientLight.intensity };
+}
+
+// Texture bytes arrive as base64 (the Exporter's JSON) or binary (other tools'
+// workers send a Uint8Array or ArrayBuffer).
+function textureBytes(value) {
+  if (value instanceof Uint8Array) {
+    return value.byteOffset === 0 && value.byteLength === value.buffer.byteLength ? value : value.slice();
+  }
+  if (value instanceof ArrayBuffer) return new Uint8Array(value);
+  return textureBytesFromBase64(value);
+}
+
+function textureBytesFromBase64(encoded) {
+  // Current Evergreen runtimes can decode directly into a byte array without
+  // allocating a binary string and copying every byte in JavaScript. Keep the
+  // original path for older WebView2 installations; no minimum version bump.
+  if (typeof Uint8Array.fromBase64 === 'function') return Uint8Array.fromBase64(encoded);
+  const binary = atob(encoded);
+  const bytes = new Uint8Array(binary.length);
+  for (let index = 0; index < binary.length; index += 1) bytes[index] = binary.charCodeAt(index);
+  return bytes;
+}
+
+function createDdsTexture(item) {
+  try {
+    const bytes = textureBytes(item.bytes);
+    const rawDds = item.previewRgba ? null : uncompressedDds(bytes);
+    if (item.previewRgba || rawDds) {
+      if (!rawDds && bytes.length !== item.width * item.height * 4) return null;
+      const texture = new THREE.DataTexture(rawDds?.data || bytes, rawDds?.width || item.width, rawDds?.height || item.height, THREE.RGBAFormat);
+      texture.name = item.name;
+      texture.channel = Number(item.uvChannel || 0);
+      texture.userData.range = item.range || null;
+      texture.colorSpace = item.range || item.format === 'RGBA8_UNORM' ? THREE.NoColorSpace : THREE.SRGBColorSpace;
+      texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+      texture.generateMipmaps = true;
+      texture.minFilter = THREE.LinearMipmapLinearFilter;
+      texture.magFilter = THREE.LinearFilter;
+      texture.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy());
+      texture.needsUpdate = true;
+      return texture;
+    }
+    const parsed = new DDSLoader().parse(bytes.buffer, true);
+    if (!parsed.format || !parsed.width || !parsed.height || parsed.isCubemap) return null;
+    const texture = new THREE.CompressedTexture(parsed.mipmaps, parsed.width, parsed.height, parsed.format);
+    texture.name = item.name;
+    texture.channel = Number(item.uvChannel || 0);
+    texture.userData.range = item.range || null;
+    // 2K27 hair, beard and eyelash color maps hold sRGB values although they are
+    // declared *_UNORM. Range-compressed ones upload raw (the shader undoes the
+    // range, then linearises); plain ones decode as sRGB. Read as linear, dark
+    // hair came out golden or gray and lashes as a light haze. Skin stays linear.
+    const strandColor = modernPlayerPreview() && item.binding?.channel === 'color'
+      && /^(?:hair|facialhair|eyelash)$/.test(item.binding?.target || '');
+    const garmentColor = Boolean(currentPayload?.player) && item.binding?.channel === 'color'
+      && /^(?:jersey|shorts)$/.test(item.binding?.target || '');
+    texture.userData.rangeColor = (strandColor || garmentColor) && Boolean(item.range);
+    const declaredFormat = String(item.format || '').toUpperCase();
+    texture.colorSpace = strandColor && !item.range ? THREE.SRGBColorSpace
+      : item.range || (declaredFormat && declaredFormat !== 'DDS' && !declaredFormat.includes('SRGB'))
+        ? THREE.NoColorSpace
+        : declaredFormat.includes('SRGB') || item.binding?.channel === 'color'
+          || /basecolou?r|(?:^|_)color(?:_|\.)|albedo|diffuse|_c(?:\.|_)/i.test(`${item.source} ${item.name}`)
+          ? THREE.SRGBColorSpace : THREE.NoColorSpace;
+    texture.minFilter = parsed.mipmapCount > 1 ? THREE.LinearMipmapLinearFilter : THREE.LinearFilter;
+    texture.magFilter = THREE.LinearFilter;
+    texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+    texture.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy());
+    texture.needsUpdate = true;
+    return texture;
+  } catch {
+    return null;
+  }
+}
+
+// Player fixes measured on 2K27 payloads; 2K18/2K23 keep their own paths.
+function modernPlayerPreview() {
+  return Boolean(currentPayload?.player) && !['2k18', '2k23'].includes(currentPayload.player.assetVersion);
+}
+
+function materialTextureTarget(materialName) {
+  const name = String(materialName || '').toLowerCase();
+  if (['2k18', '2k23'].includes(currentPayload?.player?.assetVersion) && name === 'hidden_shader') return 'hidden';
+  if (/armpit.?hair/.test(name)) return 'armpit';
+  if (/(?:^|_)(?:[lr]_eye|eyes)(?:_|$)|eyeball|sclera|iris/.test(name)) return 'eye';
+  if (/eyelash|(?:^|_)lash(?:_|$)/.test(name)) return 'eyelash';
+  if (/facial.?hair|beard/.test(name)) return 'facialhair';
+  if (/(?:^|_)hair(?:_|$)/.test(name)) return 'hair';
+  if (/(?:^|_)face(?:_|$)/.test(name)) return 'face';
+  if (/(?:^|_)(?:arms?|chest)(?:_|$)/.test(name)) return 'chest';
+  if (/(?:^|_)(?:torso|body)(?:_|$)/.test(name)) return 'torso';
+  if (/(?:^|_)(?:legs?|thigh|calf)(?:_|$)/.test(name)) return 'legs';
+  if (/ball/.test(name)) return 'ball';
+  // Preview garments dressed on players by other tools (jerseyreg_nike_v_mat,
+  // female_shortsreg_nike_mat, the generic L_/R_special_twokgeneric_shader shoes).
+  if (currentPayload?.player) {
+    if (/jerseyreg/.test(name)) return 'jersey';
+    if (/shortsreg/.test(name)) return 'shorts';
+    if (/twokgeneric/.test(name)) return 'shoes';
+  }
+  return '';
+}
+
+function materialMetadata(materialName) {
+  const normalized = String(materialName || '').toLowerCase();
+  return materialMetadataByName.get(normalized) || null;
+}
+
+function previewMaterialProfile(materialName) {
+  const metadata = materialMetadata(materialName);
+  const profile = materialProfile(materialName, metadata?.shader || '', currentPreviewProfile.kind);
+  if (materialTextureTarget(materialName) === 'hidden') {
+    return materialProfile('cloth', '', 'player');
+  }
+  if (['2k18', '2k23'].includes(currentPayload?.player?.assetVersion) && profile.role === 'strand') {
+    // The game's XYZ strand-direction map is not Three's RG-direction/B-strength
+    // anisotropy map. Do not interpret its third direction component as gloss.
+    const roughness = metadata?.previewRoughness;
+    const authored = Number.isFinite(roughness) && roughness>=0 && roughness<=1 ? roughness : profile.roughness;
+    // Legacy HairRoughness belongs to the game's strand shader, not GGX.
+    // Keep a broad, subdued lobe on 2K18's flat cards instead of a wet highlight.
+    return {...profile, anisotropy:0, roughness:currentPayload?.player?.assetVersion === '2k18' && ['hair','facialhair'].includes(materialTextureTarget(materialName)) ? Math.max(0.82, authored) : authored};
+  }
+  return profile;
+}
+
+function applyPreviewMaterialProfile(material, normalTexture = material.normalMap) {
+  if (!material || material.userData.neutralFacialHairFitBase) return null;
+  const profile = previewMaterialProfile(material.name);
+  material.userData.previewMaterialRole = profile.role;
+  if ('roughness' in material) material.roughness = profile.roughness;
+  if ('metalness' in material) material.metalness = profile.metalness;
+  if ('clearcoat' in material) material.clearcoat = profile.clearcoat || 0;
+  if ('clearcoatRoughness' in material) material.clearcoatRoughness = profile.clearcoatRoughness ?? 0;
+  if (normalTexture && material.normalScale) material.normalScale.set(profile.normalScale, profile.normalScale);
+  if ('anisotropy' in material && profile.role !== 'strand') material.anisotropy = 0;
+  if (profile.role === 'glass') {
+    material.transparent = true;
+    material.opacity = 0.28;
+    material.depthWrite = false;
+  }
+  return profile;
+}
+
+function boundTexture(targetName, channel) {
+  const index = textureItems.findIndex((item, itemIndex) => textureCache[itemIndex]
+    && item.binding?.target === targetName && item.binding?.channel === channel);
+  return index >= 0 ? textureCache[index] : null;
+}
+function boundPlayerTexture(materialName, targetName, channel) {
+  if (currentPayload?.player?.assetVersion === '2k18' && targetName === 'face' && channel === 'normal') {
+    return boundTextureMatching('face', 'normal', /\bface_normal_o\./i);
+  }
+  if (currentPayload?.player?.assetVersion === '2k18' && ['hair','facialhair'].includes(targetName)) {
+    const index = textureItems.findIndex((item, i) => textureCache[i] && legacyHairTextureMatches(materialName, item, channel));
+    return index < 0 ? null : textureCache[index];
+  }
+  return boundTexture(targetName, channel);
+}
+
+// face_detailnormal_o is also bound as a face normal and often precedes
+// face_normal_o in the payload, so a first-match lookup used the detail map as
+// the face's base normal. It is layered on top instead (playerDetailNormalTexture).
+function playerNormalTexture(materialName, targetName) {
+  if (targetName === 'face' && modernPlayerPreview()) {
+    return boundTextureMatching('face', 'normal', /^(?![\s\S]*detailnormal)/i) || boundPlayerTexture(materialName, targetName, 'normal');
+  }
+  return boundPlayerTexture(materialName, targetName, 'normal');
+}
+
+// The lightmap assigned to this strand shader, else the region's only one.
+function strandLightmapTexture(materialName, targetName) {
+  const name = String(materialName || '').toLowerCase();
+  const index = textureItems.findIndex((item, itemIndex) => textureCache[itemIndex] && /lightmap/i.test(item.name || '')
+    && item.assignments?.some((assignment) => String(assignment.material || '').toLowerCase() === name));
+  return index >= 0 ? textureCache[index] : boundTextureMatching(targetName, 'auxiliary', /lightmap/i);
+}
+
+// The occlusion in a bent-normal map's alpha: the player's own face_bentnormal_o
+// first, then the shared skin IFF's map for the region.
+function playerOcclusionTexture(targetName) {
+  return boundTextureMatching(targetName, 'auxiliary', /bentnormal_o\./i)
+    || boundTextureMatching(targetName, 'auxiliary', /bentnormal/i);
+}
+
+// The player's own detail normal only; generic skin-IFF copies are not the
+// player's scan.
+function playerDetailNormalTexture() {
+  const index = textureItems.findIndex((item, itemIndex) => textureCache[itemIndex]
+    && item.binding?.target === 'face' && item.binding?.channel === 'normal'
+    && /detailnormal/i.test(item.name || '') && !/(?:^|[\\/])(?:(?:fe)?male|child)_skin\.iff$/i.test(item.source || ''));
+  return index >= 0 ? textureCache[index] : null;
+}
+
+// Accessory maps without a region or a material assignment (other tools'
+// payloads) bind by name: goggles_kareem_color.dds to goggles_kareem_shader.
+const ACCESSORY_QUALIFIERS = new Set(['female', 'male', 'child', 'l', 'r']);
+function accessoryWords(name, separator) {
+  return String(name || '').toLowerCase().split(separator).filter((word) => word && !ACCESSORY_QUALIFIERS.has(word));
+}
+function boundAccessoryTexture(materialName, channel) {
+  if (!currentPayload?.player) return null;
+  const tokens = new Set(accessoryWords(materialName, /[^a-z0-9]+/));
+  const index = textureItems.findIndex((item, itemIndex) => textureCache[itemIndex]
+    && item.binding && !item.binding.target && item.binding.channel === channel && !item.assignments?.length
+    && tokens.has(accessoryWords(item.name, /[_.]/)[0]));
+  return index >= 0 ? textureCache[index] : null;
+}
+
+function boundTextureMatching(targetName, channel, pattern) {
+  const index = textureItems.findIndex((item, itemIndex) => textureCache[itemIndex]
+    && item.binding?.target === targetName && item.binding?.channel === channel
+    && pattern.test(`${item.name} ${item.source}`));
+  return index >= 0 ? textureCache[index] : null;
+}
+
+// Payloads that rank their texture sources (sourcePriority: another tool's staged
+// edits before the game's files) take the best-ranked strand tangent map; an
+// explicit per-material assignment wins a tie.
+function boundStrandTangent(materialName, targetName) {
+  const name = String(materialName || '').toLowerCase();
+  let selected = -1, priority = Infinity, explicit = false;
+  textureItems.forEach((item, index) => {
+    if (!textureCache[index]) return;
+    const assigned = item.assignments?.some(assignment => assignment.channel === 'tangent'
+      && String(assignment.material || '').toLowerCase() === name);
+    const fallback = item.binding?.target === targetName && item.binding?.channel === 'auxiliary'
+      && /tangent/i.test(`${item.name} ${item.source}`);
+    if (!assigned && !fallback) return;
+    const sourcePriority = Number.isFinite(item.sourcePriority) ? item.sourcePriority : index;
+    if (sourcePriority < priority || sourcePriority === priority && assigned && !explicit) {
+      selected = index; priority = sourcePriority; explicit = Boolean(assigned);
+    }
+  });
+  return selected < 0 ? null : textureCache[selected];
+}
+
+function boundArenaTexture(materialName, channel) {
+  const normalized = String(materialName || '').toLowerCase();
+  const matches = (item, itemIndex) => textureCache[itemIndex]
+    && item.assignments?.some((assignment) => assignment.channel === channel
+      && String(assignment.material || '').toLowerCase() === normalized);
+  // An explicit standalone normal wins over a packed fallback regardless of
+  // scene/container ordering. Layered maps remain outside this approximation.
+  let index = channel === 'normal' ? textureItems.findIndex((item, itemIndex) =>
+    item.captureResourceSlot === 'NormalMap' && matches(item, itemIndex)) : -1;
+  if (index < 0) index = textureItems.findIndex(matches);
+  return index >= 0 ? textureCache[index] : null;
+}
+
+function boundArenaTextureSlot(materialName, channel, slot) {
+  const normalized = materialName.toLowerCase();
+  const index = textureItems.findIndex((item, index) => textureCache[index] && item.assignments?.some(binding =>
+    binding.material.toLowerCase() === normalized && binding.channel === channel && binding.slot === slot));
+  return index < 0 ? null : textureCache[index];
+}
+
+function captureSurfaceTexture(texture, parameter, material, prefix = 'Normal') {
+  const finite = (value, fallback) => value == null || !Number.isFinite(Number(value)) ? fallback : Number(value);
+  const sx = finite(parameter[prefix + 'ScaleX'], 1), sy = finite(parameter[prefix + 'ScaleY'], 1);
+  const ox = finite(parameter[prefix + 'OffsetX'], 0), oy = finite(parameter[prefix + 'OffsetY'], 0);
+  if (sx === 1 && sy === 1 && ox === 0 && oy === 0) return texture;
+  const derived = texture.clone();
+  derived.repeat.set(sx, sy);
+  derived.offset.set(ox, oy);
+  material.userData.derivedTextures ||= [];
+  material.userData.derivedTextures.push(derived);
+  return derived;
+}
+
+function disposeDerivedTextures(material) {
+  for (const texture of material.userData.derivedTextures || []) texture.dispose();
+  material.userData.derivedTextures = [];
+}
+
+function eyeAtlasTexture(texture, material) {
+  if (!texture || !/eyewhite/i.test(texture.name)) return texture;
+  if (!legacyEyeAtlas()) {
+    // 2K27 eyewhite_color maps are one radial sclera image (white front, veined
+    // edges) across each eyeball's full 0-1 UVs, with the cornea at the centre.
+    // Sampling a quadrant stretched the veined corner over the eye (bloodshot).
+    const derived = texture.clone();
+    derived.name = `${texture.name} · sclera`;
+    derived.wrapS = THREE.ClampToEdgeWrapping;
+    derived.wrapT = THREE.ClampToEdgeWrapping;
+    derived.needsUpdate = true;
+    material.userData.derivedTextures.push(derived);
+    return derived;
+  }
+  const derived = texture.clone();
+  const rightEye = /(?:^|_)r_eye(?:_|$)/i.test(material.name);
+  derived.name = `${texture.name} · ${rightEye ? 'right' : 'left'} eye quadrant`;
+  derived.wrapS = THREE.ClampToEdgeWrapping;
+  derived.wrapT = THREE.ClampToEdgeWrapping;
+  derived.repeat.set(0.5, 0.5);
+  // DDS textures are uploaded without a Y flip. The usable eye-white/iris
+  // color is stored in the lower image row, which is v=0.5 in this basis.
+  derived.offset.set(rightEye ? 0.5 : 0, 0.5);
+  derived.needsUpdate = true;
+  material.userData.derivedTextures.push(derived);
+  return derived;
+}
+
+// The 2x2 quadrant layout is kept only where it was established (2K18/2K23).
+function legacyEyeAtlas() {
+  return !modernPlayerPreview();
+}
+
+function irisColor(value) {
+  const name = String(value || 'brown').trim().toLowerCase();
+  if (/^#?[0-9a-f]{6}$/.test(name)) return new THREE.Color(`#${name.replace('#', '')}`);
+  const colors = {
+    black: 0x211811,
+    brown: 0x5a2f17,
+    dark_brown: 0x351d12,
+    light_brown: 0x86512a,
+    amber: 0xa66a22,
+    hazel: 0x786735,
+    green: 0x4f7448,
+    blue: 0x477aa3,
+    gray: 0x76818b,
+    grey: 0x76818b,
+  };
+  return new THREE.Color(colors[name.replace(/[^a-z0-9]+/g, '_')] || colors.brown);
+}
+
+function irisScale(value) {
+  const name = String(value || 'regular').trim().toLowerCase();
+  if (/small|tiny/.test(name)) return 0.46;
+  if (/large|big/.test(name)) return 0.64;
+  return 0.54;
+}
+
+// Preview garments (other tools dress players in a jersey, shorts, shoes and
+// socks). Covered body skin sorts behind them; footwear is always worn and the
+// jersey depth follows the jersey's visibility (setGarmentLayering).
+const garmentLayeringUniform = { value: new THREE.Vector2(0, GARMENT_LAYERING.depth) };
+// The shadow pass gets the same push, or skin that sorts behind a garment still
+// shadows it (gray ovals on a female player's jersey over the bust).
+let garmentShadowDepth = null;
+function garmentShadowDepthMaterial() {
+  if (!garmentShadowDepth) {
+    // Default packing, like three's own shadow depth material; three copies each
+    // material's map/alphaMap/alphaTest onto it, so cut-out cards still cut out.
+    garmentShadowDepth = new THREE.MeshDepthMaterial();
+    configureGarmentLayering(garmentShadowDepth, garmentLayeringUniform, true);
+  }
+  return garmentShadowDepth;
+}
+// Sports-bra band bounds for the current body (see garmentBandBounds); zeros = none.
+const garmentBandUniform = { value: new THREE.Vector4() };
+// Scanned body color maps are pure black where clothing (a female player's
+// sports bra) is layered on in game: with garments, those texels draw as a
+// heather-gray athletic fabric instead of black holes when the jersey is hidden.
+const GARMENT_CUTOUT_FILL = Object.freeze({ threshold: [0.02, 0.06], color: [0.1, 0.105, 0.115] });
+const previewGarments = () => (currentPayload?.meshes || []).some((item) => previewGarmentKind(item));
+
+function configureTextureRange(material, texture, fillCutouts = false) {
+  const range = texture?.userData?.range || null;
+  const srgb = Boolean(range && texture.userData.rangeColor);
+  const fill = Boolean(range && fillCutouts);
+  material.userData.textureRange = range;
+  material.userData.textureRangeSrgb = srgb;
+  material.userData.garmentCutoutFill = fill;
+  // A color-map swap can reuse the same compiled shader. Keep its uniform
+  // objects alive and update their values even when onBeforeCompile is skipped.
+  const uniforms = material.userData.textureRangeUniforms ||= {
+    mapRangeMin: { value: new THREE.Vector4() },
+    mapRangeMax: { value: new THREE.Vector4() },
+    mapRangeMask: { value: new THREE.Vector4() },
+  };
+  if (range) {
+    uniforms.mapRangeMin.value.fromArray(range.min);
+    uniforms.mapRangeMax.value.fromArray(range.max);
+    uniforms.mapRangeMask.value.fromArray(range.mask);
+  }
+  material.onBeforeCompile = range ? (shader) => {
+    Object.assign(shader.uniforms, uniforms);
+    // Body maps also take the sports-bra band, computed per pixel from the body
+    // position against shared bounds (bottom, top, center x, half-width; 0 = none).
+    if (fill) {
+      shader.uniforms.nbaGarmentBand = garmentBandUniform;
+      shader.vertexShader = 'varying vec3 vNbaBodyPosition;\n'
+        + shader.vertexShader.replace('#include <uv_vertex>', '#include <uv_vertex>\nvNbaBodyPosition = position;');
+      shader.fragmentShader = `varying vec3 vNbaBodyPosition;
+uniform vec4 nbaGarmentBand;
+float nbaGarmentBandWeight() {
+  if ( nbaGarmentBand.w <= 0.0 ) return 0.0;
+  float edge = ${GARMENT_BAND.edge.toFixed(2)};
+  return smoothstep( nbaGarmentBand.x - edge, nbaGarmentBand.x, vNbaBodyPosition.z )
+    * ( 1.0 - smoothstep( nbaGarmentBand.y, nbaGarmentBand.y + edge, vNbaBodyPosition.z ) )
+    * ( 1.0 - smoothstep( nbaGarmentBand.w - edge, nbaGarmentBand.w, abs( vNbaBodyPosition.x - nbaGarmentBand.z ) ) );
+}
+` + shader.fragmentShader;
+    }
+    shader.fragmentShader = shader.fragmentShader
+      .replace(
+        '#include <map_pars_fragment>',
+        '#include <map_pars_fragment>\nuniform vec4 mapRangeMin;\nuniform vec4 mapRangeMax;\nuniform vec4 mapRangeMask;',
+      )
+      .replace(
+        '#include <map_fragment>',
+        `#ifdef USE_MAP
+          vec4 sampledDiffuseColor = texture2D( map, vMapUv );
+          #ifdef DECODE_VIDEO_TEXTURE
+            sampledDiffuseColor = sRGBTransferEOTF( sampledDiffuseColor );
+          #endif
+          ${fill ? `float garmentCutout = max( 1.0 - smoothstep( ${GARMENT_CUTOUT_FILL.threshold.join(', ')}, max( max( sampledDiffuseColor.r, sampledDiffuseColor.g ), sampledDiffuseColor.b ) ), nbaGarmentBandWeight() );` : ''}
+          vec4 rangeDecodedColor = mix( mapRangeMin, mapRangeMax, sampledDiffuseColor );
+          sampledDiffuseColor = mix( sampledDiffuseColor, rangeDecodedColor, mapRangeMask );
+          ${srgb ? 'sampledDiffuseColor = sRGBTransferEOTF( sampledDiffuseColor );' : ''}
+          ${fill ? `sampledDiffuseColor.rgb = mix( sampledDiffuseColor.rgb, vec3( ${GARMENT_CUTOUT_FILL.color.join(', ')} ), garmentCutout );` : ''}
+          diffuseColor *= sampledDiffuseColor;
+        #endif`,
+      );
+  } : () => {};
+  material.customProgramCacheKey = () => (range ? `nba2k27-texture-range-v1${srgb ? '-srgb' : ''}${fill ? '-cutout-band' : ''}` : '');
+}
+
+// 2K23 BC6H normal maps contain range-compressed signed vectors, not RGB normals.
+// Compose with the color-map hook and reconstruct before normalScale/lighting.
+function configureLegacyNormalRange(material, texture) {
+  const range = texture?.userData?.range;
+  if (!(['2k18', '2k23'].includes(currentPayload?.player?.assetVersion) || currentPayload?.uniform) || !range) return;
+  const signed = range.min.slice(0, 3).some(value => value < 0);
+  // Some legacy face maps retain a three-channel BC6H header/range but store
+  // only X/Y (the blue channel is entirely zero). Recover the unit-vector Z,
+  // as for BC5, rather than using the descriptor's negative blue minimum.
+  if (texture.userData.reconstructNormalZ === undefined) {
+    const pixels = decodedTexturePixels(texture)?.pixels;
+    texture.userData.reconstructNormalZ = Boolean(pixels?.length)
+      && pixels.every((value,index) => index % 4 !== 2 || value === 0);
+  }
+  const reconstructZ = texture.userData.reconstructNormalZ;
+  const previous = material.onBeforeCompile;
+  const previousKey = material.customProgramCacheKey();
+  material.onBeforeCompile = shader => {
+    previous(shader);
+    shader.uniforms.nbaNormalMin = {value:new THREE.Vector3(...range.min)};
+    shader.uniforms.nbaNormalMax = {value:new THREE.Vector3(...range.max)};
+    shader.uniforms.nbaNormalMask = {value:new THREE.Vector3(...range.mask)};
+    shader.fragmentShader = shader.fragmentShader.replace('#include <normalmap_pars_fragment>',
+      `#include <normalmap_pars_fragment>
+      uniform vec3 nbaNormalMin;
+      uniform vec3 nbaNormalMax;
+      uniform vec3 nbaNormalMask;
+      vec3 nbaDecodeLegacyNormal(vec3 sampleValue) {
+        vec3 decoded = mix(sampleValue, mix(nbaNormalMin,nbaNormalMax,sampleValue),nbaNormalMask);
+        ${signed ? '' : 'decoded = decoded * 2.0 - 1.0;'}
+        ${reconstructZ ? 'decoded.z = sqrt(max(1.0 - dot(decoded.xy,decoded.xy), 0.0));' : ''}
+        return decoded;
+      }`);
+    const sample = 'texture2D( normalMap, vNormalMapUv ).xyz';
+    const chunk = THREE.ShaderChunk.normal_fragment_maps.replaceAll(`${sample} * 2.0 - 1.0`, `nbaDecodeLegacyNormal(${sample})`);
+    shader.fragmentShader = shader.fragmentShader.replace('#include <normal_fragment_maps>', chunk);
+  };
+  material.customProgramCacheKey = () => `${previousKey}-legacy-normal-range-${signed}-${reconstructZ}`;
+}
+
+function median(values) {
+  if (!values.length) return 1;
+  values.sort((left, right) => left - right);
+  const middle = Math.floor(values.length / 2);
+  return values.length % 2 ? values[middle] : (values[middle - 1] + values[middle]) / 2;
+}
+
+function decodedTexturePixels(texture) {
+  if (!texture?.userData?.range) return null;
+  if (texture.userData.decodedPixels) return texture.userData.decodedPixels;
+  const sampleSize = 256;
+  if (!textureSampler) {
+    const targetTexture = new THREE.WebGLRenderTarget(sampleSize, sampleSize, {
+      format: THREE.RGBAFormat,
+      type: THREE.UnsignedByteType,
+      depthBuffer: false,
+      stencilBuffer: false,
+    });
+    targetTexture.texture.colorSpace = THREE.NoColorSpace;
+    targetTexture.texture.minFilter = THREE.NearestFilter;
+    targetTexture.texture.magFilter = THREE.NearestFilter;
+    const sampleScene = new THREE.Scene();
+    const sampleCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 2);
+    sampleCamera.position.z = 1;
+    // A readback must sample this exact raw map, independent of the main
+    // scene's material-program/color-space caches. Range maps use NoColorSpace.
+    const sampleMaterial = new THREE.RawShaderMaterial({
+      uniforms: { sampleMap: { value: null }, sampleTransform: { value: new THREE.Matrix3() } },
+      vertexShader: `precision highp float;
+        attribute vec3 position;
+        attribute vec2 uv;
+        uniform mat3 sampleTransform;
+        varying vec2 sampleUv;
+        void main() { sampleUv = (sampleTransform * vec3(uv, 1.0)).xy; gl_Position = vec4(position.xy, 0.0, 1.0); }`,
+      fragmentShader: `precision highp float;
+        uniform sampler2D sampleMap;
+        varying vec2 sampleUv;
+        void main() { gl_FragColor = texture2D(sampleMap, sampleUv); }`,
+      toneMapped: false,
+      depthTest: false,
+      depthWrite: false,
+    });
+    const geometry = new THREE.PlaneGeometry(2, 2);
+    sampleScene.add(new THREE.Mesh(geometry, sampleMaterial));
+    textureSampler = { target: targetTexture, scene: sampleScene, camera: sampleCamera, material: sampleMaterial, geometry };
+  }
+  const sampler = textureSampler;
+  if (texture.matrixAutoUpdate) texture.updateMatrix();
+  sampler.material.uniforms.sampleTransform.value.copy(texture.matrix);
+  sampler.material.uniforms.sampleMap.value = texture;
+  sampler.material.uniformsNeedUpdate = true;
+  const pixels = new Uint8Array(sampleSize * sampleSize * 4);
+  const previousTarget = renderer.getRenderTarget();
+  try {
+    renderer.setRenderTarget(sampler.target);
+    renderer.clear();
+    renderer.render(sampler.scene, sampler.camera);
+    renderer.readRenderTargetPixels(sampler.target, 0, 0, sampleSize, sampleSize, pixels);
+  } catch {
+    return null;
+  } finally {
+    renderer.setRenderTarget(previousTarget);
+    sampler.material.uniforms.sampleMap.value = null;
+  }
+  texture.userData.decodedPixels = { pixels, size: sampleSize, range: texture.userData.range };
+  return texture.userData.decodedPixels;
+}
+
+// Opt-in acceptance diagnostics: inspect authored UVs, without changing any map.
+function strandDiagnostics() {
+  const span = (values,components) => {
+    const min=Array(components).fill(Infinity),max=Array(components).fill(-Infinity);
+    for(let i=0;i<(values?.length||0);i++){const c=i%components;min[c]=Math.min(min[c],values[i]);max[c]=Math.max(max[c],values[i]);}
+    return {min,max};
+  };
+  return {textures:textureItems.map((item,i)=>{if(!/hair.*color/i.test(item.name))return null;const d=decodedTexturePixels(textureCache[i]);if(!d)return null;const alpha=Array.from(d.pixels).filter((_,i)=>i%4===3);return {name:item.name,alphaMin:Math.min(...alpha),alphaMax:Math.max(...alpha),alphaZero:alpha.filter(a=>a<10).length,alphaTotal:alpha.length};}).filter(Boolean),meshes:(currentPayload?.meshes||[]).map(item=>({name:item.name,sourceKind:item.sourceKind,textureUvSemantic:strandTextureCoordinates(item).semantic,sourceTextureUvSemantic:item.textureUvSemantic,positions:span(item.positions,3),uvs:span(strandTextureCoordinates(item).uvs,2),attachmentUvs:span(item.attachmentUvs,2)}))};
+}
+
+function sampleDecodedTexture(texture, uv) {
+  const decoded = decodedTexturePixels(texture);
+  if (!decoded || !uv) return null;
+  const wrap = (value) => ((Number(value) % 1) + 1) % 1;
+  const x = Math.min(decoded.size - 1, Math.floor(wrap(uv[0]) * decoded.size));
+  const y = Math.min(decoded.size - 1, Math.floor(wrap(uv[1]) * decoded.size));
+  const offset = (y * decoded.size + x) * 4;
+  // Compare colors in the same linear space the shader lights in.
+  const linear = (value) => (value <= 0.04045 ? value / 12.92 : Math.pow((value + 0.055) / 1.055, 2.4));
+  return [0, 1, 2].map((channel) => {
+    const sample = decoded.pixels[offset + channel] / 255;
+    const value = decoded.range.mask[channel]
+      ? decoded.range.min[channel] + sample * (decoded.range.max[channel] - decoded.range.min[channel])
+      : sample;
+    return texture.userData.rangeColor ? linear(value) : value;
+  });
+}
+
+function boundaryUvPairs(leftTarget, rightTarget) {
+  const key = `${leftTarget}:${rightTarget}`;
+  if (skinBoundaryPairs.has(key)) return skinBoundaryPairs.get(key);
+  const pairs = [];
+  for (const mesh of currentPayload?.meshes || []) {
+    const verticesByTarget = new Map();
+    for (const group of mesh.groups || []) {
+      const targetName = materialTextureTarget(group.material);
+      if (targetName !== leftTarget && targetName !== rightTarget) continue;
+      const vertices = verticesByTarget.get(targetName) || new Set();
+      for (let cursor = group.start; cursor < group.start + group.count; cursor += 1) {
+        vertices.add(mesh.indices[cursor]);
+      }
+      verticesByTarget.set(targetName, vertices);
+    }
+    const leftVertices = verticesByTarget.get(leftTarget);
+    const rightVertices = verticesByTarget.get(rightTarget);
+    if (!leftVertices?.size || !rightVertices?.size) continue;
+    const positionKey = (vertex) => [0, 1, 2]
+      .map((axis) => Number(mesh.positions[vertex * 3 + axis]).toFixed(3)).join(',');
+    const rightByPosition = new Map([...rightVertices].map((vertex) => [positionKey(vertex), vertex]));
+    for (const leftVertex of leftVertices) {
+      const rightVertex = rightByPosition.get(positionKey(leftVertex));
+      if (rightVertex === undefined) continue;
+      pairs.push({
+        left: [mesh.uvs[leftVertex * 2], mesh.uvs[leftVertex * 2 + 1]],
+        right: [mesh.uvs[rightVertex * 2], mesh.uvs[rightVertex * 2 + 1]],
+      });
+    }
+  }
+  const resolvedPairs = pairs.length
+    ? pairs
+    : nearestSkinBoundaryPairs(currentPayload, leftTarget, rightTarget, materialTextureTarget);
+  skinBoundaryPairs.set(key, resolvedPairs);
+  return resolvedPairs;
+}
+
+function boundaryColors(leftTarget, rightTarget) {
+  const leftTexture = boundTexture(leftTarget, 'color');
+  const rightTexture = boundTexture(rightTarget, 'color');
+  const samples = boundaryUvPairs(leftTarget, rightTarget).map((pair) => ({
+    left: sampleDecodedTexture(leftTexture, pair.left),
+    right: sampleDecodedTexture(rightTexture, pair.right),
+  })).filter((sample) => sample.left && sample.right);
+  if (!samples.length) return null;
+  return {
+    left: [0, 1, 2].map((channel) => median(samples.map((sample) => sample.left[channel]))),
+    right: [0, 1, 2].map((channel) => median(samples.map((sample) => sample.right[channel]))),
+  };
+}
+
+function responseColor(reference, source, referenceResponse = [1, 1, 1]) {
+  return new THREE.Color(...(skinBoundaryResponse(reference, source, referenceResponse) || [1, 1, 1]));
+}
+
+function skinMaterialResponses() {
+  if (!currentPayload?.player) return new Map();
+  const responses = new Map();
+  const chestTorso = boundaryColors('chest', 'torso');
+  const chestResponse = chestTorso ? responseColor(chestTorso.right, chestTorso.left) : new THREE.Color(1, 1, 1);
+  responses.set('chest', chestResponse);
+  const torsoLegs = boundaryColors('torso', 'legs');
+  if (torsoLegs) responses.set('legs', responseColor(torsoLegs.left, torsoLegs.right));
+  const faceChest = boundaryColors('face', 'chest');
+  if (faceChest) responses.set('face', responseColor(faceChest.right, faceChest.left, chestResponse.toArray()));
+  return responses;
+}
+
+// Explicit diagnostics only: compare authored ranges, sampled boundary colors
+// and material uniforms. No tint/texture/geometry changes are performed here.
+function skinDiagnostics() {
+  const materials = [];
+  modelRoot.traverse(object => {
+    const list = Array.isArray(object.material) ? object.material : [object.material];
+    for (const material of list.filter(Boolean)) {
+      const region = materialTextureTarget(material.name);
+      if (!['face', 'chest', 'torso', 'legs'].includes(region)) continue;
+      const uniforms = material.userData.textureRangeUniforms;
+      materials.push({ name: material.name, region, color: material.color.toArray(),
+        range: material.userData.textureRange,
+        uniforms: uniforms ? Object.fromEntries(Object.entries(uniforms).map(([name, value]) => [name, value.value.toArray()])) : null,
+        normal: material.normalMap?.name || '',
+      });
+    }
+  });
+  const faceNormal = decodedTexturePixels(boundTexture('face','normal'));
+  const faceNormalChannels = faceNormal ? [0,1,2].map(channel => {
+    let min=255,max=0,zero=0;
+    for(let offset=channel;offset<faceNormal.pixels.length;offset+=4) {
+      const value=faceNormal.pixels[offset]; min=Math.min(min,value);max=Math.max(max,value);if(value===0)zero++;
+    }
+    return {min,max,zero};
+  }) : null;
+  return { materials, faceNormalChannels, boundaries: [['face','chest'],['chest','torso'],['torso','legs']].map(([left,right]) => ({
+    left, right, pairs: boundaryUvPairs(left,right).length, samples: boundaryColors(left,right),
+  })) };
+}
+
+function applyAutomaticTextures() {
+  invalidateShadows();
+  const materialResponses = skinMaterialResponses();
+  const garments = previewGarments();
+  const rankedSources = textureItems.some((item) => Number.isFinite(item.sourcePriority));
+  modelRoot.traverse((object) => {
+    if (object.userData.strandSoftPass) return;
+    const materials = Array.isArray(object.material) ? object.material : [object.material];
+    materials.filter(Boolean).forEach((material) => {
+      disposeDerivedTextures(material);
+      const targetName = materialTextureTarget(material.name);
+      const boundColorTexture = boundArenaTexture(material.name, 'color') || (targetName
+        ? boundPlayerTexture(material.name, targetName, 'color')
+        : boundAccessoryTexture(material.name, 'color'));
+      const colorTexture = targetName === 'eye'
+        ? eyeAtlasTexture(boundColorTexture, material)
+        : boundColorTexture;
+      const normalTexture = boundArenaTexture(material.name, 'normal') || (targetName
+        ? playerNormalTexture(material.name, targetName)
+        : boundAccessoryTexture(material.name, 'normal'));
+      const detailNormalTexture = targetName === 'face' && normalTexture && modernPlayerPreview()
+        ? playerDetailNormalTexture() : null;
+      const strandMaterial = targetName === 'hair' || targetName === 'facialhair' || targetName === 'armpit';
+      const tangentTexture = strandMaterial && rankedSources ? boundStrandTangent(material.name, targetName)
+        : strandMaterial
+        ? boundArenaTexture(material.name, 'tangent') || (currentPayload?.player?.assetVersion === '2k18' ? boundPlayerTexture(material.name, targetName, 'auxiliary') : boundTextureMatching(targetName, 'auxiliary', /tangent/i))
+        : null;
+      material.map = colorTexture;
+      material.normalMap = normalTexture;
+      const occlusionTexture = modernPlayerPreview() && ['face', 'chest', 'torso', 'legs'].includes(targetName)
+        ? playerOcclusionTexture(targetName) : null;
+      if (modernPlayerPreview()) {
+        material.aoMap = occlusionTexture;
+        material.aoMapIntensity = 1;
+      }
+      if ('anisotropyMap' in material) {
+        material.anisotropyMap = tangentTexture;
+        material.anisotropy = tangentTexture ? previewMaterialProfile(material.name).anisotropy || 0 : 0;
+      }
+      const garmentBody = garments && ['chest', 'torso', 'legs'].includes(targetName);
+      configureTextureRange(material, colorTexture, garmentBody);
+      configureEyeIris(material, targetName === 'eye' && Boolean(colorTexture),
+        irisColor(currentPayload?.player?.irisColor), irisScale(currentPayload?.player?.irisSize), legacyEyeAtlas());
+      const profile = applyPreviewMaterialProfile(material, normalTexture);
+      const normalSource = normalTexture ? textureItems[textureCache.indexOf(normalTexture)]?.source : null;
+      if (normalTexture && material.normalScale && flipsBodyNormalGreen(targetName, normalSource)) material.normalScale.y *= -1;
+      configureEyeSurface(material);
+      configureLegacyNormalRange(material, normalTexture);
+      configureDetailNormal(material, detailNormalTexture);
+      configureSkinShading(material, profile?.role === 'skin' && modernPlayerPreview());
+      configureOcclusionAlpha(material, Boolean(occlusionTexture), THREE.ShaderChunk.aomap_fragment);
+      configureColorwayMask(material, targetName === 'shoes' ? SHOE_COLORWAY : null);
+      if (configureGarmentLayering(material, garmentLayeringUniform, garmentBody)) object.customDepthMaterial = garmentShadowDepthMaterial();
+      else if (object.customDepthMaterial === garmentShadowDepth) object.customDepthMaterial = undefined;
+      if (modernPlayerPreview()) {
+        configureSkinRoughness(material, profile?.role === 'skin' && ['face', 'chest', 'torso', 'legs'].includes(targetName)
+          ? boundTextureMatching(targetName, 'auxiliary', /roughcurvedense/i) : null);
+        const strandColor = colorTexture && (targetName === 'hair' || targetName === 'facialhair');
+        const player = currentPayload.player || {};
+        configureStrandShading(material, strandColor ? {
+          lightmap: strandLightmapTexture(material.name, targetName),
+          uvAttribute: object.geometry?.getAttribute('nbaStrandLightUv') ? 'nbaStrandLightUv' : null,
+          tangent: tangentTexture,
+          shading: object.userData.strandShading ? strandShading(object.userData.strandShading)
+            : targetName === 'facialhair' ? strandShading(player.beardShading, player.beardTint) : strandShading(player.hairShading, player.hairTint),
+        } : {});
+      }
+      if (currentPayload?.uniform) configureUniformOverlays(material, textureItems, textureCache, uniformNumber);
+      material.transparent = profile?.role === 'glass'
+        || Boolean(colorTexture) && (targetName === 'eyelash' || strandMaterial);
+      material.alphaTest = targetName === 'eyelash' || strandMaterial ? profile?.alphaTest || 0 : 0;
+      material.depthWrite = targetName !== 'eyelash' && profile?.role !== 'glass';
+      material.forceSinglePass = strandMaterial;
+      configureEyewearLens(material, modernPlayerPreview() && !targetName
+        && /goggle|glasses|lens|visor/i.test(material.name) && Boolean(colorTexture));
+      if (targetName === 'armpit') material.visible = Boolean(colorTexture) && currentPayload?.player?.armpitHair !== false;
+      material.color.copy(colorTexture && targetName !== 'eyelash'
+        ? materialResponses.get(targetName) || new THREE.Color(0xffffff)
+        : targetName === 'hidden' ? new THREE.Color(0x454545) : colorFor(material.name));
+      material.userData.skinMaterialResponse = materialResponses.get(targetName)?.toArray() || null;
+      if (currentPayload?.shoe && !colorTexture) material.color.set(0xaaaaaa);
+      if (currentPayload?.player) configureTearFilm(material);
+      material.needsUpdate = true;
+    });
+  });
+  syncStrandSoftPasses();
+}
+
+// Two-pass strands: an alpha-tested core writes depth (and casts shadows), then
+// a child mesh draws the same cards blended without depth writes for soft edges
+// and wisps. One sorted-transparent pass drew overlapping cards out of order.
+// The child shares the geometry and the core's shader hooks; it is not picked.
+const STRAND_CORE_ALPHA = 0.5;
+function syncStrandSoftPasses() {
+  for (const mesh of modelRoot.children) {
+    if (!mesh.isMesh || mesh.isInstancedMesh) continue;
+    const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
+    const strands = materials.map((material) => Boolean(material?.map && material.visible
+      && ['hair', 'facialhair'].includes(materialTextureTarget(material.name))));
+    let soft = mesh.children.find((child) => child.userData.strandSoftPass);
+    if (!modernPlayerPreview() || !strands.some(Boolean)) {
+      if (soft) soft.visible = false;
+      continue;
+    }
+    if (!soft) {
+      soft = new THREE.Mesh(mesh.geometry, materials.map(() => {
+        const copy = new THREE.MeshPhysicalMaterial();
+        copy.userData.strandSoftPass = true;
+        return copy;
+      }));
+      soft.userData.strandSoftPass = true;
+      soft.raycast = () => {};
+      mesh.add(soft);
+    }
+    soft.visible = true;
+    soft.castShadow = false;
+    soft.receiveShadow = true;
+    soft.material.forEach((copy, index) => {
+      const source = materials[index];
+      copy.visible = strands[index];
+      if (!copy.visible) return;
+      for (const key of ['name', 'map', 'normalMap', 'anisotropyMap', 'anisotropy', 'roughness', 'metalness', 'side', 'wireframe', 'aoMap']) copy[key] = source[key];
+      copy.color.copy(source.color);
+      if (source.normalScale) copy.normalScale.copy(source.normalScale);
+      copy.onBeforeCompile = source.onBeforeCompile;
+      copy.customProgramCacheKey = source.customProgramCacheKey;
+      copy.transparent = true;
+      copy.alphaTest = source.alphaTest;
+      copy.depthWrite = false;
+      copy.forceSinglePass = true;
+      copy.needsUpdate = true;
+      source.transparent = false;
+      source.depthWrite = true;
+      source.alphaTest = Math.max(source.alphaTest, STRAND_CORE_ALPHA);
+      source.needsUpdate = true;
+    });
+  }
+}
+
+async function load(payload, onProgress = () => {}, options = {}) {
+  const generation = ++loadGeneration;
+  currentPayload = payload;
+  uniformNumber = payload.uniform?.artwork?.numbers?.default || '23';
+  materialMetadataByName = new Map();
+  for (const item of payload.materials || []) {
+    const key = String(item.name || '').toLowerCase();
+    if (!materialMetadataByName.has(key)) materialMetadataByName.set(key, item);
+  }
+  grid.visible = true;
+  eyelashesVisible = false;
+  configurePreviewLighting(payload);
+  disposeRoot();
+  const items = payload.meshes || [];
+  let sliceStarted = performance.now();
+  for (let itemIndex = 0; itemIndex < items.length; itemIndex += 1) {
+    if (generation !== loadGeneration) throw new Error('Preview cancelled.');
+    const item = items[itemIndex];
+    const neutralFacialHairFitBase = item.sourceKind === 'facialhair-fit-base';
+    const geometry = new THREE.BufferGeometry();
+    geometry.setAttribute('position', new THREE.BufferAttribute(typed(item.positions, Float32Array), 3));
+    const strandMesh = (item.groups || []).some((group) => ['hair', 'facialhair'].includes(materialTextureTarget(group.material)));
+    // Without textureUvSemantic (other tools' workers) the strand atlas is picked
+    // from uvs/attachmentUvs by triangle size; the other set is the lightmap UV.
+    const pickedAtlas = strandMesh && !item.textureUvSemantic && currentPayload?.player
+      ? cardTextureUvs(item.uvs, item.attachmentUvs, item.indices) : null;
+    const textureCoordinates = pickedAtlas ? { uvs: pickedAtlas } : strandTextureCoordinates(item);
+    if (textureCoordinates.uvs?.length) geometry.setAttribute('uv', new THREE.BufferAttribute(typed(textureCoordinates.uvs, Float32Array), 2));
+    if (item.secondaryUvs?.length) geometry.setAttribute('uv1', new THREE.BufferAttribute(typed(item.secondaryUvs, Float32Array), 2));
+    // Strand lightmaps use TEXCOORD1: secondaryUvs on regular cards; on
+    // tangent-space cards (atlas taken from UV0) the remaining decoded set.
+    const lightmapUvs = pickedAtlas ? (pickedAtlas === item.uvs ? item.attachmentUvs : item.uvs)
+      : textureCoordinates.uvs !== item.uvs ? item.uvs : item.secondaryUvs;
+    if (modernPlayerPreview() && lightmapUvs?.length && lightmapUvs.length === textureCoordinates.uvs?.length && strandMesh) {
+      geometry.setAttribute('nbaStrandLightUv', new THREE.BufferAttribute(typed(lightmapUvs, Float32Array), 2));
+    }
+    if (item.courtUvs?.length) geometry.setAttribute('courtUv', new THREE.BufferAttribute(typed(item.courtUvs, Float32Array), 2));
+    if (item.detailUvs?.length) geometry.setAttribute('detailUv', new THREE.BufferAttribute(typed(item.detailUvs, Float32Array), 2));
+    if (item.overlayUvs?.length) geometry.setAttribute('overlayUv', new THREE.BufferAttribute(typed(item.overlayUvs, Float32Array), 2));
+    if (item.graffitiUvs?.length) geometry.setAttribute('graffitiUv', new THREE.BufferAttribute(typed(item.graffitiUvs, Float32Array), 2));
+    geometry.setIndex(new THREE.BufferAttribute(indexArray(item.indices), 1));
+    if (item.normals?.length === item.positions.length && item.normals.every(Number.isFinite)) {
+      geometry.setAttribute('normal', new THREE.BufferAttribute(typed(item.normals, Float32Array), 3));
+      geometry.userData.authoredNormals = true;
+    } else {
+      geometry.computeVertexNormals();
+    }
+    const materials = [];
+    for (const group of item.groups || []) {
+      const targetName = materialTextureTarget(group.material);
+      const profile = previewMaterialProfile(group.material);
+      const Material = targetName === 'hair' || targetName === 'facialhair' || targetName === 'armpit' || profile.role === 'eye' || profile.role === 'glass'
+        || profile.role === 'skin' && !neutralFacialHairFitBase && modernPlayerPreview()
+        ? THREE.MeshPhysicalMaterial
+        : THREE.MeshStandardMaterial;
+      const material = new Material({
+        name: group.material,
+        color: neutralFacialHairFitBase ? new THREE.Color(0x8e959c) : colorFor(group.material),
+        roughness: neutralFacialHairFitBase ? 0.9 : profile.roughness,
+        metalness: neutralFacialHairFitBase ? 0 : profile.metalness,
+        side: THREE.DoubleSide,
+        wireframe,
+      });
+      material.userData.neutralFacialHairFitBase = neutralFacialHairFitBase;
+      applyPreviewMaterialProfile(material);
+      const materialIndex = materials.length;
+      materials.push(material);
+      geometry.addGroup(group.start, group.count, materialIndex);
+    }
+    if (!materials.length) {
+      const material = new THREE.MeshStandardMaterial({ color: 0xa6adb7, wireframe });
+      applyPreviewMaterialProfile(material);
+      materials.push(material);
+    }
+    const packedMatrices = typed(item.instanceMatrices, Float32Array);
+    const packedCount = Math.floor(packedMatrices.length / 16);
+    const legacyInstances = item.instances || [];
+    const instanceCount = packedCount || legacyInstances.length;
+    if (instanceCount) {
+      const mesh = new THREE.InstancedMesh(geometry, materials, instanceCount);
+      mesh.name = item.name;
+      mesh.userData.previewInstances = legacyInstances;
+      mesh.userData.previewInstanceNames = item.instanceNames || legacyInstances.map((instance) => instance.name);
+      mesh.userData.previewInstanceTargets = item.instanceTargets || legacyInstances.map((instance) => instance.target);
+      mesh.userData.previewModel = item.name;
+      mesh.userData.previewGroups = item.groups || [];
+      // The hair_custom tweakables of the geometry IFF this mesh came from.
+      mesh.userData.strandShading = item.strandShading || null;
+      for (let index = 0; index < instanceCount; index += 1) {
+        const source = packedCount ? packedMatrices : legacyInstances[index].matrix;
+        const offset = packedCount ? index * 16 : 0;
+        mesh.setMatrixAt(index, new THREE.Matrix4().fromArray(source, offset));
+      }
+      mesh.instanceMatrix.setUsage(THREE.StaticDrawUsage);
+      mesh.instanceMatrix.needsUpdate = true;
+      modelRoot.add(mesh);
+    } else {
+      const mesh = new THREE.Mesh(geometry, materials);
+      mesh.name = item.name;
+      mesh.userData.previewModel = item.name;
+      mesh.userData.previewGroups = item.groups || [];
+      // The hair_custom tweakables of the geometry IFF this mesh came from.
+      mesh.userData.strandShading = item.strandShading || null;
+      modelRoot.add(mesh);
+    }
+    if (hiddenLegacyArenaHelper(payload, item.name) || hiddenArenaReflection(payload, item) || hiddenLegacyHairShell(payload, item)) modelRoot.children.at(-1).visible = false;
+    if ((!options.deferRender || options.yieldPreparation) && performance.now() - sliceStarted >= 8 && itemIndex + 1 < items.length) {
+      onProgress({ phase: 'meshes', completed: itemIndex + 1, total: items.length });
+      await nextFrame();
+      sliceStarted = performance.now();
+    }
+  }
+  applyGarmentCover(items);
+  if (modernPlayerPreview()) {
+    try {
+      prepareSurfaceFrames();
+    } catch {
+      // Keep the per-mesh normals computed above.
+    }
+  }
+  textureItems = payload.textures || [];
+  textureCache = [];
+  sliceStarted = performance.now();
+  for (let index = 0; index < textureItems.length; index += 1) {
+    if (generation !== loadGeneration) throw new Error('Preview cancelled.');
+    textureCache.push(createDdsTexture(textureItems[index]));
+    if ((!options.deferRender || options.yieldPreparation) && performance.now() - sliceStarted >= 8 && index + 1 < textureItems.length) {
+      onProgress({ phase: 'textures', completed: index + 1, total: textureItems.length });
+      await nextFrame();
+      sliceStarted = performance.now();
+    }
+  }
+  applyAutomaticTextures();
+  applyGarmentBand();
+  if (generation !== loadGeneration) throw new Error('Preview cancelled.');
+  if (!options.deferRender) {
+    // Apply visibility and the final camera before the first scene draw. The
+    // discarded pre-fit frame needlessly compiled/uploaded the same model.
+    setEyelashesVisible(false, false);
+    setHeadbandsVisible(payload?.player?.assetVersion !== '2k18', false);
+    // Fit first: studio lights decide the shadow variants the programs compile with.
+    fitCamera(false);
+    await compilePrograms(generation);
+    if (isPlacedArena(payload) || legacyArenaCourtDefault(payload)) setArenaCourtView();
+    else { if (options.cameraState) setCameraState(options.cameraState, false); updateCamera(); }
+  }
+  return { decodedTextures: textureCache.filter(Boolean).length };
+}
+
+// Player meshes share one seam-aware normal pass (face/neck/body splits stay
+// smooth across meshes and material groups; folds sharper than 60 degrees stay
+// hard), then get UV-derived tangents for their normal maps. Authored normals
+// (legacy strand frames) are kept as decoded.
+// Depth (model units) by which covered skin sorts behind the jersey and shorts;
+// 0 turns it off. Footwear keeps its own depth.
+function setGarmentLayering(depth) {
+  garmentLayeringUniform.value.x = Math.max(0, Number(depth) || 0);
+}
+
+// Extends the chest map's sports-bra cut-out into a band around the torso
+// (garmentBandUniform); bodies without cut-out cups get none.
+function applyGarmentBand() {
+  garmentBandUniform.value.set(0, 0, 0, 0);
+  if (!previewGarments()) return;
+  modelRoot.traverse((object) => {
+    const geometry = object.isMesh && !object.userData.strandSoftPass ? object.geometry : null;
+    const materials = Array.isArray(object.material) ? object.material : [object.material];
+    if (!geometry?.groups?.length || !geometry.index || !geometry.getAttribute('uv')) return;
+    const index = geometry.index.array, uv = geometry.getAttribute('uv').array;
+    const seen = new Set(), cups = [];
+    for (const group of geometry.groups) {
+      const material = materials[group.materialIndex ?? 0];
+      if (materialTextureTarget(material?.name) !== 'chest' || !material.map) continue;
+      const decoded = decodedTexturePixels(material.map);
+      if (!decoded) continue;
+      const size = decoded.size;
+      for (let cursor = group.start; cursor < group.start + group.count; cursor++) {
+        const v = index[cursor];
+        if (seen.has(v)) continue;
+        seen.add(v);
+        const x = Math.min(size - 1, Math.floor((uv[v * 2] - Math.floor(uv[v * 2])) * size));
+        const y = Math.min(size - 1, Math.floor((uv[v * 2 + 1] - Math.floor(uv[v * 2 + 1])) * size));
+        const offset = (y * size + x) * 4;
+        if (Math.max(decoded.pixels[offset], decoded.pixels[offset + 1], decoded.pixels[offset + 2]) < 16) cups.push(v);
+      }
+    }
+    const bounds = garmentBandBounds(geometry.getAttribute('position').array, cups);
+    if (bounds) garmentBandUniform.value.fromArray(bounds);
+  });
+}
+
+// Marks body vertices covered by a preview garment (nbaGarmentCover), so only
+// that skin sorts behind garments.
+function applyGarmentCover(items) {
+  const garments = [];
+  items.forEach((item, index) => {
+    const kind = previewGarmentKind(item);
+    const positions = modelRoot.children[index]?.geometry?.getAttribute('position')?.array;
+    if (kind && positions) garments.push({ kind, positions });
+  });
+  if (!garments.length) return;
+  items.forEach((item, index) => {
+    const geometry = modelRoot.children[index]?.geometry;
+    if (item.sourceKind !== 'main' || !geometry) return;
+    geometry.setAttribute('nbaGarmentCover', new THREE.BufferAttribute(garmentCoverWeights(geometry.getAttribute('position').array, garments), 2));
+  });
+}
+
+function prepareSurfaceFrames() {
+  const meshes = modelRoot.children.filter((object) => object.isMesh && !object.isInstancedMesh
+    && object.geometry.index && !object.geometry.userData.authoredNormals);
+  if (meshes.length) {
+    const normals = seamSmoothedNormals(meshes.map(({ geometry }) => ({
+      positions: geometry.attributes.position.array, indices: geometry.index.array,
+    })));
+    meshes.forEach(({ geometry }, index) => geometry.setAttribute('normal', new THREE.BufferAttribute(normals[index], 3)));
+  }
+  for (const { geometry, isMesh } of modelRoot.children) {
+    if (!isMesh || !geometry.index || !geometry.attributes.uv || !geometry.attributes.normal) continue;
+    geometry.setAttribute('tangent', new THREE.BufferAttribute(vertexTangents(geometry.attributes.position.array,
+      geometry.attributes.normal.array, geometry.attributes.uv.array, geometry.index.array), 4));
+  }
+}
+
+// A cold load compiled every material program inside the first render, which
+// blocked the UI. compileAsync lets KHR_parallel_shader_compile do that work
+// off the main thread; the following render reuses the programs.
+async function compilePrograms(generation) {
+  if (typeof renderer.compileAsync !== 'function') return;
+  try {
+    await renderer.compileAsync(scene, camera);
+  } catch {
+    // The next render compiles synchronously instead.
+  }
+  if (generation !== loadGeneration) throw new Error('Preview cancelled.');
+}
+
+// Texture-only reloads are atomic: the previous textures stay bound until the
+// new batch applies, and a failed or superseded batch leaves them in place.
+async function loadArenaTextures(items, onProgress = () => {}, options = {}) {
+  const generation = loadGeneration;
+  const batch = ++textureBatchGeneration;
+  const append = Boolean(options.append);
+  const previousItems = textureItems, previousCache = textureCache;
+  const existingNames = new Set((append ? previousItems : []).map((item) => String(item.name || '').toLowerCase()));
+  const additions = (items || []).filter((item) => {
+    const name = String(item?.name || '').toLowerCase();
+    if (!name || existingNames.has(name)) return false;
+    existingNames.add(name);
+    return true;
+  });
+  const added = [];
+  const created = [], stored = [];
+  let committedItems, committedCache;
+  const isCurrent = () => generation === loadGeneration && batch === textureBatchGeneration
+    && textureItems === previousItems && textureCache === previousCache;
+  let sliceStarted = performance.now();
+  try {
+  for (let index = 0; index < additions.length; index += 1) {
+    if (!isCurrent()) throw new Error('Preview cancelled.');
+    const item = additions[index];
+    const texture = createDdsTexture(item);
+    created.push(texture);
+    const { bytes: _encodedBytes, ...storedItem } = item;
+    const textureIndex = (append ? previousItems.length : 0) + stored.length;
+    stored.push(storedItem);
+    added.push({ index: textureIndex, item: storedItem, decoded: Boolean(texture) });
+    if (performance.now() - sliceStarted >= 8 && index + 1 < additions.length) {
+      onProgress({ completed: index + 1, total: additions.length });
+      await nextFrame();
+      sliceStarted = performance.now();
+    }
+  }
+  onProgress({ completed: additions.length, total: additions.length });
+  if (!isCurrent()) throw new Error('Preview cancelled.');
+  textureItems = committedItems = append ? [...previousItems, ...stored] : stored;
+  textureCache = committedCache = append ? [...previousCache, ...created] : created;
+  applyAutomaticTextures();
+  renderer.render(scene, camera);
+  if (!append) previousCache.forEach(texture => texture?.dispose());
+  return {
+    decodedTextures: textureCache.filter(Boolean).length,
+    addedTextures: added.filter((entry) => entry.decoded).length,
+    added,
+  };
+  } catch (error) {
+    if (committedItems && textureItems === committedItems && textureCache === committedCache) {
+      textureItems = previousItems; textureCache = previousCache;
+      try { applyAutomaticTextures(); } catch { /* Preserve the original upload/render error. */ }
+    }
+    created.forEach(texture => { if (!textureCache.includes(texture)) texture?.dispose(); });
+    throw error;
+  }
+}
+
+function replaceModelColors(update) {
+  const names = new Set(update.replaceMaterials.map(n => n.toLowerCase()));
+  // A baked finish may author different normal maps. Ordinary colorway/design
+  // changes still retain normals unless the native session explicitly opts in.
+  const replaces = item => item.assignments?.some(a => names.has(a.material.toLowerCase())
+    && (a.channel === 'color' || (update.replaceNormals === true && a.channel === 'normal')));
+  const additions = update.textures.map(item => ({ item, texture: createDdsTexture(item) }));
+  if (additions.some(a => !a.texture)) {
+    additions.forEach(a => a.texture?.dispose());
+    throw new Error('The new color texture could not be uploaded; previous textures retained.');
+  }
+  const keptItems = [], keptTextures = [], removed = [];
+  textureItems.forEach((item, i) => {
+    if (replaces(item)) removed.push(textureCache[i]);
+    else { keptItems.push(item); keptTextures.push(textureCache[i]); }
+  });
+  textureItems = [...keptItems, ...additions.map(a => a.item)];
+  textureCache = [...keptTextures, ...additions.map(a => a.texture)];
+  if (update.shoe) currentPayload.shoe = update.shoe;
+  if ('apparelVariant' in update) currentPayload.apparelVariant = update.apparelVariant;
+  currentPayload.textures = textureItems;
+  currentPayload.stats.textures = textureItems.length;
+  currentPayload.textureDependencies = [
+    ...(currentPayload.textureDependencies || []).filter(item => !replaces(item)),
+    ...update.textures.map(({bytes: _bytes, data: _data, ...metadata}) => metadata),
+  ];
+  applyAutomaticTextures();
+  removed.forEach(texture => texture?.dispose());
+  renderer.render(scene, camera);
+  return { decodedTextures: textureCache.filter(Boolean).length };
+}
+
+function dependencyDetails(material) {
+  const materialName = String(material?.name || 'Unassigned');
+  const normalizedMaterial = materialName.toLowerCase();
+  const targetName = materialTextureTarget(materialName);
+  const dependencies = (currentPayload?.textureDependencies || []).filter((item) => (
+    item.assignments?.some((assignment) => String(assignment.material || '').toLowerCase() === normalizedMaterial)
+      || (targetName && item.binding?.target === targetName)
+  ));
+  const appliedNames = new Map([
+    ['color', material?.map?.name || ''],
+    ['normal', material?.normalMap?.name || ''],
+    ['auxiliary', material?.anisotropyMap?.name || ''],
+  ]);
+  return dependencies.map((dependency) => {
+    const normalizedName = String(dependency.name || '').toLowerCase();
+    const textureIndex = textureItems.findIndex((item) => String(item.name || '').toLowerCase() === normalizedName);
+    const decoded = textureIndex >= 0 && Boolean(textureCache[textureIndex]);
+    const assignment = dependency.assignments?.find(
+      (item) => String(item.material || '').toLowerCase() === normalizedMaterial,
+    );
+    const channel = assignment?.channel || dependency.binding?.channel || 'auxiliary';
+    const appliedName = appliedNames.get(channel) || '';
+    return {
+      name: dependency.name,
+      resourceName: dependency.resourceName || dependency.name,
+      source: dependency.source || '',
+      sourceIff: dependency.sourceIff || '',
+      width: Number(dependency.width || 0),
+      height: Number(dependency.height || 0),
+      mips: Number(dependency.mips || 0),
+      format: dependency.format || 'DDS',
+      channel,
+      rangeCompressed: Boolean(dependency.range),
+      loaded: decoded,
+      applied: Boolean(appliedName) && (
+        appliedName.toLowerCase() === normalizedName || appliedName.toLowerCase().includes(normalizedName)
+      ),
+      status: decoded ? 'loaded' : textureIndex >= 0 ? 'unsupported' : 'pending',
+      textureIndex: decoded ? textureIndex : null,
+    };
+  });
+}
+
+function clearArenaTextures() {
+  textureCache.forEach((texture) => texture?.dispose());
+  textureItems = [];
+  textureCache = [];
+  applyAutomaticTextures();
+  renderer.render(scene, camera);
+}
+
+function pickObject(clientX, clientY) {
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return;
+  pointer.set(
+    ((clientX - rect.left) / rect.width) * 2 - 1,
+    -((clientY - rect.top) / rect.height) * 2 + 1,
+  );
+  modelRoot.updateMatrixWorld(true);
+  raycaster.setFromCamera(pointer, camera);
+  const hits = raycaster.intersectObjects(modelRoot.children.filter(mesh => mesh.visible), false);
+  const hit = (config.filterHits ? config.filterHits(hits) : hits).find(hit => {
+    const materials = Array.isArray(hit.object.material) ? hit.object.material : [hit.object.material];
+    return materials[hit.face?.materialIndex || 0]?.visible !== false;
+  });
+  clearPick(false);
+  if (!hit) {
+    emit('model-preview:pick', null);
+    renderer.render(scene, camera);
+    return;
+  }
+
+  const object = hit.object;
+  const materialIndex = Number.isInteger(hit.face?.materialIndex) ? hit.face.materialIndex : 0;
+  const materials = Array.isArray(object.material) ? object.material : [object.material];
+  const material = materials[materialIndex] || materials[0] || null;
+  const group = object.userData.previewGroups?.[materialIndex] || null;
+  const materialMetadata = currentPayload?.materials?.find(
+    (item) => String(item.name || '').toLowerCase() === String(material?.name || '').toLowerCase(),
+  );
+  const instanceId = Number.isInteger(hit.instanceId) ? hit.instanceId : null;
+  const legacyInstance = instanceId === null ? null : object.userData.previewInstances?.[instanceId];
+  const instance = instanceId === null ? null : {
+    name: object.userData.previewInstanceNames?.[instanceId] || legacyInstance?.name,
+    target: object.userData.previewInstanceTargets?.[instanceId] || legacyInstance?.target,
+  };
+  object.geometry.computeBoundingBox();
+  const bounds = object.geometry.boundingBox.clone();
+  if (instanceId === null) {
+    bounds.applyMatrix4(object.matrixWorld);
+  } else {
+    const matrix = new THREE.Matrix4();
+    object.getMatrixAt(instanceId, matrix);
+    matrix.premultiply(object.matrixWorld);
+    bounds.applyMatrix4(matrix);
+  }
+  selectionHelper = new THREE.Box3Helper(bounds, 0xff6a32);
+  scene.add(selectionHelper);
+  emit('model-preview:pick', {
+    name: instance?.name || object.name,
+    target: instance?.target || object.userData.previewModel || object.name,
+    model: object.userData.previewModel || object.name,
+    instance: instanceId,
+    primitive: group?.mesh || '',
+    material: material ? {
+      name: material.name || 'Unassigned',
+      shader: materialMetadata?.shader || '',
+      source: materialMetadata?.source || '',
+      textures: dependencyDetails(material),
+    } : null,
+  });
+  renderer.render(scene, camera);
+}
+
+function setWireframe(value) {
+  invalidateShadows();
+  wireframe = Boolean(value);
+  modelRoot.traverse((object) => {
+    const materials = Array.isArray(object.material) ? object.material : [object.material];
+    materials.filter(Boolean).forEach((material) => { material.wireframe = wireframe; material.needsUpdate = true; });
+  });
+  renderer.render(scene, camera);
+}
+
+function setHeadbandsVisible(value, draw = true) {
+  invalidateShadows();
+  modelRoot.traverse(object => {
+    const materials = Array.isArray(object.material) ? object.material : [object.material];
+    for (const material of materials.filter(Boolean)) {
+      if (/^headband_shader$/i.test(material.name)) material.visible = Boolean(value);
+    }
+  });
+  if (draw) renderer.render(scene, camera);
+}
+
+function setEyelashesVisible(value, draw = true) {
+  invalidateShadows();
+  eyelashesVisible = Boolean(value);
+  modelRoot.traverse((object) => {
+    const materials = Array.isArray(object.material) ? object.material : [object.material];
+    materials.filter(Boolean).forEach((material) => {
+      if (materialTextureTarget(material.name) === 'eyelash') material.visible = eyelashesVisible;
+    });
+  });
+  if (draw) renderer.render(scene, camera);
+}
+
+function setTexture(index) {
+  invalidateShadows();
+  if (index === '' || index === null) {
+    applyAutomaticTextures();
+    renderer.render(scene, camera);
+    return;
+  }
+  const texture = index === '' || index === null ? null : textureCache[Number(index)] || null;
+  modelRoot.traverse((object) => {
+    const materials = Array.isArray(object.material) ? object.material : [object.material];
+    materials.filter(Boolean).forEach((material) => {
+      material.map = texture;
+      material.normalMap = null;
+      // Inspecting one texture shows it raw, without the automatic extra maps.
+      if (material.userData.strandSoftPass) { material.visible = false; return; }
+      if (material.userData.occlusionAlpha) material.aoMap = null;
+      if (material.userData.skinRoughness) { material.roughnessMap = null; material.userData.skinRoughness = false; }
+      if (material.userData.eyewearLens) { material.transparent = false; material.userData.eyewearLens = false; }
+      if (material.userData.tearFilm) {
+        // Inspection shows the texture raw, without the tear-line translucency.
+        material.transparent = false; material.opacity = 1; material.depthWrite = true;
+        material.userData.tearFilm = false;
+      }
+      configureTextureRange(material, texture);
+      applyPreviewMaterialProfile(material, null);
+      material.color.copy(texture ? new THREE.Color(0xffffff) : colorFor(material.name));
+      material.needsUpdate = true;
+    });
+  });
+  renderer.render(scene, camera);
+}
+
+if (config.interactive !== false) {
+canvas.addEventListener('contextmenu', (event) => event.preventDefault());
+canvas.addEventListener('pointerdown', (event) => {
+  canvas.setPointerCapture(event.pointerId);
+  drag = {
+    x: event.clientX,
+    y: event.clientY,
+    originX: event.clientX,
+    originY: event.clientY,
+    button: event.button,
+    moved: false,
+  };
+});
+canvas.addEventListener('pointermove', (event) => {
+  if (!drag) return;
+  const dx = event.clientX - drag.x;
+  const dy = event.clientY - drag.y;
+  if (Math.hypot(event.clientX - drag.originX, event.clientY - drag.originY) > 4) drag.moved = true;
+  drag.x = event.clientX;
+  drag.y = event.clientY;
+  if (drag.button === 2) {
+    const forward = target.clone().sub(camera.position).normalize();
+    const right = new THREE.Vector3().crossVectors(forward, camera.up).normalize();
+    const up = new THREE.Vector3().crossVectors(right, forward).normalize();
+    const scale = distance * 0.0015;
+    target.addScaledVector(right, -dx * scale).addScaledVector(up, dy * scale);
+  } else {
+    yaw -= dx * 0.006;
+    pitch += dy * 0.006;
+  }
+  scheduleCameraRender();
+});
+canvas.addEventListener('pointerup', (event) => {
+  const shouldPick = drag?.button === 0 && !drag.moved;
+  drag = null;
+  if (shouldPick) pickObject(event.clientX, event.clientY);
+});
+canvas.addEventListener('pointercancel', () => { drag = null; });
+canvas.addEventListener('wheel', (event) => {
+  event.preventDefault();
+  distance *= Math.exp(event.deltaY * 0.001);
+  scheduleCameraRender();
+}, { passive: false });
+
+const movementCodes = new Set([
+  'KeyW', 'KeyA', 'KeyS', 'KeyD', 'KeyQ', 'KeyE', 'KeyC', 'Space',
+  'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ShiftLeft', 'ShiftRight',
+]);
+window.addEventListener('keydown', (event) => {
+  if (!movementCodes.has(event.code) || !viewerIsActive()) return;
+  if (/^(INPUT|SELECT|TEXTAREA|BUTTON)$/.test(event.target?.tagName || '')) return;
+  movementKeys.add(event.code);
+  event.preventDefault();
+  startCameraMovement();
+});
+window.addEventListener('keyup', (event) => {
+  if (!movementCodes.has(event.code)) return;
+  movementKeys.delete(event.code);
+  event.preventDefault();
+});
+window.addEventListener('blur', stopCameraMovement);
+}
+
+const api = {
+  strandDiagnostics,
+  skinDiagnostics,
+  cancelLoad,
+  clearPreview,
+  colorHex: (name) => `#${colorFor(name).getHexString()}`,
+  clearPick,
+  fitCamera,
+  getCameraState,
+  setCameraState,
+  load,
+  loadArenaTextures,
+  replaceModelColors,
+  clearArenaTextures,
+  resize,
+  setTexture,
+  setEyelashesVisible,
+  setHeadbandsVisible,
+  setArenaCourtView,
+  setArenaCaptureView,
+  setArenaDisplayCaptureView,
+  capturePng,
+  inspectCaptureVisibility,
+  setArenaCaptureAppearance,
+  setArenaCaptureLighting,
+  stopCameraMovement,
+  setWireframe,
+  setGarmentLayering,
+  // Compiles the current scene's shader programs off the main thread (wrappers
+  // that load with deferRender call this before their first draw).
+  precompile: () => compilePrograms(loadGeneration),
+  setUniformNumber: value => {
+    if (!/^[0-9]{0,2}$/.test(value)) return false;
+    uniformNumber=value;
+    modelRoot.children.forEach(object => (Array.isArray(object.material)?object.material:[object.material]).forEach(material=>material?.userData.updateUniformNumber?.(value)));
+    renderer.render(scene, camera);
+    return true;
+  },
+  stats: () => ({
+    payload: currentPayload,
+    previewProfile: currentPreviewProfile,
+    fittedDistance,
+    camera: camera.position.toArray(),
+    target: target.toArray(),
+    captureState: { environment: Boolean(scene.environment), shadows: renderer.shadowMap.enabled, authoredLights: captureLightGroup.children.length / 2,
+      keyPosition: keyLight.position.toArray(), keyColor: keyLight.color.getHex(), cameraFov: camera.fov,
+      toneMapping:renderer.toneMapping, exposure:renderer.toneMappingExposure, localClipping:renderer.localClippingEnabled },
+    geometryIds: modelRoot.children.map(object => object.geometry?.uuid),
+    hiddenMeshes: modelRoot.children.filter(object => !object.visible).map(object => object.name),
+    materialTextures: modelRoot.children.flatMap((object) => {
+      const materials = Array.isArray(object.material) ? object.material : [object.material];
+      return materials.filter(Boolean).map((material) => ({
+        name: material.name,
+        map: material.map?.name || '',
+        normalMap: material.normalMap?.name || '',
+        reconstructedNormalZ: material.normalMap?.userData?.reconstructNormalZ ?? false,
+        roughnessMap: material.roughnessMap?.name || '',
+        aoMap: material.aoMap?.name || '',
+        metalnessMap: material.metalnessMap?.name || '',
+        normalColorSpace: material.normalMap?.colorSpace ?? null,
+        roughnessColorSpace: material.roughnessMap?.colorSpace ?? null,
+        aoColorSpace: material.aoMap?.colorSpace ?? null,
+        metalnessColorSpace: material.metalnessMap?.colorSpace ?? null,
+        normalRepeat: material.normalMap?.repeat.toArray() || null,
+        normalOffset: material.normalMap?.offset.toArray() || null,
+        color: `#${material.color.getHexString()}`,
+        role: material.userData.previewMaterialRole || '',
+        roughness: material.roughness ?? null,
+        metalness: material.metalness ?? null,
+        skinResponse: material.userData.skinMaterialResponse || null,
+        strandShading: material.userData.strandShading || null,
+        strandLightmap: material.userData.strandLightmap || null,
+        skinRoughness: Boolean(material.userData.skinRoughness),
+        occlusionAlpha: Boolean(material.userData.occlusionAlpha),
+        eyewearLens: Boolean(material.userData.eyewearLens),
+        normalScale: material.normalScale?.toArray() || null,
+        visible: material.visible,
+        alphaTest: material.alphaTest,
+        rangeCompressed: Boolean(material.userData.textureRange),
+        uniformArtwork: material.userData.uniformArtwork || [],
+      }));
+    }),
+    renderer: renderer.capabilities.isWebGL2 ? 'WebGL 2' : 'WebGL 1',
+  }),
+};
+resize();
+
+return {
+  api, THREE, canvas, scene, camera, renderer, modelRoot, grid, target,
+  ambientLight, hemisphereLight, keyLight, fillLight, rimLight,
+  applyAutomaticTextures, materialTextureTarget, boundTextureMatching, decodedTexturePixels, typed, boundaryUvPairs, boundaryColors,
+  disposeRoot, configurePreviewLighting, configureStudioLights, updateCamera, pickObject, invalidateShadows, indexArray,
+  origin: 'nba2k-shared-model-preview',
+  get payload() { return currentPayload; }, set payload(value) { currentPayload = value; },
+  get fittedDistance() { return fittedDistance; },
+  cameraState: () => ({ target: target.toArray(), yaw, pitch, distance, fittedDistance }),
+  setCameraState(value) {
+    if (cameraRenderFrame) { cancelAnimationFrame(cameraRenderFrame); cameraRenderFrame = 0; }
+    target.fromArray(value.target); yaw = value.yaw; pitch = value.pitch;
+    distance = value.distance; fittedDistance = value.fittedDistance;
+    updateCamera(false);
+  },
+};
+}

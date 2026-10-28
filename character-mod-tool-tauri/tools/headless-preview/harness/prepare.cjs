@@ -10,16 +10,10 @@ const harness = __dirname;
 const app = path.resolve(harness, '../../..');
 const index = process.argv.indexOf('--baseline');
 const baseline = index > 0 ? process.argv[index + 1] : 'HEAD';
-// Published name in the harness -> source under web/renderer/.
-const rendererFiles = {
-  'explorer/model-preview.js': 'explorer-model-preview.js',
-  'skin-response.mjs': 'skin-response.mjs',
-  'strand-preview-fixes.mjs': 'strand-preview-fixes.mjs',
-  'studio-shading.mjs': 'studio-shading.mjs',
-  // The app wrapper (wrapper.html): body fit, jersey fit, editor display.
-  'model-preview.js': 'model-preview.js',
-  'body-preview-editor.mjs': 'body-preview-editor.mjs',
-};
+// Every file under web/renderer/ (the app wrapper, its modules and the vendored
+// shared renderer in shared/), published at the same relative path, except the
+// explorer entry, which the app serves as explorer/model-preview.js.
+const published = (source) => source === 'explorer-model-preview.js' ? 'explorer/model-preview.js' : source;
 
 function vendored(destination) {
   fs.mkdirSync(path.join(destination, 'explorer'), { recursive: true });
@@ -28,21 +22,23 @@ function vendored(destination) {
     fs.copyFileSync(path.join(app, 'frontend/explorer', name), path.join(destination, 'explorer', name));
   }
 }
-function fromBaseline(source) {
-  try {
-    return execFileSync('git', ['-C', app, 'show', `${baseline}:./web/renderer/${source}`], { stdio: ['ignore', 'pipe', 'ignore'], maxBuffer: 64 * 1024 * 1024 });
-  } catch {
-    return null; // The baseline predates this module.
-  }
+function write(side, source, data) {
+  const file = path.join(harness, side, published(source));
+  fs.mkdirSync(path.dirname(file), { recursive: true });
+  fs.writeFileSync(file, data);
 }
+function workingTreeFiles(dir = path.join(app, 'web/renderer'), base = dir) {
+  return fs.readdirSync(dir, { withFileTypes: true }).flatMap((entry) => entry.isDirectory()
+    ? workingTreeFiles(path.join(dir, entry.name), base) : [path.relative(base, path.join(dir, entry.name)).split(path.sep).join('/')]);
+}
+const git = (...args) => execFileSync('git', ['-C', app, ...args], { stdio: ['ignore', 'pipe', 'ignore'], maxBuffer: 64 * 1024 * 1024 });
 
 for (const side of ['old', 'new']) fs.rmSync(path.join(harness, side), { recursive: true, force: true });
 for (const side of ['old', 'new']) vendored(path.join(harness, side));
-for (const [published, source] of Object.entries(rendererFiles)) {
-  fs.copyFileSync(path.join(app, 'web/renderer', source), path.join(harness, 'new', published));
-  const old = fromBaseline(source);
-  if (old) fs.writeFileSync(path.join(harness, 'old', published), old);
-}
+for (const source of workingTreeFiles()) write('new', source, fs.readFileSync(path.join(app, 'web/renderer', source)));
+const baselineFiles = git('ls-tree', '-r', '--name-only', baseline, '--', 'web/renderer').toString().split(/\r?\n/).filter(Boolean)
+  .map((file) => file.replace(/^.*?web\/renderer\//, ''));
+for (const source of baselineFiles) write('old', source, git('show', `${baseline}:./web/renderer/${source}`));
 if (!fs.existsSync(path.join(harness, 'old/explorer/model-preview.js'))) throw new Error(`No explorer renderer at ${baseline}`);
 fs.copyFileSync(path.join(app, 'frontend/skin-preview-fixes.mjs'), path.join(harness, 'skin-preview-fixes.mjs'));
 for (const side of ['old', 'new']) fs.copyFileSync(path.join(app, 'frontend/skin-preview-fixes.mjs'), path.join(harness, side, 'skin-preview-fixes.mjs'));
