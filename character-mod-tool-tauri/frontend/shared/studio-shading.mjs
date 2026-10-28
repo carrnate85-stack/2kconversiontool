@@ -1,8 +1,10 @@
 // Preview-only studio shading: environment, surface frames, eyes and skin.
-// Shader hooks chain onto any previous onBeforeCompile, like the strand fixes.
+// Adapted from the Character Mod Tool renderer (2kconversiontool PR #3) and
+// checked against Exporter player payloads. Shader hooks chain onto any
+// previous onBeforeCompile so texture-range decoding is never discarded.
 
 // Image-based light replaces most of the flat ambient/hemisphere fill. The
-// remaining fill keeps unlit (environment-free) cavities from going black.
+// remaining fill keeps environment-free cavities from going black.
 export const STUDIO_ENVIRONMENT = Object.freeze({ intensity: 0.62, ambientScale: 0.22, hemisphereScale: 0.38 });
 
 export function studioLightBalance(profile = {}) {
@@ -59,9 +61,9 @@ export function createStudioEnvironment(THREE, renderer) {
   }
 }
 
-// Vertices split along UV/material seams get the same smooth normal when
-// they coincide and face within creaseAngleDegrees; hard edges stay hard.
-// Each input is { positions, indices }; returns one Float32Array per mesh.
+// Vertices split along UV/material seams (face/neck/body) get the same smooth
+// normal when they coincide and face within creaseAngleDegrees; hard edges stay
+// hard. Each input is { positions, indices }; returns one Float32Array per mesh.
 export function seamSmoothedNormals(meshes, { creaseAngleDegrees = 60, tolerance = null } = {}) {
   const sums = meshes.map(({ positions, indices }) => {
     const sum = new Float32Array(positions.length);
@@ -87,7 +89,7 @@ export function seamSmoothedNormals(meshes, { creaseAngleDegrees = 60, tolerance
   });
   let step = tolerance;
   if (!(step > 0)) {
-    let min = [Infinity, Infinity, Infinity], max = [-Infinity, -Infinity, -Infinity];
+    const min = [Infinity, Infinity, Infinity], max = [-Infinity, -Infinity, -Infinity];
     for (const { positions } of meshes) for (let index = 0; index < positions.length; index += 3) {
       for (let axis = 0; axis < 3; axis++) {
         min[axis] = Math.min(min[axis], positions[index + axis]);
@@ -141,30 +143,6 @@ export function seamSmoothedNormals(meshes, { creaseAngleDegrees = 60, tolerance
   return results;
 }
 
-// Tangent-space hair and beards carry two UV sets: the shared strand-atlas UVs
-// (color, alpha, tangent) and a unique per-card lightmap layout. The decoder
-// labels the wider-spread set `uvs`, which for these meshes is the lightmap
-// grid, so cards sampled tiny solid patches of the atlas and rendered as flat
-// flakes. Atlas UVs give each triangle a real share of the strand artwork;
-// lightmap cells are tiny. Pick the set whose median triangle UV area is
-// clearly larger; the other set is the lightmap UV.
-export function cardTextureUvs(uvs, alternateUvs, indices, margin = 4) {
-  if (!uvs?.length || alternateUvs?.length !== uvs.length || !indices?.length) return uvs;
-  const medianArea = (values) => {
-    const triangles = Math.floor(indices.length / 3);
-    const step = Math.max(1, Math.floor(triangles / 4096));
-    const areas = [];
-    for (let triangle = 0; triangle < triangles; triangle += step) {
-      const a = indices[triangle * 3] * 2, b = indices[triangle * 3 + 1] * 2, c = indices[triangle * 3 + 2] * 2;
-      areas.push(Math.abs((values[b] - values[a]) * (values[c + 1] - values[a + 1])
-        - (values[c] - values[a]) * (values[b + 1] - values[a + 1])) / 2);
-    }
-    areas.sort((left, right) => left - right);
-    return areas[Math.floor(areas.length / 2)] || 0;
-  };
-  return medianArea(alternateUvs) > medianArea(uvs) * margin ? alternateUvs : uvs;
-}
-
 // Per-vertex tangents (xyz + handedness w) from UV gradients. Degenerate UV
 // triangles leave no gradient, so those vertices get any tangent orthogonal
 // to the normal rather than a zero vector that would shade as NaN.
@@ -182,8 +160,7 @@ export function vertexTangents(positions, normals, uvs, indices, target = new Fl
     const r = 1 / determinant;
     const sx = (e1x * t2 - e2x * t1) * r, sy = (e1y * t2 - e2y * t1) * r, sz = (e1z * t2 - e2z * t1) * r;
     const tx = (e2x * s1 - e1x * s2) * r, ty = (e2y * s1 - e1y * s2) * r, tz = (e2z * s1 - e1z * s2) * r;
-    for (let corner = 0; corner < 3; corner++) {
-      const vertex = (corner === 0 ? a : corner === 1 ? b : c) * 3;
+    for (const vertex of [a * 3, b * 3, c * 3]) {
       tan1[vertex] += sx; tan1[vertex + 1] += sy; tan1[vertex + 2] += sz;
       tan2[vertex] += tx; tan2[vertex + 1] += ty; tan2[vertex + 2] += tz;
     }
@@ -208,11 +185,8 @@ export function vertexTangents(positions, normals, uvs, indices, target = new Fl
   return target;
 }
 
-// The decoded eye textures carry the sclera only, so the iris is drawn around
-// the cornea, which sits at the centre of the eyeball's 0-1 UVs.
-// Color and size are uniforms: one program for all players.
-// The wet cornea should show small, crisp catchlights. A rough clearcoat
-// smeared the key softbox into a white band across the iris.
+// The wet cornea should show small, crisp catchlights. The eye profile's 0.16
+// clearcoat roughness smeared the key softbox into a band across the iris.
 export const EYE_SURFACE = Object.freeze({ environmentIntensity: 0.3, clearcoatRoughness: 0.05 });
 
 // Runs after the material profile, which resets clearcoat roughness.
@@ -222,7 +196,12 @@ export function configureEyeSurface(material) {
   if ('clearcoatRoughness' in material) material.clearcoatRoughness = EYE_SURFACE.clearcoatRoughness;
 }
 
-export function configureEyeIris(material, enabled, color, scale) {
+// The decoded eye textures carry the sclera only, so the iris is drawn around
+// the cornea. 2K27 eyeballs map the whole 0-1 UV square with the cornea at its
+// centre; `quadrant` keeps the legacy 2x2-atlas lookup. Color and size are
+// uniforms, so every player shares one program. Injected before color_fragment,
+// after the map (and any range decoding) has been applied.
+export function configureEyeIris(material, enabled, color, scale, quadrant = false) {
   material.userData.eyeIris = Boolean(enabled && material.map);
   if (!material.userData.eyeIris) return;
   const uniforms = material.userData.eyeIrisUniforms ||= { nbaIrisColor: { value: null }, nbaIrisScale: { value: 0.54 } };
@@ -234,9 +213,8 @@ export function configureEyeIris(material, enabled, color, scale) {
     previous(shader);
     Object.assign(shader.uniforms, uniforms);
     shader.fragmentShader = 'uniform vec3 nbaIrisColor;\nuniform float nbaIrisScale;\n' + shader.fragmentShader;
-    // Runs after map/range decoding (which may have replaced map_fragment).
     shader.fragmentShader = shader.fragmentShader.replace('#include <color_fragment>', `#ifdef USE_MAP
-  vec2 nbaEyeOffset = vMapUv - vec2( 0.5 );
+  vec2 nbaEyeOffset = ${quadrant ? 'fract( vMapUv * 2.0 )' : 'vMapUv'} - vec2( 0.5 );
   float nbaIrisDistance = length( nbaEyeOffset ) / nbaIrisScale;
   float nbaIrisMask = 1.0 - smoothstep( 0.185, 0.255, nbaIrisDistance );
   float nbaPupilMask = 1.0 - smoothstep( 0.052, 0.085, nbaIrisDistance );
@@ -252,15 +230,15 @@ export function configureEyeIris(material, enabled, color, scale) {
 #endif
 #include <color_fragment>`);
   };
-  material.customProgramCacheKey = () => previousKey + ':nba-eye-iris-v4';
+  material.customProgramCacheKey = () => `${previousKey}:nba-eye-iris-v4${quadrant ? '-quadrant' : ''}`;
 }
 
-// The teartube mesh is the wet tear line along the lower lid; drawn opaque with
-// a placeholder flesh color it reads as a red rim. The caruncle stays opaque.
+// The untextured teartube mesh is the wet tear line along the lower lid; drawn
+// opaque in a placeholder flesh color it read as a red rim. The caruncle stays.
 export const TEAR_FILM = Object.freeze({ opacity: 0.18, roughness: 0.06, color: [0.95, 0.9, 0.9] });
 
 export function configureTearFilm(material) {
-  const film = /(?:^|_)teartube(?:_|$)/i.test(String(material.name || ''));
+  const film = /(?:^|_)teartube(?:_|$)/i.test(String(material.name || '')) && !material.map;
   material.userData.tearFilm = film;
   if (!film) return false;
   material.color?.setRGB?.(...TEAR_FILM.color);
@@ -272,10 +250,213 @@ export function configureTearFilm(material) {
   return true;
 }
 
-// Eyewear (goggles, glasses) color maps carry an opacity mask: frame opaque,
-// lens transparent. A flat material opacity either hid the eyes behind solid
-// lenses or, multiplied with the mask, erased the lenses. Use the mask with a
-// minimum lens opacity and a glossy surface so lenses read as clear plastic.
+// Skin, approximating subsurface scattering per color channel: red light
+// travels furthest under the skin, so red diffuse uses mostly the smooth
+// (geometry) normal and wraps furthest past the terminator, blue mostly the
+// detailed normal-mapped one. Specular keeps the detailed normal, plus a
+// tighter "oily" lobe. Sheen adds the peach-fuzz rim. Values from A/B renders in
+// the roster editor's portrait work (21 coaches) and the character tool.
+export const SKIN_SHADING = Object.freeze({
+  sheen: 0.15, sheenRoughness: 0.55, sheenColor: [0.75, 0.55, 0.48], specularIntensity: 0.6,
+  detail: [0.3, 0.65, 0.85], wrap: [0.5, 0.2, 0.12], oilWeight: 0.1, oilRoughness: 0.5, roughnessScale: 1.15,
+});
+
+export function configureSkinShading(material, enabled) {
+  material.userData.skinScatter = Boolean(enabled && 'sheen' in material);
+  if (!material.userData.skinScatter) return;
+  material.sheen = SKIN_SHADING.sheen;
+  material.sheenRoughness = SKIN_SHADING.sheenRoughness;
+  material.sheenColor?.setRGB?.(...SKIN_SHADING.sheenColor);
+  material.specularIntensity = SKIN_SHADING.specularIntensity;
+  const uniforms = material.userData.skinScatterUniforms ||= {
+    nbaSkinDetail: { value: new Float32Array(SKIN_SHADING.detail) },
+    nbaSkinWrap: { value: new Float32Array(SKIN_SHADING.wrap) },
+    nbaSkinOil: { value: new Float32Array([SKIN_SHADING.oilWeight, SKIN_SHADING.oilRoughness]) },
+  };
+  const previous = material.onBeforeCompile;
+  const previousKey = material.customProgramCacheKey();
+  material.onBeforeCompile = (shader) => {
+    previous(shader);
+    Object.assign(shader.uniforms, uniforms);
+    shader.fragmentShader = 'uniform vec3 nbaSkinDetail;\nuniform vec3 nbaSkinWrap;\nuniform vec2 nbaSkinOil;\nvec3 nbaSkinSmoothNormal;\n' + shader.fragmentShader;
+    // The lighting functions cannot see main()'s locals: keep the pre-normal-map normal.
+    shader.fragmentShader = shader.fragmentShader.replace('#include <normal_fragment_maps>',
+      '#include <normal_fragment_maps>\nnbaSkinSmoothNormal = nonPerturbedNormal;');
+    shader.fragmentShader = shader.fragmentShader.replace('#include <lights_physical_pars_fragment>', `#include <lights_physical_pars_fragment>
+void RE_Direct_NbaSkin( const in IncidentLight directLight, const in vec3 geometryPosition, const in vec3 geometryNormal, const in vec3 geometryViewDir, const in vec3 geometryClearcoatNormal, const in PhysicalMaterial material, inout ReflectedLight reflectedLight ) {
+  // Specular, clearcoat and sheen exactly as the physical model; its diffuse is replaced.
+  ReflectedLight nbaPhysical = ReflectedLight( vec3( 0.0 ), vec3( 0.0 ), vec3( 0.0 ), vec3( 0.0 ) );
+  RE_Direct_Physical( directLight, geometryPosition, geometryNormal, geometryViewDir, geometryClearcoatNormal, material, nbaPhysical );
+  reflectedLight.directSpecular += nbaPhysical.directSpecular;
+  PhysicalMaterial nbaOily = material;
+  nbaOily.roughness = max( material.roughness * nbaSkinOil.y, 0.08 );
+  float nbaDotNL = saturate( dot( geometryNormal, directLight.direction ) );
+  reflectedLight.directSpecular += nbaDotNL * directLight.color * BRDF_GGX( directLight.direction, geometryViewDir, geometryNormal, nbaOily ) * nbaSkinOil.x;
+  vec3 nbaIrradiance;
+  for ( int nbaChannel = 0; nbaChannel < 3; nbaChannel ++ ) {
+    vec3 nbaNormal = normalize( mix( nbaSkinSmoothNormal, geometryNormal, nbaSkinDetail[ nbaChannel ] ) );
+    float nbaWrap = nbaSkinWrap[ nbaChannel ];
+    nbaIrradiance[ nbaChannel ] = saturate( ( dot( nbaNormal, directLight.direction ) + nbaWrap ) / ( 1.0 + nbaWrap ) );
+  }
+  reflectedLight.directDiffuse += nbaIrradiance * directLight.color * BRDF_Lambert( material.diffuseContribution );
+}
+#undef RE_Direct
+#define RE_Direct RE_Direct_NbaSkin`);
+  };
+  material.customProgramCacheKey = () => `${previousKey}:nba-skin-scatter-v2`;
+}
+
+// The game's *_roughcurvedense maps hold skin roughness in red (range-packed;
+// decoded values 0.34-0.96 across the male body). They replace the single
+// profile roughness, so lips, nose and forehead read differently from the cheeks.
+export function configureSkinRoughness(material, texture) {
+  material.userData.skinRoughness = Boolean(texture && 'roughnessMap' in material);
+  if (!material.userData.skinRoughness) { if ('roughnessMap' in material) material.roughnessMap = null; return false; }
+  material.roughnessMap = texture;
+  material.roughness = SKIN_SHADING.roughnessScale;
+  const range = texture.userData?.range;
+  const uniforms = material.userData.skinRoughnessUniforms ||= { nbaRoughnessRange: { value: new Float32Array(3) } };
+  // min, max, mask for the red channel.
+  uniforms.nbaRoughnessRange.value.set(range ? [range.min[0], range.max[0], range.mask[0]] : [0, 1, 0]);
+  const previous = material.onBeforeCompile;
+  const previousKey = material.customProgramCacheKey();
+  material.onBeforeCompile = (shader) => {
+    previous(shader);
+    Object.assign(shader.uniforms, uniforms);
+    shader.fragmentShader = 'uniform vec3 nbaRoughnessRange;\n' + shader.fragmentShader;
+    shader.fragmentShader = shader.fragmentShader.replace('#include <roughnessmap_fragment>', `float roughnessFactor = roughness;
+#ifdef USE_ROUGHNESSMAP
+  float nbaRoughSample = texture2D( roughnessMap, vRoughnessMapUv ).r;
+  roughnessFactor *= mix( nbaRoughSample, mix( nbaRoughnessRange.x, nbaRoughnessRange.y, nbaRoughSample ), nbaRoughnessRange.z );
+#endif`);
+  };
+  material.customProgramCacheKey = () => `${previousKey}:nba-skin-roughness-v1`;
+  return true;
+}
+
+// The 2K27 hair_custom effect (localbuildglobal.iff; GBuffer and forward pixel
+// shaders), per strand pixel:
+//   lightmap = IsLightmapOn ? saturate(lightmap.r * LightmapScale + LightmapOffset) : 1
+//   albedo   = color * tangent.a * mix(linear(LightmapColor), 1, lightmap)
+//   specular *= lightmap * saturate(saturate(luma(color) * 1.75 + 0.25) * tangent.a
+//               * SOcclusionScale + SOcclusionOffset)
+// The lightmap does not dim the diffuse lighting, and LightmapColor only tints
+// where the lightmap is dark (roots, inner layers). The lightmap uses the card's
+// TEXCOORD1 (uvAttribute; null skips it), the tangent map the color UVs.
+// The preview keeps the albedo and the lightmap's specular term. The luminance
+// occlusion is tuned for the game's primary + 5x colored highlight lobes; on the
+// preview's single GGX lobe it removed the highlights from dark hair.
+export const STRAND_SHADING_DEFAULTS = Object.freeze({ lightmapScale: 1, lightmapOffset: 0, lightmapOn: true, specularOcclusionScale: 1, specularOcclusionOffset: 0 });
+const srgbToLinear = (value) => (value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4);
+const rangeUniforms = (texture) => {
+  const range = texture?.userData?.range;
+  return [range?.min || [0, 0, 0, 0], range?.max || [1, 1, 1, 1], range?.mask || [0, 0, 0, 0]];
+};
+// shading: the payload's decoded tweakables; tint: an older payload's bare
+// LightmapColor. A black LightmapColor is real data (albedo x lightmap); without
+// any color the effect default (black) applies.
+export function strandShading(shading, tint) {
+  const number = (key) => (Number.isFinite(shading?.[key]) ? shading[key] : STRAND_SHADING_DEFAULTS[key]);
+  const stored = shading?.lightmapColor;
+  const color = Array.isArray(stored) && stored.length === 3 && stored.every((value) => Number.isFinite(value) && value >= 0 && value <= 1)
+    ? stored : strandTint(tint);
+  return {
+    lightmapColor: color ? color.map(srgbToLinear) : [0, 0, 0],
+    lightmapScale: number('lightmapScale'),
+    lightmapOffset: number('lightmapOffset'),
+    lightmapOn: shading?.lightmapOn !== false,
+    specularOcclusionScale: number('specularOcclusionScale'),
+    specularOcclusionOffset: number('specularOcclusionOffset'),
+  };
+}
+export function configureStrandShading(material, { lightmap = null, uvAttribute = null, tangent = null, shading = null } = {}) {
+  const sampled = Boolean(lightmap && uvAttribute);
+  material.userData.strandLightmap = shading && material.map && sampled ? lightmap.name : null;
+  material.userData.strandShading = shading && material.map ? shading : null;
+  if (!material.userData.strandShading) return false;
+  const uniforms = material.userData.strandShadingUniforms ||= {
+    nbaStrandLightmap: { value: null },
+    nbaStrandLightRange: { value: new Float32Array(12) },
+    nbaStrandTangent: { value: null },
+    nbaStrandTangentRange: { value: new Float32Array(12) },
+    nbaStrandLightColor: { value: new Float32Array(3) },
+    nbaStrandShading: { value: new Float32Array(4) },
+  };
+  uniforms.nbaStrandLightmap.value = sampled ? lightmap : null;
+  uniforms.nbaStrandTangent.value = tangent;
+  // vec4[ 3 ]: minimum, maximum, mask.
+  uniforms.nbaStrandLightRange.value.set(rangeUniforms(lightmap).flat());
+  uniforms.nbaStrandTangentRange.value.set(rangeUniforms(tangent).flat());
+  uniforms.nbaStrandLightColor.value.set(shading.lightmapColor);
+  uniforms.nbaStrandShading.value.set([shading.lightmapScale, shading.lightmapOffset, shading.specularOcclusionScale, shading.specularOcclusionOffset]);
+  const lightmapOn = sampled && shading.lightmapOn;
+  const previous = material.onBeforeCompile;
+  const previousKey = material.customProgramCacheKey();
+  material.onBeforeCompile = (shader) => {
+    previous(shader);
+    Object.assign(shader.uniforms, uniforms);
+    if (lightmapOn) {
+      shader.vertexShader = `attribute vec2 ${uvAttribute};\nvarying vec2 vNbaStrandLightUv;\n` + shader.vertexShader
+        .replace('#include <uv_vertex>', `#include <uv_vertex>\nvNbaStrandLightUv = ${uvAttribute};`);
+    }
+    const decode = (sample, range) => `mix( ${sample}, ${range}[ 0 ] + ${sample} * ( ${range}[ 1 ] - ${range}[ 0 ] ), ${range}[ 2 ] )`;
+    shader.fragmentShader = `uniform sampler2D nbaStrandLightmap, nbaStrandTangent;
+uniform vec4 nbaStrandLightRange[ 3 ], nbaStrandTangentRange[ 3 ];
+uniform vec3 nbaStrandLightColor;
+uniform vec4 nbaStrandShading;
+${lightmapOn ? 'varying vec2 vNbaStrandLightUv;\n' : ''}float nbaStrandSpecular = 1.0;
+` + shader.fragmentShader
+      .replace('#include <color_fragment>', `#include <color_fragment>
+{
+  float nbaLightmap = ${lightmapOn ? `clamp( ${decode('texture2D( nbaStrandLightmap, vNbaStrandLightUv )', 'nbaStrandLightRange')}.r * nbaStrandShading.x + nbaStrandShading.y, 0.0, 1.0 )` : '1.0'};
+  float nbaStrandShade = ${tangent ? `clamp( ${decode('texture2D( nbaStrandTangent, vMapUv )', 'nbaStrandTangentRange')}.a, 0.0, 1.0 )` : '1.0'};
+  nbaStrandSpecular = nbaLightmap;
+  diffuseColor.rgb *= nbaStrandShade * mix( nbaStrandLightColor, vec3( 1.0 ), nbaLightmap );
+}`)
+      .replace('#include <lights_fragment_end>', `#include <lights_fragment_end>
+reflectedLight.directSpecular *= nbaStrandSpecular;
+reflectedLight.indirectSpecular *= nbaStrandSpecular;`);
+  };
+  material.customProgramCacheKey = () => `${previousKey}:nba-strand-shading-v2:${lightmapOn ? uvAttribute : 'unlit'}:${tangent ? 'shade' : 'flat'}`;
+  return true;
+}
+
+// The LightmapColor record of the player's hair/beard FxTweakables, as stored
+// (sRGB); (0,0,0) means no color is set, so it reads as absent.
+export function strandTint(value) {
+  if (!Array.isArray(value) || value.length !== 3) return null;
+  if (!value.every((channel) => Number.isFinite(channel) && channel >= 0 && channel <= 1)) return null;
+  return value.some((channel) => channel > 0) ? value.slice() : null;
+}
+
+// The fpglobal torso normal maps (every muscle type) carry the opposite green
+// (bitangent) direction to their chest maps, which drew a zigzag seam below the
+// pecs. The flip follows the map's source, not the player.
+export function flipsBodyNormalGreen(targetName, textureSource) {
+  return targetName === 'torso' && /fpglobal/i.test(String(textureSource || ''));
+}
+
+// Bent-normal maps carry ambient occlusion in alpha (armpits, under the jaw,
+// eye sockets, nostrils). Bound as the aoMap, alpha is read in place of red;
+// three applies the aoMap to ambient and environment light only.
+export function configureOcclusionAlpha(material, enabled, aomapChunk) {
+  const sample = 'texture2D( aoMap, vAoMapUv ).r';
+  material.userData.occlusionAlpha = Boolean(enabled && material.aoMap && aomapChunk?.includes(sample));
+  if (!material.userData.occlusionAlpha) return false;
+  const chunk = aomapChunk.replace(sample, 'texture2D( aoMap, vAoMapUv ).a');
+  const previous = material.onBeforeCompile;
+  const previousKey = material.customProgramCacheKey();
+  material.onBeforeCompile = (shader) => {
+    previous(shader);
+    shader.fragmentShader = shader.fragmentShader.replace('#include <aomap_fragment>', chunk);
+  };
+  material.customProgramCacheKey = () => `${previousKey}:nba-occlusion-alpha-v1`;
+  return true;
+}
+
+// Eyewear color maps carry an opacity mask: frame opaque, lens transparent. A
+// flat opacity either hid the eyes behind solid lenses or, multiplied with the
+// mask, erased the lenses. Use the mask with a minimum lens opacity.
 export const EYEWEAR_LENS = Object.freeze({ minimumOpacity: 0.22, roughness: 0.12 });
 
 export function configureEyewearLens(material, enabled) {
@@ -296,72 +477,13 @@ export function configureEyewearLens(material, enabled) {
     shader.fragmentShader = shader.fragmentShader.replace('#include <alphamap_fragment>',
       'diffuseColor.a = max( diffuseColor.a, nbaLensMinimumOpacity );\n#include <alphamap_fragment>');
   };
-  material.customProgramCacheKey = () => previousKey + ':nba-eyewear-lens-v1';
+  material.customProgramCacheKey = () => `${previousKey}:nba-eyewear-lens-v1`;
   return true;
 }
 
-// Skin: sheen for the peach-fuzz rim, a lower dielectric F0, and wrapped,
-// red-shifted diffuse past the terminator as a cheap subsurface stand-in.
-export const SKIN_SHADING = Object.freeze({
-  sheen: 0.2, sheenRoughness: 0.55, sheenColor: [0.75, 0.55, 0.48],
-  specularIntensity: 0.6, scatterWrap: 0.45, scatterColor: [0.62, 0.2, 0.12],
-});
-
-export function configureSkinShading(material, enabled) {
-  material.userData.skinScatter = Boolean(enabled && 'sheen' in material);
-  if (!material.userData.skinScatter) return;
-  material.sheen = SKIN_SHADING.sheen;
-  material.sheenRoughness = SKIN_SHADING.sheenRoughness;
-  material.sheenColor?.setRGB?.(...SKIN_SHADING.sheenColor);
-  material.specularIntensity = SKIN_SHADING.specularIntensity;
-  const uniforms = material.userData.skinScatterUniforms ||= {
-    nbaSkinScatterColor: { value: new Float32Array(SKIN_SHADING.scatterColor) },
-    nbaSkinScatterWrap: { value: SKIN_SHADING.scatterWrap },
-  };
-  const previous = material.onBeforeCompile;
-  const previousKey = material.customProgramCacheKey();
-  material.onBeforeCompile = (shader) => {
-    previous(shader);
-    Object.assign(shader.uniforms, uniforms);
-    shader.fragmentShader = 'uniform vec3 nbaSkinScatterColor;\nuniform float nbaSkinScatterWrap;\n' + shader.fragmentShader;
-    shader.fragmentShader = shader.fragmentShader.replace('#include <lights_physical_pars_fragment>', `#include <lights_physical_pars_fragment>
-void RE_Direct_NbaSkin( const in IncidentLight directLight, const in vec3 geometryPosition, const in vec3 geometryNormal, const in vec3 geometryViewDir, const in vec3 geometryClearcoatNormal, const in PhysicalMaterial material, inout ReflectedLight reflectedLight ) {
-  RE_Direct_Physical( directLight, geometryPosition, geometryNormal, geometryViewDir, geometryClearcoatNormal, material, reflectedLight );
-  float nbaSkinNdl = dot( geometryNormal, directLight.direction );
-  float nbaSkinWrapped = saturate( ( nbaSkinNdl + nbaSkinScatterWrap ) / ( 1.0 + nbaSkinScatterWrap ) );
-  float nbaSkinBand = max( nbaSkinWrapped - saturate( nbaSkinNdl ), 0.0 );
-  reflectedLight.directDiffuse += directLight.color * nbaSkinBand * nbaSkinScatterColor * BRDF_Lambert( material.diffuseColor );
-}
-#undef RE_Direct
-#define RE_Direct RE_Direct_NbaSkin`);
-  };
-  material.customProgramCacheKey = () => previousKey + ':nba-skin-scatter-v1';
-}
-
-// Per-player hair/beard color from the FxTweakables color record. 2K multiplies
-// the strand albedo by it; (0,0,0) means no tint is set, so it reads as absent.
-export function strandTint(value) {
-  if (!Array.isArray(value) || value.length !== 3) return null;
-  if (!value.every((channel) => Number.isFinite(channel) && channel >= 0 && channel <= 1)) return null;
-  return value.some((channel) => channel > 0) ? value.slice() : null;
-}
-
-// The male body's torso normal maps (fpglobal, every muscle type) carry the
-// opposite green (bitangent) direction to its chest maps, which left a zigzag
-// seam where the two materials meet. The mesh's own TANGENTFRAME0 frames match
-// the UV-derived ones on every body material, so the flip is in the torso maps
-// themselves. Child bodies share the male layout and take the same maps. The
-// flip follows the map's source (native prep labels it "body normals
-// (char/fpglobal.iff)"), not the player: female_skin torso maps match their
-// chest maps, and flipping them creates the seam.
-export function flipsBodyNormalGreen(targetName, textureSource) {
-  return targetName === 'torso' && /fpglobal/i.test(String(textureSource || ''));
-}
-
-// A player's face_normal_o is only 512x512; the pores and fine wrinkles live in
-// the 2048x2048 face_detailnormal_o over the same UVs. Its XY is added to the
-// base normal's in tangent space (scaled like the base), after three's normal
-// chunk so the wrapper's normal-packing hook still finds that chunk.
+// A player's face_normal_o is 512x512; pores and fine wrinkles live in the
+// 2048x2048 face_detailnormal_o over the same UVs. Its XY is added to the base
+// normal in tangent space (scaled like the base).
 export const DETAIL_NORMAL = Object.freeze({ strength: 0.6 });
 
 export function configureDetailNormal(material, texture, strength = DETAIL_NORMAL.strength) {
@@ -493,26 +615,6 @@ export function configureColorwayMask(material, colorway) {
   return true;
 }
 
-// Body bent-normal maps (and the player's face_bentnormal_o) carry ambient
-// occlusion in alpha: dark in the armpits, under the jaw, around the eyes and
-// nostrils. Bound as the aoMap, alpha is read in place of red. Its TXTR Min/Max
-// are bounds, not range compression (the chest's darkest raw alpha, 171/255, is
-// its Min of 0.67), so it is read raw. three applies the aoMap to ambient and
-// environment light only: contact shadows that leave the key light alone.
-export function configureOcclusionAlpha(material, enabled, aomapChunk) {
-  const sample = 'texture2D( aoMap, vAoMapUv ).r';
-  material.userData.occlusionAlpha = Boolean(enabled && material.aoMap && aomapChunk?.includes(sample));
-  if (!material.userData.occlusionAlpha) return false;
-  const chunk = aomapChunk.replace(sample, 'texture2D( aoMap, vAoMapUv ).a');
-  const previous = material.onBeforeCompile;
-  const previousKey = material.customProgramCacheKey();
-  material.onBeforeCompile = (shader) => {
-    previous(shader);
-    shader.fragmentShader = shader.fragmentShader.replace('#include <aomap_fragment>', chunk);
-  };
-  material.customProgramCacheKey = () => `${previousKey}:nba-occlusion-alpha-v1`;
-  return true;
-}
 
 // A female player's scanned chest color is black only where the sports-bra cups
 // go, so the cut-out fill alone drew two gray ovals. The band extends it into a
@@ -533,4 +635,30 @@ export function garmentBandBounds(positions, cups, band = GARMENT_BAND) {
   let halfWidth = 0;
   for (const v of cups) halfWidth = Math.max(halfWidth, Math.abs(positions[v * 3] - centerX));
   return [low - band.below, high + band.above, centerX, halfWidth * band.widthScale];
+}
+
+// Tangent-space hair and beards carry two UV sets: the shared strand-atlas UVs
+// (color, alpha, tangent) and a unique per-card lightmap layout. The decoder
+// labels the wider-spread set `uvs`, which for these meshes is the lightmap
+// grid, so cards sampled tiny solid patches of the atlas and rendered as flat
+// flakes. Atlas UVs give each triangle a real share of the strand artwork;
+// lightmap cells are tiny. Pick the set whose median triangle UV area is
+// clearly larger; the other set is the lightmap UV. Payloads without
+// textureUvSemantic (other tools' workers) send the second set as attachmentUvs
+// and leave this choice to the renderer.
+export function cardTextureUvs(uvs, alternateUvs, indices, margin = 4) {
+  if (!uvs?.length || alternateUvs?.length !== uvs.length || !indices?.length) return uvs;
+  const medianArea = (values) => {
+    const triangles = Math.floor(indices.length / 3);
+    const step = Math.max(1, Math.floor(triangles / 4096));
+    const areas = [];
+    for (let triangle = 0; triangle < triangles; triangle += step) {
+      const a = indices[triangle * 3] * 2, b = indices[triangle * 3 + 1] * 2, c = indices[triangle * 3 + 2] * 2;
+      areas.push(Math.abs((values[b] - values[a]) * (values[c + 1] - values[a + 1])
+        - (values[c] - values[a]) * (values[b + 1] - values[a + 1])) / 2);
+    }
+    areas.sort((left, right) => left - right);
+    return areas[Math.floor(areas.length / 2)] || 0;
+  };
+  return medianArea(alternateUvs) > medianArea(uvs) * margin ? alternateUvs : uvs;
 }

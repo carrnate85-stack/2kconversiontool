@@ -48,12 +48,14 @@ const STRAND_REPLACEMENTS = [
 // kept; the generic skin IFF copies are not. Body bent-normal maps are kept for
 // their alpha, which is ambient occlusion (the renderer's contact shadows); the
 // skin IFF's generic face_bentnormal gives way to the player's face_bentnormal_o.
+// Skin *_roughcurvedense maps are kept: the shared renderer reads skin roughness
+// from their red channel.
 const UNUSED_TEXTURE = String.raw`      function previewTextureUnused(item) {
         const identity = ${'`${item.name || ""} ${item.source || ""}`'};
         const channels = item.assignments?.length ? item.assignments.map((assignment) => assignment.channel) : [item.binding?.channel];
         if (channels.some((channel) => channel === "color" || channel === "tangent")) return false;
         if (channels.includes("normal")) return /detailnormal/i.test(identity) && (!/^face_detailnormal_o\./i.test(item.name || "") || /_skin\.iff/i.test(identity)) || /_normal_avg_/i.test(identity) && !item.externalPath;
-        return !/occlusion|(?:^|_)ao(?:_|\.)|lightmap|tangent|bentnormal/i.test(identity) || /face_bentnormal\./i.test(item.name || "") && /_skin\.iff/i.test(identity);
+        return !/occlusion|(?:^|_)ao(?:_|\.)|lightmap|tangent|bentnormal|roughcurvedense/i.test(identity) || /face_bentnormal\./i.test(item.name || "") && /_skin\.iff/i.test(identity);
       }
 `;
 

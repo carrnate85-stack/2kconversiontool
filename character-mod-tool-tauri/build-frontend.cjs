@@ -7,15 +7,17 @@ const root = __dirname;
 execFileSync(process.execPath, [path.join(root, 'typecheck.cjs')], { stdio: 'inherit' });
 const production = path.join(root, '../character-mod-tool-webview2/Reference/src');
 const output = path.join(root, 'frontend');
+// The renderer is the 2K Exporter's shared one: refresh web/renderer/shared from
+// it (or, without that folder, check the committed copy against its lock).
+execFileSync(process.execPath, [path.join(root, 'shared-renderer.mjs'), path.join(root, 'web/renderer/shared')], { stdio: 'inherit' });
 fs.cpSync(path.join(production, 'renderer'), output, { recursive: true });
+fs.rmSync(path.join(output, 'shared'), { recursive: true, force: true });
+fs.cpSync(path.join(root, 'web/renderer/shared'), path.join(output, 'shared'), { recursive: true });
 fs.copyFileSync(path.join(root, 'web/renderer/model-preview.js'), path.join(output, 'model-preview.js'));
 fs.copyFileSync(path.join(root, 'web/renderer/body-preview-editor.mjs'), path.join(output, 'body-preview-editor.mjs'));
 fs.copyFileSync(path.join(root, 'web/renderer/explorer-model-preview.js'), path.join(output, 'explorer/model-preview.js'));
-fs.copyFileSync(path.join(root, 'web/renderer/strand-preview-fixes.mjs'), path.join(output, 'strand-preview-fixes.mjs'));
-fs.copyFileSync(path.join(root, 'web/renderer/skin-response.mjs'), path.join(output, 'skin-response.mjs'));
 fs.copyFileSync(path.join(root, 'web/renderer/portrait-skin.mjs'), path.join(output, 'portrait-skin.mjs'));
 fs.copyFileSync(path.join(root, 'web/renderer/portrait-capture.mjs'), path.join(output, 'portrait-capture.mjs'));
-fs.copyFileSync(path.join(root, 'web/renderer/studio-shading.mjs'), path.join(output, 'studio-shading.mjs'));
 let html = fs.readFileSync(path.join(output, 'index.html'), 'utf8');
 html = html.replace(/<meta[^>]*http-equiv="Content-Security-Policy"[^>]*>/i, '');
 html = html.replace('<script src="lucide.min.js"></script>', '<script src="tauri-bridge.js"></script>\n<script src="lucide.min.js"></script>');

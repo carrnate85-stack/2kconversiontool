@@ -1,127 +1,48 @@
-// Opt-in portrait shading (model-preview.js?portrait=1). Uses the game's own
-// skin maps, range-decoded with their TXTR Min/Max, which the default viewer
-// leaves unbound: *_roughcurvedense R = roughness, *_bentnormal A = ambient
-// occlusion, face_detailnormal RG = fine (pore/wrinkle) normal detail. All
-// share the color map's UVs. Skin also gets a subsurface approximation:
-// per-channel softened normals and wrapped diffuse (red scatters furthest).
-import { DDSLoader } from './explorer/vendor/DDSLoader.js';
+// Opt-in portrait additions (model-preview.js?portrait=1) on top of the shared
+// renderer, which already shades 2K27 skin from the game's maps (roughness from
+// *_roughcurvedense, bent-normal occlusion, the face detail normal, per-channel
+// soft normals and wrapped diffuse, an oily lobe) and lights players with its
+// studio environment. Portraits add procedural pores, the portrait garments
+// (team color, logos, numbers, the jersey tuck) and the research lighting
+// overrides.
+import { DDSLoader } from './shared/vendor/DDSLoader.js';
 
-const SKIN_TARGETS = new Set(['face', 'chest', 'torso', 'legs']);
-const DETAIL_STRENGTH = 0.7;
-const DIRECT_OCCLUSION = 0.15;
-// Share of the detailed (mapped) normal in R/G/B diffuse; the rest is the smooth surface.
-const SKIN_NORMAL_MIX = [0.3, 0.65, 0.85];
-// Diffuse wrap past the terminator per channel.
-const SKIN_WRAP = [0.5, 0.2, 0.12];
-// Second, tighter specular lobe for skin's oily top layer.
-const SKIN_OIL_ROUGHNESS = 0.5;
-const SKIN_OIL_WEIGHT = 0.25;
 // Procedural pore micro-surface (not a game texture), scaled per person by the
 // appearance's "noise uv scale" (~31.9) and "face pore depth" (~3).
 const PORE_FREQUENCY = 12;
 const PORE_STRENGTH = 0.03;
 
-function rangeUniforms(texture) {
-  const range = texture?.userData?.range;
-  return {
-    min: { value: new Float32Array(range?.min || [0, 0, 0, 0]) },
-    max: { value: new Float32Array(range?.max || [1, 1, 1, 1]) },
-    mask: { value: new Float32Array(range?.mask || [0, 0, 0, 0]) },
-  };
-}
-
 export function configurePortraitSkin(context, material) {
-  const target = context.materialTextureTarget(material.name);
   material.userData.portraitSkin = null;
-  if (!SKIN_TARGETS.has(target) || !material.map || material.userData.previewMaterialRole !== 'skin') return;
-  // Per-character config maps precede male_skin's generic ones in binding order.
-  const rough = context.boundTextureMatching(target, 'auxiliary', /roughcurvedense/i);
-  const occlusion = context.boundTextureMatching(target, 'auxiliary', /bentnormal/i);
-  // The explorer's studio shading adds the face detail normal itself
-  // (configureDetailNormal); then only the procedural pores are added here.
-  const pores = target === 'face';
-  const detail = pores && !material.userData.detailNormal ? context.boundTextureMatching('face', 'normal', /detailnormal/i) : null;
-  material.userData.portraitSkin = { roughness: rough?.name || '', occlusion: occlusion?.name || '', detail: detail?.name || '', subsurface: true };
-  const { THREE } = context;
-  const directLine = 'reflectedLight.directDiffuse += irradiance * BRDF_Lambert( material.diffuseContribution );';
-  const physicalChunk = THREE.ShaderChunk.lights_physical_pars_fragment;
-  if (!physicalChunk.includes(directLine)) throw new Error('Skin diffuse shader hook changed.');
-  const skinChunk = physicalChunk.replace(directLine, `vec3 nbaSkinNL = mix( vec3( dot( nbaSmoothNormal, directLight.direction ) ),
-      vec3( dot( geometryNormal, directLight.direction ) ), nbaSkinNormalMix );
-    vec3 nbaSkinDiffuse = saturate( ( nbaSkinNL + nbaSkinWrap ) / ( 1.0 + nbaSkinWrap ) );
-    reflectedLight.directDiffuse += nbaSkinDiffuse * directLight.color * BRDF_Lambert( material.diffuseContribution );
-    PhysicalMaterial nbaOilLayer = material;
-    nbaOilLayer.roughness = max( 0.12, material.roughness * nbaSkinOilRoughness );
-    reflectedLight.directSpecular += irradiance * BRDF_GGX( directLight.direction, geometryViewDir, geometryNormal, nbaOilLayer ) * nbaSkinOilWeight;`);
+  if (context.materialTextureTarget(material.name) !== 'face' || !material.map
+    || material.userData.previewMaterialRole !== 'skin') return;
+  material.userData.portraitSkin = { pores: true };
   const uniforms = {
-    nbaRoughMap: { value: rough }, nbaOcclusionMap: { value: occlusion }, nbaDetailMap: { value: detail },
-    nbaDetailStrength: { value: DETAIL_STRENGTH }, nbaDirectOcclusion: { value: DIRECT_OCCLUSION },
-    nbaSkinNormalMix: { value: new THREE.Vector3(...SKIN_NORMAL_MIX) }, nbaSkinWrap: { value: new THREE.Vector3(...SKIN_WRAP) },
-    nbaSkinOilRoughness: { value: SKIN_OIL_ROUGHNESS }, nbaSkinOilWeight: { value: SKIN_OIL_WEIGHT },
     nbaPoreScale: { value: (Number(context.payload?.player?.poreScale) || 31.855) * PORE_FREQUENCY },
     nbaPoreStrength: { value: (Number(context.payload?.player?.poreDepth) || 3) * PORE_STRENGTH },
   };
-  for (const [prefix, texture] of [['nbaRough', rough], ['nbaOcclusion', occlusion], ['nbaDetail', detail]]) {
-    const range = rangeUniforms(texture);
-    uniforms[prefix + 'Min'] = range.min; uniforms[prefix + 'Max'] = range.max; uniforms[prefix + 'Mask'] = range.mask;
-  }
   const previous = material.onBeforeCompile;
   const previousKey = material.customProgramCacheKey();
-  const flags = `${rough ? 'R' : ''}${occlusion ? 'O' : ''}${detail ? 'D' : ''}${pores ? 'P' : ''}`;
   material.onBeforeCompile = (shader) => {
     previous(shader);
     Object.assign(shader.uniforms, uniforms);
-    const decode = (prefix) => `mix(${prefix}Sample, ${prefix}Min + ${prefix}Sample * (${prefix}Max - ${prefix}Min), ${prefix}Mask)`;
-    if (!shader.fragmentShader.includes('#include <lights_physical_pars_fragment>')) throw new Error('Skin lighting include missing.');
-    shader.fragmentShader = shader.fragmentShader
-      .replace('#include <lights_physical_pars_fragment>', `uniform vec3 nbaSkinNormalMix, nbaSkinWrap;
-uniform float nbaSkinOilRoughness, nbaSkinOilWeight;
-vec3 nbaSmoothNormal;
-${skinChunk}`)
-      .replace('#include <lights_fragment_begin>', 'nbaSmoothNormal = nonPerturbedNormal;\n#include <lights_fragment_begin>');
-    shader.fragmentShader = `${rough ? 'uniform sampler2D nbaRoughMap; uniform vec4 nbaRoughMin, nbaRoughMax, nbaRoughMask;\n' : ''}`
-      + `${occlusion ? 'uniform sampler2D nbaOcclusionMap; uniform vec4 nbaOcclusionMin, nbaOcclusionMax, nbaOcclusionMask; uniform float nbaDirectOcclusion;\n' : ''}`
-      + `${detail ? 'uniform sampler2D nbaDetailMap; uniform vec4 nbaDetailMin, nbaDetailMax, nbaDetailMask; uniform float nbaDetailStrength;\n' : ''}`
-      + `${pores ? `uniform float nbaPoreScale, nbaPoreStrength;
+    shader.fragmentShader = `uniform float nbaPoreScale, nbaPoreStrength;
 float nbaHash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
 float nbaNoise(vec2 p) { vec2 i = floor(p), f = fract(p); f = f * f * (3.0 - 2.0 * f);
   return mix(mix(nbaHash(i), nbaHash(i + vec2(1.0, 0.0)), f.x), mix(nbaHash(i + vec2(0.0, 1.0)), nbaHash(i + 1.0), f.x), f.y); }
-` : ''}`
-      + shader.fragmentShader;
-    if (rough) {
-      shader.fragmentShader = shader.fragmentShader.replace('#include <roughnessmap_fragment>', `#include <roughnessmap_fragment>
-        vec4 nbaRoughSample = texture2D( nbaRoughMap, vMapUv );
-        roughnessFactor = clamp( ${decode('nbaRough')}.r, 0.2, 1.0 );`);
-    }
-    if (pores) {
-      shader.fragmentShader = shader.fragmentShader.replace('#include <emissivemap_fragment>', `
+` + shader.fragmentShader.replace('#include <emissivemap_fragment>', `
         #ifdef USE_NORMALMAP_TANGENTSPACE
-          ${detail ? `vec4 nbaDetailSample = texture2D( nbaDetailMap, vMapUv );
-          vec2 nbaPortraitDetailXY = ( ${decode('nbaDetail')}.xy * 2.0 - 1.0 ) * nbaDetailStrength;
-          normal = normalize( normal + tbn * vec3( nbaPortraitDetailXY, 0.0 ) );` : ''}
           vec2 nbaPore = vMapUv * nbaPoreScale;
           vec2 nbaPoreSlope = vec2( nbaNoise( nbaPore + vec2( 0.35, 0.0 ) ) - nbaNoise( nbaPore - vec2( 0.35, 0.0 ) ),
             nbaNoise( nbaPore + vec2( 0.0, 0.35 ) ) - nbaNoise( nbaPore - vec2( 0.0, 0.35 ) ) );
           normal = normalize( normal - tbn * vec3( nbaPoreSlope * nbaPoreStrength, 0.0 ) );
         #endif
         #include <emissivemap_fragment>`);
-    }
-    if (occlusion) {
-      shader.fragmentShader = shader.fragmentShader.replace('#include <aomap_fragment>', `#include <aomap_fragment>
-        vec4 nbaOcclusionSample = texture2D( nbaOcclusionMap, vMapUv );
-        float nbaOcclusion = clamp( ${decode('nbaOcclusion')}.a, 0.0, 1.0 );
-        reflectedLight.indirectDiffuse *= nbaOcclusion;
-        reflectedLight.indirectSpecular *= nbaOcclusion;
-        reflectedLight.directDiffuse *= mix( 1.0, nbaOcclusion, nbaDirectOcclusion );
-        reflectedLight.directSpecular *= mix( 1.0, nbaOcclusion, nbaDirectOcclusion );`);
-    }
   };
-  material.customProgramCacheKey = () => `${previousKey}:nba-portrait-skin-v3-${flags}`;
+  material.customProgramCacheKey = () => `${previousKey}:nba-portrait-pores-v1`;
   material.needsUpdate = true;
 }
 
-// Soft photo-studio image lighting from the same key/fill/rim directions as
-// the exporter's studio rig, replacing its flat ambient/hemisphere fill.
 // Generic portrait garments (preview-jersey companions): untextured fabric.
 const GARMENT_MATERIALS = [
   // Basketball uniforms are matte mesh knit: at roughness 0.62 they read as
@@ -302,72 +223,12 @@ function configureGarmentTextures(context, material) {
   configureGarmentOverlays(THREE, material, material.map ? overlays : [], context.renderer);
   material.needsUpdate = true;
 }
-// Richer procedural iris on top of the exporter's flat iris disc: radial
-// fibers, a lighter collarette, darker toward the pupil, a dark limbal ring,
-// and a slight sclera falloff toward the lids.
-const IRIS_LINE = 'sampledDiffuseColor.rgb = mix( sampledDiffuseColor.rgb, nbaIrisColor * nbaIrisRays, nbaIrisMask );';
-function configurePortraitEye(material) {
-  const previous = material.onBeforeCompile, previousKey = material.customProgramCacheKey();
-  material.onBeforeCompile = (shader) => {
-    previous(shader);
-    if (!shader.fragmentShader.includes(IRIS_LINE)) return;
-    shader.fragmentShader = shader.fragmentShader.replace(IRIS_LINE, `
-      vec2 nbaIrisOffset = nbaEyeUv - vec2( 0.5 );
-      float nbaIrisAngle = atan( nbaIrisOffset.y, nbaIrisOffset.x );
-      float nbaFibers = 0.78 + 0.22 * sin( nbaIrisAngle * 85.0 + 2.0 * sin( nbaIrisAngle * 19.0 ) ) * ( 0.65 + 0.35 * sin( nbaIrisDistance * 70.0 ) );
-      float nbaCollarette = smoothstep( 0.085, 0.11, nbaIrisDistance ) * ( 1.0 - smoothstep( 0.11, 0.145, nbaIrisDistance ) );
-      vec3 nbaIris = nbaIrisColor * nbaFibers * ( 1.0 + 0.4 * nbaCollarette );
-      nbaIris *= mix( 0.72, 1.0, smoothstep( 0.06, 0.15, nbaIrisDistance ) );
-      nbaIris *= mix( 1.0, 0.3, smoothstep( 0.165, 0.235, nbaIrisDistance ) );
-      sampledDiffuseColor.rgb *= mix( 1.0, 0.82, smoothstep( 0.32, 0.5, length( nbaIrisOffset ) ) );
-      sampledDiffuseColor.rgb = mix( sampledDiffuseColor.rgb, nbaIris, nbaIrisMask );`);
-  };
-  material.customProgramCacheKey = () => `${previousKey}:nba-portrait-iris-v1`;
-  material.needsUpdate = true;
-}
-let studioEnvironment = null;
-const averagedLightmaps = new WeakMap();
+
+// Research overrides (?environment=&ambient=&hemisphere=&garmentRoughness=) and
+// the portrait garments; the studio environment is the shared renderer's.
 export function configurePortraitLighting(context, settings = {}) {
-  const { THREE, renderer, scene } = context;
-  if (!studioEnvironment) {
-    const room = new THREE.Scene();
-    const material = (value) => new THREE.MeshBasicMaterial({ color: new THREE.Color(...value), side: THREE.DoubleSide });
-    room.add(new THREE.Mesh(new THREE.SphereGeometry(50, 32, 16), material([0.035, 0.036, 0.04])));
-    const panel = (direction, size, value) => {
-      const mesh = new THREE.Mesh(new THREE.PlaneGeometry(size[0], size[1]), material(value));
-      mesh.position.copy(new THREE.Vector3(...direction).normalize().multiplyScalar(20));
-      mesh.lookAt(0, 0, 0);
-      room.add(mesh);
-    };
-    // Photo-studio sized softboxes: small enough for compact eye catchlights.
-    panel([1.5, 2.3, 2], [8, 10], [14, 13.4, 12.8]);
-    panel([-2.1, 1.15, 1.3], [7, 9], [3.0, 3.2, 3.5]);
-    panel([-1.4, 1.7, -2.2], [4, 11], [5.5, 5.3, 5.0]);
-    panel([0, 3, 0.2], [12, 12], [1.2, 1.2, 1.22]);
-    panel([0, -3, 1], [40, 40], [0.12, 0.105, 0.09]);
-    const generator = new THREE.PMREMGenerator(renderer);
-    studioEnvironment = generator.fromScene(room, 0.035);
-    generator.dispose();
-    room.traverse((object) => { object.geometry?.dispose(); object.material?.dispose(); });
-  }
-  scene.environment = studioEnvironment.texture;
-  scene.environmentIntensity = settings.environment ?? 0.5;
-  // Hair lightmaps are scalp-space clump maps sampled with TEXCOORD1 (the
-  // strand's attachment position). Where the mesh has that set (lightmapUv),
-  // point the existing strand hook at it. Otherwise the exporter would sample
-  // with the color UVs and stamp a cell pattern over the cards, so feed it one
-  // texel holding the map's mean raw value (Min/Max still decode).
-  const meanLightmap = (texture) => {
-    if (averagedLightmaps.has(texture)) return averagedLightmaps.get(texture);
-    const pixels = context.decodedTexturePixels(texture)?.pixels;
-    const mean = [0, 0, 0];
-    if (pixels?.length) for (let i = 0; i < pixels.length; i += 4) for (let c = 0; c < 3; c += 1) mean[c] += pixels[i + c];
-    const count = pixels?.length ? pixels.length / 4 : 0;
-    const texel = count ? mean.map((sum) => Math.round(sum / count)) : [255, 255, 255];
-    const averaged = Object.assign(new THREE.DataTexture(new Uint8Array([...texel, 255]), 1, 1), { needsUpdate: true });
-    averagedLightmaps.set(texture, averaged);
-    return averaged;
-  };
+  const { scene } = context;
+  if (settings.environment !== undefined && scene.environment) scene.environmentIntensity = settings.environment;
   const tuckAt = jerseyTuckHeight(context);
   context.modelRoot.traverse((object) => {
     for (const material of [object.material].flat().filter(Boolean)) {
@@ -383,31 +244,14 @@ export function configurePortraitLighting(context, settings = {}) {
           configureGarmentTextures(context, material);
           // Tucked: the jersey's tail ends inside the shorts' waistband.
           const tuck = tuckAt !== null && /jersey/i.test(material.name);
-          material.clippingPlanes = tuck ? [new THREE.Plane(new THREE.Vector3(0, 1, 0), -tuckAt)] : null;
+          material.clippingPlanes = tuck ? [new context.THREE.Plane(new context.THREE.Vector3(0, 1, 0), -tuckAt)] : null;
           if (tuck) context.renderer.localClippingEnabled = true;
         }
       }
       // Wet clearcoated eyes would otherwise mirror the whole studio over the iris.
       if ('envMapIntensity' in material) material.envMapIntensity = material.userData.previewMaterialRole === 'eye' ? 0.6 : 1;
-      if (material.userData.previewMaterialRole === 'eye' && material.map) configurePortraitEye(material);
-      const strand = material.userData.strandLightmapUniforms;
-      const lightmap = strand?.nbaStrandLightmap.value;
-      if (!lightmap || lightmap.isDataTexture) continue;
-      if (object.geometry?.getAttribute('lightmapUv')) {
-        const sample = 'vNbaStrandLightUv = (nbaStrandLightTransform * vec3(uv, 1.0)).xy;';
-        const previous = material.onBeforeCompile;
-        const previousKey = material.customProgramCacheKey();
-        material.onBeforeCompile = (shader) => {
-          previous(shader);
-          if (!shader.vertexShader.includes(sample)) throw new Error('Strand lightmap UV hook changed.');
-          shader.vertexShader = 'attribute vec2 lightmapUv;\n' + shader.vertexShader
-            .replace(sample, 'vNbaStrandLightUv = (nbaStrandLightTransform * vec3(lightmapUv, 1.0)).xy;');
-        };
-        material.customProgramCacheKey = () => `${previousKey}:nba-lightmap-uv1`;
-        material.needsUpdate = true;
-      } else strand.nbaStrandLightmap.value = meanLightmap(lightmap);
     }
   });
-  context.ambientLight.intensity = settings.ambient ?? 0.15;
-  context.hemisphereLight.intensity = settings.hemisphere ?? 0.35;
+  if (settings.ambient !== undefined) context.ambientLight.intensity = settings.ambient;
+  if (settings.hemisphere !== undefined) context.hemisphereLight.intensity = settings.hemisphere;
 }

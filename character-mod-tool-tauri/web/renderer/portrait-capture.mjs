@@ -115,6 +115,10 @@ function fitHeadShadow(context, options = {}) {
 function renderWithSoftHair(context, options) {
   const { renderer, scene, camera, modelRoot } = context;
   const strands = [], others = [];
+  // The shared renderer already draws strands this way (soft-pass children).
+  let sharedSoftPasses = false;
+  modelRoot.traverse((object) => { if (object.userData.strandSoftPass) sharedSoftPasses = true; });
+  if (sharedSoftPasses) { renderer.render(scene, camera); return; }
   modelRoot.traverse((object) => {
     if (!object.isMesh || !object.visible) return;
     const materials = [object.material].flat().filter(Boolean);

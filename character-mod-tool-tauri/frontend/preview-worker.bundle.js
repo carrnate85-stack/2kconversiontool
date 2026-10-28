@@ -34,9 +34,9 @@
   ));
   var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
-  // build-tools/node_modules/base64-js/index.js
+  // C:/Users/carrn/CodexProjects/2kconversiontool/character-mod-tool-tauri/build-tools/node_modules/base64-js/index.js
   var require_base64_js = __commonJS({
-    "build-tools/node_modules/base64-js/index.js"(exports) {
+    "C:/Users/carrn/CodexProjects/2kconversiontool/character-mod-tool-tauri/build-tools/node_modules/base64-js/index.js"(exports) {
       "use strict";
       init_globals();
       exports.byteLength = byteLength;
@@ -136,9 +136,9 @@
     }
   });
 
-  // build-tools/node_modules/ieee754/index.js
+  // C:/Users/carrn/CodexProjects/2kconversiontool/character-mod-tool-tauri/build-tools/node_modules/ieee754/index.js
   var require_ieee754 = __commonJS({
-    "build-tools/node_modules/ieee754/index.js"(exports) {
+    "C:/Users/carrn/CodexProjects/2kconversiontool/character-mod-tool-tauri/build-tools/node_modules/ieee754/index.js"(exports) {
       init_globals();
       exports.read = function(buffer, offset, isLE, mLen, nBytes) {
         var e, m;
@@ -220,9 +220,9 @@
     }
   });
 
-  // build-tools/node_modules/buffer/index.js
+  // C:/Users/carrn/CodexProjects/2kconversiontool/character-mod-tool-tauri/build-tools/node_modules/buffer/index.js
   var require_buffer = __commonJS({
-    "build-tools/node_modules/buffer/index.js"(exports) {
+    "C:/Users/carrn/CodexProjects/2kconversiontool/character-mod-tool-tauri/build-tools/node_modules/buffer/index.js"(exports) {
       "use strict";
       init_globals();
       var base64 = require_base64_js();
@@ -2148,9 +2148,9 @@
     }
   });
 
-  // build-tools/node_modules/path-browserify/index.js
+  // C:/Users/carrn/CodexProjects/2kconversiontool/character-mod-tool-tauri/build-tools/node_modules/path-browserify/index.js
   var require_path_browserify = __commonJS({
-    "build-tools/node_modules/path-browserify/index.js"(exports, module) {
+    "C:/Users/carrn/CodexProjects/2kconversiontool/character-mod-tool-tauri/build-tools/node_modules/path-browserify/index.js"(exports, module) {
       "use strict";
       init_globals();
       function assertPath(path) {
@@ -2583,13 +2583,13 @@
     }
   });
 
-  // build-tools/node_modules/fflate/esm/browser.js
+  // C:/Users/carrn/CodexProjects/2kconversiontool/character-mod-tool-tauri/build-tools/node_modules/fflate/esm/browser.js
   function inflateSync(data, opts) {
     return inflt(data, { i: 2 }, opts && opts.out, opts && opts.dictionary);
   }
   var u8, u16, i32, fleb, fdeb, clim, freb, _a, fl, revfl, _b, fd, revfd, rev, x, i, hMap, flt, i, i, i, i, fdt, i, flrm, fdrm, max, bits, bits16, shft, slc, ec, err, inflt, et, td, tds;
   var init_browser = __esm({
-    "build-tools/node_modules/fflate/esm/browser.js"() {
+    "C:/Users/carrn/CodexProjects/2kconversiontool/character-mod-tool-tauri/build-tools/node_modules/fflate/esm/browser.js"() {
       init_globals();
       u8 = Uint8Array;
       u16 = Uint16Array;
@@ -2966,9 +2966,9 @@
     }
   });
 
-  // ../character-mod-tool-webview2/Reference/src/core/iff.js
+  // C:/Users/carrn/CodexProjects/2kconversiontool/character-mod-tool-webview2/Reference/src/core/iff.js
   var require_iff = __commonJS({
-    "../character-mod-tool-webview2/Reference/src/core/iff.js"(exports, module) {
+    "C:/Users/carrn/CodexProjects/2kconversiontool/character-mod-tool-webview2/Reference/src/core/iff.js"(exports, module) {
       init_globals();
       var fsp = (init_fs(), __toCommonJS(fs_exports));
       var path = (init_path(), __toCommonJS(path_exports));
@@ -3191,9 +3191,9 @@
     }
   });
 
-  // ../character-mod-tool-webview2/Reference/src/core/preview.js
+  // C:/Users/carrn/CodexProjects/2kconversiontool/character-mod-tool-webview2/Reference/src/core/preview.js
   var require_preview = __commonJS({
-    "../character-mod-tool-webview2/Reference/src/core/preview.js"(exports, module) {
+    "C:/Users/carrn/CodexProjects/2kconversiontool/character-mod-tool-webview2/Reference/src/core/preview.js"(exports, module) {
       init_globals();
       var path = (init_path(), __toCommonJS(path_exports));
       var fsp = (init_fs(), __toCommonJS(fs_exports));
@@ -3659,7 +3659,7 @@
         const channels = item.assignments?.length ? item.assignments.map((assignment) => assignment.channel) : [item.binding?.channel];
         if (channels.some((channel) => channel === "color" || channel === "tangent")) return false;
         if (channels.includes("normal")) return /detailnormal/i.test(identity) && (!/^face_detailnormal_o\./i.test(item.name || "") || /_skin\.iff/i.test(identity)) || /_normal_avg_/i.test(identity) && !item.externalPath;
-        return !/occlusion|(?:^|_)ao(?:_|\.)|lightmap|tangent|bentnormal/i.test(identity) || /face_bentnormal\./i.test(item.name || "") && /_skin\.iff/i.test(identity);
+        return !/occlusion|(?:^|_)ao(?:_|\.)|lightmap|tangent|bentnormal|roughcurvedense/i.test(identity) || /face_bentnormal\./i.test(item.name || "") && /_skin\.iff/i.test(identity);
       }
       function previewTextureScore(item) {
         const channels = item.assignments?.map((assignment) => assignment.channel) || [item.binding?.channel];

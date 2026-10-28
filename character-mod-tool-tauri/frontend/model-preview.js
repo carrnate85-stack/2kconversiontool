@@ -1,5 +1,5 @@
-import { createExplorerRenderer } from './explorer/model-preview.js';
-import { GARMENT_LAYERING, previewGarmentKind } from './studio-shading.mjs';
+import { createModelPreview } from './shared/model-preview-core.mjs';
+import { GARMENT_LAYERING, previewGarmentKind } from './shared/studio-shading.mjs';
 import { createBodyEditor } from './body-preview-editor.mjs';
 import { nearestSkinBoundaryPairs, normalPacking, configureNormalPacking } from './skin-preview-fixes.mjs';
 import { configurePortraitSkin, configurePortraitLighting } from './portrait-skin.mjs';
@@ -29,7 +29,7 @@ function visibleHit(hit) {
   return materials[hit.face?.materialIndex || 0]?.visible !== false;
 }
 
-const context = createExplorerRenderer({
+const context = createModelPreview({
   canvas,
   viewer: viewerGlobalName,
   picker: pickerMode,

@@ -74,6 +74,12 @@ New sessions open in Select Player; the conversion workflow remains in Full Swap
 - The production UI, Explorer renderer and preview decoder are reused.
 - The existing Explorer renderer and decoder remain JavaScript compatibility modules;
   Three.js and the bundled icon library are not rewritten or removed.
+- The 3D preview draws with the 2K Exporter's shared renderer, vendored in
+  web/renderer/shared with shared-renderer.lock.json. build-frontend.cjs refreshes it
+  from 2k Exporter/shared/model-preview when that folder exists (shared-renderer.mjs;
+  NBA2K_SHARED_RENDERER overrides the path) and otherwise checks the copy against its
+  lock. Edit the shared renderer there, not here: web/renderer/model-preview.js
+  (body fit, editor display, portrait mode) wraps it through createModelPreview.
 - Preview decoding runs in browser WebWorkers, not a Node process.
 - The worker entry and result transport are owned modules; completed geometry
   buffers transfer to the UI while retained donor heads remain isolated.
